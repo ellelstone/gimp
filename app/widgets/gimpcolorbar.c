@@ -93,7 +93,7 @@ gimp_color_bar_class_init (GimpColorBarClass *klass)
                                    g_param_spec_enum ("histogram-channel",
                                                       NULL, NULL,
                                                       GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                                      GIMP_HISTOGRAM_VALUE,
+                                                      GIMP_HISTOGRAM_RGB,
                                                       GIMP_PARAM_WRITABLE));
 }
 
@@ -285,7 +285,7 @@ gimp_color_bar_set_channel (GimpColorBar         *bar,
   GimpRGB  color = { 1.0, 1.0, 1.0, 1.0 };
 
   g_return_if_fail (GIMP_IS_COLOR_BAR (bar));
-
+channel=GIMP_HISTOGRAM_RGB;
   switch (channel)
     {
     case GIMP_HISTOGRAM_VALUE:

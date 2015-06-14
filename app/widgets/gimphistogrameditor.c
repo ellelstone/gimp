@@ -455,7 +455,7 @@ gimp_histogram_editor_channel_valid (GimpHistogramEditor  *editor,
       switch (channel)
         {
         case GIMP_HISTOGRAM_VALUE:
-          return TRUE;
+          //return TRUE;
 
         case GIMP_HISTOGRAM_RED:
         case GIMP_HISTOGRAM_GREEN:
@@ -494,7 +494,7 @@ gimp_histogram_editor_menu_update (GimpHistogramEditor *editor)
 
   if (! gimp_histogram_editor_channel_valid (editor, view->channel))
     {
-      gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+      gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_RGB);
     }
 }
 
