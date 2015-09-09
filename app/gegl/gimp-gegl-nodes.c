@@ -181,6 +181,7 @@ gimp_gegl_mode_node_set_mode (GeglNode             *node,
     case GIMP_LCH_CHROMA_MODE:    operation = "gimp:lch-chroma-mode"; break;
     case GIMP_LCH_COLOR_MODE:     operation = "gimp:lch-color-mode"; break;
     case GIMP_LCH_LIGHTNESS_MODE: operation = "gimp:lch-lightness-mode"; break;
+    case GIMP_LUMINANCE_MODE:     operation = "gimp:luminance-mode"; break;
     default:
       break;
     }

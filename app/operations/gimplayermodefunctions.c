@@ -53,6 +53,7 @@
 #include "gimpoperationlchchromamode.h"
 #include "gimpoperationlchcolormode.h"
 #include "gimpoperationlchlightnessmode.h"
+#include "gimpoperationluminancemode.h"
 #include "gimpoperationerasemode.h"
 #include "gimpoperationreplacemode.h"
 #include "gimpoperationantierasemode.h"
@@ -102,6 +103,9 @@ get_layer_mode_function (GimpLayerModeEffects paint_mode,
       case GIMP_LCH_LIGHTNESS_MODE: func = linear_mode ?
                                             gimp_operation_lch_lightness_mode_process_pixels_linear :
                                             gimp_operation_lch_lightness_mode_process_pixels; break;
+      case GIMP_LUMINANCE_MODE:     func = linear_mode ?
+                                            gimp_operation_luminance_mode_process_pixels_linear :
+                                            gimp_operation_luminance_mode_process_pixels; break;
       case GIMP_ERASE_MODE:         func = gimp_operation_erase_mode_process_pixels; break;
       case GIMP_REPLACE_MODE:       func = gimp_operation_replace_mode_process_pixels; break;
       case GIMP_ANTI_ERASE_MODE:    func = gimp_operation_anti_erase_mode_process_pixels; break;

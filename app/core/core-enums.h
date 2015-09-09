@@ -182,6 +182,7 @@ typedef enum
   GIMP_LCH_CHROMA_MODE,      /*< desc="Chroma (LCH)"         >*/
   GIMP_LCH_COLOR_MODE,       /*< desc="Color (LCH)"          >*/
   GIMP_LCH_LIGHTNESS_MODE,   /*< desc="Lightness (LCH)"      >*/
+  GIMP_LUMINANCE_MODE,       /*< desc="Luminance (RGB)"      >*/
 
   /* internal modes, not available to the PDB */
   GIMP_ERASE_MODE      = 1000, /*< pdb-skip, desc="Erase"      >*/

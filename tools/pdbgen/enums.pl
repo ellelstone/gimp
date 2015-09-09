@@ -689,7 +689,7 @@ package Gimp::CodeGen::enums;
 			  GIMP_GRAIN_MERGE_MODE GIMP_COLOR_ERASE_MODE
 			  GIMP_NEW_OVERLAY_MODE GIMP_LCH_HUE_MODE
 			  GIMP_LCH_CHROMA_MODE GIMP_LCH_COLOR_MODE
-			  GIMP_LCH_LIGHTNESS_MODE) ],
+			  GIMP_LCH_LIGHTNESS_MODE GIMP_LUMINANCE_MODE) ],
 	  mapping => { GIMP_NORMAL_MODE => '0',
 		       GIMP_DISSOLVE_MODE => '1',
 		       GIMP_BEHIND_MODE => '2',
@@ -717,7 +717,8 @@ package Gimp::CodeGen::enums;
 		       GIMP_LCH_HUE_MODE => '24',
 		       GIMP_LCH_CHROMA_MODE => '25',
 		       GIMP_LCH_COLOR_MODE => '26',
-		       GIMP_LCH_LIGHTNESS_MODE => '27' }
+		       GIMP_LCH_LIGHTNESS_MODE => '27',
+		       GIMP_LUMINANCE_MODE => '28' }
 	},
     GimpBrushApplicationMode =>
 	{ contig => 1,
