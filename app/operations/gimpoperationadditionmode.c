@@ -111,7 +111,7 @@ gimp_operation_addition_mode_process_pixels (gfloat              *in,
               gfloat comp = in[b] + layer[b];
 
               out[b] = comp * ratio + in[b] * (1.0 - ratio);
-              out[b] = CLAMP (out[b], 0.0, 1.0);
+              //out[b] = CLAMP (out[b], 0.0, 1.0);
             }
         }
       else
