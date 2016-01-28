@@ -111,7 +111,7 @@ gimp_operation_grain_extract_mode_process_pixels (gfloat              *in,
               gfloat comp = in[b] - layer[b] + 0.5;
 
               out[b] = comp * ratio + in[b] * (1.0 - ratio);
-              out[b] = CLAMP (out[b], 0.0, 1.0);
+              //out[b] = CLAMP (out[b], 0.0, 1.0);
             }
         }
       else
