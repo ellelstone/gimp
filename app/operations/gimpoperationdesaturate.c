@@ -90,7 +90,7 @@ gimp_operation_desaturate_class_init (GimpOperationDesaturateClass *klass)
                          _("Mode"),
                          _("Choose shade of gray based on"),
                          GIMP_TYPE_DESATURATE_MODE,
-                         GIMP_DESATURATE_LIGHTNESS,
+                         GIMP_DESATURATE_LUMINANCE,
                          GIMP_PARAM_STATIC_STRINGS);
 }
 
