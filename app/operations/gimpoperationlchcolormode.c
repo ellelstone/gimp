@@ -170,8 +170,14 @@ gimp_operation_lch_color_mode_process_pixels_linear (gfloat              *in,
                                                      const GeglRectangle *roi,
                                                      gint                 level)
 {
-  color_pre_process (babl_format ("RGBA float"), in, layer, out, samples);
-  color_post_process (in, layer, mask, out, opacity, samples);
+  const gsize bytes_per_sample = 4 * sizeof * in;
+  gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;
+
+  color_pre_process (babl_format ("RGBA float"), in2, layer, out, samples);
+  color_post_process (in2, layer, mask, out, opacity, samples);
+
+  if (in != in2)
+    g_free (in2);
 
   return TRUE;
 }
@@ -186,8 +192,14 @@ gimp_operation_lch_color_mode_process_pixels (gfloat              *in,
                                               const GeglRectangle *roi,
                                               gint                 level)
 {
-  color_pre_process (babl_format ("R'G'B'A float"), in, layer, out, samples);
-  color_post_process (in, layer, mask, out, opacity, samples);
+  const gsize bytes_per_sample = 4 * sizeof * in;
+  gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;
+
+  color_pre_process (babl_format ("R'G'B'A float"), in2, layer, out, samples);
+  color_post_process (in2, layer, mask, out, opacity, samples);
+
+  if (in != in2)
+    g_free (in2);
 
   return TRUE;
 }
