@@ -634,6 +634,7 @@ save_image (const gchar  *filename,
   GimpRGB       background;
   s_fli_header  fli_header;
   gint          cnt;
+  double        Y[3];
 
   framelist = gimp_image_get_layers (image_id, &nframes);
 
@@ -671,12 +672,13 @@ save_image (const gchar  *filename,
   switch (gimp_image_base_type (image_id))
     {
     case GIMP_GRAY:
+    gimp_get_Y (Y);
       /* build grayscale palette */
       for (i = 0; i < 256; i++)
 	{
 	  cm[i*3+0] = cm[i*3+1] = cm[i*3+2] = i;
 	}
-      bg = GIMP_RGB_LUMINANCE (red, green, blue) + 0.5;
+      bg = red * Y[0] + green * Y[1] + blue * Y[2] + 0.5;
       break;
 
     case GIMP_INDEXED:
