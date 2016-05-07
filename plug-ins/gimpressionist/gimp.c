@@ -381,7 +381,8 @@ gimpressionist_main (void)
   glong         done;
   glong         total;
   gpointer      pr;
-
+  double Y[3];
+  gimp_get_Y (Y);
   if (! gimp_drawable_mask_intersect (drawable->drawable_id,
                                       &x1, &y1, &width, &height))
     return;
@@ -419,10 +420,9 @@ gimpressionist_main (void)
               for (x = 0, col = dest_rgn.x - x1; x < dest_rgn.w; x++, col++)
                 {
                   gint k = col * 3;
-
-                  *d++ = GIMP_RGB_LUMINANCE (tmprow[k + 0],
-                                             tmprow[k + 1],
-                                             tmprow[k + 2]);
+                  *d++ = tmprow[k + 0] * Y[0] +
+                         tmprow[k + 1] * Y[1] +
+                         tmprow[k + 2] * Y[2];
                 }
 
               dest += dest_rgn.rowstride;
@@ -439,9 +439,9 @@ gimpressionist_main (void)
               for (x = 0, col = dest_rgn.x - x1; x < dest_rgn.w; x++, col++)
                 {
                   gint k     = col * 3;
-                  gint value = GIMP_RGB_LUMINANCE (tmprow[k + 0],
-                                                   tmprow[k + 1],
-                                                   tmprow[k + 2]);
+                  gint value = tmprow[k + 0] * Y[0] +
+                               tmprow[k + 1] * Y[1] +
+                               tmprow[k + 2] * Y[2];
 
                   d[0] = value;
                   d[1] = 255 - tmparow[k];
