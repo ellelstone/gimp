@@ -434,7 +434,7 @@ register_image_convert_procs (GimpPDB *pdb)
                                                   "precision",
                                                   "The new precision",
                                                   GIMP_TYPE_PRECISION,
-                                                  GIMP_PRECISION_U8_LINEAR,
+                                                  GIMP_PRECISION_U8_GAMMA,
                                                   GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);

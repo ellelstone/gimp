@@ -347,9 +347,9 @@
         <menuitem action="image-convert-float" />
         <menuitem action="image-convert-double" />
         <separator />
-        <menuitem action="image-convert-gamma" />
+<!--        <menuitem action="image-convert-gamma" />
         <menuitem action="image-convert-linear" />
-        <separator />
+        <separator />-->
       </menu>
       <menu action="image-color-management-menu" name="Color Management">
         <menuitem action="image-color-management-enabled" />

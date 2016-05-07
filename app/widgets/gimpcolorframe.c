@@ -529,14 +529,14 @@ gimp_color_frame_update (GimpColorFrame *frame)
                   }
                 /* else fall thru */
 
-              case GIMP_PRECISION_U8_LINEAR:
-              case GIMP_PRECISION_U16_LINEAR:
+              //case GIMP_PRECISION_U8_LINEAR:
+              //case GIMP_PRECISION_U16_LINEAR:
               case GIMP_PRECISION_U16_GAMMA:
-              case GIMP_PRECISION_U32_LINEAR:
+              //case GIMP_PRECISION_U32_LINEAR:
               case GIMP_PRECISION_U32_GAMMA:
-              case GIMP_PRECISION_FLOAT_LINEAR:
+              //case GIMP_PRECISION_FLOAT_LINEAR:
               case GIMP_PRECISION_FLOAT_GAMMA:
-              case GIMP_PRECISION_DOUBLE_LINEAR:
+              //case GIMP_PRECISION_DOUBLE_LINEAR:
               case GIMP_PRECISION_DOUBLE_GAMMA:
                 print_format = frame->sample_format;
                 break;
@@ -547,11 +547,11 @@ gimp_color_frame_update (GimpColorFrame *frame)
                                                  has_alpha);
                 break;
 
-              case GIMP_PRECISION_HALF_LINEAR:
+              /*case GIMP_PRECISION_HALF_LINEAR:
                 print_format = gimp_babl_format (base_type,
                                                  GIMP_PRECISION_FLOAT_LINEAR,
                                                  has_alpha);
-                break;
+                break;*/
               }
 
             if (frame->sample_average)

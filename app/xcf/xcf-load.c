@@ -178,9 +178,9 @@ xcf_load_image (Gimp     *gimp,
             {
             case 0: precision = GIMP_PRECISION_U8_GAMMA;     break;
             case 1: precision = GIMP_PRECISION_U16_GAMMA;    break;
-            case 2: precision = GIMP_PRECISION_U32_LINEAR;   break;
-            case 3: precision = GIMP_PRECISION_HALF_LINEAR;  break;
-            case 4: precision = GIMP_PRECISION_FLOAT_LINEAR; break;
+            case 2: precision = GIMP_PRECISION_U32_GAMMA;   break;
+            case 3: precision = GIMP_PRECISION_HALF_GAMMA;  break;
+            case 4: precision = GIMP_PRECISION_FLOAT_GAMMA; break;
             default:
               goto hard_error;
             }
@@ -190,15 +190,15 @@ xcf_load_image (Gimp     *gimp,
         {
           switch (p)
             {
-            case 100: precision = GIMP_PRECISION_U8_LINEAR; break;
+            case 100: precision = GIMP_PRECISION_U8_GAMMA; break;
             case 150: precision = GIMP_PRECISION_U8_GAMMA; break;
-            case 200: precision = GIMP_PRECISION_U16_LINEAR; break;
+            case 200: precision = GIMP_PRECISION_U16_GAMMA; break;
             case 250: precision = GIMP_PRECISION_U16_GAMMA; break;
-            case 300: precision = GIMP_PRECISION_U32_LINEAR; break;
+            case 300: precision = GIMP_PRECISION_U32_GAMMA; break;
             case 350: precision = GIMP_PRECISION_U32_GAMMA; break;
-            case 400: precision = GIMP_PRECISION_HALF_LINEAR; break;
+            case 400: precision = GIMP_PRECISION_HALF_GAMMA; break;
             case 450: precision = GIMP_PRECISION_HALF_GAMMA; break;
-            case 500: precision = GIMP_PRECISION_FLOAT_LINEAR; break;
+            case 500: precision = GIMP_PRECISION_FLOAT_GAMMA; break;
             case 550: precision = GIMP_PRECISION_FLOAT_GAMMA; break;
             default:
               goto hard_error;
@@ -207,6 +207,12 @@ xcf_load_image (Gimp     *gimp,
       else
         {
           precision = p;
+          if (precision == 600) precision=650;
+          else if (precision == 100) precision=150;
+          else if (precision == 200) precision=250;
+          else if (precision == 300) precision=350;
+          else if (precision == 500) precision=450;
+          else if (precision == 700) precision=750;
         }
     }
 

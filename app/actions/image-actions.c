@@ -240,7 +240,7 @@ static const GimpRadioActionEntry image_convert_precision_actions[] =
     GIMP_COMPONENT_TYPE_DOUBLE, GIMP_HELP_IMAGE_CONVERT_DOUBLE }
 };
 
-static const GimpRadioActionEntry image_convert_gamma_actions[] =
+/*static const GimpRadioActionEntry image_convert_gamma_actions[] =
 {
   { "image-convert-gamma", NULL,
     NC_("image-convert-action", "Perceptual gamma (sRGB)"), NULL,
@@ -253,7 +253,7 @@ static const GimpRadioActionEntry image_convert_gamma_actions[] =
     NC_("image-convert-action",
         "Convert the image to linear light"),
     TRUE, GIMP_HELP_IMAGE_CONVERT_GAMMA }
-};
+};*/
 
 static const GimpEnumActionEntry image_flip_actions[] =
 {
@@ -315,11 +315,11 @@ image_actions_setup (GimpActionGroup *group)
                                        NULL, 0,
                                        G_CALLBACK (image_convert_precision_cmd_callback));
 
-  gimp_action_group_add_radio_actions (group, "image-convert-action",
+  /*gimp_action_group_add_radio_actions (group, "image-convert-action",
                                        image_convert_gamma_actions,
                                        G_N_ELEMENTS (image_convert_gamma_actions),
                                        NULL, 0,
-                                       G_CALLBACK (image_convert_gamma_cmd_callback));
+                                       G_CALLBACK (image_convert_gamma_cmd_callback));*/
 
   gimp_action_group_add_enum_actions (group, "image-action",
                                       image_flip_actions,
@@ -386,7 +386,7 @@ image_actions_update (GimpActionGroup *group,
 
       gimp_action_group_set_action_active (group, action, TRUE);
 
-      if (gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
+/*      if (gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
                                                                     FALSE)))
         {
           gimp_action_group_set_action_active (group, "image-convert-linear",
@@ -396,7 +396,7 @@ image_actions_update (GimpActionGroup *group,
         {
           gimp_action_group_set_action_active (group, "image-convert-gamma",
                                                TRUE);
-        }
+        }*/
 
       is_indexed  = (base_type == GIMP_INDEXED);
       is_u8_gamma = (precision == GIMP_PRECISION_U8_GAMMA);
@@ -447,8 +447,8 @@ image_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("image-convert-float",  image && !is_indexed);
   SET_SENSITIVE ("image-convert-double", image && !is_indexed);
 
-  SET_SENSITIVE ("image-convert-gamma",  image);
-  SET_SENSITIVE ("image-convert-linear", image && !is_indexed);
+/*  SET_SENSITIVE ("image-convert-gamma",  image);
+  SET_SENSITIVE ("image-convert-linear", image && !is_indexed);*/
 
   SET_SENSITIVE ("image-color-management-enabled", image);
   SET_ACTIVE    ("image-color-management-enabled", image && color_managed);

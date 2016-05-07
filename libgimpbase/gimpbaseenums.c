@@ -1341,35 +1341,23 @@ gimp_precision_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_PRECISION_U8_LINEAR, "GIMP_PRECISION_U8_LINEAR", "u8-linear" },
     { GIMP_PRECISION_U8_GAMMA, "GIMP_PRECISION_U8_GAMMA", "u8-gamma" },
-    { GIMP_PRECISION_U16_LINEAR, "GIMP_PRECISION_U16_LINEAR", "u16-linear" },
     { GIMP_PRECISION_U16_GAMMA, "GIMP_PRECISION_U16_GAMMA", "u16-gamma" },
-    { GIMP_PRECISION_U32_LINEAR, "GIMP_PRECISION_U32_LINEAR", "u32-linear" },
     { GIMP_PRECISION_U32_GAMMA, "GIMP_PRECISION_U32_GAMMA", "u32-gamma" },
-    { GIMP_PRECISION_HALF_LINEAR, "GIMP_PRECISION_HALF_LINEAR", "half-linear" },
     { GIMP_PRECISION_HALF_GAMMA, "GIMP_PRECISION_HALF_GAMMA", "half-gamma" },
-    { GIMP_PRECISION_FLOAT_LINEAR, "GIMP_PRECISION_FLOAT_LINEAR", "float-linear" },
     { GIMP_PRECISION_FLOAT_GAMMA, "GIMP_PRECISION_FLOAT_GAMMA", "float-gamma" },
-    { GIMP_PRECISION_DOUBLE_LINEAR, "GIMP_PRECISION_DOUBLE_LINEAR", "double-linear" },
     { GIMP_PRECISION_DOUBLE_GAMMA, "GIMP_PRECISION_DOUBLE_GAMMA", "double-gamma" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_PRECISION_U8_LINEAR, NC_("precision", "8-bit linear integer"), NULL },
-    { GIMP_PRECISION_U8_GAMMA, NC_("precision", "8-bit gamma integer"), NULL },
-    { GIMP_PRECISION_U16_LINEAR, NC_("precision", "16-bit linear integer"), NULL },
-    { GIMP_PRECISION_U16_GAMMA, NC_("precision", "16-bit gamma integer"), NULL },
-    { GIMP_PRECISION_U32_LINEAR, NC_("precision", "32-bit linear integer"), NULL },
-    { GIMP_PRECISION_U32_GAMMA, NC_("precision", "32-bit gamma integer"), NULL },
-    { GIMP_PRECISION_HALF_LINEAR, NC_("precision", "16-bit linear floating point"), NULL },
-    { GIMP_PRECISION_HALF_GAMMA, NC_("precision", "16-bit gamma floating point"), NULL },
-    { GIMP_PRECISION_FLOAT_LINEAR, NC_("precision", "32-bit linear floating point"), NULL },
-    { GIMP_PRECISION_FLOAT_GAMMA, NC_("precision", "32-bit gamma floating point"), NULL },
-    { GIMP_PRECISION_DOUBLE_LINEAR, NC_("precision", "64-bit linear floating point"), NULL },
-    { GIMP_PRECISION_DOUBLE_GAMMA, NC_("precision", "64-bit gamma floating point"), NULL },
+    { GIMP_PRECISION_U8_GAMMA, NC_("precision", "8-bit integer"), NULL },
+    { GIMP_PRECISION_U16_GAMMA, NC_("precision", "16-bit integer"), NULL },
+    { GIMP_PRECISION_U32_GAMMA, NC_("precision", "32-bit integer"), NULL },
+    { GIMP_PRECISION_HALF_GAMMA, NC_("precision", "16-bit floating point"), NULL },
+    { GIMP_PRECISION_FLOAT_GAMMA, NC_("precision", "32-bit floating point"), NULL },
+    { GIMP_PRECISION_DOUBLE_GAMMA, NC_("precision", "64-bit floating point"), NULL },
     { 0, NULL, NULL }
   };
 

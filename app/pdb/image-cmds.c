@@ -2875,7 +2875,7 @@ register_image_procs (GimpPDB *pdb)
                                                   "precision",
                                                   "The precision",
                                                   GIMP_TYPE_PRECISION,
-                                                  GIMP_PRECISION_U8_LINEAR,
+                                                  GIMP_PRECISION_U8_GAMMA,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_return_value (procedure,
                                    gimp_param_spec_image_id ("image",
@@ -2993,7 +2993,7 @@ register_image_procs (GimpPDB *pdb)
                                                       "precision",
                                                       "The image's precision",
                                                       GIMP_TYPE_PRECISION,
-                                                      GIMP_PRECISION_U8_LINEAR,
+                                                      GIMP_PRECISION_U8_GAMMA,
                                                       GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);

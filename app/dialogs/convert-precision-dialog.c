@@ -267,7 +267,7 @@ convert_precision_dialog_new (GimpImage         *image,
 
   g_object_unref (size_group);
 
-  /*  gamma  */
+  /*  gamma
 
   frame = gimp_frame_new (_("Gamma"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, FALSE, FALSE, 0);
@@ -287,7 +287,7 @@ convert_precision_dialog_new (GimpImage         *image,
 
                                    NULL);
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
+  gtk_widget_show (hbox);*/
 
   return dialog->dialog;
 }

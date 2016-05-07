@@ -182,6 +182,13 @@ gimp_image_new_with_precision (gint              width,
   gint nreturn_vals;
   gint32 image_ID = -1;
 
+  if (precision == 600) precision=650;
+  else if (precision == 100) precision=150;
+  else if (precision == 200) precision=250;
+  else if (precision == 300) precision=350;
+  else if (precision == 500) precision=450;
+  else if (precision == 700) precision=750;
+
   return_vals = gimp_run_procedure ("gimp-image-new-with-precision",
                                     &nreturn_vals,
                                     GIMP_PDB_INT32, width,
