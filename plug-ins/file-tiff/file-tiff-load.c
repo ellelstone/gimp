@@ -283,7 +283,7 @@ load_image (GFile              *file,
 
       profile = load_profile (tif);
       if (profile)
-        profile_linear = gimp_color_profile_is_linear (profile);
+        profile_linear = FALSE;//gimp_color_profile_is_linear (profile);
 
       if (bps > 8 && bps != 8 && bps != 16 && bps != 32 && bps != 64)
         worst_case = TRUE; /* Wrong sample width => RGBA */
@@ -293,7 +293,7 @@ load_image (GFile              *file,
         case 1:
         case 8:
           if (profile_linear)
-            image_precision = GIMP_PRECISION_U8_LINEAR;
+            image_precision = GIMP_PRECISION_U8_GAMMA;
           else
             image_precision = GIMP_PRECISION_U8_GAMMA;
 
@@ -304,7 +304,7 @@ load_image (GFile              *file,
           if (sampleformat == SAMPLEFORMAT_IEEEFP)
             {
               if (profile_linear)
-                image_precision = GIMP_PRECISION_HALF_LINEAR;
+                image_precision = GIMP_PRECISION_HALF_GAMMA;
               else
                 image_precision = GIMP_PRECISION_HALF_GAMMA;
 
@@ -313,7 +313,7 @@ load_image (GFile              *file,
           else
             {
               if (profile_linear)
-                image_precision = GIMP_PRECISION_U16_LINEAR;
+                image_precision = GIMP_PRECISION_U16_GAMMA;
               else
                 image_precision = GIMP_PRECISION_U16_GAMMA;
 
@@ -325,7 +325,7 @@ load_image (GFile              *file,
           if (sampleformat == SAMPLEFORMAT_IEEEFP)
             {
               if (profile_linear)
-                image_precision = GIMP_PRECISION_FLOAT_LINEAR;
+                image_precision = GIMP_PRECISION_FLOAT_GAMMA;
               else
                 image_precision = GIMP_PRECISION_FLOAT_GAMMA;
 
@@ -334,7 +334,7 @@ load_image (GFile              *file,
           else
             {
               if (profile_linear)
-                image_precision = GIMP_PRECISION_U32_LINEAR;
+                image_precision = GIMP_PRECISION_U32_GAMMA;
               else
                 image_precision = GIMP_PRECISION_U32_GAMMA;
 
@@ -344,7 +344,7 @@ load_image (GFile              *file,
 
         case 64:
           if (profile_linear)
-            image_precision = GIMP_PRECISION_DOUBLE_LINEAR;
+            image_precision = GIMP_PRECISION_DOUBLE_GAMMA;
           else
             image_precision = GIMP_PRECISION_DOUBLE_GAMMA;
 
@@ -353,7 +353,7 @@ load_image (GFile              *file,
 
         default:
           if (profile_linear)
-            image_precision = GIMP_PRECISION_U16_LINEAR;
+            image_precision = GIMP_PRECISION_U16_GAMMA;
           else
             image_precision = GIMP_PRECISION_U16_GAMMA;
 
