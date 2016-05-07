@@ -1342,6 +1342,8 @@ save_image (GFile     *file,
     {
       guchar *cmap;
       gint    num_colors;
+      double Y[3], luminance, luminance1, luminance2;
+      gimp_get_Y (Y);
 
       cmap = gimp_image_get_colormap (image_ID, &num_colors);
 
@@ -1351,18 +1353,14 @@ save_image (GFile     *file,
           switch (num_colors)
             {
             case 1:
-              rowinfo.zero_is_black = (GIMP_RGB_LUMINANCE (cmap[0],
-                                                           cmap[1],
-                                                           cmap[2]) < 128);
+              luminance = (cmap[0] * Y[0]) + (cmap[1] * Y[1]) + (cmap[2] * Y[2]);
+              rowinfo.zero_is_black = (luminance < 128);
               break;
 
             case 2:
-              rowinfo.zero_is_black = (GIMP_RGB_LUMINANCE (cmap[0],
-                                                           cmap[1],
-                                                           cmap[2]) <
-                                       GIMP_RGB_LUMINANCE (cmap[3],
-                                                           cmap[4],
-                                                           cmap[5]));
+              luminance1 = (cmap[0] * Y[0]) + (cmap[1] * Y[1]) + (cmap[2] * Y[2]);
+              luminance2 = (cmap[3] * Y[0]) + (cmap[4] * Y[1]) + (cmap[5] * Y[2]);
+              rowinfo.zero_is_black = (luminance1 < luminance2);
               break;
 
             default:
