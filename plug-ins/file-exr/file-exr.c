@@ -211,13 +211,13 @@ load_image (const gchar  *filename,
   switch (exr_loader_get_precision (loader))
     {
     case PREC_UINT:
-      image_precision = GIMP_PRECISION_U32_LINEAR;
+      image_precision = GIMP_PRECISION_U32_GAMMA;
       break;
     case PREC_HALF:
-      image_precision = GIMP_PRECISION_HALF_LINEAR;
+      image_precision = GIMP_PRECISION_HALF_GAMMA;
       break;
     case PREC_FLOAT:
-      image_precision = GIMP_PRECISION_FLOAT_LINEAR;
+      image_precision = GIMP_PRECISION_FLOAT_GAMMA;
       break;
     default:
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
