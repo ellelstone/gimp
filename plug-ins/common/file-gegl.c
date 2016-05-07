@@ -360,7 +360,7 @@ load_image (const gchar  *filename,
     {
       const Babl *model  = babl_format_get_model (format);
       const Babl *type   = babl_format_get_type (format, 0);
-      gboolean    linear = TRUE;
+      gboolean    linear = FALSE;
 
       if (model == babl_model ("Y")  ||
           model == babl_model ("Y'") ||
@@ -392,21 +392,6 @@ load_image (const gchar  *filename,
             linear = FALSE;
         }
 
-      if (linear)
-        {
-          if (type == babl_type ("u8"))
-            precision = GIMP_PRECISION_U8_LINEAR;
-          else if (type == babl_type ("u16"))
-            precision = GIMP_PRECISION_U16_LINEAR;
-          else if (type == babl_type ("u32"))
-            precision = GIMP_PRECISION_U32_LINEAR;
-          else if (type == babl_type ("half"))
-            precision = GIMP_PRECISION_HALF_LINEAR;
-          else
-            precision = GIMP_PRECISION_FLOAT_LINEAR;
-        }
-      else
-        {
           if (type == babl_type ("u8"))
             precision = GIMP_PRECISION_U8_GAMMA;
           else if (type == babl_type ("u16"))
@@ -417,7 +402,7 @@ load_image (const gchar  *filename,
             precision = GIMP_PRECISION_HALF_GAMMA;
           else
             precision = GIMP_PRECISION_FLOAT_GAMMA;
-        }
+
     }
 
 
