@@ -336,6 +336,8 @@ static inline guchar
 pixel_luminance (const guchar *p,
                  gint          bpp)
 {
+  double Y[3], luminance;
+  gimp_get_Y (Y);
   switch (bpp)
     {
     case 1:
@@ -344,7 +346,8 @@ pixel_luminance (const guchar *p,
 
     case 3:
     case 4:
-      return GIMP_RGB_LUMINANCE (p[0], p[1], p[2]);
+      luminance = (p[0] * Y[0]) + (p[1] * Y[1]) + (p[2] * Y[2]);
+      return luminance;//GIMP_RGB_LUMINANCE (p[0], p[1], p[2]);
 
     default:
       return 0; /* should not be reached */
