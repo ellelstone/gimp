@@ -129,24 +129,24 @@ gimp_image_convert_precision (GimpImage     *image,
 
   old_profile = gimp_image_get_color_profile (image);
   old_format  = gimp_image_get_layer_format (image, FALSE);
-
+  new_profile = old_profile;
   /*  Set the new precision  */
   g_object_set (image, "precision", precision, NULL);
 
   new_format = gimp_image_get_layer_format (image, FALSE);
 
-  if (old_profile &&
+  /*if (old_profile &&
       gimp_babl_format_get_linear (old_format) !=
       gimp_babl_format_get_linear (new_format))
     {
-      GimpColorProfile *new_profile;
+      GimpColorProfile *new_profile;*/
 
       /* when converting between linear and gamma, we create a new
        * profile using the original profile's chromacities and
        * whitepoint, but a linear/sRGB-gamma TRC.
        */
 
-      if (gimp_babl_format_get_linear (new_format))
+      /*if (gimp_babl_format_get_linear (new_format))
         {
           new_profile =
             gimp_color_profile_new_linear_from_color_profile (old_profile);
@@ -155,18 +155,18 @@ gimp_image_convert_precision (GimpImage     *image,
         {
           new_profile =
             gimp_color_profile_new_srgb_trc_from_color_profile (old_profile);
-        }
+        }*/
 
       /* if a new profile cannot be be generated, convert to the
        * builtin profile, which is better than leaving the user with
        * broken colors
        */
-      if (! new_profile)
+      /*if (! new_profile)
         {
           new_profile = gimp_image_get_builtin_color_profile (image);
           g_object_ref (new_profile);
         }
-    }
+    }*/
 
   for (list = all_drawables, nth_drawable = 0;
        list;
@@ -195,11 +195,11 @@ gimp_image_convert_precision (GimpImage     *image,
 
   g_list_free (all_drawables);
 
-  if (old_profile)
+  /*if (old_profile)
     {
       gimp_image_set_color_profile (image, new_profile, NULL);
       g_object_unref (new_profile);
-    }
+    }*/
 
   /*  convert the selection mask  */
   {

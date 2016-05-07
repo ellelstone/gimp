@@ -516,6 +516,7 @@ static gdouble
 gimp_levels_config_input_from_color (GimpHistogramChannel  channel,
                                      const GimpRGB        *color)
 {
+	double Y[3], luminance;
   switch (channel)
     {
     case GIMP_HISTOGRAM_VALUE:
@@ -537,7 +538,10 @@ gimp_levels_config_input_from_color (GimpHistogramChannel  channel,
       return MIN (MIN (color->r, color->g), color->b);
 
     case GIMP_HISTOGRAM_LUMINANCE:
-      return GIMP_RGB_LUMINANCE (color->r, color->g, color->b);
+      gimp_get_Y (Y);
+      luminance = (color->r * Y[0]) + (color->g * Y[1]) + (color->b * Y[2]);
+      return luminance;
+
     }
 
   return 0.0;
@@ -576,9 +580,18 @@ gimp_levels_config_adjust_by_colors (GimpLevelsConfig     *config,
       gdouble inten;
       gdouble out_light;
       gdouble lightness;
-
+      double Y[3], gray_to_rgb[3];
       /* Calculate lightness value */
-      lightness = GIMP_RGB_LUMINANCE (gray->r, gray->g, gray->b);
+
+      gimp_get_Y (Y);
+
+      gray_to_rgb[0]=gray->r;
+      gray_to_rgb[1]=gray->g;
+      gray_to_rgb[2]=gray->b;
+
+      lightness = gray_to_rgb[0] * Y[0] +
+                  gray_to_rgb[1] * Y[1] +
+                  gray_to_rgb[2] * Y[2];
 
       input = gimp_levels_config_input_from_color (channel, gray);
 

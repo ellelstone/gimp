@@ -114,6 +114,7 @@ gboolean           gimp_color_profile_is_linear             (GimpColorProfile  *
 const Babl       * gimp_color_profile_get_format            (const Babl        *format,
                                                              guint32           *lcms_format);
 
+void               gimp_color_profile_get_colorants         (GimpColorProfile *profile);
 
 G_END_DECLS
 

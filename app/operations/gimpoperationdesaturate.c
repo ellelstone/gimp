@@ -170,6 +170,14 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
   gfloat                  *src        = in_buf;
   gfloat                  *dest       = out_buf;
 
+/*
+ * Should the following three lines be inside
+ * while (samples--) for LUMA/LUMINANCE?
+ * */
+  double Y[3];
+  gfloat value;
+  gimp_get_Y (Y);
+
   switch (desaturate->mode)
     {
     case GIMP_DESATURATE_LIGHTNESS:
@@ -198,7 +206,7 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
     case GIMP_DESATURATE_LUMINANCE:
       while (samples--)
         {
-          gfloat value = GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+          value = src[0] * Y[0] + src[1] * Y[1] + src[2] * Y[2];
 
           dest[0] = value;
           dest[1] = value;

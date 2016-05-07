@@ -291,6 +291,11 @@ gimp_image_get_color_profile (GimpImage *image)
 {
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
 
+  GimpColorProfile *profile;
+  profile = GIMP_IMAGE_GET_PRIVATE (image)->color_profile;
+  if (! profile) profile = gimp_image_get_builtin_color_profile (image);
+  gimp_color_profile_get_colorants (profile);
+
   return GIMP_IMAGE_GET_PRIVATE (image)->color_profile;
 }
 

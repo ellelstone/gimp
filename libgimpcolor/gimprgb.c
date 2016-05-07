@@ -17,6 +17,8 @@
  */
 
 #include "config.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 #include <babl/babl.h>
 #include <glib-object.h>
@@ -319,6 +321,36 @@ gimp_rgb_gamma (GimpRGB *rgb,
 }
 
 /**
+ * gimp_get_rgb_Y:
+ *
+ * Return value: matrix containing the RGB working space
+ * colorant Y values.
+ *
+ * Since: 2.10, hopefully!
+ **/
+gdouble
+gimp_get_Y (double Y[3])
+{
+  Y[0] = SRGB_RED_Y;
+  Y[1] = SRGB_GREEN_Y;
+  Y[2] = SRGB_BLUE_Y;
+
+  if ( colorant_babl != NULL) /*Does this still work once colorant_babl
+  has been used the first time? Probably not*/
+    {
+      double *new_colorant_data = babl_get_user_data (colorant_babl);
+      /*printf ("GIMP gimprgb.c 1: babl_get_user_data\n");*/
+
+      Y[0] = new_colorant_data[1];
+      Y[1] = new_colorant_data[4];
+      Y[2] = new_colorant_data[7];
+      /*printf("GIMP gimprgb.c 2: \nrY=%.8f gY=%.8f bY:%.8f\n\n", Y[0], Y[1], Y[2]);*/
+    }
+
+  return Y[3];
+}
+
+/**
  * gimp_rgb_luminance:
  * @rgb: a #GimpRGB struct
  *
@@ -326,14 +358,19 @@ gimp_rgb_gamma (GimpRGB *rgb,
  *
  * Since: 2.4
  **/
+
 gdouble
 gimp_rgb_luminance (const GimpRGB *rgb)
 {
   gdouble luminance;
+  double Y[3];
+  gimp_get_Y (Y);
 
   g_return_val_if_fail (rgb != NULL, 0.0);
 
-  luminance = GIMP_RGB_LUMINANCE (rgb->r, rgb->g, rgb->b);
+  luminance = rgb->r * Y[0] +
+              rgb->g * Y[1] +
+              rgb->b * Y[2];
 
   return CLAMP (luminance, 0.0, 1.0);
 }
@@ -352,42 +389,6 @@ gimp_rgb_luminance_uchar (const GimpRGB *rgb)
   g_return_val_if_fail (rgb != NULL, 0);
 
   return ROUND (gimp_rgb_luminance (rgb) * 255.0);
-}
-
-/**
- * gimp_rgb_intensity:
- * @rgb: a #GimpRGB struct
- *
- * This function is deprecated! Use gimp_rgb_luminance() instead.
- *
- * Return value: the intensity in the range from 0.0 to 1.0.
- **/
-gdouble
-gimp_rgb_intensity (const GimpRGB *rgb)
-{
-  gdouble intensity;
-
-  g_return_val_if_fail (rgb != NULL, 0.0);
-
-  intensity = GIMP_RGB_INTENSITY (rgb->r, rgb->g, rgb->b);
-
-  return CLAMP (intensity, 0.0, 1.0);
-}
-
-/**
- * gimp_rgb_intensity_uchar:
- * @rgb: a #GimpRGB struct
- *
- * This function is deprecated! Use gimp_rgb_luminance_uchar() instead.
- *
- * Return value: the intensity in the range from 0 to 255.
- **/
-guchar
-gimp_rgb_intensity_uchar (const GimpRGB *rgb)
-{
-  g_return_val_if_fail (rgb != NULL, 0);
-
-  return ROUND (gimp_rgb_intensity (rgb) * 255.0);
 }
 
 void

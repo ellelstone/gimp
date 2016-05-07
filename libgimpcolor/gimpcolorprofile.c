@@ -56,6 +56,78 @@
 #endif
 
 
+static gboolean
+gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
+                                             GimpMatrix3      *matrix);
+
+/**
+ * gimp_color_profile_get_colorants:
+ *
+ * This function retrieves colorants from an RGB matrix profiles
+ * for use in all babl/GEGL/GIMP functions that use calculations
+ * involving Y and XYZ.
+ *
+ * Since: 2.10, hopefully!
+ **/
+void gimp_color_profile_get_colorants (GimpColorProfile *profile)
+{
+  GimpMatrix3       matrix = { 0, };
+  double *colorants;
+  if (gimp_color_profile_is_rgb (profile))
+  {
+    colorants = malloc( 9 * sizeof(double));
+    colorant_babl = babl_format ("Y u8");
+    gimp_color_profile_get_rgb_matrix_colorants ( profile, &matrix );
+    if ( colorants == 0 )
+    {
+      printf("gimp_color_profile_get_colorants: Out of memory for colorants matrix\n");
+      }
+    else
+    {
+    colorants[0]= matrix.coeff[0][0];
+    colorants[1]= matrix.coeff[0][1];
+    colorants[2]= matrix.coeff[0][2];
+    colorants[3]= matrix.coeff[1][0];
+    colorants[4]= matrix.coeff[1][1];
+    colorants[5]= matrix.coeff[1][2];
+    colorants[6]= matrix.coeff[2][0];
+    colorants[7]= matrix.coeff[2][1];
+    colorants[8]= matrix.coeff[2][2];
+    /** Uncomment below to print values to screen:*/
+    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);
+
+    colorant_data = (double *)malloc(sizeof(double));
+    if ( colorant_data == 0)
+    {
+			printf("gimp_color_profile_get_colorants: Out of memory for colorant_data\n");
+      }
+    else
+    {
+      colorant_data = &colorants[0];
+      babl_set_user_data (colorant_babl, colorant_data);
+
+      /** Uncomment below to print values to screen:
+      double *gimp_colorant_data;
+      gimp_colorant_data = babl_get_user_data (colorant_babl);
+      double gimp_colorants[9];
+      gimp_colorants[0] = gimp_colorant_data[0];
+      gimp_colorants[1] = gimp_colorant_data[1];
+      gimp_colorants[2] = gimp_colorant_data[2];
+      gimp_colorants[3] = gimp_colorant_data[3];
+      gimp_colorants[4] = gimp_colorant_data[4];
+      gimp_colorants[5] = gimp_colorant_data[5];
+      gimp_colorants[6] = gimp_colorant_data[6];
+      gimp_colorants[7] = gimp_colorant_data[7];
+      gimp_colorants[8] = gimp_colorant_data[8];
+      printf("gimp_color_profile_get_colorants: \n%.8f\n%.8f\n%.8f\n%.8f\n%.8f\n%.8f\n%.8f\n%.8f\n%.8f\n\n",
+      gimp_colorants[0], gimp_colorants[1], gimp_colorants[2],
+      gimp_colorants[3], gimp_colorants[4], gimp_colorants[5],
+      gimp_colorants[6], gimp_colorants[7], gimp_colorants[8]);*/
+      }
+    }
+  }
+}
+
 /**
  * SECTION: gimpcolorprofile
  * @title: GimpColorProfile

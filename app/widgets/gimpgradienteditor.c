@@ -943,6 +943,7 @@ view_set_hint (GimpGradientEditor *editor,
   gchar          *str2;
   gchar          *str3;
   gchar          *str4;
+  double Y[3], luminance;
 
   xpos = control_calc_g_pos (editor, x);
 
@@ -959,8 +960,11 @@ view_set_hint (GimpGradientEditor *editor,
                           rgb.r, rgb.g, rgb.b);
   str3 = g_strdup_printf (_("HSV (%0.1f, %0.1f, %0.1f)"),
                           hsv.h * 360.0, hsv.s * 100.0, hsv.v * 100.0);
+
+  gimp_get_Y (Y);
+  luminance = (rgb.r * Y[0]) + (rgb.g * Y[1]) + (rgb.b * Y[2]);
   str4 = g_strdup_printf (_("Luminance: %0.1f    Opacity: %0.1f"),
-                          GIMP_RGB_LUMINANCE (rgb.r, rgb.g, rgb.b) * 100.0,
+                          luminance * 100.0,
                           rgb.a * 100.0);
 
   gradient_editor_set_hint (editor, str1, str2, str3, str4);

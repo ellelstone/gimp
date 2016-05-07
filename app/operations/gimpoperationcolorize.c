@@ -102,9 +102,14 @@ gimp_operation_colorize_process (GeglOperation       *operation,
   while (samples--)
     {
       GimpRGB rgb;
-      gfloat  lum = GIMP_RGB_LUMINANCE (src[RED],
-                                        src[GREEN],
-                                        src[BLUE]);
+      double Y[3];
+      gfloat lum;
+
+      gimp_get_Y (Y);
+
+      lum = src[RED] * Y[0] +
+            src[GREEN] * Y[1] +
+            src[BLUE] * Y[2];
 
       if (config->lightness > 0)
         {

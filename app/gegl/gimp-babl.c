@@ -562,8 +562,8 @@ gimp_babl_format_get_precision (const Babl *format)
 
 gboolean
 gimp_babl_format_get_linear (const Babl *format)
-{
-  const Babl *model;
+{return FALSE;
+  /*const Babl *model;
 
   g_return_val_if_fail (format != NULL, FALSE);
 
@@ -588,7 +588,7 @@ gimp_babl_format_get_linear (const Babl *format)
       return FALSE;
     }
 
-  g_return_val_if_reached (FALSE);
+  g_return_val_if_reached (FALSE);*/
 }
 
 GimpComponentType

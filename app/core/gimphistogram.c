@@ -336,6 +336,8 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
       gint          length = iter->length;
       gfloat        max;
       gfloat        luminance;
+      double Y[3];
+      gimp_get_Y (Y);
 
       if (mask)
         {
@@ -382,7 +384,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
                   max = MAX (data[2], max);
                   VALUE (0, max) += masked;
 
-                  luminance = GIMP_RGB_LUMINANCE (data[0], data[1], data[2]);
+                  luminance = (data[0] * Y[0]) + (data[1] * Y[1]) + (data[2] * Y[2]);
                   VALUE (4, luminance) += masked;
 
                   data += n_components;
@@ -405,7 +407,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
                   max = MAX (data[2], max);
                   VALUE (0, max) += weight * masked;
 
-                  luminance = GIMP_RGB_LUMINANCE (data[0], data[1], data[2]);
+                  luminance = (data[0] * Y[0]) + (data[1] * Y[1]) + (data[2] * Y[2]);
                   VALUE (5, luminance) += weight * masked;
 
                   data += n_components;
@@ -450,7 +452,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
                   max = MAX (data[2], max);
                   VALUE (0, max) += 1.0;
 
-                  luminance = GIMP_RGB_LUMINANCE (data[0], data[1], data[2]);
+                  luminance = (data[0] * Y[0]) + (data[1] * Y[1]) + (data[2] * Y[2]);
                   VALUE (4, luminance) += 1.0;
 
                   data += n_components;
@@ -471,7 +473,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
                   max = MAX (data[2], max);
                   VALUE (0, max) += weight;
 
-                  luminance = GIMP_RGB_LUMINANCE (data[0], data[1], data[2]);
+                  luminance = (data[0] * Y[0]) + (data[1] * Y[1]) + (data[2] * Y[2]);
                   VALUE (5, luminance) += weight;
 
                   data += n_components;

@@ -347,6 +347,7 @@ splash_average_text_area (GimpSplash *splash,
   gint          rowstride;
   gint          channels;
   gint          luminance = 0;
+  double        Y[3];
   guint         sum[3]    = { 0, 0, 0 };
   GdkRectangle  image     = { 0, 0, 0, 0 };
   GdkRectangle  area      = { 0, 0, 0, 0 };
@@ -387,13 +388,13 @@ splash_average_text_area (GimpSplash *splash,
           pixels += rowstride;
         }
 
-      luminance = GIMP_RGB_LUMINANCE (sum[0] / count,
-                                      sum[1] / count,
-                                      sum[2] / count);
+      gimp_get_Y (Y);
 
+      luminance = sum[0] / count * Y[0] +
+                  sum[1] / count * Y[1] +
+                  sum[2] / count * Y[2];
       luminance = CLAMP0255 (luminance > 127 ?
                              luminance - 223 : luminance + 223);
-
     }
 
   color->red = color->green = color->blue = (luminance << 8 | luminance);

@@ -736,9 +736,14 @@ color_quicksort (const void *c1,
 {
   Color *color1 = (Color *) c1;
   Color *color2 = (Color *) c2;
+  double Y[3];
+  gdouble v1;
+  gdouble v2;
 
-  gdouble v1 = GIMP_RGB_LUMINANCE (color1->red, color1->green, color1->blue);
-  gdouble v2 = GIMP_RGB_LUMINANCE (color2->red, color2->green, color2->blue);
+  gimp_get_Y (Y);
+
+  v1 = color1->red * Y[0] + color1->green * Y[1] + color1->blue * Y[2];
+  v2 = color2->red * Y[0] + color2->green * Y[1] + color2->blue * Y[2];
 
   if (v1 < v2)
     return -1;
