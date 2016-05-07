@@ -443,10 +443,10 @@ explorer (GimpDrawable * drawable)
   if (bpp < 3)
     {
       gint     i;
+      double Y[3];
+      gimp_get_Y (Y);
       for (i = 0; i < MAXNCOLORS; i++)
-          valuemap[i] = GIMP_RGB_LUMINANCE (colormap[i].r,
-                                            colormap[i].g,
-                                            colormap[i].b);
+          valuemap[i] = (colormap[i].r * Y[0]) + (colormap[i].g * Y[1]) + (colormap[i].b * Y[2]);
     }
 
   for (row = y; row < y + h; row++)
