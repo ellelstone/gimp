@@ -276,7 +276,11 @@ get_map_value (const guchar *src,
   gfloat value;
 
   if (bpp >= 3)
-    value = GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+    {
+      double Y[3];
+      gimp_get_Y (Y);
+      value = src[0] * Y[0] + src[1] * Y[1] + src[2] * Y[2];
+      }
   else
     value = *src;
 
@@ -544,6 +548,8 @@ oilify (GimpDrawable *drawable,
     {
       guchar *src;
       guchar *dest;
+      double Y[3];
+      gimp_get_Y (Y);
 
       src_inten_buf = g_new (guchar, width * height);
 
@@ -557,7 +563,7 @@ oilify (GimpDrawable *drawable,
            src += bpp,
            dest++)
         {
-          *dest = (guchar) GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+         *dest = src[0] * Y[0] + src[1] * Y[1] + src[2] * Y[2];
         }
     }
 
