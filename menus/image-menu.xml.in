@@ -729,10 +729,10 @@
       <menu action="filters-combine-menu" name="Combine" />
       <menu action="filters-artistic-menu" name="Artistic">
 	<menuitem action="filters-apply-canvas" />
-	<menuitem action="filters-cartoon" />
+<!--	<menuitem action="filters-cartoon" />-->
 	<menuitem action="filters-cubism" />
 	<menuitem action="filters-tile-glass" />
-	<menuitem action="filters-oilify" />
+<!-- 	<menuitem action="filters-oilify" />-->
 	<menuitem action="filters-photocopy" />
 	<menuitem action="filters-softglow" />
       </menu>

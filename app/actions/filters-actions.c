@@ -127,10 +127,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:c2g",
     NULL /* FIXME GIMP_HELP_FILTER_C2G */ },
 
-  { "filters-cartoon", GIMP_STOCK_GEGL,
-    NC_("filters-action", "Ca_rtoon..."), NULL, NULL,
-    "gegl:cartoon",
-    NULL /* FIXME GIMP_HELP_FILTER_CARTOON */ },
+//  { "filters-cartoon", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "Ca_rtoon..."), NULL, NULL,
+//    "gegl:cartoon",
+//    NULL /* FIXME GIMP_HELP_FILTER_CARTOON */ },
 
   { "filters-channel-mixer", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Channel Mixer..."), NULL, NULL,
@@ -387,10 +387,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:noise-spread",
     NULL /* FIXME GIMP_HELP_FILTER_NOISE_SPREAD */ },
 
-  { "filters-oilify", GIMP_STOCK_GEGL,
-    NC_("filters-action", "Oili_fy..."), NULL, NULL,
-    "gegl:oilify",
-    NULL /* FIXME GIMP_HELP_FILTER_OILIFY */ },
+//  { "filters-oilify", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "Oili_fy..."), NULL, NULL,
+//    "gegl:oilify",
+//    NULL /* FIXME GIMP_HELP_FILTER_OILIFY */ },
 
   { "filters-panorama-projection", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Panorama Projection..."), NULL, NULL,
@@ -660,7 +660,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-apply-lens",              writable);
   SET_SENSITIVE ("filters-bump-map",                writable);
   SET_SENSITIVE ("filters-c2g",                     writable && !gray);
-  SET_SENSITIVE ("filters-cartoon",                 writable);
+//  SET_SENSITIVE ("filters-cartoon",                 writable);
   SET_SENSITIVE ("filters-channel-mixer",           writable);
   SET_SENSITIVE ("filters-checkerboard",            writable);
   SET_SENSITIVE ("filters-color-enhance",           writable && !gray);
@@ -712,7 +712,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-noise-slur",              writable);
   SET_SENSITIVE ("filters-noise-solid",             writable);
   SET_SENSITIVE ("filters-noise-spread",            writable);
-  SET_SENSITIVE ("filters-oilify",                  writable);
+/*  SET_SENSITIVE ("filters-oilify",                  writable);*/
   SET_SENSITIVE ("filters-panorama-projection",     writable);
   SET_SENSITIVE ("filters-photocopy",               writable);
   SET_SENSITIVE ("filters-pixelize",                writable);

@@ -477,7 +477,7 @@ sanity_check_gegl_ops (void)
     "gegl:buffer-source",
     "gegl:c2g",
     "gegl:cache",
-    "gegl:cartoon",
+/*    "gegl:cartoon",*/
     "gegl:cell-noise",
     "gegl:checkerboard",
     "gegl:color",
@@ -534,7 +534,7 @@ sanity_check_gegl_ops (void)
     "gegl:noise-solid",
     "gegl:noise-spread",
     "gegl:npd",
-    "gegl:oilify",
+/*    "gegl:oilify",*/
     "gegl:opacity",
     "gegl:over",
     "gegl:panorama-projection",
