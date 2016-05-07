@@ -664,7 +664,7 @@ load_image (GFile   *file,
     (pnminfo->xres, pnminfo->yres,
      (pnminfo->np >= 3) ? GIMP_RGB : GIMP_GRAY,
      (pnminfo->float_format ?
-      GIMP_PRECISION_FLOAT_LINEAR : GIMP_PRECISION_U8_GAMMA));
+      GIMP_PRECISION_FLOAT_GAMMA : GIMP_PRECISION_U8_GAMMA));
 
   gimp_image_set_filename (image_ID, g_file_get_uri (file));
 
