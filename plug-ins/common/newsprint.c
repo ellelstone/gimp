@@ -1770,6 +1770,7 @@ newsprint (GimpDrawable *drawable,
   gpointer      pr;
   gint          w002;
   guchar       *preview_buffer = NULL;
+  double        Y[3];
 
 #ifdef TIMINGS
   GTimer    *timer = g_timer_new ();
@@ -1958,9 +1959,10 @@ do {                                                            \
 
                         case CS_LUMINANCE:
                           data[3] = data[0]; /* save orig for later */
-                          data[0] = GIMP_RGB_LUMINANCE (data[0],
-                                                        data[1],
-                                                        data[2]) + 0.5;
+                          gimp_get_Y (Y);
+                          data[0] = data[0] * Y[0] +
+                                    data[1] * Y[1] +
+                                    data[2] * Y[2] + 0.5;
                           break;
 
                         default:
