@@ -35,6 +35,10 @@
  */
 
 #include "config.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <babl/babl.h>
 
 #include <string.h>
 
@@ -247,7 +251,7 @@ static COMPOSE_DSC compose_dsc[] =
     { CPN_LCH_L,
       CPN_LCH_C,
       CPN_LCH_H },
-    "lch-compose" },
+    "lch-compose" }/*,
 
   { "Y'CbCr",
     N_("YCbCr_ITU_R470"), 3,
@@ -275,7 +279,7 @@ static COMPOSE_DSC compose_dsc[] =
     { CPN_YCBCR709_Y,
       CPN_YCBCR709_CB,
       CPN_YCBCR709_CR },
-    "ycbcr709F-compose" }
+    "ycbcr709F-compose" }*/
 };
 
 
@@ -812,6 +816,7 @@ compose (const gchar  *compose_type,
   GeglBuffer    *buffer_src[MAX_COMPOSE_IMAGES];
   GeglBuffer    *buffer_dst;
   GimpPrecision  precision;
+  GimpColorProfile *profile;
 
   /* Search type of composing */
   compose_idx = -1;
@@ -862,6 +867,8 @@ compose (const gchar  *compose_type,
       height = gimp_drawable_height (inputs[first_ID].comp.ID);
 
       precision = gimp_image_get_precision (first_image);
+      //profile = gimp_image_get_color_profile (first_image);
+      //gimp_color_profile_get_colorants (profile);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
@@ -897,6 +904,9 @@ compose (const gchar  *compose_type,
       height = gimp_image_height (inputs[first_ID].comp.ID);
 
       precision = gimp_image_get_precision (inputs[first_ID].comp.ID);
+
+      //profile = gimp_image_get_color_profile (inputs[first_ID].comp.ID);
+      //gimp_color_profile_get_colorants (profile);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
@@ -946,8 +956,9 @@ compose (const gchar  *compose_type,
         }
 
       image_ID_dst = gimp_item_get_image (layer_ID_dst);
-
       buffer_dst = gimp_drawable_get_shadow_buffer (layer_ID_dst);
+      profile = gimp_image_get_color_profile (image_ID_dst);
+      gimp_color_profile_get_colorants (profile);
     }
   else
     {

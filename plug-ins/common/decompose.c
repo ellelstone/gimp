@@ -27,6 +27,10 @@
 
 
 #include "config.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+#include <babl/babl.h>
 
 #include <string.h>
 
@@ -160,7 +164,7 @@ static gchar   * generate_filename           (guint32              image_ID,
 #define CPN_LCH_L       { "CIE L",      N_("L"),             0.0, 100.0, TRUE }
 #define CPN_LCH_C       { "CIE C(ab)",  N_("C"),             0.0, 200.0, TRUE }
 #define CPN_LCH_H       { "CIE H(ab)",  N_("H"),             0.0, 360.0, TRUE }
-
+/*
 #define CPN_YCBCR_Y     { "Y'",         N_("luma-y470"),       0.0, 1.0, TRUE }
 #define CPN_YCBCR_CB    { "Cb",         N_("blueness-cb470"), -0.5, 0.5, TRUE }
 #define CPN_YCBCR_CR    { "Cr",         N_("redness-cr470"),  -0.5, 0.5, TRUE }
@@ -168,7 +172,7 @@ static gchar   * generate_filename           (guint32              image_ID,
 #define CPN_YCBCR709_Y  { "Y'",         N_("luma-y709"),       0.0, 1.0, TRUE }
 #define CPN_YCBCR709_CB { "Cb",         N_("blueness-cb709"), -0.5, 0.5, TRUE }
 #define CPN_YCBCR709_CR { "Cr",         N_("redness-cr709"),  -0.5, 0.5, TRUE }
-
+*/
 
 static const Extract extract[] =
 {
@@ -203,12 +207,12 @@ static const Extract extract[] =
   { N_("LAB"), "CIE Lab",     TRUE, 3, FALSE, { CPN_LAB_L, CPN_LAB_A, CPN_LAB_B } },
 
   { N_("LCH"), "CIE LCH(ab)", TRUE, 3, FALSE, { CPN_LCH_L, CPN_LCH_C, CPN_LCH_H } },
-
+/*
   { N_("YCbCr_ITU_R470"),     "Y'CbCr", TRUE, 3, FALSE, { CPN_YCBCR_Y, CPN_YCBCR_CB, CPN_YCBCR_CR} },
   { N_("YCbCr_ITU_R470_256"), "Y'CbCr", TRUE, 3, TRUE,  { CPN_YCBCR_Y, CPN_YCBCR_CB, CPN_YCBCR_CR} },
 
   { N_("YCbCr_ITU_R709"),     "Y'CbCr709", TRUE, 3, FALSE, { CPN_YCBCR709_Y, CPN_YCBCR709_CB, CPN_YCBCR709_CR} },
-  { N_("YCbCr_ITU_R709_256"), "Y'CbCr709", TRUE, 3, TRUE,  { CPN_YCBCR709_Y, CPN_YCBCR709_CB, CPN_YCBCR709_CR} }
+  { N_("YCbCr_ITU_R709_256"), "Y'CbCr709", TRUE, 3, TRUE,  { CPN_YCBCR709_Y, CPN_YCBCR709_CB, CPN_YCBCR709_CR} }*/
 };
 
 const GimpPlugInInfo PLUG_IN_INFO =
@@ -252,6 +256,7 @@ query (void)
   GString *type_desc;
   gint     i;
 
+ //printf("decompose.c query\n");
   type_desc = g_string_new ("What to decompose: ");
   g_string_append_c (type_desc, '"');
   g_string_append (type_desc, extract[0].type);
@@ -324,7 +329,7 @@ run (const gchar      *name,
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
-
+ //printf("decompose.c run\n");
   run_mode = param[0].data.d_int32;
   image_ID = param[1].data.d_image;
   layer    = param[2].data.d_drawable;
@@ -453,6 +458,9 @@ decompose (gint32       image_ID,
   GimpPrecision  precision;
   gboolean       requirments      = FALSE;
   gboolean       decomp_has_alpha = FALSE;
+  GimpColorProfile *profile;
+
+//printf("02. decompose.c decompose\n");
 
   extract_idx = -1;   /* Search extract type */
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
@@ -471,6 +479,8 @@ decompose (gint32       image_ID,
   /* Sanity checks */
   src_buffer = gimp_drawable_get_buffer (drawable_ID);
   precision  = gimp_image_get_precision (image_ID);
+  profile = gimp_image_get_color_profile (image_ID);
+  gimp_color_profile_get_colorants (profile);
 
   for (j = 0; j < num_layers; j++)
     {
@@ -574,7 +584,7 @@ create_new_image (const gchar       *filename,
 
   *layer_ID = create_new_layer (image_ID, 0,
                                 layername, width, height, type);
-
+ //printf("04. decompose.c create_new_image\n");
   return image_ID;
 }
 
@@ -589,7 +599,7 @@ create_new_layer (gint32             image_ID,
 {
   gint32        layer_ID;
   GimpImageType gdtype = GIMP_RGB_IMAGE;
-
+ //printf("05/07/09. decompose.c create_new_layer\n");
   switch (type)
     {
     case GIMP_RGB:
@@ -628,7 +638,7 @@ transfer_registration_color (GeglBuffer  *src,
   gint                dst_bpp;
   gint                i;
   gdouble             white;
-
+ //printf("decompose.c transfer_registration_color\n");
   gimp_context_get_foreground (&color);
   white = 1.0;
 
@@ -686,8 +696,9 @@ cpn_affine_transform_clamp (GeglBuffer *buffer,
   GeglBufferIterator *gi;
   gdouble             scale  = 1.0 / (max - min);
   gdouble             offset = - min;
-
+ //printf("12/14/16. decompose.c cpn_affine_transform_clamp\n");
   /* We want to scale values linearly, regardless of the format of the buffer */
+  //double *new_colorant_data = babl_get_user_data (colorant_babl);
   gegl_buffer_set_format (buffer, babl_format ("Y double"));
 
   gi = gegl_buffer_iterator_new (buffer, NULL, 0, NULL,
@@ -723,7 +734,7 @@ copy_n_components (GeglBuffer  *src,
                    Extract      ext)
 {
   gint i;
-
+ //printf("10. decompose.c copy_n_components\n");
   for (i = 0; i < ext.num_images; i++)
     {
       gimp_progress_update ((gdouble) i / (gdouble) ext.num_images);
@@ -743,7 +754,7 @@ copy_one_component (GeglBuffer      *src,
   const Babl          *dst_format;
   GeglBuffer          *temp;
   const GeglRectangle *extent;
-
+ //printf("11/13/15. decompose.c copy_one_component\n");
   /* We are working in linear double precison*/
   component_format = babl_format_new (babl_model (model),
                                       babl_type ("double"),
@@ -799,7 +810,7 @@ decompose_dialog (void)
   gint       j;
   gint       extract_idx;
   gboolean   run;
-
+ //printf("01. decompose.c decompose_dialog\n");
   extract_idx = 0;
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
     {
@@ -932,7 +943,7 @@ generate_filename (guint32 image_ID,
   gchar   *fname;
   gchar   *filename;
   gchar   *extension;
-
+ //printf("03/06/08. decompose.c generate_filename\n");
   fname = gimp_image_get_filename (image_ID);
 
   if (fname)
