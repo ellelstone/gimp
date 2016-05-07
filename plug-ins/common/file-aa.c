@@ -280,6 +280,8 @@ gimp2aa (gint32      drawable_ID,
   gint             bpp;
   guchar          *buf;
   guchar          *p;
+  double           Y[3], buf_to_rgb[3];
+  guchar           lum;
 
   buffer = gimp_drawable_get_buffer (drawable_ID);
 
@@ -334,16 +336,31 @@ gimp2aa (gint32      drawable_ID,
           break;
 
         case 3:  /* RGB */
+          gimp_get_Y (Y);
           for (x = 0, p = buf; x < width; x++, p += 3)
-            aa_putpixel (context, x, y,
-                         GIMP_RGB_LUMINANCE (p[0], p[1], p[2]) + 0.5);
+          {
+            buf_to_rgb[0]=buf->r;
+            buf_to_rgb[1]=buf->g;
+            buf_to_rgb[2]=buf->b;
+            lum = buf_to_rgb[0] * Y[0] +
+                  buf_to_rgb[1] * Y[1] +
+                  buf_to_rgb[2] * Y[2] + 0.5;
+            aa_putpixel (context, x, y, lum);
+            }
           break;
 
         case 4:  /* RGBA, blend over black */
+          gimp_get_Y (Y);
           for (x = 0, p = buf; x < width; x++, p += 4)
-            aa_putpixel (context, x, y,
-                         ((guchar) (GIMP_RGB_LUMINANCE (p[0], p[1], p[2]) + 0.5)
-                          * (p[3] + 1)) >> 8);
+            {
+              buf_to_rgb[0]=buf->r;
+              buf_to_rgb[1]=buf->g;
+              buf_to_rgb[2]=buf->b;
+              lum = buf_to_rgb[0] * Y[0] +
+                    buf_to_rgb[1] * Y[1] +
+                    buf_to_rgb[2] * Y[2] + 0.5;
+              aa_putpixel (context, x, y, lum * (p[3] + 1)) >> 8));
+              }
           break;
 
         default:
