@@ -915,8 +915,8 @@ load_image (const gchar  *filename,
    */
   profile = load_color_profile (pp, info, &profile_name);
 
-  if (profile)
-    linear = gimp_color_profile_is_linear (profile);
+  /*if (profile)
+    linear = gimp_color_profile_is_linear (profile);*/
 
   /*
    * Get image precision and color model
@@ -925,14 +925,14 @@ load_image (const gchar  *filename,
   if (png_get_bit_depth (pp, info) == 16)
     {
       if (linear)
-        image_precision = GIMP_PRECISION_U16_LINEAR;
+        image_precision = GIMP_PRECISION_U16_GAMMA;
       else
         image_precision = GIMP_PRECISION_U16_GAMMA;
     }
   else
     {
       if (linear)
-        image_precision = GIMP_PRECISION_U8_LINEAR;
+        image_precision = GIMP_PRECISION_U8_GAMMA;
       else
         image_precision = GIMP_PRECISION_U8_GAMMA;
     }
