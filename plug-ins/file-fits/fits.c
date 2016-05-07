@@ -584,19 +584,19 @@ load_fits (const gchar *filename,
       replacetransform = 257;
       break;
     case 32:
-      iprecision = GIMP_PRECISION_U32_LINEAR;
+      iprecision = GIMP_PRECISION_U32_GAMMA;
       type = babl_type ("u32");
       datamax = 4294967295.0;
       replacetransform = 16843009;
       break;
     case -32:
-      iprecision = GIMP_PRECISION_FLOAT_LINEAR;
+      iprecision = GIMP_PRECISION_FLOAT_GAMMA;
       type = babl_type ("float");
       datamax = 1.0;
       replacetransform = 1.0 / 255.0;
       break;
     case -64:
-      iprecision = GIMP_PRECISION_DOUBLE_LINEAR;
+      iprecision = GIMP_PRECISION_DOUBLE_GAMMA;
       type = babl_type ("double");
       datamax = 1.0;
       replacetransform = 1.0 / 255.0;
