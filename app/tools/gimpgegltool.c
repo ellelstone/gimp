@@ -126,7 +126,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:color-exchange",
     "gegl:color-reduction",
     "gegl:color-rotate",
-    "gegl:color-temperature",
+/*    "gegl:color-temperature",*/
     "gegl:color-to-alpha",
     "gegl:convolution-matrix",
     "gegl:cubism",
