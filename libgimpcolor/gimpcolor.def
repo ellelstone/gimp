@@ -81,8 +81,6 @@ EXPORTS
 	gimp_rgb_get_pixel
 	gimp_rgb_get_type
 	gimp_rgb_get_uchar
-	gimp_rgb_intensity
-	gimp_rgb_intensity_uchar
 	gimp_rgb_list_names
 	gimp_rgb_luminance
 	gimp_rgb_luminance_uchar

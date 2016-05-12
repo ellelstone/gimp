@@ -128,10 +128,6 @@ gdouble   gimp_rgb_luminance       (const GimpRGB *rgb);
 
 guchar    gimp_rgb_luminance_uchar (const GimpRGB *rgb);
 
-GIMP_DEPRECATED_FOR(gimp_rgb_luminance)
-gdouble   gimp_rgb_intensity       (const GimpRGB *rgb);
-GIMP_DEPRECATED_FOR(gimp_rgb_luminance_uchar)
-guchar    gimp_rgb_intensity_uchar (const GimpRGB *rgb);
 
 void      gimp_rgb_composite       (GimpRGB              *color1,
                                     const GimpRGB        *color2,
