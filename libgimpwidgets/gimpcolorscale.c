@@ -109,7 +109,7 @@ gimp_color_scale_class_init (GimpColorScaleClass *klass)
   g_object_class_install_property (object_class, PROP_CHANNEL,
                                    g_param_spec_enum ("channel", NULL, NULL,
                                                       GIMP_TYPE_COLOR_SELECTOR_CHANNEL,
-                                                      GIMP_COLOR_SELECTOR_VALUE,
+                                                      GIMP_COLOR_SELECTOR_LIGHTNESS,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 }
@@ -124,14 +124,14 @@ gimp_color_scale_init (GimpColorScale *scale)
 
   gtk_scale_set_draw_value (GTK_SCALE (scale), FALSE);
 
-  scale->channel      = GIMP_COLOR_SELECTOR_VALUE;
+  scale->channel      = GIMP_COLOR_SELECTOR_LIGHTNESS;
   scale->needs_render = TRUE;
 
   gtk_orientable_set_orientation (GTK_ORIENTABLE (range),
                                   GTK_ORIENTATION_HORIZONTAL);
 
   gimp_rgba_set (&scale->rgb, 0.0, 0.0, 0.0, 1.0);
-  gimp_rgb_to_hsv (&scale->rgb, &scale->hsv);
+  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &scale->rgb, &scale->lch, 1);
 }
 
 static void
@@ -551,21 +551,21 @@ gimp_color_scale_set_channel (GimpColorScale           *scale,
  * gimp_color_scale_set_color:
  * @scale: a #GimpColorScale widget
  * @rgb: the new color as #GimpRGB
- * @hsv: the new color as #GimpHSV
+ * @lch: the new color as #GimpLch
  *
  * Changes the color value of the @scale.
  **/
 void
 gimp_color_scale_set_color (GimpColorScale *scale,
                             const GimpRGB  *rgb,
-                            const GimpHSV  *hsv)
+                            const GimpLch  *lch)
 {
   g_return_if_fail (GIMP_IS_COLOR_SCALE (scale));
   g_return_if_fail (rgb != NULL);
-  g_return_if_fail (hsv != NULL);
+  g_return_if_fail (lch != NULL);
 
   scale->rgb = *rgb;
-  scale->hsv = *hsv;
+  scale->lch = *lch;
 
   scale->needs_render = TRUE;
   gtk_widget_queue_draw (GTK_WIDGET (scale));
@@ -599,10 +599,11 @@ gimp_color_scale_render (GimpColorScale *scale)
 {
   GtkRange *range = GTK_RANGE (scale);
   GimpRGB   rgb;
-  GimpHSV   hsv;
+  GimpLch   lch;
   guint     x, y;
   gdouble  *channel_value = NULL; /* shut up compiler */
   gboolean  to_rgb        = FALSE;
+  gint      multiplier = 1;
   gboolean  invert;
   guchar   *buf;
   guchar   *d;
@@ -617,13 +618,13 @@ gimp_color_scale_render (GimpColorScale *scale)
     }
 
   rgb = scale->rgb;
-  hsv = scale->hsv;
+  lch = scale->lch;
 
   switch (scale->channel)
     {
-    case GIMP_COLOR_SELECTOR_HUE:        channel_value = &hsv.h; break;
-    case GIMP_COLOR_SELECTOR_SATURATION: channel_value = &hsv.s; break;
-    case GIMP_COLOR_SELECTOR_VALUE:      channel_value = &hsv.v; break;
+    case GIMP_COLOR_SELECTOR_LIGHTNESS:  channel_value = &lch.l; break;
+    case GIMP_COLOR_SELECTOR_CHROMA:     channel_value = &lch.c; break;
+    case GIMP_COLOR_SELECTOR_HUE:        channel_value = &lch.h; break;
     case GIMP_COLOR_SELECTOR_RED:        channel_value = &rgb.r; break;
     case GIMP_COLOR_SELECTOR_GREEN:      channel_value = &rgb.g; break;
     case GIMP_COLOR_SELECTOR_BLUE:       channel_value = &rgb.b; break;
@@ -632,9 +633,16 @@ gimp_color_scale_render (GimpColorScale *scale)
 
   switch (scale->channel)
     {
+    case GIMP_COLOR_SELECTOR_LIGHTNESS:
+      multiplier = 100;
+      to_rgb = TRUE;
+      break;
+    case GIMP_COLOR_SELECTOR_CHROMA:
+      multiplier = 200;
+      to_rgb = TRUE;
+      break;
     case GIMP_COLOR_SELECTOR_HUE:
-    case GIMP_COLOR_SELECTOR_SATURATION:
-    case GIMP_COLOR_SELECTOR_VALUE:
+      multiplier = 360;
       to_rgb = TRUE;
       break;
 
@@ -655,12 +663,17 @@ gimp_color_scale_render (GimpColorScale *scale)
           if (invert)
             value = 1.0 - value;
 
-          *channel_value = value;
-
           if (to_rgb)
-            gimp_hsv_to_rgb (&hsv, &rgb);
+            {
+              *channel_value = value * multiplier;
+              babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
+            }
+          else
+            *channel_value = value;
 
           gimp_rgb_get_uchar (&rgb, &r, &g, &b);
+
+          if (r>=255 || g>=255 || b>=255 || r<=0 || g<=0 || b<=0) {r=0; b=0; g=0;}
 
           GIMP_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
         }
@@ -685,12 +698,13 @@ gimp_color_scale_render (GimpColorScale *scale)
           *channel_value = value;
 
           if (to_rgb)
-            gimp_hsv_to_rgb (&hsv, &rgb);
+            babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
 
           gimp_rgb_get_uchar (&rgb, &r, &g, &b);
 
           for (x = 0, d = buf; x < scale->width; x++, d += 4)
             {
+              if (r>=255 || g>=255 || b>=255 || r<=0 || g<=0 || b<=0) {r=0; b=0; g=0;}
               GIMP_CAIRO_RGB24_SET_PIXEL (d, r, g, b);
             }
 

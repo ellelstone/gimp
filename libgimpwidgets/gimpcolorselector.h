@@ -71,7 +71,7 @@ struct _GimpColorSelector
   gboolean                  show_alpha;
 
   GimpRGB                   rgb;
-  GimpHSV                   hsv;
+  GimpLch                   lch;
 
   GimpColorSelectorChannel  channel;
 };
@@ -97,14 +97,14 @@ struct _GimpColorSelectorClass
                                   gboolean                  show_alpha);
   void (* set_color)             (GimpColorSelector        *selector,
                                   const GimpRGB            *rgb,
-                                  const GimpHSV            *hsv);
+                                  const GimpLch            *lch);
   void (* set_channel)           (GimpColorSelector        *selector,
                                   GimpColorSelectorChannel  channel);
 
   /*  signals  */
   void (* color_changed)         (GimpColorSelector        *selector,
                                   const GimpRGB            *rgb,
-                                  const GimpHSV            *hsv);
+                                  const GimpLch            *lch);
   void (* channel_changed)       (GimpColorSelector        *selector,
                                   GimpColorSelectorChannel  channel);
 
@@ -124,7 +124,7 @@ struct _GimpColorSelectorClass
 GType       gimp_color_selector_get_type         (void) G_GNUC_CONST;
 GtkWidget * gimp_color_selector_new              (GType              selector_type,
                                                   const GimpRGB     *rgb,
-                                                  const GimpHSV     *hsv,
+                                                  const GimpLch     *lch,
                                                   GimpColorSelectorChannel  channel);
 
 void   gimp_color_selector_set_toggles_visible   (GimpColorSelector *selector,
@@ -135,7 +135,7 @@ void   gimp_color_selector_set_show_alpha        (GimpColorSelector *selector,
                                                   gboolean           show_alpha);
 void   gimp_color_selector_set_color             (GimpColorSelector *selector,
                                                   const GimpRGB     *rgb,
-                                                  const GimpHSV     *hsv);
+                                                  const GimpLch     *lch);
 void   gimp_color_selector_set_channel           (GimpColorSelector *selector,
                                                   GimpColorSelectorChannel  channel);
 

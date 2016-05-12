@@ -207,7 +207,7 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
   if (color_scale)
     {
       scale = gimp_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
-                                    GIMP_COLOR_SELECTOR_VALUE);
+                                    GIMP_COLOR_SELECTOR_LIGHTNESS);
 
       gtk_range_set_adjustment (GTK_RANGE (scale), adjustment);
     }

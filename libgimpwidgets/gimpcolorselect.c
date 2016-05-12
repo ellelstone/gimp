@@ -139,7 +139,7 @@ struct _ColorSelectFill
   gint     width;
   gint     height;
   GimpRGB  rgb;
-  GimpHSV  hsv;
+  GimpLch  lch;
 
   ColorSelectFillUpdateProc update;
 };
@@ -151,7 +151,7 @@ static void   gimp_color_select_togg_sensitive  (GimpColorSelector  *selector,
                                                  gboolean            sensitive);
 static void   gimp_color_select_set_color       (GimpColorSelector  *selector,
                                                  const GimpRGB      *rgb,
-                                                 const GimpHSV      *hsv);
+                                                 const GimpLch      *lch);
 static void   gimp_color_select_set_channel     (GimpColorSelector  *selector,
                                                  GimpColorSelectorChannel  channel);
 
@@ -192,21 +192,21 @@ static gboolean   gimp_color_select_z_events    (GtkWidget          *widet,
 
 static void   gimp_color_select_image_fill      (GtkWidget          *widget,
                                                  ColorSelectFillType fill_type,
-                                                 const GimpHSV      *hsv,
+                                                 const GimpLch      *lch,
                                                  const GimpRGB      *rgb);
 
 static void   color_select_update_red              (ColorSelectFill *csf);
 static void   color_select_update_green            (ColorSelectFill *csf);
 static void   color_select_update_blue             (ColorSelectFill *csf);
 static void   color_select_update_hue              (ColorSelectFill *csf);
-static void   color_select_update_saturation       (ColorSelectFill *csf);
-static void   color_select_update_value            (ColorSelectFill *csf);
+static void   color_select_update_chroma           (ColorSelectFill *csf);
+static void   color_select_update_lightness        (ColorSelectFill *csf);
 static void   color_select_update_red_green        (ColorSelectFill *csf);
 static void   color_select_update_red_blue         (ColorSelectFill *csf);
 static void   color_select_update_green_blue       (ColorSelectFill *csf);
-static void   color_select_update_hue_saturation   (ColorSelectFill *csf);
-static void   color_select_update_hue_value        (ColorSelectFill *csf);
-static void   color_select_update_saturation_value (ColorSelectFill *csf);
+static void   color_select_update_hue_chroma       (ColorSelectFill *csf);
+static void   color_select_update_hue_lightness    (ColorSelectFill *csf);
+static void   color_select_update_chroma_lightness (ColorSelectFill *csf);
 
 
 G_DEFINE_TYPE (GimpColorSelect, gimp_color_select, GIMP_TYPE_COLOR_SELECTOR)
@@ -216,15 +216,15 @@ G_DEFINE_TYPE (GimpColorSelect, gimp_color_select, GIMP_TYPE_COLOR_SELECTOR)
 static const ColorSelectFillUpdateProc update_procs[] =
 {
   color_select_update_hue,
-  color_select_update_saturation,
-  color_select_update_value,
+  color_select_update_chroma,
+  color_select_update_lightness,
   color_select_update_red,
   color_select_update_green,
   color_select_update_blue,
   NULL, /* alpha */
-  color_select_update_hue_saturation,
-  color_select_update_hue_value,
-  color_select_update_saturation_value,
+  color_select_update_hue_chroma,
+  color_select_update_hue_lightness,
+  color_select_update_chroma_lightness,
   color_select_update_red_green,
   color_select_update_red_blue,
   color_select_update_green_blue,
@@ -378,7 +378,7 @@ gimp_color_select_togg_sensitive (GimpColorSelector *selector,
 static void
 gimp_color_select_set_color (GimpColorSelector *selector,
                              const GimpRGB     *rgb,
-                             const GimpHSV     *hsv)
+                             const GimpLch     *lch)
 {
   GimpColorSelect *select = GIMP_COLOR_SELECT (selector);
 
@@ -466,14 +466,14 @@ gimp_color_select_update (GimpColorSelect       *select,
   if (update & UPDATE_XY_COLOR)
     {
       gimp_color_select_image_fill (select->xy_color, select->xy_color_fill,
-                                    &selector->hsv, &selector->rgb);
+                                    &selector->lch, &selector->rgb);
       gtk_widget_queue_draw (select->xy_color);
     }
 
   if (update & UPDATE_Z_COLOR)
     {
       gimp_color_select_image_fill (select->z_color, select->z_color_fill,
-                                    &selector->hsv, &selector->rgb);
+                                    &selector->lch, &selector->rgb);
       gtk_widget_queue_draw (select->z_color);
     }
 
@@ -505,19 +505,19 @@ gimp_color_select_update_values (GimpColorSelect *select)
       break;
 
     case COLOR_SELECT_HUE:
-      selector->hsv.s = select->pos[0];
-      selector->hsv.v = select->pos[1];
-      selector->hsv.h = select->pos[2];
+      selector->lch.c = select->pos[0] * 200;
+      selector->lch.l = select->pos[1] * 100;
+      selector->lch.h = select->pos[2] * 360;
       break;
     case COLOR_SELECT_SATURATION:
-      selector->hsv.h = select->pos[0];
-      selector->hsv.v = select->pos[1];
-      selector->hsv.s = select->pos[2];
+      selector->lch.h = select->pos[0] * 360;
+      selector->lch.l = select->pos[1] * 100;
+      selector->lch.c = select->pos[2] * 200;
       break;
     case COLOR_SELECT_VALUE:
-      selector->hsv.h = select->pos[0];
-      selector->hsv.s = select->pos[1];
-      selector->hsv.v = select->pos[2];
+      selector->lch.h = select->pos[0] * 360;
+      selector->lch.c = select->pos[1] * 200;
+      selector->lch.l = select->pos[2] * 100;
       break;
 
     default:
@@ -529,13 +529,13 @@ gimp_color_select_update_values (GimpColorSelect *select)
     case COLOR_SELECT_RED:
     case COLOR_SELECT_GREEN:
     case COLOR_SELECT_BLUE:
-      gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
       break;
 
     case COLOR_SELECT_HUE:
     case COLOR_SELECT_SATURATION:
     case COLOR_SELECT_VALUE:
-      gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &selector->lch, &selector->rgb, 1);
       break;
 
     default:
@@ -567,19 +567,19 @@ gimp_color_select_update_pos (GimpColorSelect *select)
       break;
 
     case COLOR_SELECT_HUE:
-      select->pos[0] = CLAMP (selector->hsv.s, 0.0, 1.0);
-      select->pos[1] = CLAMP (selector->hsv.v, 0.0, 1.0);
-      select->pos[2] = CLAMP (selector->hsv.h, 0.0, 1.0);
+      select->pos[0] = CLAMP (selector->lch.c / 200, 0.0, 1.0);
+      select->pos[1] = CLAMP (selector->lch.l / 100, 0.0, 1.0);
+      select->pos[2] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
       break;
     case COLOR_SELECT_SATURATION:
-      select->pos[0] = CLAMP (selector->hsv.h, 0.0, 1.0);
-      select->pos[1] = CLAMP (selector->hsv.v, 0.0, 1.0);
-      select->pos[2] = CLAMP (selector->hsv.s, 0.0, 1.0);
+      select->pos[0] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
+      select->pos[1] = CLAMP (selector->lch.l / 100, 0.0, 1.0);
+      select->pos[2] = CLAMP (selector->lch.c / 200, 0.0, 1.0);
       break;
     case COLOR_SELECT_VALUE:
-      select->pos[0] = CLAMP (selector->hsv.h, 0.0, 1.0);
-      select->pos[1] = CLAMP (selector->hsv.s, 0.0, 1.0);
-      select->pos[2] = CLAMP (selector->hsv.v, 0.0, 1.0);
+      select->pos[0] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
+      select->pos[1] = CLAMP (selector->lch.c / 200, 0.0, 1.0);
+      select->pos[2] = CLAMP (selector->lch.l / 100, 0.0, 1.0);
       break;
 
     default:
@@ -599,7 +599,7 @@ gimp_color_select_drop_color (GtkWidget     *widget,
 
   select->rgb = *color;
 
-  gimp_color_select_update_hsv_values (select);
+  gimp_color_select_update_lch_values (select);
 
   gimp_color_select_update (select,
                             UPDATE_POS | UPDATE_XY_COLOR | UPDATE_Z_COLOR |
@@ -844,7 +844,7 @@ gimp_color_select_z_events (GtkWidget       *widget,
 static void
 gimp_color_select_image_fill (GtkWidget           *preview,
                               ColorSelectFillType  fill_type,
-                              const GimpHSV       *hsv,
+                              const GimpLch       *lch,
                               const GimpRGB       *rgb)
 {
   GtkAllocation   allocation;
@@ -855,7 +855,7 @@ gimp_color_select_image_fill (GtkWidget           *preview,
   csf.buffer = g_alloca (allocation.width * 3);
   csf.width  = allocation.width;
   csf.height = allocation.height;
-  csf.hsv    = *hsv;
+  csf.lch    = *lch;
   csf.rgb    = *rgb;
   csf.update = update_procs[fill_type];
 
@@ -926,97 +926,54 @@ static void
 color_select_update_hue (ColorSelectFill *csf)
 {
   guchar *p = csf->buffer;
-  gfloat  h, f;
-  gint    r, g, b;
+  GimpLch lch = { 80.0, 160.0, 0, 1.0};
+  guchar rgb[3];
   gint    i;
 
-  h = csf->y * 360.0 / csf->height;
-  h = CLAMP (360 - h, 0, 360);
-
-  h /= 60;
-  f = (h - (int) h) * 255;
-
-  r = g = b = 0;
-
-  switch ((int) h)
-    {
-    case 0:
-      r = 255;
-      g = f;
-      b = 0;
-      break;
-    case 1:
-      r = 255 - f;
-      g = 255;
-      b = 0;
-      break;
-    case 2:
-      r = 0;
-      g = 255;
-      b = f;
-      break;
-    case 3:
-      r = 0;
-      g = 255 - f;
-      b = 255;
-      break;
-    case 4:
-      r = f;
-      g = 0;
-      b = 255;
-      break;
-    case 5:
-      r = 255;
-      g = 0;
-      b = 255 - f;
-      break;
-    }
+  lch.h = (csf->height - 1 - csf->y) * 360.0 / csf->height;
+  babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
 
   for (i = 0; i < csf->width; i++)
     {
-      *p++ = r;
-      *p++ = g;
-      *p++ = b;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }
 
 static void
-color_select_update_saturation (ColorSelectFill *csf)
+color_select_update_chroma (ColorSelectFill *csf)
 {
   guchar *p = csf->buffer;
-  gint    s;
-  gint    i;
+  gint    i, c;
 
-  s = csf->y * 255 / csf->height;
-  s = CLAMP (s, 0, 255);
-
-  s = 255 - s;
+  /* linear 0 -> max*/
+  c = (csf->height - 1 - csf->y) * 255 / csf->height ;
 
   for (i = 0; i < csf->width; i++)
     {
-      *p++ = s;
-      *p++ = s;
-      *p++ = s;
+      *p++ = c;
+      *p++ = c;
+      *p++ = c;
     }
 }
 
 static void
-color_select_update_value (ColorSelectFill *csf)
+color_select_update_lightness (ColorSelectFill *csf)
 {
   guchar *p = csf->buffer;
-  gint    v;
+  GimpLch lch = { 0.0, 0.0, 0.0, 1.0};
+  guchar rgb[3];
   gint    i;
 
-  v = csf->y * 255 / csf->height;
-  v = CLAMP (v, 0, 255);
-
-  v = 255 - v;
+  lch.l = (csf->height - 1 - csf->y) * 100.0 / csf->height;
+  babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
 
   for (i = 0; i < csf->width; i++)
     {
-      *p++ = v;
-      *p++ = v;
-      *p++ = v;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }
 
@@ -1096,205 +1053,70 @@ color_select_update_green_blue (ColorSelectFill *csf)
 }
 
 static void
-color_select_update_hue_saturation (ColorSelectFill *csf)
+color_select_update_hue_chroma (ColorSelectFill *csf)
 {
+  GimpLch lch;
   guchar *p = csf->buffer;
-  gfloat  h, dh, s, v;
-  gint    f;
   gint    i;
+  guchar rgb[3];
 
-  v = csf->hsv.v;
-
-  s = (gfloat) csf->y / csf->height;
-  s = CLAMP (s, 0.0, 1.0);
-  s = 1.0 - s;
-
-  h = 0;
-  dh = 360.0 / csf->width;
+  lch.l = csf->lch.l;
+  lch.c = (csf->height - 1 - csf->y) * 200.0 / csf->height;
 
   for (i = 0; i < csf->width; i++)
     {
-      f = ((h / 60) - (int) (h / 60)) * 255;
+      lch.h = i * 360.0 / csf->width;
 
-      switch ((int) (h / 60))
-        {
-        case 0:
-          *p++ = v * 255;
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * 255 * (1 - s);
-          break;
-        case 1:
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
-          break;
-        case 2:
-          *p++ = v * 255 * (1 - s);
-          *p++ = v *255;
-          *p++ = v * (255 - (s * (255 - f)));
-          break;
-        case 3:
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-          break;
-        case 4:
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * (255 * (1 - s));
-          *p++ = v * 255;
-          break;
-        case 5:
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-          break;
-        }
+      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
 
-      h += dh;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }
 
 static void
-color_select_update_hue_value (ColorSelectFill *csf)
+color_select_update_hue_lightness (ColorSelectFill *csf)
 {
+  GimpLch lch;
   guchar *p = csf->buffer;
-  gfloat  h, dh, s, v;
-  gint    f;
   gint    i;
+  guchar rgb[3];
 
-  s = csf->hsv.s;
-
-  v = (gfloat) csf->y / csf->height;
-  v = CLAMP (v, 0.0, 1.0);
-  v = 1.0 - v;
-
-  h = 0;
-  dh = 360.0 / csf->width;
+  lch.l = (csf->height - 1 - csf->y) * 100.0 / csf->height;
+  lch.c = csf->lch.c;
 
   for (i = 0; i < csf->width; i++)
     {
-      f = ((h / 60) - (int) (h / 60)) * 255;
+      lch.h = i * 360.0 / csf->width;
 
-      switch ((int) (h / 60))
-        {
-        case 0:
-          *p++ = v * 255;
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * 255 * (1 - s);
-          break;
-        case 1:
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
-          break;
-        case 2:
-          *p++ = v * 255 * (1 - s);
-          *p++ = v *255;
-          *p++ = v * (255 - (s * (255 - f)));
-          break;
-        case 3:
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-          break;
-        case 4:
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * (255 * (1 - s));
-          *p++ = v * 255;
-          break;
-        case 5:
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-          break;
-        }
+      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
 
-      h += dh;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }
 
 static void
-color_select_update_saturation_value (ColorSelectFill *csf)
+color_select_update_chroma_lightness (ColorSelectFill *csf)
 {
+  GimpLch lch;
   guchar *p = csf->buffer;
-  gfloat  h, s, ds, v;
-  gint    f;
   gint    i;
+  guchar rgb[3];
 
-  h = (gfloat) csf->hsv.h * 360.0;
-  if (h >= 360)
-    h -= 360;
-  h /= 60;
-  f = (h - (gint) h) * 255;
+  lch.l = (csf->height - 1 - csf->y) * 100.0 / csf->height;
+  lch.h = csf->lch.h;
 
-  v = (gfloat) csf->y / csf->height;
-  v = CLAMP (v, 0.0, 1.0);
-  v = 1.0 - v;
-
-  s = 0;
-  ds = 1.0 / csf->width;
-
-  switch ((gint) h)
+  for (i = 0; i < csf->width; i++)
     {
-    case 0:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * 255;
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * 255 * (1 - s);
+      lch.c = i * 200.0 / csf->width;
 
-          s += ds;
-        }
-      break;
-    case 1:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
+      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
 
-          s += ds;
-        }
-      break;
-    case 2:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * 255 * (1 - s);
-          *p++ = v *255;
-          *p++ = v * (255 - (s * (255 - f)));
-
-          s += ds;
-        }
-      break;
-    case 3:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-          *p++ = v * 255;
-
-          s += ds;
-        }
-      break;
-    case 4:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * (255 - (s * (255 - f)));
-          *p++ = v * (255 * (1 - s));
-          *p++ = v * 255;
-
-          s += ds;
-        }
-      break;
-    case 5:
-      for (i = 0; i < csf->width; i++)
-        {
-          *p++ = v * 255;
-          *p++ = v * 255 * (1 - s);
-          *p++ = v * (255 - s * f);
-
-          s += ds;
-        }
-      break;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }

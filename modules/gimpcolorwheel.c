@@ -356,71 +356,14 @@ hsv_to_rgb (gdouble *h,
             gdouble *s,
             gdouble *v)
 {
-  gdouble hue, saturation, value;
-  gdouble f, p, q, t;
+  GimpRGB rgb;
+  GimpLch lch = { *v * 100.0, *s * 200.0, *h * 360.0, 1.0 };
 
-  if (*s == 0.0)
-    {
-      *h = *v;
-      *s = *v;
-   /* *v = *v; -- heh */
-    }
-  else
-    {
-      hue = *h * 6.0;
-      saturation = *s;
-      value = *v;
+  babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
 
-      if (hue == 6.0)
-        hue = 0.0;
-
-      f = hue - (int) hue;
-      p = value * (1.0 - saturation);
-      q = value * (1.0 - saturation * f);
-      t = value * (1.0 - saturation * (1.0 - f));
-
-      switch ((int) hue)
-        {
-        case 0:
-          *h = value;
-          *s = t;
-          *v = p;
-          break;
-
-        case 1:
-          *h = q;
-          *s = value;
-          *v = p;
-          break;
-
-        case 2:
-          *h = p;
-          *s = value;
-          *v = t;
-          break;
-
-        case 3:
-          *h = p;
-          *s = q;
-          *v = value;
-          break;
-
-        case 4:
-          *h = t;
-          *s = p;
-          *v = value;
-          break;
-
-        case 5:
-          *h = value;
-          *s = p;
-          *v = q;
-          break;
-
-        default:
-          g_assert_not_reached ();
-        }
-    }
+  *h = CLAMP (rgb.r, 0.0, 1.0);
+  *s = CLAMP (rgb.g, 0.0, 1.0);
+  *v = CLAMP (rgb.b, 0.0, 1.0);
 }
 
 /* Computes the vertices of the saturation/value triangle */
