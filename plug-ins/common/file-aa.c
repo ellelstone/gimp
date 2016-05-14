@@ -359,7 +359,7 @@ gimp2aa (gint32      drawable_ID,
               lum = buf_to_rgb[0] * Y[0] +
                     buf_to_rgb[1] * Y[1] +
                     buf_to_rgb[2] * Y[2] + 0.5;
-              aa_putpixel (context, x, y, lum * (p[3] + 1)) >> 8));
+              aa_putpixel (context, x, y, ((guchar) (lum) * (p[3] + 1)) >> 8);
               }
           break;
 
