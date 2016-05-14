@@ -660,14 +660,14 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-apply-lens",              writable);
   SET_SENSITIVE ("filters-bump-map",                writable);
   SET_SENSITIVE ("filters-c2g",                     writable && !gray);
-//  SET_SENSITIVE ("filters-cartoon",                 writable);
+/*  SET_SENSITIVE ("filters-cartoon",                 writable);*/
   SET_SENSITIVE ("filters-channel-mixer",           writable);
   SET_SENSITIVE ("filters-checkerboard",            writable);
   SET_SENSITIVE ("filters-color-enhance",           writable && !gray);
   SET_SENSITIVE ("filters-color-exchange",          writable);
   SET_SENSITIVE ("filters-color-reduction",         writable);
   SET_SENSITIVE ("filters-color-rotate",            writable);
-//  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);
+/*  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);*/
   SET_SENSITIVE ("filters-color-to-alpha",          writable && !gray && alpha);
   SET_SENSITIVE ("filters-convolution-matrix",      writable);
   SET_SENSITIVE ("filters-cubism",                  writable);

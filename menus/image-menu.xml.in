@@ -352,8 +352,8 @@
         <separator />-->
       </menu>
       <menu action="image-color-management-menu" name="Color Management">
-        <menuitem action="image-color-management-enabled" />
-        <separator />
+<!--        <menuitem action="image-color-management-enabled" />
+        <separator />-->
         <menuitem action="image-color-profile-assign" />
         <menuitem action="image-color-profile-convert" />
         <menuitem action="image-color-profile-discard" />
@@ -578,7 +578,7 @@
       <separator />
       <menuitem action="filters-color-to-alpha" />
       <menuitem action="filters-color-reduction" />
-<!--       <menuitem action="filters-color-temperature" />-->
+<!--      <menuitem action="filters-color-temperature" />-->
       <menuitem action="filters-exposure" />
       <placeholder name="Modify" />
     </menu>
@@ -732,7 +732,7 @@
 <!--	<menuitem action="filters-cartoon" />-->
 	<menuitem action="filters-cubism" />
 	<menuitem action="filters-tile-glass" />
-<!-- 	<menuitem action="filters-oilify" />-->
+<!--	<menuitem action="filters-oilify" />-->
 	<menuitem action="filters-photocopy" />
 	<menuitem action="filters-softglow" />
       </menu>
