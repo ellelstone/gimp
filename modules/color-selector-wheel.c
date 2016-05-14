@@ -60,7 +60,7 @@ static GType  colorsel_wheel_get_type      (void);
 
 static void   colorsel_wheel_set_color     (GimpColorSelector *selector,
                                             const GimpRGB     *rgb,
-                                            const GimpLch     *lch);
+                                            const GimpHSV     *hsv);
 static void   colorsel_wheel_changed       (GimpColorWheel    *hsv,
                                             GimpColorSelector *selector);
 
@@ -132,12 +132,12 @@ colorsel_wheel_init (ColorselWheel *wheel)
 static void
 colorsel_wheel_set_color (GimpColorSelector *selector,
                           const GimpRGB     *rgb,
-                          const GimpLch     *lch)
+                          const GimpHSV     *hsv)
 {
   ColorselWheel *wheel = COLORSEL_WHEEL (selector);
 
   gimp_color_wheel_set_color (GIMP_COLOR_WHEEL (wheel->hsv),
-                              lch->h / 360.0, lch->c / 200.0, lch->l / 100.0);
+                              hsv->h, hsv->s, hsv->v);
 }
 
 static void
@@ -145,14 +145,10 @@ colorsel_wheel_changed (GimpColorWheel    *hsv,
                         GimpColorSelector *selector)
 {
   gimp_color_wheel_get_color (hsv,
-                              &selector->lch.h,
-                              &selector->lch.c,
-                              &selector->lch.l);
-  selector->lch.h *= 360.0;
-  selector->lch.c *= 200.0;
-  selector->lch.l *= 100.0;
-
-  babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &selector->lch, &selector->rgb, 1);
+                              &selector->hsv.h,
+                              &selector->hsv.s,
+                              &selector->hsv.v);
+  gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
 
   gimp_color_selector_color_changed (selector);
 }

@@ -639,27 +639,27 @@ gimp_color_frame_update (GimpColorFrame *frame)
         }
       break;
 
-    case GIMP_COLOR_FRAME_MODE_LCH:
-      names[2] = _("Lightness:");
-      names[1] = _("Chroma:");
+    case GIMP_COLOR_FRAME_MODE_HSV:
       names[0] = _("Hue:");
+      names[1] = _("Sat.:");
+      names[2] = _("Value:");
 
       if (has_alpha)
         names[3] = _("Alpha:");
 
       if (frame->sample_valid)
         {
-          GimpLch lch;
+          GimpHSV hsv;
 
-          babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &frame->color, &lch, 1);
-          lch.a = frame->color.a;
+          gimp_rgb_to_hsv (&frame->color, &hsv);
+          hsv.a = frame->color.a;
 
           values = g_new0 (gchar *, 5);
 
-          values[2] = g_strdup_printf ("%d %%",       ROUND (lch.l /* * 100.0 */));
-          values[1] = g_strdup_printf ("%d %%",       ROUND (lch.c /* * 100.0 */));
-          values[0] = g_strdup_printf ("%d \302\260", ROUND (lch.h /* * 360.0 */));
-          values[3] = g_strdup_printf ("%d %%",       ROUND (lch.a /* * 100.0 */));
+          values[0] = g_strdup_printf ("%d \302\260", ROUND (hsv.h * 360.0));
+          values[1] = g_strdup_printf ("%d %%",       ROUND (hsv.s * 100.0));
+          values[2] = g_strdup_printf ("%d %%",       ROUND (hsv.v * 100.0));
+          values[3] = g_strdup_printf ("%d %%",       ROUND (hsv.a * 100.0));
         }
       break;
 
