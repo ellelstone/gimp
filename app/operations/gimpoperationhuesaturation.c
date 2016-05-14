@@ -18,6 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* All references and functions in the code below that refer to "saturation"
+ * actually use "LCH chroma" rather than "HSL saturation".
+ * The UI says "chroma".
+ * The code that allows to modify a range of colors has been disabled.
+ * */
+
 #include "config.h"
 
 #include <cairo.h>
@@ -81,17 +87,12 @@ gimp_operation_hue_saturation_init (GimpOperationHueSaturation *self)
 }
 
 static inline gdouble
-map_hue (GimpHueSaturationConfig *config,
-         GimpHueRange             range,
-         gdouble                  value)
+map_lightness (GimpHueSaturationConfig *config,
+               GimpHueRange             range,
+               gdouble                  value)
 {
-  value += (config->hue[GIMP_ALL_HUES] + config->hue[range]) / 2.0;
+  value += config->lightness[GIMP_ALL_HUES];
 
-  if (value < 0)
-    return value + 1.0;
-  else if (value > 1.0)
-    return value - 1.0;
-  else
     return value;
 }
 
@@ -100,32 +101,19 @@ map_saturation (GimpHueSaturationConfig *config,
                 GimpHueRange             range,
                 gdouble                  value)
 {
-  gdouble v = config->saturation[GIMP_ALL_HUES] + config->saturation[range];
+  value += config->saturation[GIMP_ALL_HUES];
 
-  /* This change affects the way saturation is computed. With the old
-   * code (different code for value < 0), increasing the saturation
-   * affected muted colors very much, and bright colors less. With the
-   * new code, it affects muted colors and bright colors more or less
-   * evenly. For enhancing the color in photos, the new behavior is
-   * exactly what you want. It's hard for me to imagine a case in
-   * which the old behavior is better.
-  */
-  value *= (v + 1.0);
-
-  return CLAMP (value, 0.0, 1.0);
+  return CLAMP (value, 0.0, 200.0);
 }
 
 static inline gdouble
-map_lightness (GimpHueSaturationConfig *config,
-               GimpHueRange             range,
-               gdouble                  value)
+map_hue (GimpHueSaturationConfig *config,
+         GimpHueRange             range,
+         gdouble                  value)
 {
-  gdouble v = (config->lightness[GIMP_ALL_HUES] + config->lightness[range]) / 2.0;
+  value += config->hue[GIMP_ALL_HUES];
 
-  if (v < 0)
-    return value * (v + 1.0);
-  else
-    return value + (v * (1.0 - value));
+    return value;
 }
 
 static gboolean
@@ -140,116 +128,28 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
   GimpHueSaturationConfig  *config = GIMP_HUE_SATURATION_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
-  gfloat                    overlap;
 
   if (! config)
     return FALSE;
 
-  overlap = config->overlap / 2.0;
-
   while (samples--)
     {
       GimpRGB  rgb;
-      GimpHSL  hsl;
-      gdouble  h;
-      gint     hue_counter;
-      gint     hue                 = 0;
-      gint     secondary_hue       = 0;
-      gboolean use_secondary_hue   = FALSE;
-      gfloat   primary_intensity   = 0.0;
-      gfloat   secondary_intensity = 0.0;
+      GimpLch  lch;
 
       rgb.r = src[RED];
       rgb.g = src[GREEN];
       rgb.b = src[BLUE];
       rgb.a = src[ALPHA];
 
-      gimp_rgb_to_hsl (&rgb, &hsl);
+      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
 
-      h = hsl.h * 6.0;
+          lch.l = map_lightness  (config, 0, lch.l);
+          lch.c = map_saturation (config, 0, lch.c);
+          lch.h = map_hue        (config, 0, lch.h);
 
-      for (hue_counter = 0; hue_counter < 7; hue_counter++)
-        {
-          gdouble hue_threshold = (gdouble) hue_counter + 0.5;
 
-          if (h < ((gdouble) hue_threshold + overlap))
-            {
-              hue = hue_counter;
-
-              if (overlap > 0.0 && h > ((gdouble) hue_threshold - overlap))
-                {
-                  use_secondary_hue = TRUE;
-
-                  secondary_hue = hue_counter + 1;
-
-                  secondary_intensity =
-                    (h - (gdouble) hue_threshold + overlap) / (2.0 * overlap);
-
-                  primary_intensity = 1.0 - secondary_intensity;
-                }
-              else
-                {
-                  use_secondary_hue = FALSE;
-                }
-
-              break;
-            }
-        }
-
-      if (hue >= 6)
-        {
-          hue = 0;
-          use_secondary_hue = FALSE;
-        }
-
-      if (secondary_hue >= 6)
-        {
-          secondary_hue = 0;
-        }
-
-      /*  transform into GimpHueRange values  */
-      hue++;
-      secondary_hue++;
-
-      if (use_secondary_hue)
-        {
-          gdouble mapped_primary_hue;
-          gdouble mapped_secondary_hue;
-          gdouble diff;
-
-          mapped_primary_hue   = map_hue (config, hue,           hsl.h);
-          mapped_secondary_hue = map_hue (config, secondary_hue, hsl.h);
-
-          /* Find nearest hue on the circle between primary and
-           * secondary hue
-           */
-          diff = mapped_primary_hue - mapped_secondary_hue;
-          if (diff < -0.5)
-            {
-              mapped_secondary_hue -= 1.0;
-            }
-          else if (diff >= 0.5)
-            {
-              mapped_secondary_hue += 1.0;
-            }
-
-          hsl.h = (mapped_primary_hue   * primary_intensity +
-                   mapped_secondary_hue * secondary_intensity);
-
-          hsl.s = (map_saturation (config, hue,           hsl.s) * primary_intensity +
-                   map_saturation (config, secondary_hue, hsl.s) * secondary_intensity);
-
-          hsl.l = (map_lightness (config, hue,           hsl.l) * primary_intensity +
-                   map_lightness (config, secondary_hue, hsl.l) * secondary_intensity);
-        }
-      else
-        {
-          hsl.h = map_hue        (config, hue, hsl.h);
-          hsl.s = map_saturation (config, hue, hsl.s);
-          hsl.l = map_lightness  (config, hue, hsl.l);
-        }
-
-      gimp_hsl_to_rgb (&hsl, &rgb);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
 
       dest[RED]   = rgb.r;
       dest[GREEN] = rgb.g;
@@ -272,17 +172,17 @@ gimp_operation_hue_saturation_map (GimpHueSaturationConfig *config,
                                    GimpHueRange             range,
                                    GimpRGB                 *result)
 {
-  GimpHSL hsl;
+  GimpLch lch;
 
   g_return_if_fail (GIMP_IS_HUE_SATURATION_CONFIG (config));
   g_return_if_fail (color != NULL);
   g_return_if_fail (result != NULL);
 
-  gimp_rgb_to_hsl (color, &hsl);
+  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), color, &lch, 1);
 
-  hsl.h = map_hue        (config, range, hsl.h);
-  hsl.s = map_saturation (config, range, hsl.s);
-  hsl.l = map_lightness  (config, range, hsl.l);
+  lch.l = map_lightness  (config, range, lch.l);
+  lch.c = map_saturation (config, range, lch.c);
+  lch.h = map_hue        (config, range, lch.h);
 
-  gimp_hsl_to_rgb (&hsl, result);
+  babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, result, 1);
 }

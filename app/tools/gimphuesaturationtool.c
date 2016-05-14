@@ -15,6 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* All references and functions in the code below that refer to "saturation"
+ * actually use "LCH chroma" rather than "HSL saturation".
+ * The UI says "chroma".
+ * The code that allows to modify a range of colors has been disabled.
+ * */
+
 #include "config.h"
 
 #include <string.h>
@@ -93,9 +99,9 @@ gimp_hue_saturation_tool_register (GimpToolRegisterCallback  callback,
                 GIMP_TYPE_FILTER_OPTIONS, NULL,
                 0,
                 "gimp-hue-saturation-tool",
-                _("Hue-Saturation"),
-                _("Hue-Saturation Tool: Adjust hue, saturation, and lightness"),
-                N_("Hue-_Saturation..."), NULL,
+                _("Hue-Chroma"),
+                _("Hue-Chroma Tool: Adjust LCH Hue, Chroma, and Lightness"),
+                N_("Hue-_Chroma..."), NULL,
                 NULL, GIMP_HELP_TOOL_HUE_SATURATION,
                 GIMP_STOCK_TOOL_HUE_SATURATION,
                 data);
@@ -113,8 +119,8 @@ gimp_hue_saturation_tool_class_init (GimpHueSaturationToolClass *klass)
   tool_class->initialize                 = gimp_hue_saturation_tool_initialize;
 
   filter_tool_class->settings_name       = "hue-saturation";
-  filter_tool_class->import_dialog_title = _("Import Hue-Saturation Settings");
-  filter_tool_class->export_dialog_title = _("Export Hue-Saturation Settings");
+  filter_tool_class->import_dialog_title = _("Import Hue-Chroma Settings");
+  filter_tool_class->export_dialog_title = _("Export Hue-Chroma Settings");
 
   filter_tool_class->get_operation       = gimp_hue_saturation_tool_get_operation;
   filter_tool_class->dialog              = gimp_hue_saturation_tool_dialog;
@@ -150,7 +156,7 @@ gimp_hue_saturation_tool_initialize (GimpTool     *tool,
   if (! gimp_drawable_is_rgb (drawable))
     {
       g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
-			   _("Hue-Saturation operates only on RGB color layers."));
+			   _("Hue-Chroma operates only on RGB color layers."));
       return FALSE;
     }
 
@@ -165,7 +171,7 @@ gimp_hue_saturation_tool_get_operation (GimpFilterTool  *filter_tool,
                                         gchar          **icon_name,
                                         gchar          **help_id)
 {
-  *description = g_strdup (_("Adjust Hue / Lightness / Saturation"));
+  *description = g_strdup (_("Adjust Hue / Chroma / Lightness"));
 
   return g_strdup ("gimp:hue-saturation");
 }
@@ -213,7 +219,7 @@ gimp_hue_saturation_tool_dialog (GimpFilterTool *filter_tool)
 
   main_vbox = gimp_filter_tool_dialog_get_vbox (filter_tool);
 
-  frame = gimp_frame_new (_("Select Primary Color to Adjust"));
+  frame = gimp_frame_new (_("Adjust Master (individual colors are disabled)"));
   gtk_box_pack_start (GTK_BOX (main_vbox), frame, TRUE, TRUE, 0);
   gtk_widget_show (frame);
 
@@ -292,7 +298,7 @@ gimp_hue_saturation_tool_dialog (GimpFilterTool *filter_tool)
 
   gtk_widget_show (table);
 
-  /* Create the 'Overlap' option slider */
+  /* Create the 'Overlap' option slider
   scale = gimp_prop_spin_scale_new (filter_tool->config, "overlap",
                                     _("_Overlap"), 0.01, 0.1, 0);
   gimp_prop_widget_set_factor (scale, 100.0, 0.0, 0.0, 1);
@@ -305,26 +311,26 @@ gimp_hue_saturation_tool_dialog (GimpFilterTool *filter_tool)
 
   vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 4);
   gtk_container_add (GTK_CONTAINER (frame), vbox);
-  gtk_widget_show (vbox);
+  gtk_widget_show (vbox); */
 
   /*  Create the hue scale widget  */
   scale = gimp_prop_spin_scale_new (filter_tool->config, "hue",
-                                    _("_Hue"), 1.0 / 180.0, 15.0 / 180.0, 0);
-  gimp_prop_widget_set_factor (scale, 180.0, 0.0, 0.0, 1);
+                                    _("_Hue"), 1.0, 15.0, 0);
+  gimp_prop_widget_set_factor (scale, 1.0, 0.0, 0.0, 1);
+  gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
+  gtk_widget_show (scale);
+
+  /*  Create the chroma scale widget  */
+  scale = gimp_prop_spin_scale_new (filter_tool->config, "saturation",
+                                    _("_Chroma"), 1, 10, 0);
+  gimp_prop_widget_set_factor (scale, 1.0, 0.0, 0.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 
   /*  Create the lightness scale widget  */
   scale = gimp_prop_spin_scale_new (filter_tool->config, "lightness",
-                                    _("_Lightness"), 0.01, 0.1, 0);
-  gimp_prop_widget_set_factor (scale, 100.0, 0.0, 0.0, 1);
-  gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
-  gtk_widget_show (scale);
-
-  /*  Create the saturation scale widget  */
-  scale = gimp_prop_spin_scale_new (filter_tool->config, "saturation",
-                                    _("_Saturation"), 0.01, 0.1, 0);
-  gimp_prop_widget_set_factor (scale, 100.0, 0.0, 0.0, 1);
+                                    _("_Lightness"), 1, 10, 0);
+  gimp_prop_widget_set_factor (scale, 1.0, 0.0, 0.0, 1);
   gtk_box_pack_start (GTK_BOX (vbox), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
 

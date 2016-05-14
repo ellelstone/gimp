@@ -497,7 +497,7 @@ drawable_hue_saturation_invoker (GimpProcedure         *procedure,
                          NULL);
 
           gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 C_("undo-type", "Hue-Saturation"),
+                                                 C_("undo-type", "Hue-Chroma"),
                                                  "gimp:hue-saturation",
                                                  config);
           g_object_unref (config);

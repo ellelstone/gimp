@@ -141,7 +141,7 @@ gimp_sample_point_editor_init (GimpSamplePointEditor *editor)
       GtkWidget *frame;
 
       frame = g_object_new (GIMP_TYPE_COLOR_FRAME,
-                            "mode",           GIMP_COLOR_FRAME_MODE_PIXEL,
+                            "mode",           GIMP_COLOR_FRAME_MODE_LCH,
                             "has-number",     TRUE,
                             "number",         i + 1,
                             "has-color-area", TRUE,

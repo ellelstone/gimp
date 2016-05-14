@@ -18,6 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* All references and functions in the code below that refer to "saturation"
+ * actually use "LCH chroma" rather than "HSL saturation".
+ * The UI says "chroma".
+ * The code that allows to modify a range of colors has been disabled.
+ * */
+
 #include "config.h"
 
 #include <cairo.h>
@@ -33,15 +39,15 @@
 #include "gimp-intl.h"
 
 
-enum
-{
-  PROP_0,
-  PROP_RANGE,
-  PROP_HUE,
-  PROP_SATURATION,
-  PROP_LIGHTNESS,
-  PROP_OVERLAP
-};
+ enum
+ {
+   PROP_0,
+   PROP_RANGE,
+   PROP_LIGHTNESS,
+   PROP_SATURATION,
+   PROP_HUE,
+   PROP_OVERLAP
+ };
 
 
 static void     gimp_hue_saturation_config_iface_init   (GimpConfigInterface *iface);
@@ -100,19 +106,19 @@ gimp_hue_saturation_config_class_init (GimpHueSaturationConfigClass *klass)
                            "hue",
                            _("Hue"),
                            _("Hue"),
-                           -1.0, 1.0, 0.0, 0);
+                           -180.0, 180.0, 0.0, 0);
 
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_SATURATION,
                            "saturation",
                            _("Saturation"),
                            _("Saturation"),
-                           -1.0, 1.0, 0.0, 0);
+                           -100.0, 100.0, 0.0, 0);
 
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
                            "lightness",
                            _("Lightness"),
                            _("Lightness"),
-                           -1.0, 1.0, 0.0, 0);
+                           -100.0, 100.0, 0.0, 0);
 
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_OVERLAP,
                            "overlap",

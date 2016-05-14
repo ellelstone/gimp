@@ -65,7 +65,7 @@ static void   gimp_color_notebook_set_show_alpha  (GimpColorSelector *selector,
                                                    gboolean           show_alpha);
 static void   gimp_color_notebook_set_color       (GimpColorSelector *selector,
                                                    const GimpRGB     *rgb,
-                                                   const GimpHSV     *hsv);
+                                                   const GimpLch     *lch);
 static void   gimp_color_notebook_set_channel     (GimpColorSelector *selector,
                                                    GimpColorSelectorChannel channel);
 static void   gimp_color_notebook_set_config      (GimpColorSelector *selector,
@@ -79,7 +79,7 @@ static void   gimp_color_notebook_switch_page     (GtkNotebook       *gtk_notebo
 
 static void   gimp_color_notebook_color_changed   (GimpColorSelector *page,
                                                    const GimpRGB     *rgb,
-                                                   const GimpHSV     *hsv,
+                                                   const GimpLch     *lch,
                                                    GimpColorNotebook *notebook);
 static void   gimp_color_notebook_channel_changed (GimpColorSelector *page,
                                                    GimpColorSelectorChannel channel,
@@ -260,7 +260,7 @@ gimp_color_notebook_set_show_alpha (GimpColorSelector *selector,
 static void
 gimp_color_notebook_set_color (GimpColorSelector *selector,
                                const GimpRGB     *rgb,
-                               const GimpHSV     *hsv)
+                               const GimpLch     *lch)
 {
   GimpColorNotebook *notebook = GIMP_COLOR_NOTEBOOK (selector);
 
@@ -268,7 +268,7 @@ gimp_color_notebook_set_color (GimpColorSelector *selector,
                                    gimp_color_notebook_color_changed,
                                    notebook);
 
-  gimp_color_selector_set_color (notebook->cur_page, rgb, hsv);
+  gimp_color_selector_set_color (notebook->cur_page, rgb, lch);
 
   g_signal_handlers_unblock_by_func (notebook->cur_page,
                                      gimp_color_notebook_color_changed,
@@ -329,7 +329,7 @@ gimp_color_notebook_switch_page (GtkNotebook       *gtk_notebook,
 
   gimp_color_selector_set_color (notebook->cur_page,
                                  &selector->rgb,
-                                 &selector->hsv);
+                                 &selector->lch);
   gimp_color_selector_set_channel (notebook->cur_page,
                                    selector->channel);
 
@@ -344,13 +344,13 @@ gimp_color_notebook_switch_page (GtkNotebook       *gtk_notebook,
 static void
 gimp_color_notebook_color_changed (GimpColorSelector *page,
                                    const GimpRGB     *rgb,
-                                   const GimpHSV     *hsv,
+                                   const GimpLch     *lch,
                                    GimpColorNotebook *notebook)
 {
   GimpColorSelector *selector = GIMP_COLOR_SELECTOR (notebook);
 
   selector->rgb = *rgb;
-  selector->hsv = *hsv;
+  selector->lch = *lch;
 
   gimp_color_selector_color_changed (selector);
 }
@@ -380,7 +380,7 @@ gimp_color_notebook_add_page (GimpColorNotebook *notebook,
 
   page = gimp_color_selector_new (page_type,
                                   &selector->rgb,
-                                  &selector->hsv,
+                                  &selector->lch,
                                   selector->channel);
 
   if (! page)

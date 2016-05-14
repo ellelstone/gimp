@@ -666,7 +666,7 @@ sub hue_saturation {
                      NULL);
 
       gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             _("Hue-Saturation"),
+                                             _("Hue-Chroma"),
                                              "gimp:hue-saturation",
                                              config);
       g_object_unref (config);

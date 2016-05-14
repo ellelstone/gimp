@@ -42,6 +42,56 @@ typedef struct _GimpRGB  GimpRGB;
 typedef struct _GimpHSV  GimpHSV;
 typedef struct _GimpHSL  GimpHSL;
 typedef struct _GimpCMYK GimpCMYK;
+typedef struct _GimpXYZ  GimpXYZ;
+typedef struct _GimpLab  GimpLab;
+typedef struct _GimpLch  GimpLch;
+
+/**
+ * GimpXYZ:
+ * @l: the x component
+ * @A: the y component
+ * @B: the z component
+ * @a: the alpha component
+ *
+ * Used to keep XYZ and XYZA colors. All components are in a range of
+ * [0.0..1.0].
+ **/
+struct _GimpXYZ
+{
+  gdouble x, y, z, a;
+};
+
+
+/**
+ * GimpLab:
+ * @l: the lightness component
+ * @A: the a component
+ * @B: the b component
+ * @a: the alpha component
+ *
+ * Used to keep Lab and LabA colors. All components are in a range of
+ * [0.0..1.0].
+ **/
+struct _GimpLab
+{
+  gdouble l, A, B, a;
+};
+
+/**
+ * GimpLch:
+ * @l: the lightness component
+ * @c: the chroma component
+ * @h: the hue component
+ * @a: the alpha component
+ *
+ * Used to keep Lch and LchA colors. All components are in a range of
+ * [0.0..1.0].
+ **/
+struct _GimpLch
+{
+  gdouble l, c, h, a;
+};
+
 
 /**
  * GimpRGB:

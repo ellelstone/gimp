@@ -49,7 +49,7 @@
  *
  * The #GimpColorScales widget is an implementation of a
  * #GimpColorSelector. It shows a group of #GimpColorScale widgets
- * that allow to adjust the HSV and RGB color channels.
+ * that allow to adjust the LCH and RGB color channels.
  **/
 
 
@@ -84,7 +84,7 @@ static void   gimp_color_scales_set_show_alpha (GimpColorSelector *selector,
                                                 gboolean           show_alpha);
 static void   gimp_color_scales_set_color      (GimpColorSelector *selector,
                                                 const GimpRGB     *rgb,
-                                                const GimpHSV     *hsv);
+                                                const GimpLch     *lch);
 static void   gimp_color_scales_set_channel    (GimpColorSelector *selector,
                                                 GimpColorSelectorChannel  channel);
 
@@ -128,7 +128,7 @@ gimp_color_scales_init (GimpColorScales *scales)
   static const gdouble slider_initial_vals[] =
     {   0,   0,   0,   0,   0,   0,   0 };
   static const gdouble slider_max_vals[] =
-    { 360, 100, 100, 255, 255, 255, 100 };
+    { 360, 200, 100, 255, 255, 255, 100 };
   static const gdouble slider_incs[] =
     {  30,  10,  10,  16,  16,  16,  10 };
 
@@ -137,7 +137,7 @@ gimp_color_scales_init (GimpColorScales *scales)
 
   table = gtk_table_new (7, 4, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 1);
-  gtk_table_set_row_spacing (GTK_TABLE (table), 2, 5); /* hsv <-> rgb   */
+  gtk_table_set_row_spacing (GTK_TABLE (table), 2, 5); /* lch <-> rgb   */
   gtk_table_set_row_spacing (GTK_TABLE (table), 5, 5); /* rgb <-> alpha */
   gtk_table_set_col_spacings (GTK_TABLE (table), 2);
   gtk_table_set_col_spacing (GTK_TABLE (table), 0, 0);
@@ -251,7 +251,7 @@ gimp_color_scales_set_show_alpha (GimpColorSelector *selector,
 static void
 gimp_color_scales_set_color (GimpColorSelector *selector,
                              const GimpRGB     *rgb,
-                             const GimpHSV     *hsv)
+                             const GimpLch     *lch)
 {
   GimpColorScales *scales = GIMP_COLOR_SCALES (selector);
 
@@ -287,12 +287,12 @@ gimp_color_scales_update_scales (GimpColorScales *scales,
   gint               values[7];
   gint               i;
 
-  values[GIMP_COLOR_SELECTOR_HUE]        = ROUND (selector->hsv.h * 360.0);
-  values[GIMP_COLOR_SELECTOR_SATURATION] = ROUND (selector->hsv.s * 100.0);
-  values[GIMP_COLOR_SELECTOR_VALUE]      = ROUND (selector->hsv.v * 100.0);
-  values[GIMP_COLOR_SELECTOR_RED]        = ROUND (selector->rgb.r * 255.0);
-  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND (selector->rgb.g * 255.0);
-  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND (selector->rgb.b * 255.0);
+  values[GIMP_COLOR_SELECTOR_LIGHTNESS]  = ROUND (selector->lch.l /* * 100.0 */);
+  values[GIMP_COLOR_SELECTOR_CHROMA]     = ROUND (selector->lch.c /* * 100.0 */);
+  values[GIMP_COLOR_SELECTOR_HUE]        = ROUND (selector->lch.h /* * 360.0 */);
+  values[GIMP_COLOR_SELECTOR_RED]        = ROUND ( CLAMP(selector->rgb.r,0.0,1.0) * 255.0);
+  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND ( CLAMP(selector->rgb.g,0.0,1.0) * 255.0);
+  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND ( CLAMP(selector->rgb.b,0.0,1.0) * 255.0);
   values[GIMP_COLOR_SELECTOR_ALPHA]      = ROUND (selector->rgb.a * 100.0);
 
   for (i = 0; i < 7; i++)
@@ -312,7 +312,7 @@ gimp_color_scales_update_scales (GimpColorScales *scales,
         }
 
       gimp_color_scale_set_color (GIMP_COLOR_SCALE (scales->sliders[i]),
-                                  &selector->rgb, &selector->hsv);
+                                  &selector->rgb, &selector->lch);
     }
 }
 
@@ -351,43 +351,47 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
 
   switch (i)
     {
+    case GIMP_COLOR_SELECTOR_LIGHTNESS:
+      selector->lch.l = value /* / 100.0 */;
+      break;
+
+    case GIMP_COLOR_SELECTOR_CHROMA:
+      selector->lch.c = value /* / 100.0 */;
+      break;
+
     case GIMP_COLOR_SELECTOR_HUE:
-      selector->hsv.h = value / 360.0;
-      break;
-
-    case GIMP_COLOR_SELECTOR_SATURATION:
-      selector->hsv.s = value / 100.0;
-      break;
-
-    case GIMP_COLOR_SELECTOR_VALUE:
-      selector->hsv.v = value / 100.0;
+      selector->lch.h = value /* / 360.0 */;
       break;
 
     case GIMP_COLOR_SELECTOR_RED:
-      selector->rgb.r = value / 255.0;
+      selector->rgb.r = CLAMP (value / 255.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_GREEN:
-      selector->rgb.g = value / 255.0;
+      selector->rgb.g = CLAMP (value / 255.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_BLUE:
-      selector->rgb.b = value / 255.0;
+      selector->rgb.b = CLAMP (value / 255.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_ALPHA:
-      selector->hsv.a = selector->rgb.a = value / 100.0;
+      selector->lch.a = selector->rgb.a = value / 100.0;
       break;
     }
 
-  if ((i >= GIMP_COLOR_SELECTOR_HUE) && (i <= GIMP_COLOR_SELECTOR_VALUE))
+  if ((i >= GIMP_COLOR_SELECTOR_HUE) && (i <= GIMP_COLOR_SELECTOR_LIGHTNESS))
     {
-      gimp_hsv_to_rgb (&selector->hsv, &selector->rgb);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &selector->lch, &selector->rgb, 1);
     }
   else if ((i >= GIMP_COLOR_SELECTOR_RED) && (i <= GIMP_COLOR_SELECTOR_BLUE))
     {
-      gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
+      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
     }
+
+      selector->rgb.r = CLAMP (selector->rgb.r, 0.0, 1.0);
+      selector->rgb.g = CLAMP (selector->rgb.g, 0.0, 1.0);
+      selector->rgb.b = CLAMP (selector->rgb.b, 0.0, 1.0);
 
   gimp_color_scales_update_scales (scales, i);
 

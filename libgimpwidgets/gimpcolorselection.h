@@ -47,7 +47,7 @@ struct _GimpColorSelection
 
   gboolean                  show_alpha;
 
-  GimpHSV                   hsv;
+  GimpLch                   lch;
   GimpRGB                   rgb;
   GimpColorSelectorChannel  channel;
 
