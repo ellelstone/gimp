@@ -723,7 +723,7 @@ hue_saturation_invoker (GimpProcedure         *procedure,
                          NULL);
 
           gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 _("Hue-Chroma"),
+                                                 _("Hue-Saturation"),
                                                  "gimp:hue-saturation",
                                                  config);
           g_object_unref (config);
