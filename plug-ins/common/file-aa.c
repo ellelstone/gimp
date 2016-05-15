@@ -339,12 +339,9 @@ gimp2aa (gint32      drawable_ID,
           gimp_get_Y (Y);
           for (x = 0, p = buf; x < width; x++, p += 3)
           {
-            buf_to_rgb[0]=buf->r;
-            buf_to_rgb[1]=buf->g;
-            buf_to_rgb[2]=buf->b;
-            lum = buf_to_rgb[0] * Y[0] +
-                  buf_to_rgb[1] * Y[1] +
-                  buf_to_rgb[2] * Y[2] + 0.5;
+            lum = p[0] * Y[0] +
+                  p[1] * Y[1] +
+                  p[2] * Y[2] + 0.5;
             aa_putpixel (context, x, y, lum);
             }
           break;
@@ -353,12 +350,9 @@ gimp2aa (gint32      drawable_ID,
           gimp_get_Y (Y);
           for (x = 0, p = buf; x < width; x++, p += 4)
             {
-              buf_to_rgb[0]=buf->r;
-              buf_to_rgb[1]=buf->g;
-              buf_to_rgb[2]=buf->b;
-              lum = buf_to_rgb[0] * Y[0] +
-                    buf_to_rgb[1] * Y[1] +
-                    buf_to_rgb[2] * Y[2] + 0.5;
+              lum = p[0] * Y[0] +
+                    p[1] * Y[1] +
+                    p[2] * Y[2] + 0.5;
               aa_putpixel (context, x, y, ((guchar) (lum) * (p[3] + 1)) >> 8);
               }
           break;
