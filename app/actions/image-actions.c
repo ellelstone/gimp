@@ -94,11 +94,11 @@ static const GimpActionEntry image_actions[] =
     G_CALLBACK (image_color_profile_convert_cmd_callback),
     GIMP_HELP_IMAGE_COLOR_PROFILE_CONVERT },
 
-  { "image-color-profile-discard", NULL,
+/*  { "image-color-profile-discard", NULL,
     NC_("image-action", "_Discard Color Profile"), NULL,
     NC_("image-action", "Remove the image's color profile"),
     G_CALLBACK (image_color_profile_discard_cmd_callback),
-    GIMP_HELP_IMAGE_COLOR_PROFILE_DISCARD },
+    GIMP_HELP_IMAGE_COLOR_PROFILE_DISCARD },*/
 
   { "image-color-profile-save", NULL,
     NC_("image-action", "_Save Color Profile to File..."), NULL,
@@ -173,7 +173,7 @@ static const GimpActionEntry image_actions[] =
     GIMP_HELP_IMAGE_PROPERTIES }
 };
 
-static const GimpToggleActionEntry image_toggle_actions[] =
+/*static const GimpToggleActionEntry image_toggle_actions[] =
 {
   { "image-color-management-enabled", NULL,
     NC_("image-action", "_Enable Color Management"), NULL,
@@ -183,7 +183,7 @@ static const GimpToggleActionEntry image_toggle_actions[] =
     G_CALLBACK (image_color_management_enabled_cmd_callback),
     TRUE,
     GIMP_HELP_IMAGE_COLOR_MANAGEMENT_ENABLED }
-};
+};*/
 
 static const GimpRadioActionEntry image_convert_base_type_actions[] =
 {
@@ -301,9 +301,9 @@ image_actions_setup (GimpActionGroup *group)
                                  image_actions,
                                  G_N_ELEMENTS (image_actions));
 
-  gimp_action_group_add_toggle_actions (group, "image-action",
+/*  gimp_action_group_add_toggle_actions (group, "image-action",
                                         image_toggle_actions,
-                                        G_N_ELEMENTS (image_toggle_actions));
+                                        G_N_ELEMENTS (image_toggle_actions));*/
 
   gimp_action_group_add_radio_actions (group, "image-convert-action",
                                        image_convert_base_type_actions,
@@ -452,12 +452,12 @@ image_actions_update (GimpActionGroup *group,
 /*  SET_SENSITIVE ("image-convert-gamma",  image);
   SET_SENSITIVE ("image-convert-linear", image && !is_indexed);*/
 
-  SET_SENSITIVE ("image-color-management-enabled", image);
-  SET_ACTIVE    ("image-color-management-enabled", image && color_managed);
+/*  SET_SENSITIVE ("image-color-management-enabled", image);
+  SET_ACTIVE    ("image-color-management-enabled", image && color_managed);*/
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);
-  SET_SENSITIVE ("image-color-profile-discard", image && profile);
+/*  SET_SENSITIVE ("image-color-profile-discard", image && profile);*/
   SET_SENSITIVE ("image-color-profile-save",    image);
 
   SET_SENSITIVE ("image-flip-horizontal", image);

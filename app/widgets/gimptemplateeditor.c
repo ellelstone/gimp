@@ -394,12 +394,12 @@ gimp_template_editor_constructed (GObject *object)
                              _("_Precision:"), 0.0, 0.5,
                              combo, 1, FALSE);
 
-  toggle = gimp_prop_check_button_new (G_OBJECT (template),
+/*  toggle = gimp_prop_check_button_new (G_OBJECT (template),
                                        "color-managed",
                                        _("Color manage this image"));
   gimp_table_attach_aligned (GTK_TABLE (table), 0, 4,
                              NULL, 0.0, 0.5,
-                             toggle, 1, FALSE);
+                             toggle, 1, FALSE);*/
 
   combo = gimp_prop_profile_combo_box_new (G_OBJECT (template),
                                            "color-profile",
