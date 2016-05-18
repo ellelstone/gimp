@@ -280,7 +280,7 @@ gimp2aa (gint32      drawable_ID,
   gint             bpp;
   guchar          *buf;
   guchar          *p;
-  double           Y[3], buf_to_rgb[3];
+  double           Y[3];
   guchar           lum;
 
   buffer = gimp_drawable_get_buffer (drawable_ID);
