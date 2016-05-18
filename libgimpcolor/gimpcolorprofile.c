@@ -93,8 +93,8 @@ void gimp_color_profile_get_colorants (GimpColorProfile *profile)
     colorants[6]= matrix.coeff[2][0];
     colorants[7]= matrix.coeff[2][1];
     colorants[8]= matrix.coeff[2][2];
-    /** Uncomment below to print values to screen:*/
-    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);
+    /** Uncomment below to print values to screen:
+    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);*/
 
     colorant_data = (double *)malloc(sizeof(double));
     if ( colorant_data == 0)
