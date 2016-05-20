@@ -21,6 +21,7 @@
 #include <gtk/gtk.h>
 
 #include "libgimpmath/gimpmath.h"
+#include "libgimpconfig/gimpconfig.h"
 #include "libgimpwidgets/gimpwidgets.h"
 
 #include "actions-types.h"
@@ -486,17 +487,163 @@ view_display_filters_cmd_callback (GtkAction *action,
 }
 
 void
+view_color_management_reset_cmd_callback (GtkAction *action,
+                                          gpointer   data)
+{
+  GimpDisplayShell *shell;
+  GimpColorConfig  *global_config;
+  GimpColorConfig  *shell_config;
+  return_if_no_shell (shell, data);
+
+  global_config = GIMP_CORE_CONFIG (shell->display->config)->color_management;
+  shell_config  = gimp_display_shell_get_color_config (shell);
+
+  gimp_config_copy (GIMP_CONFIG (global_config),
+                    GIMP_CONFIG (shell_config),
+                    0);
+  shell->color_config_set = FALSE;
+}
+
+void
+view_color_management_mode_cmd_callback (GtkAction *action,
+                                         GtkAction *current,
+                                         gpointer   data)
+{
+  GimpDisplayShell        *shell;
+  GimpColorConfig         *color_config;
+  GimpColorManagementMode  value;
+  return_if_no_shell (shell, data);
+
+  color_config = gimp_display_shell_get_color_config (shell);
+
+  value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+  if (value != color_config->mode)
+    {
+      g_object_set (color_config,
+                    "mode", value,
+                    NULL);
+      shell->color_config_set = TRUE;
+    }
+}
+
+void
+view_color_management_intent_cmd_callback (GtkAction *action,
+                                           GtkAction *current,
+                                           gpointer   data)
+{
+  GimpDisplayShell          *shell;
+  GimpColorConfig           *color_config;
+  GimpColorRenderingIntent   value;
+  return_if_no_shell (shell, data);
+
+  color_config = gimp_display_shell_get_color_config (shell);
+
+  value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+  switch (color_config->mode)
+    {
+    case GIMP_COLOR_MANAGEMENT_DISPLAY:
+      if (value != color_config->display_intent)
+        {
+          g_object_set (color_config,
+                        "display-rendering-intent", value,
+                        NULL);
+          shell->color_config_set = TRUE;
+        }
+      break;
+
+    case GIMP_COLOR_MANAGEMENT_SOFTPROOF:
+      if (value != color_config->simulation_intent)
+        {
+          g_object_set (color_config,
+                        "simulation-rendering-intent", value,
+                        NULL);
+          shell->color_config_set = TRUE;
+        }
+      break;
+
+    default:
+      break;
+    }
+}
+
+void
+view_color_management_bpc_cmd_callback (GtkAction *action,
+                                        gpointer   data)
+{
+  GimpDisplayShell *shell;
+  GimpColorConfig  *color_config;
+  gboolean          active;
+  return_if_no_shell (shell, data);
+
+  color_config = gimp_display_shell_get_color_config (shell);
+
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+  switch (color_config->mode)
+    {
+    case GIMP_COLOR_MANAGEMENT_DISPLAY:
+      if (active != color_config->display_use_black_point_compensation)
+        {
+          g_object_set (color_config,
+                        "display-use-black-point-compensation", active,
+                        NULL);
+          shell->color_config_set = TRUE;
+        }
+      break;
+
+    case GIMP_COLOR_MANAGEMENT_SOFTPROOF:
+      if (active != color_config->simulation_use_black_point_compensation)
+        {
+          g_object_set (color_config,
+                        "simulation-use-black-point-compensation", active,
+                        NULL);
+          shell->color_config_set = TRUE;
+        }
+      break;
+
+    default:
+      break;
+    }
+}
+
+void
+view_color_management_gamut_check_cmd_callback (GtkAction *action,
+                                                gpointer   data)
+{
+  GimpDisplayShell *shell;
+  GimpColorConfig  *color_config;
+  gboolean          active;
+  return_if_no_shell (shell, data);
+
+  color_config = gimp_display_shell_get_color_config (shell);
+
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+  if (active != color_config->simulation_gamut_check)
+    {
+      g_object_set (color_config,
+                    "simulation-gamut-check", active,
+                    NULL);
+      shell->color_config_set = TRUE;
+    }
+}
+
+void
 view_toggle_selection_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_selection (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_selection (shell, active);
+  if (active != gimp_display_shell_get_show_selection (shell))
+    {
+      gimp_display_shell_set_show_selection (shell, active);
+    }
 }
 
 void
@@ -504,13 +651,15 @@ view_toggle_layer_boundary_cmd_callback (GtkAction *action,
                                          gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_layer (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_layer (shell, active);
+  if (active != gimp_display_shell_get_show_layer (shell))
+    {
+      gimp_display_shell_set_show_layer (shell, active);
+    }
 }
 
 void
@@ -518,13 +667,15 @@ view_toggle_menubar_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_menubar (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_menubar (shell, active);
+  if (active != gimp_display_shell_get_show_menubar (shell))
+    {
+      gimp_display_shell_set_show_menubar (shell, active);
+    }
 }
 
 void
@@ -532,13 +683,15 @@ view_toggle_rulers_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_rulers (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_rulers (shell, active);
+  if (active != gimp_display_shell_get_show_rulers (shell))
+    {
+      gimp_display_shell_set_show_rulers (shell, active);
+    }
 }
 
 void
@@ -546,13 +699,15 @@ view_toggle_scrollbars_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_scrollbars (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_scrollbars (shell, active);
+  if (active != gimp_display_shell_get_show_scrollbars (shell))
+    {
+      gimp_display_shell_set_show_scrollbars (shell, active);
+    }
 }
 
 void
@@ -560,13 +715,15 @@ view_toggle_statusbar_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_statusbar (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_statusbar (shell, active);
+  if (active != gimp_display_shell_get_show_statusbar (shell))
+    {
+      gimp_display_shell_set_show_statusbar (shell, active);
+    }
 }
 
 void
@@ -574,13 +731,15 @@ view_toggle_guides_cmd_callback (GtkAction *action,
                                  gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_guides (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_guides (shell, active);
+  if (active != gimp_display_shell_get_show_guides (shell))
+    {
+      gimp_display_shell_set_show_guides (shell, active);
+    }
 }
 
 void
@@ -588,13 +747,15 @@ view_toggle_grid_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_grid (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_grid (shell, active);
+  if (active != gimp_display_shell_get_show_grid (shell))
+    {
+      gimp_display_shell_set_show_grid (shell, active);
+    }
 }
 
 void
@@ -602,13 +763,15 @@ view_toggle_sample_points_cmd_callback (GtkAction *action,
                                         gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_show_sample_points (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_show_sample_points (shell, active);
+  if (active != gimp_display_shell_get_show_sample_points (shell))
+    {
+      gimp_display_shell_set_show_sample_points (shell, active);
+    }
 }
 
 void
@@ -616,13 +779,15 @@ view_snap_to_guides_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_snap_to_guides (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_snap_to_guides (shell, active);
+  if (active != gimp_display_shell_get_snap_to_guides (shell))
+    {
+      gimp_display_shell_set_snap_to_guides (shell, active);
+    }
 }
 
 void
@@ -630,13 +795,15 @@ view_snap_to_grid_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_snap_to_grid (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_snap_to_grid (shell, active);
+  if (active != gimp_display_shell_get_snap_to_grid (shell))
+    {
+      gimp_display_shell_set_snap_to_grid (shell, active);
+    }
 }
 
 void
@@ -644,13 +811,15 @@ view_snap_to_canvas_cmd_callback (GtkAction *action,
                                   gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_snap_to_canvas (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_snap_to_canvas (shell, active);
+  if (active != gimp_display_shell_get_snap_to_canvas (shell))
+    {
+      gimp_display_shell_set_snap_to_canvas (shell, active);
+    }
 }
 
 void
@@ -658,13 +827,15 @@ view_snap_to_vectors_cmd_callback (GtkAction *action,
                                    gpointer   data)
 {
   GimpDisplayShell *shell;
-  gboolean          active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+  gboolean          active;
   return_if_no_shell (shell, data);
 
-  if (active == gimp_display_shell_get_snap_to_vectors (shell))
-    return;
+  active = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
 
-  gimp_display_shell_set_snap_to_vectors (shell, active);
+  if (active != gimp_display_shell_get_snap_to_vectors (shell))
+    {
+      gimp_display_shell_set_snap_to_vectors (shell, active);
+    }
 }
 
 void
