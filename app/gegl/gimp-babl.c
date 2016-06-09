@@ -403,7 +403,6 @@ GimpColorProfile *
 gimp_babl_format_get_color_profile (const Babl *format)
 {
   static GimpColorProfile *srgb_profile        = NULL;
-  //static GimpColorProfile *linear_rgb_profile  = NULL;
   static GimpColorProfile *gray_profile        = NULL;
   static GimpColorProfile *linear_gray_profile = NULL;
 
@@ -411,7 +410,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
 
   if (gimp_babl_format_get_base_type (format) == GIMP_GRAY)
     {
-      if (gimp_babl_format_get_linear (format))
+      /*if (gimp_babl_format_get_linear (format))
         {
           if (! linear_gray_profile)
             {
@@ -421,9 +420,9 @@ gimp_babl_format_get_color_profile (const Babl *format)
             }
 
           return linear_gray_profile;
-        }
-      else
-        {
+        }*/
+      //else
+        //{
           if (! gray_profile)
             {
               gray_profile = gimp_color_profile_new_d65_gray_srgb_trc ();
@@ -432,23 +431,10 @@ gimp_babl_format_get_color_profile (const Babl *format)
             }
 
           return gray_profile;
-        }
+        //}
     }
   else
     {
-      /*if (gimp_babl_format_get_linear (format))
-        {
-          if (! linear_rgb_profile)
-            {
-              linear_rgb_profile = gimp_color_profile_new_rgb_srgb_linear ();
-              g_object_add_weak_pointer (G_OBJECT (linear_rgb_profile),
-                                         (gpointer) &linear_rgb_profile);
-            }
-
-          return linear_rgb_profile;
-        }
-      else
-        {*/
           if (! srgb_profile)
             {
               srgb_profile = gimp_color_profile_new_rgb_srgb ();
@@ -457,7 +443,6 @@ gimp_babl_format_get_color_profile (const Babl *format)
             }
 
           return srgb_profile;
-        /*}*/
     }
 }
 
@@ -528,23 +513,6 @@ gimp_babl_format_get_precision (const Babl *format)
 
   type = babl_format_get_type (format, 0);
 
-  /*if (gimp_babl_format_get_linear (format))
-    {
-      if (type == babl_type ("u8"))
-        return GIMP_PRECISION_U8_LINEAR;
-      else if (type == babl_type ("u16"))
-        return GIMP_PRECISION_U16_LINEAR;
-      else if (type == babl_type ("u32"))
-        return GIMP_PRECISION_U32_LINEAR;
-      else if (type == babl_type ("half"))
-        return GIMP_PRECISION_HALF_LINEAR;
-      else if (type == babl_type ("float"))
-        return GIMP_PRECISION_FLOAT_LINEAR;
-      else if (type == babl_type ("double"))
-        return GIMP_PRECISION_DOUBLE_LINEAR;
-    }
-  else
-    {*/
       if (type == babl_type ("u8"))
         return GIMP_PRECISION_U8_GAMMA;
       else if (type == babl_type ("u16"))
@@ -557,42 +525,14 @@ gimp_babl_format_get_precision (const Babl *format)
         return GIMP_PRECISION_FLOAT_GAMMA;
       else if (type == babl_type ("double"))
         return GIMP_PRECISION_DOUBLE_GAMMA;
-    /*}*/
 
   g_return_val_if_reached (-1);
 }
 
 gboolean
 gimp_babl_format_get_linear (const Babl *format)
-{return FALSE;
-  /*const Babl *model;
-
-  g_return_val_if_fail (format != NULL, FALSE);
-
-  model = babl_format_get_model (format);
-
-  if (model == babl_model ("Y")    ||
-      model == babl_model ("YA")   ||
-      model == babl_model ("RGB")  ||
-      model == babl_model ("RGBA") ||
-      model == babl_model ("RaGaBaA"))
-    {
-      return TRUE;
-    }
-  else if (model == babl_model ("Y'")      ||
-           model == babl_model ("Y'A")     ||
-           model == babl_model ("R'G'B'")  ||
-           model == babl_model ("R'G'B'A") ||
-           model == babl_model ("R'aG'aB'aA"))
-    {
-      return FALSE;
-    }
-  else if (babl_format_is_palette (format))
-    {
-      return FALSE;
-    }
-
-  g_return_val_if_reached (FALSE);*/
+{
+  return FALSE;
 }
 
 GimpComponentType
@@ -600,27 +540,21 @@ gimp_babl_component_type (GimpPrecision precision)
 {
   switch (precision)
     {
-    //case GIMP_PRECISION_U8_LINEAR:
     case GIMP_PRECISION_U8_GAMMA:
       return GIMP_COMPONENT_TYPE_U8;
 
-    //case GIMP_PRECISION_U16_LINEAR:
     case GIMP_PRECISION_U16_GAMMA:
       return GIMP_COMPONENT_TYPE_U16;
 
-    //case GIMP_PRECISION_U32_LINEAR:
     case GIMP_PRECISION_U32_GAMMA:
       return GIMP_COMPONENT_TYPE_U32;
 
-    //case GIMP_PRECISION_HALF_LINEAR:
     case GIMP_PRECISION_HALF_GAMMA:
       return GIMP_COMPONENT_TYPE_HALF;
 
-    //case GIMP_PRECISION_FLOAT_LINEAR:
     case GIMP_PRECISION_FLOAT_GAMMA:
       return GIMP_COMPONENT_TYPE_FLOAT;
 
-    //case GIMP_PRECISION_DOUBLE_LINEAR:
     case GIMP_PRECISION_DOUBLE_GAMMA:
       return GIMP_COMPONENT_TYPE_DOUBLE;
     }
@@ -635,39 +569,21 @@ gimp_babl_precision (GimpComponentType component,
   switch (component)
     {
     case GIMP_COMPONENT_TYPE_U8:
-      //if (linear)
-        //return GIMP_PRECISION_U8_LINEAR;
-      //else
         return GIMP_PRECISION_U8_GAMMA;
 
     case GIMP_COMPONENT_TYPE_U16:
-      //if (linear)
-        //return GIMP_PRECISION_U16_LINEAR;
-      //else
         return GIMP_PRECISION_U16_GAMMA;
 
     case GIMP_COMPONENT_TYPE_U32:
-      //if (linear)
-        //return GIMP_PRECISION_U32_LINEAR;
-      //else
         return GIMP_PRECISION_U32_GAMMA;
 
     case GIMP_COMPONENT_TYPE_HALF:
-      //if (linear)
-        //return GIMP_PRECISION_HALF_LINEAR;
-      //else
         return GIMP_PRECISION_HALF_GAMMA;
 
     case GIMP_COMPONENT_TYPE_FLOAT:
-      //if (linear)
-        //return GIMP_PRECISION_FLOAT_LINEAR;
-      //else
         return GIMP_PRECISION_FLOAT_GAMMA;
 
     case GIMP_COMPONENT_TYPE_DOUBLE:
-      //if (linear)
-        //return GIMP_PRECISION_DOUBLE_LINEAR;
-      //else
         return GIMP_PRECISION_DOUBLE_GAMMA;
 
     default:
@@ -687,11 +603,6 @@ gimp_babl_format (GimpImageBaseType  base_type,
     case GIMP_RGB:
       switch (precision)
         {
-        /*case GIMP_PRECISION_U8_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA u8");
-          else
-            return babl_format ("RGB u8");*/
 
         case GIMP_PRECISION_U8_GAMMA:
           if (with_alpha)
@@ -699,23 +610,11 @@ gimp_babl_format (GimpImageBaseType  base_type,
           else
             return babl_format ("R'G'B' u8");
 
-        /*case GIMP_PRECISION_U16_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA u16");
-          else
-            return babl_format ("RGB u16");*/
-
         case GIMP_PRECISION_U16_GAMMA:
           if (with_alpha)
             return babl_format ("R'G'B'A u16");
           else
             return babl_format ("R'G'B' u16");
-
-        /*case GIMP_PRECISION_U32_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA u32");
-          else
-            return babl_format ("RGB u32");*/
 
         case GIMP_PRECISION_U32_GAMMA:
           if (with_alpha)
@@ -723,35 +622,17 @@ gimp_babl_format (GimpImageBaseType  base_type,
           else
             return babl_format ("R'G'B' u32");
 
-        /*case GIMP_PRECISION_HALF_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA half");
-          else
-            return babl_format ("RGB half");*/
-
         case GIMP_PRECISION_HALF_GAMMA:
           if (with_alpha)
             return babl_format ("R'G'B'A half");
           else
             return babl_format ("R'G'B' half");
 
-        /*case GIMP_PRECISION_FLOAT_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA float");
-          else
-            return babl_format ("RGB float");*/
-
         case GIMP_PRECISION_FLOAT_GAMMA:
           if (with_alpha)
             return babl_format ("R'G'B'A float");
           else
             return babl_format ("R'G'B' float");
-
-        /*case GIMP_PRECISION_DOUBLE_LINEAR:
-          if (with_alpha)
-            return babl_format ("RGBA double");
-          else
-            return babl_format ("RGB double");*/
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           if (with_alpha)
@@ -767,11 +648,6 @@ gimp_babl_format (GimpImageBaseType  base_type,
     case GIMP_GRAY:
       switch (precision)
         {
-        /*case GIMP_PRECISION_U8_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA u8");
-          else
-            return babl_format ("Y u8");*/
 
         case GIMP_PRECISION_U8_GAMMA:
           if (with_alpha)
@@ -779,23 +655,11 @@ gimp_babl_format (GimpImageBaseType  base_type,
           else
             return babl_format ("Y' u8");
 
-        /*case GIMP_PRECISION_U16_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA u16");
-          else
-            return babl_format ("Y u16");*/
-
         case GIMP_PRECISION_U16_GAMMA:
           if (with_alpha)
             return babl_format ("Y'A u16");
           else
             return babl_format ("Y' u16");
-
-        /*case GIMP_PRECISION_U32_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA u32");
-          else
-            return babl_format ("Y u32");*/
 
         case GIMP_PRECISION_U32_GAMMA:
           if (with_alpha)
@@ -803,35 +667,17 @@ gimp_babl_format (GimpImageBaseType  base_type,
           else
             return babl_format ("Y' u32");
 
-        /*case GIMP_PRECISION_HALF_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA half");
-          else
-            return babl_format ("Y half");*/
-
         case GIMP_PRECISION_HALF_GAMMA:
           if (with_alpha)
             return babl_format ("Y'A half");
           else
             return babl_format ("Y' half");
 
-        /*case GIMP_PRECISION_FLOAT_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA float");
-          else
-            return babl_format ("Y float");*/
-
         case GIMP_PRECISION_FLOAT_GAMMA:
           if (with_alpha)
             return babl_format ("Y'A float");
           else
             return babl_format ("Y' float");
-
-        /*case GIMP_PRECISION_DOUBLE_LINEAR:
-          if (with_alpha)
-            return babl_format ("YA double");
-          else
-            return babl_format ("Y double");*/
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           if (with_alpha)
@@ -878,17 +724,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
     case GIMP_RGB:
       switch (precision)
         {
-        /*case GIMP_PRECISION_U8_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R u8");
-            case 1: return babl_format ("G u8");
-            case 2: return babl_format ("B u8");
-            case 3: return babl_format ("A u8");
-            default:
-              break;
-            }
-          break;*/
 
         case GIMP_PRECISION_U8_GAMMA:
           switch (index)
@@ -902,18 +737,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_U16_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R u16");
-            case 1: return babl_format ("G u16");
-            case 2: return babl_format ("B u16");
-            case 3: return babl_format ("A u16");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_U16_GAMMA:
           switch (index)
             {
@@ -925,18 +748,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
               break;
             }
           break;
-
-        /*case GIMP_PRECISION_U32_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R u32");
-            case 1: return babl_format ("G u32");
-            case 2: return babl_format ("B u32");
-            case 3: return babl_format ("A u32");
-            default:
-              break;
-            }
-          break;*/
 
         case GIMP_PRECISION_U32_GAMMA:
           switch (index)
@@ -950,18 +761,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_HALF_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R half");
-            case 1: return babl_format ("G half");
-            case 2: return babl_format ("B half");
-            case 3: return babl_format ("A half");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_HALF_GAMMA:
           switch (index)
             {
@@ -974,18 +773,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_FLOAT_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R float");
-            case 1: return babl_format ("G float");
-            case 2: return babl_format ("B float");
-            case 3: return babl_format ("A float");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_FLOAT_GAMMA:
           switch (index)
             {
@@ -997,18 +784,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
               break;
             }
           break;
-
-        /*case GIMP_PRECISION_DOUBLE_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("R double");
-            case 1: return babl_format ("G double");
-            case 2: return babl_format ("B double");
-            case 3: return babl_format ("A double");
-            default:
-              break;
-            }
-          break;*/
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           switch (index)
@@ -1030,15 +805,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
     case GIMP_GRAY:
       switch (precision)
         {
-        /*case GIMP_PRECISION_U8_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y u8");
-            case 1: return babl_format ("A u8");
-            default:
-              break;
-            }
-          break;*/
 
         case GIMP_PRECISION_U8_GAMMA:
           switch (index)
@@ -1050,16 +816,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_U16_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y u16");
-            case 1: return babl_format ("A u16");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_U16_GAMMA:
           switch (index)
             {
@@ -1069,16 +825,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
               break;
             }
           break;
-
-        /*case GIMP_PRECISION_U32_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y u32");
-            case 1: return babl_format ("A u32");
-            default:
-              break;
-            }
-          break;*/
 
         case GIMP_PRECISION_U32_GAMMA:
           switch (index)
@@ -1090,16 +836,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_HALF_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y half");
-            case 1: return babl_format ("A half");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_HALF_GAMMA:
           switch (index)
             {
@@ -1110,16 +846,6 @@ gimp_babl_component_format (GimpImageBaseType base_type,
             }
           break;
 
-        /*case GIMP_PRECISION_FLOAT_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y float");
-            case 1: return babl_format ("A float");
-            default:
-              break;
-            }
-          break;*/
-
         case GIMP_PRECISION_FLOAT_GAMMA:
           switch (index)
             {
@@ -1129,16 +855,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
               break;
             }
           break;
-
-        /*case GIMP_PRECISION_DOUBLE_LINEAR:
-          switch (index)
-            {
-            case 0: return babl_format ("Y double");
-            case 1: return babl_format ("A double");
-            default:
-              break;
-            }
-          break;*/
+          break;
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           switch (index)

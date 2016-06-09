@@ -38,10 +38,8 @@ EXPORTS
 	gimp_color_profile_is_cmyk
 	gimp_color_profile_is_equal
 	gimp_color_profile_is_gray
-	gimp_color_profile_is_linear
 	gimp_color_profile_is_rgb
 	gimp_color_profile_new_d50_gray_lab_trc
-	gimp_color_profile_new_d65_gray_linear
 	gimp_color_profile_new_d65_gray_srgb_trc
 	gimp_color_profile_new_from_file
 	gimp_color_profile_new_from_icc_profile
