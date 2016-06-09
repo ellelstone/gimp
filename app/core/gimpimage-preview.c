@@ -116,7 +116,7 @@ gimp_image_get_new_preview (GimpViewable *viewable,
   scale_y = (gdouble) height / (gdouble) gimp_image_get_height (image);
 
   format = gimp_projectable_get_format (GIMP_PROJECTABLE (image));
-  linear = gimp_babl_format_get_linear (format);
+  linear = FALSE;//gimp_babl_format_get_linear (format);
 
   format = gimp_babl_format (gimp_babl_format_get_base_type (format),
                              gimp_babl_precision (GIMP_COMPONENT_TYPE_U8,

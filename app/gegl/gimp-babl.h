@@ -30,7 +30,7 @@ GimpColorProfile  * gimp_babl_format_get_color_profile  (const Babl *format);
 GimpImageBaseType   gimp_babl_format_get_base_type      (const Babl *format);
 GimpComponentType   gimp_babl_format_get_component_type (const Babl *format);
 GimpPrecision       gimp_babl_format_get_precision      (const Babl *format);
-gboolean            gimp_babl_format_get_linear         (const Babl *format);
+//gboolean            gimp_babl_format_get_linear         (const Babl *format);
 
 GimpComponentType   gimp_babl_component_type   (GimpPrecision      precision);
 GimpPrecision       gimp_babl_precision        (GimpComponentType  component,

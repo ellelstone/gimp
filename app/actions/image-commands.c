@@ -337,8 +337,8 @@ image_convert_gamma_cmd_callback (GtkAction *action,
 
   value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
 
-  if (value == gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
-                                                                         FALSE)))
+  if (value == FALSE /*gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
+                                                                         FALSE))*/ )
     return;
 
   precision = gimp_babl_precision (gimp_image_get_component_type (image),

@@ -388,18 +388,6 @@ image_actions_update (GimpActionGroup *group,
 
       gimp_action_group_set_action_active (group, action, TRUE);
 
-/*      if (gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
-                                                                    FALSE)))
-        {
-          gimp_action_group_set_action_active (group, "image-convert-linear",
-                                               TRUE);
-        }
-      else
-        {
-          gimp_action_group_set_action_active (group, "image-convert-gamma",
-                                               TRUE);
-        }*/
-
       is_indexed  = (base_type == GIMP_INDEXED);
       is_u8_gamma = (precision == GIMP_PRECISION_U8_GAMMA);
       aux         = (gimp_image_get_active_channel (image) != NULL);

@@ -112,8 +112,8 @@ convert_precision_dialog_new (GimpImage         *image,
   bits   = (babl_format_get_bytes_per_pixel (format) * 8 /
             babl_format_get_n_components (format));
 
-  linear = gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
-                                                                     FALSE));
+  linear = FALSE;/*gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
+                                                                     FALSE));*/
 
   dialog->image          = image;
   dialog->progress       = progress;

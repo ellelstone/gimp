@@ -337,10 +337,10 @@ gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter *filter,
                                      gboolean            gamma_hack)
 {
   g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
-
+  gamma_hack = FALSE;
   if (gamma_hack != filter->gamma_hack)
     {
-      filter->gamma_hack = gamma_hack;
+      filter->gamma_hack = FALSE; /*gamma_hack;*/
 
       gimp_drawable_filter_sync_gamma_hack (filter);
 
@@ -618,7 +618,7 @@ gimp_drawable_filter_sync_gamma_hack (GimpDrawableFilter *filter)
       cast_format =
         gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
                           gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format),
-                                               ! gimp_babl_format_get_linear (drawable_format)),
+                                               ! FALSE /*gimp_babl_format_get_linear (drawable_format)*/),
                           TRUE);
 
       gegl_node_set (filter->cast_before,

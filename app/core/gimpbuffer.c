@@ -236,7 +236,7 @@ gimp_buffer_get_new_preview (GimpViewable *viewable,
   else
     format = gimp_babl_format (gimp_babl_format_get_base_type (format),
                                gimp_babl_precision (GIMP_COMPONENT_TYPE_U8,
-                                                    gimp_babl_format_get_linear (format)),
+                                          FALSE /*gimp_babl_format_get_linear (format)*/),
                                babl_format_has_alpha (format));
 
   preview = gimp_temp_buf_new (width, height, format);

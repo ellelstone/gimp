@@ -529,11 +529,11 @@ gimp_babl_format_get_precision (const Babl *format)
   g_return_val_if_reached (-1);
 }
 
-gboolean
+/*gboolean
 gimp_babl_format_get_linear (const Babl *format)
 {
   return FALSE;
-}
+}*/
 
 GimpComponentType
 gimp_babl_component_type (GimpPrecision precision)
@@ -947,7 +947,7 @@ gimp_babl_print_pixel (const Babl *format,
         const Babl   *f;
 
         p = gimp_babl_precision (GIMP_COMPONENT_TYPE_FLOAT,
-                                 gimp_babl_format_get_linear (format));
+                                 FALSE /*gimp_babl_format_get_linear (format)*/);
 
         f = gimp_babl_format (gimp_babl_format_get_base_type (format),
                               p,

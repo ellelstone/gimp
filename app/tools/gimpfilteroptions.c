@@ -172,7 +172,7 @@ gimp_filter_options_set_property (GObject      *object,
       break;
 
     case PROP_GAMMA_HACK:
-      options->gamma_hack = g_value_get_boolean (value);
+      options->gamma_hack = FALSE; //g_value_get_boolean (value);
       break;
 
     case PROP_SETTINGS:
@@ -218,7 +218,7 @@ gimp_filter_options_get_property (GObject    *object,
       break;
 
     case PROP_GAMMA_HACK:
-      g_value_set_boolean (value, options->gamma_hack);
+      g_value_set_boolean (value, FALSE /*options->gamma_hack*/);
       break;
 
     case PROP_SETTINGS:

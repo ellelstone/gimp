@@ -1341,7 +1341,7 @@ gimp_drawable_get_linear (GimpDrawable *drawable)
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
-  return gimp_babl_format_get_linear (format);
+  return FALSE; //gimp_babl_format_get_linear (format);
 }
 
 gboolean

@@ -784,7 +784,7 @@ gimp_filter_tool_options_notify (GimpTool         *tool,
            filter_tool->filter)
     {
       gimp_drawable_filter_set_gamma_hack (filter_tool->filter,
-                                           filter_options->gamma_hack);
+                                           FALSE /*filter_options->gamma_hack*/);
     }
 }
 
