@@ -54,8 +54,8 @@ gimp_image_convert_precision (GimpImage     *image,
 {
   GimpColorProfile *old_profile;
   GimpColorProfile *new_profile = NULL;
-  const Babl       *old_format;
-  const Babl       *new_format;
+  //const Babl       *old_format;
+  //const Babl       *new_format;
   GList            *all_drawables;
   GList            *list;
   const gchar      *undo_desc    = NULL;
@@ -128,12 +128,12 @@ gimp_image_convert_precision (GimpImage     *image,
   gimp_image_undo_push_image_precision (image, NULL);
 
   old_profile = gimp_image_get_color_profile (image);
-  old_format  = gimp_image_get_layer_format (image, FALSE);
+  //old_format  = gimp_image_get_layer_format (image, FALSE);
 
   /*  Set the new precision  */
   g_object_set (image, "precision", precision, NULL);
   new_profile = old_profile;/*elle: prevents unwanted ICC profile conversion*/
-  new_format = gimp_image_get_layer_format (image, FALSE);
+  //new_format = gimp_image_get_layer_format (image, FALSE);
 
 /*  if (old_profile)
     {

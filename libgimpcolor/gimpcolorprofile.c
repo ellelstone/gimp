@@ -919,7 +919,7 @@ gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
   return FALSE;
 }
 
-static GimpColorProfile *
+/*static GimpColorProfile *
 gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
                                            gboolean          linear)
 {
@@ -956,7 +956,7 @@ gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
 
   if (linear)
     {
-      /* linear light */
+       linear light
       curve = cmsBuildGamma (NULL, 1.00);
 
       gimp_color_profile_set_tag (target_profile, cmsSigProfileDescriptionTag,
@@ -965,9 +965,9 @@ gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
   else
     {
       cmsFloat64Number srgb_parameters[5] =
-        { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
+        { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };*/
 
-      /* sRGB curve */
+      /* sRGB curve
       curve = cmsBuildParametricToneCurve (NULL, 4, srgb_parameters);
 
       gimp_color_profile_set_tag (target_profile, cmsSigProfileDescriptionTag,
@@ -1015,7 +1015,7 @@ gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
 
   if (model && g_str_has_prefix (model, "Generated from '"))
     {
-      /* don't add multiple "Generated from 'foo'" */
+      /* don't add multiple "Generated from 'foo'"
       new_model = g_strdup (model);
     }
   else
@@ -1038,7 +1038,7 @@ gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
   cmsCloseProfile (target_profile);
 
   return new_profile;
-}
+}*/
 
 /**
  * gimp_color_profile_new_srgb_trc_from_color_profile:
@@ -1052,13 +1052,13 @@ gimp_color_profile_new_from_color_profile (GimpColorProfile *profile,
  *
  * Since: 2.10
  **/
-GimpColorProfile *
+/*GimpColorProfile *
 gimp_color_profile_new_srgb_trc_from_color_profile (GimpColorProfile *profile)
 {
   g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (profile), NULL);
 
   return gimp_color_profile_new_from_color_profile (profile, FALSE);
-}
+}*/
 
 /**
  * gimp_color_profile_new_linear_from_color_profile:
@@ -1072,13 +1072,13 @@ gimp_color_profile_new_srgb_trc_from_color_profile (GimpColorProfile *profile)
  *
  * Since: 2.10
  **/
-GimpColorProfile *
+/*GimpColorProfile *
 gimp_color_profile_new_linear_from_color_profile (GimpColorProfile *profile)
 {
   g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (profile), NULL);
 
   return gimp_color_profile_new_from_color_profile (profile, TRUE);
-}
+}*/
 
 /**
  * gimp_color_profile_new_rgb_srgb:
