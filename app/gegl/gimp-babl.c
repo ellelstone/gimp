@@ -403,7 +403,7 @@ GimpColorProfile *
 gimp_babl_format_get_color_profile (const Babl *format)
 {
   static GimpColorProfile *srgb_profile        = NULL;
-  static GimpColorProfile *linear_rgb_profile  = NULL;
+  //static GimpColorProfile *linear_rgb_profile  = NULL;
   static GimpColorProfile *gray_profile        = NULL;
   static GimpColorProfile *linear_gray_profile = NULL;
 
@@ -436,7 +436,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
     }
   else
     {
-      if (gimp_babl_format_get_linear (format))
+      /*if (gimp_babl_format_get_linear (format))
         {
           if (! linear_rgb_profile)
             {
@@ -448,7 +448,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
           return linear_rgb_profile;
         }
       else
-        {
+        {*/
           if (! srgb_profile)
             {
               srgb_profile = gimp_color_profile_new_rgb_srgb ();
@@ -457,7 +457,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
             }
 
           return srgb_profile;
-        }
+        /*}*/
     }
 }
 

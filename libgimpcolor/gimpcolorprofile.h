@@ -65,7 +65,7 @@ struct _GimpColorProfileClass
 GType              gimp_color_profile_get_type              (void) G_GNUC_CONST;
 
 GimpColorProfile * gimp_color_profile_new_rgb_srgb          (void);
-GimpColorProfile * gimp_color_profile_new_rgb_srgb_linear   (void);
+//GimpColorProfile * gimp_color_profile_new_rgb_srgb_linear   (void);
 GimpColorProfile * gimp_color_profile_new_rgb_adobe         (void);
 
 GimpColorProfile * gimp_color_profile_new_d65_gray_srgb_trc (void);

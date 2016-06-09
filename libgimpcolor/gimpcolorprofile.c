@@ -1080,63 +1080,6 @@ gimp_color_profile_new_linear_from_color_profile (GimpColorProfile *profile)
   return gimp_color_profile_new_from_color_profile (profile, TRUE);
 }
 
-static cmsHPROFILE *
-gimp_color_profile_new_rgb_srgb_internal (void)
-{
-  cmsHPROFILE profile;
-
-  /* white point is D65 from the sRGB specs */
-  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
-
-  /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
-   * from the sRGB specs, modified to properly account for hexadecimal
-   * quantization during the profile making process.
-   */
-  cmsCIExyYTRIPLE primaries =
-    {
-      /* R { 0.6400, 0.3300, 1.0 }, */
-      /* G { 0.3000, 0.6000, 1.0 }, */
-      /* B { 0.1500, 0.0600, 1.0 }  */
-      /* R */ { 0.639998686, 0.330010138, 1.0 },
-      /* G */ { 0.300003784, 0.600003357, 1.0 },
-      /* B */ { 0.150002046, 0.059997204, 1.0 }
-    };
-
-  cmsFloat64Number srgb_parameters[5] =
-    { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
-
-  cmsToneCurve *curve[3];
-
-  /* sRGB curve */
-  curve[0] = curve[1] = curve[2] = cmsBuildParametricToneCurve (NULL, 4,
-                                                                srgb_parameters);
-
-  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
-
-  cmsFreeToneCurve (curve[0]);
-
-  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMP built-in sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMP");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
-                              "sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");
-
-  /* The following line produces a V2 profile with a point curve TRC.
-   * Profiles with point curve TRCs can't be used in LCMS2 unbounded
-   * mode ICC profile conversions. A V2 profile might be appropriate
-   * for embedding in sRGB images saved to disk, if the image is to be
-   * opened by an image editing application that doesn't understand V4
-   * profiles.
-   *
-   * cmsSetProfileVersion (srgb_profile, 2.1);
-   */
-
-  return profile;
-}
-
 /**
  * gimp_color_profile_new_rgb_srgb:
  *
@@ -1178,8 +1121,8 @@ gimp_color_profile_new_rgb_srgb (void)
 
   if (G_UNLIKELY (profile == NULL))
     {
-      cmsHPROFILE lcms_profile = gimp_color_profile_new_rgb_srgb_internal ();
-
+      cmsHPROFILE lcms_profile =
+        cmsOpenProfileFromFile( "/usr/share/color/icc/Rec2020-elle-V2-g10.icc", "r" );
       profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
 
       cmsCloseProfile (lcms_profile);
@@ -1188,49 +1131,6 @@ gimp_color_profile_new_rgb_srgb (void)
   data = gimp_color_profile_get_icc_profile (profile, &length);
 
   return gimp_color_profile_new_from_icc_profile (data, length, NULL);
-}
-
-static cmsHPROFILE
-gimp_color_profile_new_rgb_srgb_linear_internal (void)
-{
-  cmsHPROFILE profile;
-
-  /* white point is D65 from the sRGB specs */
-  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
-
-  /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
-   * from the sRGB specs, modified to properly account for hexadecimal
-   * quantization during the profile making process.
-   */
-  cmsCIExyYTRIPLE primaries =
-    {
-      /* R { 0.6400, 0.3300, 1.0 }, */
-      /* G { 0.3000, 0.6000, 1.0 }, */
-      /* B { 0.1500, 0.0600, 1.0 }  */
-      /* R */ { 0.639998686, 0.330010138, 1.0 },
-      /* G */ { 0.300003784, 0.600003357, 1.0 },
-      /* B */ { 0.150002046, 0.059997204, 1.0 }
-    };
-
-  cmsToneCurve *curve[3];
-
-  /* linear light */
-  curve[0] = curve[1] = curve[2] = cmsBuildGamma (NULL, 1.0);
-
-  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
-
-  cmsFreeToneCurve (curve[0]);
-
-  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMP built-in Linear sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMP");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
-                              "Linear sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");
-
-  return profile;
 }
 
 /**
@@ -1243,7 +1143,7 @@ gimp_color_profile_new_rgb_srgb_linear_internal (void)
  *
  * Since: 2.10
  **/
-GimpColorProfile *
+/*GimpColorProfile *
 gimp_color_profile_new_rgb_srgb_linear (void)
 {
   static GimpColorProfile *profile = NULL;
@@ -1253,8 +1153,8 @@ gimp_color_profile_new_rgb_srgb_linear (void)
 
   if (G_UNLIKELY (profile == NULL))
     {
-      cmsHPROFILE lcms_profile = gimp_color_profile_new_rgb_srgb_linear_internal ();
-
+      cmsHPROFILE lcms_profile =
+        cmsOpenProfileFromFile( "/usr/share/color/icc/Rec2020-elle-V2-g10.icc", "r" );
       profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
 
       cmsCloseProfile (lcms_profile);
@@ -1263,7 +1163,7 @@ gimp_color_profile_new_rgb_srgb_linear (void)
   data = gimp_color_profile_get_icc_profile (profile, &length);
 
   return gimp_color_profile_new_from_icc_profile (data, length, NULL);
-}
+}*/
 
 static cmsHPROFILE *
 gimp_color_profile_new_rgb_adobe_internal (void)
