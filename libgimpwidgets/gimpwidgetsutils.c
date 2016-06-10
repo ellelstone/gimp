@@ -352,6 +352,123 @@ gimp_get_monitor_at_pointer (GdkScreen **screen)
   return gdk_screen_get_monitor_at_point (*screen, x, y);
 }
 
+typedef void (* MonitorChangedCallback) (GtkWidget *, gpointer);
+
+typedef struct
+{
+  GtkWidget *widget;
+  gint       monitor;
+
+  MonitorChangedCallback callback;
+  gpointer               user_data;
+} TrackMonitorData;
+
+static gboolean
+track_monitor_configure_event (GtkWidget        *toplevel,
+                               GdkEvent         *event,
+                               TrackMonitorData *track_data)
+{
+  gint monitor = gimp_widget_get_monitor (toplevel);
+
+  if (monitor != track_data->monitor)
+    {
+      track_data->monitor = monitor;
+
+      track_data->callback (track_data->widget, track_data->user_data);
+    }
+
+  return FALSE;
+}
+
+static void
+track_monitor_hierarchy_changed (GtkWidget        *widget,
+                                 GtkWidget        *previous_toplevel,
+                                 TrackMonitorData *track_data)
+{
+  GtkWidget *toplevel;
+
+  if (previous_toplevel)
+    {
+      g_signal_handlers_disconnect_by_func (previous_toplevel,
+                                            track_monitor_configure_event,
+                                            track_data);
+    }
+
+  toplevel = gtk_widget_get_toplevel (widget);
+
+  if (GTK_IS_WINDOW (toplevel))
+    {
+      GClosure *closure;
+      gint      monitor;
+
+      closure = g_cclosure_new (G_CALLBACK (track_monitor_configure_event),
+                                track_data, NULL);
+      g_object_watch_closure (G_OBJECT (widget), closure);
+      g_signal_connect_closure (toplevel, "configure-event", closure, FALSE);
+
+      monitor = gimp_widget_get_monitor (toplevel);
+
+      if (monitor != track_data->monitor)
+        {
+          track_data->monitor = monitor;
+
+          track_data->callback (track_data->widget, track_data->user_data);
+        }
+    }
+}
+
+/**
+ * gimp_widget_track_monitor:
+ * @widget:                   a #GtkWidget
+ * @monitor_changed_callback: the callback when @widget's monitor changes
+ * @user_data:                data passed to @monitor_changed_callback
+ *
+ * This function behaves as if #GtkWidget had a signal
+ *
+ * GtkWidget::monitor_changed(GtkWidget *widget, gpointer user_data)
+ *
+ * That is emitted whenever @widget's toplevel window is moved from
+ * one monitor to another. This function automatically connects to
+ * the right toplevel #GtkWindow, even across moving @widget between
+ * toplevel windows.
+ *
+ * Note that this function tracks the toplevel, not @widget itself, so
+ * all a window's widgets are always considered to be on the same
+ * monitor. This is because this function is mainly used for fetching
+ * the new monitor's color profile, and it makes little sense to use
+ * different profiles for the widgets of one window.
+ *
+ * Since: 2.10
+ **/
+void
+gimp_widget_track_monitor (GtkWidget *widget,
+                           GCallback  monitor_changed_callback,
+                           gpointer   user_data)
+{
+  TrackMonitorData *track_data;
+  GtkWidget        *toplevel;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (monitor_changed_callback != NULL);
+
+  track_data = g_new0 (TrackMonitorData, 1);
+
+  track_data->widget    = widget;
+  track_data->callback  = (MonitorChangedCallback) monitor_changed_callback;
+  track_data->user_data = user_data;
+
+  g_object_weak_ref (G_OBJECT (widget), (GWeakNotify) g_free, track_data);
+
+  g_signal_connect (widget, "hierarchy-changed",
+                    G_CALLBACK (track_monitor_hierarchy_changed),
+                    track_data);
+
+  toplevel = gtk_widget_get_toplevel (widget);
+
+  if (GTK_IS_WINDOW (toplevel))
+    track_monitor_hierarchy_changed (widget, NULL, track_data);
+}
+
 GimpColorProfile *
 gimp_widget_get_color_profile (GtkWidget *widget)
 {
@@ -441,10 +558,10 @@ gimp_widget_get_color_profile (GtkWidget *widget)
         gchar  *path;
         gint32  len = 0;
 
-        GetICMProfile (hdc, &len, NULL);
+        GetICMProfile (hdc, (LPDWORD) &len, NULL);
         path = g_new (gchar, len);
 
-        if (GetICMProfile (hdc, &len, path))
+        if (GetICMProfile (hdc, (LPDWORD) &len, path))
           {
             GFile *file = g_file_new_for_path (path);
 
@@ -467,8 +584,9 @@ get_display_profile (GtkWidget       *widget,
 {
   GimpColorProfile *profile = NULL;
 
-  if (config->display_profile_from_gdk)
-    profile = gimp_widget_get_color_profile (widget);
+  if (gimp_color_config_get_display_profile_from_gdk (config))
+    /* get the toplevel's profile so all a window's colors look the same */
+    profile = gimp_widget_get_color_profile (gtk_widget_get_toplevel (widget));
 
   if (! profile)
     profile = gimp_color_config_get_display_color_profile (config, NULL);
@@ -479,35 +597,122 @@ get_display_profile (GtkWidget       *widget,
   return profile;
 }
 
-GimpColorTransform
-gimp_widget_get_color_transform (GtkWidget         *widget,
-                                 GimpColorConfig   *config,
-                                 GimpColorProfile  *src_profile,
-                                 const Babl       **src_format,
-                                 const Babl       **dest_format)
+typedef struct _TransformCache TransformCache;
+
+struct _TransformCache
 {
-  GimpColorTransform  transform     = NULL;
+  GimpColorTransform *transform;
+
+  GimpColorConfig    *config;
+  GimpColorProfile   *src_profile;
+  const Babl         *src_format;
+  GimpColorProfile   *dest_profile;
+  const Babl         *dest_format;
+  GimpColorProfile   *proof_profile;
+
+  gulong              notify_id;
+};
+
+static GList    *transform_caches = NULL;
+static gboolean  debug_cache      = FALSE;
+
+static gboolean
+profiles_equal (GimpColorProfile *profile1,
+                GimpColorProfile *profile2)
+{
+  return ((profile1 == NULL && profile2 == NULL) ||
+          (profile1 != NULL && profile2 != NULL &&
+           gimp_color_profile_is_equal (profile1, profile2)));
+}
+
+static TransformCache *
+transform_cache_get (GimpColorConfig  *config,
+                     GimpColorProfile *src_profile,
+                     const Babl       *src_format,
+                     GimpColorProfile *dest_profile,
+                     const Babl       *dest_format,
+                     GimpColorProfile *proof_profile)
+{
+  GList *list;
+
+  for (list = transform_caches; list; list = g_list_next (list))
+    {
+      TransformCache *cache = list->data;
+
+      if (config      == cache->config                        &&
+          src_format  == cache->src_format                    &&
+          dest_format == cache->dest_format                   &&
+          profiles_equal (src_profile,   cache->src_profile)  &&
+          profiles_equal (dest_profile,  cache->dest_profile) &&
+          profiles_equal (proof_profile, cache->proof_profile))
+        {
+          if (debug_cache)
+            g_printerr ("found cache %p\n", cache);
+
+          return cache;
+        }
+    }
+
+  return NULL;
+}
+
+static void
+transform_cache_config_notify (GObject          *config,
+                               const GParamSpec *pspec,
+                               TransformCache   *cache)
+{
+  transform_caches = g_list_remove (transform_caches, cache);
+
+  g_signal_handler_disconnect (config, cache->notify_id);
+
+  if (cache->transform)
+    g_object_unref (cache->transform);
+
+  g_object_unref (cache->src_profile);
+  g_object_unref (cache->dest_profile);
+
+  if (cache->proof_profile)
+    g_object_unref (cache->proof_profile);
+
+  g_free (cache);
+
+  if (debug_cache)
+    g_printerr ("deleted cache %p\n", cache);
+}
+
+GimpColorTransform *
+gimp_widget_get_color_transform (GtkWidget        *widget,
+                                 GimpColorConfig  *config,
+                                 GimpColorProfile *src_profile,
+                                 const Babl       *src_format,
+                                 const Babl       *dest_format)
+{
+  static gboolean     initialized   = FALSE;
   GimpColorProfile   *dest_profile  = NULL;
   GimpColorProfile   *proof_profile = NULL;
-  cmsHPROFILE         src_lcms;
-  cmsHPROFILE         dest_lcms;
-  cmsUInt32Number     lcms_src_format;
-  cmsUInt32Number     lcms_dest_format;
-  cmsUInt16Number     alarmCodes[cmsMAXCHANNELS] = { 0, };
+  TransformCache     *cache;
 
   g_return_val_if_fail (widget == NULL || GTK_IS_WIDGET (widget), NULL);
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (src_profile), NULL);
   g_return_val_if_fail (GIMP_IS_COLOR_CONFIG (config), NULL);
+  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (src_profile), NULL);
   g_return_val_if_fail (src_format != NULL, NULL);
   g_return_val_if_fail (dest_format != NULL, NULL);
 
-  switch (config->mode)
+  if (G_UNLIKELY (! initialized))
+    {
+      initialized = TRUE;
+
+      debug_cache = g_getenv ("GIMP_DEBUG_TRANSFORM_CACHE") != NULL;
+    }
+
+  switch (gimp_color_config_get_mode (config))
     {
     case GIMP_COLOR_MANAGEMENT_OFF:
       return NULL;
 
     case GIMP_COLOR_MANAGEMENT_SOFTPROOF:
-      proof_profile = gimp_color_config_get_printer_color_profile (config, NULL);
+      proof_profile = gimp_color_config_get_simulation_color_profile (config,
+                                                                      NULL);
       /*  fallthru  */
 
     case GIMP_COLOR_MANAGEMENT_DISPLAY:
@@ -515,29 +720,69 @@ gimp_widget_get_color_transform (GtkWidget         *widget,
       break;
     }
 
-  src_lcms  = gimp_color_profile_get_lcms_profile (src_profile);
-  dest_lcms = gimp_color_profile_get_lcms_profile (dest_profile);
+  cache = transform_cache_get (config,
+                               src_profile,
+                               src_format,
+                               dest_profile,
+                               dest_format,
+                               proof_profile);
 
-  *src_format  = gimp_color_profile_get_format (*src_format,  &lcms_src_format);
-  *dest_format = gimp_color_profile_get_format (*dest_format, &lcms_dest_format);
-
-  if (proof_profile)
+  if (cache)
     {
-      cmsHPROFILE     proof_lcms;
-      cmsUInt32Number softproof_flags = cmsFLAGS_SOFTPROOFING;
+      g_object_unref (dest_profile);
 
-      proof_lcms = gimp_color_profile_get_lcms_profile (proof_profile);
+      if (proof_profile)
+        g_object_unref (proof_profile);
 
-      if (config->simulation_use_black_point_compensation)
+      if (cache->transform)
+        return g_object_ref (cache->transform);
+
+      return NULL;
+    }
+
+  if (! proof_profile &&
+      gimp_color_profile_is_equal (src_profile, dest_profile))
+    {
+      g_object_unref (dest_profile);
+
+      return NULL;
+    }
+
+  cache = g_new0 (TransformCache, 1);
+
+  if (debug_cache)
+    g_printerr ("creating cache %p\n", cache);
+
+  cache->config        = g_object_ref (config);
+  cache->src_profile   = g_object_ref (src_profile);
+  cache->src_format    = src_format;
+  cache->dest_profile  = dest_profile;
+  cache->dest_format   = dest_format;
+  cache->proof_profile = proof_profile;
+
+  cache->notify_id =
+    g_signal_connect (cache->config, "notify",
+                      G_CALLBACK (transform_cache_config_notify),
+                      cache);
+
+  transform_caches = g_list_prepend (transform_caches, cache);
+
+  if (cache->proof_profile)
+    {
+      GimpColorTransformFlags flags = 0;
+
+      if (gimp_color_config_get_simulation_bpc (config))
+        flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
+
+      if (! gimp_color_config_get_simulation_optimize (config))
+        flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
+
+      if (gimp_color_config_get_simulation_gamut_check (config))
         {
-          softproof_flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
-        }
+          cmsUInt16Number alarmCodes[cmsMAXCHANNELS] = { 0, };
+          guchar          r, g, b;
 
-      if (config->simulation_gamut_check)
-        {
-          guchar r, g, b;
-
-          softproof_flags |= cmsFLAGS_GAMUTCHECK;
+          flags |= GIMP_COLOR_TRANSFORM_FLAGS_GAMUT_CHECK;
 
           gimp_rgb_get_uchar (&config->out_of_gamut_color, &r, &g, &b);
 
@@ -548,31 +793,37 @@ gimp_widget_get_color_transform (GtkWidget         *widget,
           cmsSetAlarmCodes (alarmCodes);
         }
 
-      transform = cmsCreateProofingTransform (src_lcms,  lcms_src_format,
-                                              dest_lcms, lcms_dest_format,
-                                              proof_lcms,
-                                              config->simulation_intent,
-                                              config->display_intent,
-                                              softproof_flags);
-
-      g_object_unref (proof_profile);
+      cache->transform =
+        gimp_color_transform_new_proofing (cache->src_profile,
+                                           cache->src_format,
+                                           cache->dest_profile,
+                                           cache->dest_format,
+                                           cache->proof_profile,
+                                           gimp_color_config_get_simulation_intent (config),
+                                           gimp_color_config_get_display_intent (config),
+                                           flags);
     }
-  else if (! gimp_color_profile_is_equal (src_profile, dest_profile))
+  else
     {
-      cmsUInt32Number display_flags = 0;
+      GimpColorTransformFlags flags = 0;
 
-      if (config->display_use_black_point_compensation)
-        {
-          display_flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
-        }
+      if (gimp_color_config_get_display_bpc (config))
+        flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
 
-      transform = cmsCreateTransform (src_lcms,  lcms_src_format,
-                                      dest_lcms, lcms_dest_format,
-                                      config->display_intent,
-                                      display_flags);
+      if (! gimp_color_config_get_display_optimize (config))
+        flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
+
+      cache->transform =
+        gimp_color_transform_new (cache->src_profile,
+                                  cache->src_format,
+                                  cache->dest_profile,
+                                  cache->dest_format,
+                                  gimp_color_config_get_display_intent (config),
+                                  flags);
     }
 
-  g_object_unref (dest_profile);
+  if (cache->transform)
+    return g_object_ref (cache->transform);
 
-  return transform;
+  return NULL;
 }

@@ -19,7 +19,10 @@ scalable_images = \
 	scalable/gimp-color-picker-gray.svg		\
 	scalable/gimp-color-picker-white.svg		\
 	scalable/gimp-color-pick-from-screen.svg	\
+	scalable/gimp-color-cmyk.svg			\
+	scalable/gimp-color-palette.svg			\
 	scalable/gimp-color-triangle.svg		\
+	scalable/gimp-color-water.svg			\
 	scalable/gimp-controller-keyboard.svg		\
 	scalable/gimp-controller-linux-input.svg	\
 	scalable/gimp-controller-midi.svg		\
@@ -252,24 +255,86 @@ vector24_images = \
 	24/gimp-channel-indexed.svg			\
 	24/gimp-channel-red.svg				\
 	24/gimp-channels.svg				\
+	24/gimp-char-picker.svg				\
 	24/gimp-colormap.svg				\
+	24/gimp-color-palette.svg			\
+	24/gimp-controller.svg				\
+	24/gimp-controller-keyboard.svg			\
+	24/gimp-controller-linux-input.svg		\
+	24/gimp-controller-midi.svg			\
+	24/gimp-controller-wheel.svg			\
+	24/gimp-cursor.svg				\
+	24/gimp-device-status.svg			\
+	24/gimp-display-filter.svg			\
+	24/gimp-display-filter-colorblind.svg		\
+	24/gimp-display-filter-contrast.svg		\
+	24/gimp-display-filter-gamma.svg		\
+	24/gimp-display-filter-lcms.svg			\
+	24/gimp-display-filter-proof.svg		\
+	24/gimp-dynamics.svg				\
 	24/gimp-error.svg				\
 	24/gimp-floating-selection.svg			\
 	24/gimp-gegl.svg				\
 	24/gimp-grid.svg				\
+	24/gimp-histogram.svg				\
 	24/gimp-image.svg				\
 	24/gimp-images.svg				\
+	24/gimp-info.svg				\
+	24/gimp-landscape.svg				\
 	24/gimp-layer.svg				\
 	24/gimp-layer-mask.svg				\
 	24/gimp-layers.svg				\
+	24/gimp-letter-spacing.svg			\
+	24/gimp-line-spacing.svg			\
 	24/gimp-move-to-screen.svg			\
 	24/gimp-navigation.svg				\
+	24/gimp-path.svg				\
+	24/gimp-paths.svg				\
+	24/gimp-portrait.svg				\
+	24/gimp-prefs-color-management.svg		\
+	24/gimp-prefs-controllers.svg			\
+	24/gimp-prefs-default-comment.svg		\
+	24/gimp-prefs-default-grid.svg			\
+	24/gimp-prefs-display.svg			\
+	24/gimp-prefs-folders.svg			\
+	24/gimp-prefs-folders-brushes.svg		\
+	24/gimp-prefs-folders-dynamics.svg		\
+	24/gimp-prefs-folders-environ.svg		\
+	24/gimp-prefs-folders-fonts.svg			\
+	24/gimp-prefs-folders-gradients.svg		\
+	24/gimp-prefs-folders-icon-themes.svg		\
+	24/gimp-prefs-folders-interp.svg		\
+	24/gimp-prefs-folders-modules.svg		\
+	24/gimp-prefs-folders-palettes.svg		\
+	24/gimp-prefs-folders-patterns.svg		\
+	24/gimp-prefs-folders-plug-ins.svg		\
+	24/gimp-prefs-folders-scripts.svg		\
+	24/gimp-prefs-folders-themes.svg		\
+	24/gimp-prefs-folders-tool-plug-ins.svg		\
+	24/gimp-prefs-folders-tool-presets.svg		\
+	24/gimp-prefs-folders-tools.svg			\
+	24/gimp-prefs-help-system.svg			\
+	24/gimp-prefs-icon-theme.svg			\
+	24/gimp-prefs-image-title.svg			\
+	24/gimp-prefs-image-windows.svg			\
+	24/gimp-prefs-input-devices.svg			\
+	24/gimp-prefs-interface.svg			\
+	24/gimp-prefs-new-image.svg			\
+	24/gimp-prefs-playground.svg			\
+	24/gimp-prefs-session.svg			\
+	24/gimp-prefs-system-resources.svg		\
+	24/gimp-prefs-theme.svg				\
+	24/gimp-prefs-toolbox.svg			\
+	24/gimp-prefs-tool-options.svg			\
+	24/gimp-prefs-window-management.svg		\
 	24/gimp-print-resolution.svg			\
 	24/gimp-question.svg				\
 	24/gimp-resize.svg				\
-	24/gimp-scale					\
+	24/gimp-sample-point.svg			\
+	24/gimp-scale.svg				\
 	24/gimp-selection.svg				\
 	24/gimp-symmetry.svg				\
+	24/gimp-template.svg				\
 	24/gimp-text-layer.svg				\
 	24/gimp-tool-airbrush.svg			\
 	24/gimp-tool-align.svg				\
@@ -309,8 +374,10 @@ vector24_images = \
 	24/gimp-tool-perspective.svg			\
 	24/gimp-tool-perspective-clone.svg		\
 	24/gimp-tool-posterize.svg			\
+	24/gimp-tool-preset.svg				\
 	24/gimp-tool-rect-select.svg			\
 	24/gimp-tool-rotate.svg				\
+	24/gimp-tools.svg				\
 	24/gimp-tool-scale.svg				\
 	24/gimp-tool-seamless-clone.svg			\
 	24/gimp-tool-shear.svg				\
@@ -321,8 +388,12 @@ vector24_images = \
 	24/gimp-tool-warp.svg				\
 	24/gimp-tool-zoom.svg				\
 	24/gimp-transparency.svg			\
+	24/gimp-undo-history.svg			\
+	24/gimp-user-manual.svg				\
+	24/gimp-video.svg				\
 	24/gimp-warning.svg				\
-	24/gimp-web.svg
+	24/gimp-web.svg					\
+	24/gimp-wilber.svg
 
 icons12_images = \
 	12/gimp-close.png			\
@@ -351,7 +422,10 @@ icons16_images = \
 	16/gimp-channel.png				\
 	16/gimp-channels.png				\
 	16/gimp-color-pick-from-screen.png		\
+	16/gimp-color-cmyk.png				\
+	16/gimp-color-palette.png			\
 	16/gimp-color-triangle.png			\
+	16/gimp-color-water.png				\
 	16/gimp-colormap.png				\
 	16/gimp-controller-keyboard.png			\
 	16/gimp-controller-linux-input.png		\
@@ -599,6 +673,7 @@ icons24_images = \
 	24/gimp-channel.png			\
 	24/gimp-channels.png			\
 	24/gimp-colormap.png			\
+	24/gimp-color-palette.png		\
 	24/gimp-controller-keyboard.png		\
 	24/gimp-controller-linux-input.png	\
 	24/gimp-controller-midi.png		\

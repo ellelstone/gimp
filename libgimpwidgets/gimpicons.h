@@ -93,6 +93,9 @@ G_BEGIN_DECLS
 #define GIMP_STOCK_COLOR_PICKER_GRAY        "gimp-color-picker-gray"
 #define GIMP_STOCK_COLOR_PICKER_WHITE       "gimp-color-picker-white"
 #define GIMP_STOCK_COLOR_TRIANGLE           "gimp-color-triangle"
+#define GIMP_STOCK_COLOR_CMYK               "gimp-color-cmyk"
+#define GIMP_STOCK_COLOR_WATER              "gimp-color-water"
+#define GIMP_STOCK_COLOR_PALETTE            "gimp-color-palette"
 #define GIMP_STOCK_COLOR_PICK_FROM_SCREEN   "gimp-color-pick-from-screen"
 
 #define GIMP_STOCK_CHAR_PICKER              "gimp-char-picker"
@@ -292,7 +295,7 @@ G_BEGIN_DECLS
 #define GIMP_STOCK_FONT                     GTK_STOCK_SELECT_FONT
 #define GIMP_STOCK_GRADIENT                 GIMP_STOCK_TOOL_BLEND
 #define GIMP_STOCK_MYPAINT_BRUSH            GIMP_STOCK_TOOL_MYPAINT_BRUSH
-#define GIMP_STOCK_PALETTE                  GTK_STOCK_SELECT_COLOR
+#define GIMP_STOCK_PALETTE                  GIMP_STOCK_COLOR_PALETTE
 #define GIMP_STOCK_PATTERN                  GIMP_STOCK_TOOL_BUCKET_FILL
 #define GIMP_STOCK_CONTROLLER_MOUSE         GIMP_STOCK_CURSOR
 #define GIMP_STOCK_CONVERT_PRECISION        GIMP_STOCK_CONVERT_RGB

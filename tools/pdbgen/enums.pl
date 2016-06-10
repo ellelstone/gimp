@@ -619,7 +619,7 @@ package Gimp::CodeGen::enums;
 	},
     GimpColorManagementMode =>
 	{ contig => 1,
-	  header => 'libgimpconfig/gimpcolorconfig-enums.h',
+	  header => 'libgimpconfig/gimpconfigenums.h',
 	  symbols => [ qw(GIMP_COLOR_MANAGEMENT_OFF
 			  GIMP_COLOR_MANAGEMENT_DISPLAY
 			  GIMP_COLOR_MANAGEMENT_SOFTPROOF) ],
@@ -629,7 +629,7 @@ package Gimp::CodeGen::enums;
 	},
     GimpColorRenderingIntent =>
 	{ contig => 1,
-	  header => 'libgimpconfig/gimpcolorconfig-enums.h',
+	  header => 'libgimpconfig/gimpconfigenums.h',
 	  symbols => [ qw(GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL
 			  GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC
 			  GIMP_COLOR_RENDERING_INTENT_SATURATION

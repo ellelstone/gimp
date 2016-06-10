@@ -46,13 +46,17 @@ void                 gimp_label_set_attributes       (GtkLabel          *label,
 gint                 gimp_widget_get_monitor         (GtkWidget         *widget);
 gint                 gimp_get_monitor_at_pointer     (GdkScreen        **screen);
 
+void                 gimp_widget_track_monitor       (GtkWidget         *widget,
+                                                      GCallback          monitor_changed_callback,
+                                                      gpointer           user_data);
+
 GimpColorProfile   * gimp_widget_get_color_profile   (GtkWidget         *widget);
 
-GimpColorTransform   gimp_widget_get_color_transform (GtkWidget         *widget,
+GimpColorTransform * gimp_widget_get_color_transform (GtkWidget         *widget,
                                                       GimpColorConfig   *config,
                                                       GimpColorProfile  *src_profile,
-                                                      const Babl       **src_format,
-                                                      const Babl       **dest_format);
+                                                      const Babl        *src_format,
+                                                      const Babl        *dest_format);
 
 
 G_END_DECLS

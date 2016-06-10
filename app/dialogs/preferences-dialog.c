@@ -1367,7 +1367,6 @@ prefs_dialog_new (Gimp       *gimp,
                                          "display-profile-from-gdk",
                                          _("_Try to use the system monitor "
                                            "profile"));
-
     gtk_table_attach_defaults (GTK_TABLE (table),
                                button, 1, 2, row, row + 1);
     gtk_widget_show (button);
@@ -1381,13 +1380,20 @@ prefs_dialog_new (Gimp       *gimp,
     button = gimp_prop_check_button_new (color_config,
                                          "display-use-black-point-compensation",
                                          _("Use _black point compensation"));
-
     gtk_table_attach_defaults (GTK_TABLE (table),
                                button, 1, 2, row, row + 1);
     gtk_widget_show (button);
+    row++;
 
-    /*  Print Simulation (Softproofing)  */
-    vbox2 = prefs_frame_new (_("Print Simulation (Softproofing)"),
+    prefs_boolean_combo_box_add (color_config,
+                                 "display-optimize",
+                                 _("Speed"),
+                                 _("Precision / Color Fidelity"),
+                                 _("_Optimize image display for:"),
+                                 GTK_TABLE (table), row++, size_group);
+
+    /*  Print Simulation (Soft-proofing)  */
+    vbox2 = prefs_frame_new (_("Soft-Proofing"),
                              GTK_CONTAINER (vbox),
                              FALSE);
 
@@ -1397,8 +1403,8 @@ prefs_dialog_new (Gimp       *gimp,
     prefs_profile_combo_box_add (color_config,
                                  "printer-profile",
                                  store,
-                                 _("Select Printer Color Profile"),
-                                 _("_Print simulation profile:"),
+                                 _("Select Soft-Proofing Color Profile"),
+                                 _("_Soft-proofing profile:"),
                                  GTK_TABLE (table), row++, size_group);
 
     prefs_enum_combo_box_add (color_config,
@@ -1409,11 +1415,17 @@ prefs_dialog_new (Gimp       *gimp,
     button = gimp_prop_check_button_new (color_config,
                                          "simulation-use-black-point-compensation",
                                          _("Use black _point compensation"));
-
     gtk_table_attach_defaults (GTK_TABLE (table),
                                button, 1, 2, row, row + 1);
     gtk_widget_show (button);
     row++;
+
+    prefs_boolean_combo_box_add (color_config,
+                                 "simulation-optimize",
+                                 _("Speed"),
+                                 _("Precision / Color Fidelity"),
+                                 _("O_ptimize soft-proofing for:"),
+                                 GTK_TABLE (table), row++, size_group);
 
     hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
     gtk_table_attach_defaults (GTK_TABLE (table), hbox, 1, 2, row, row + 1);
@@ -1689,9 +1701,12 @@ prefs_dialog_new (Gimp       *gimp,
   prefs_enum_combo_box_add (object, "layer-preview-size", 0, 0,
                             _("_Default layer & channel preview size:"),
                             GTK_TABLE (table), 0, size_group);
+  prefs_enum_combo_box_add (object, "undo-preview-size", 0, 0,
+                            _("_Undo preview size:"),
+                            GTK_TABLE (table), 1, size_group);
   prefs_enum_combo_box_add (object, "navigation-preview-size", 0, 0,
                             _("Na_vigation preview size:"),
-                            GTK_TABLE (table), 1, size_group);
+                            GTK_TABLE (table), 2, size_group);
 
   /* Keyboard Shortcuts */
   vbox2 = prefs_frame_new (_("Keyboard Shortcuts"),

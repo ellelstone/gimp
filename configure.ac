@@ -238,39 +238,41 @@ AM_MAINTAINER_MODE([enable])
 PKG_PROG_PKG_CONFIG(0.16)
 
 
-###########################
-# Check target architecture
-###########################
+#########################
+# Check host architecture
+#########################
 
-AC_MSG_CHECKING([for target architecture])
-case x"$target" in
-  xNONE | x)
-    target_or_host="$host" ;;
-  *)
-    target_or_host="$target" ;;
-esac
-AC_MSG_RESULT([$target_or_host])
+AC_CANONICAL_HOST
 
-case "$target_or_host" in
-  i*86-*-*)
+AC_MSG_CHECKING([for host type])
+AC_MSG_RESULT([$host])
+
+AC_MSG_CHECKING([for host processor])
+case "$host_cpu" in
+  i*86)
     have_x86=yes
     AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
+    AC_MSG_RESULT([x86])
     ;;
-  x86_64-*-*)
+  x86_64)
     have_x86=yes
     AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
     AC_DEFINE(ARCH_X86_64, 1, [Define to 1 if you are compiling for amd64.])
+    AC_MSG_RESULT([x86-64])
     ;;
-  ppc-*-* | powerpc-*)
+  ppc | powerpc)
     have_ppc=yes
     AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
+    AC_MSG_RESULT([PowerPC])
     ;;
-  ppc64-*-* | powerpc64-*)
+  ppc64 | powerpc64)
     have_ppc=yes
     AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
     AC_DEFINE(ARCH_PPC64, 1, [Define to 1 if you are compiling for PowerPC64.])
+    AC_MSG_RESULT([64-bit PowerPC])
     ;;
   *)
+    AC_MSG_RESULT([unknown])
     ;;
 esac
 
@@ -279,9 +281,9 @@ esac
 # Check for Win32
 #################
 
-AC_MSG_CHECKING([for some Win32 platform])
-case "$target_or_host" in
-  *-*-mingw* | *-*-cygwin*)
+AC_MSG_CHECKING([if compiling for Win32])
+case "$host_os" in
+  mingw* | cygwin*)
     platform_win32=yes
     ;;
   *)
@@ -291,25 +293,27 @@ esac
 AC_MSG_RESULT([$platform_win32])
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
-AC_MSG_CHECKING([for native Win32])
-case "$target_or_host" in
-  *-*-mingw*)
-    os_win32=yes
-    case "$host" in
-      x86_64-*-*)
-	;;
-      *)
-	WIN32_LARGE_ADDRESS_AWARE='-Wl,--large-address-aware'
-	;;
-    esac
-    PATHSEP=';'
-    ;;
-  *)
-    os_win32=no
-    PATHSEP=':'
-    ;;
-esac
-AC_MSG_RESULT([$os_win32])
+PATHSEP=':'
+os_win32=no
+if test "x$platform_win32" != xno; then
+  AC_MSG_CHECKING([if this is native Win32])
+  case "$host_os" in
+    mingw*)
+      os_win32=yes
+      case "$host_cpu" in
+        x86_64)
+        ;;
+        *)
+        WIN32_LARGE_ADDRESS_AWARE='-Wl,--large-address-aware'
+        ;;
+      esac
+      PATHSEP=';'
+      ;;
+    *)
+      ;;
+  esac
+  AC_MSG_RESULT([$os_win32])
+fi
 AC_SUBST(WIN32_LARGE_ADDRESS_AWARE)
 AC_SUBST(PATHSEP)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
@@ -326,6 +330,25 @@ AM_CONDITIONAL(MS_LIB_AVAILABLE, test "x$ms_librarian" = xyes)
 AM_CONDITIONAL(HAVE_WINDRES, test "x$WINDRES" != "x:")
 
 AC_SUBST(WINDRES)
+
+
+####################
+# Check for Mac OS X
+####################
+
+platform_osx=no
+AC_MSG_CHECKING([if compiling for Mac OS X])
+case "$host_os" in
+  darwin*)
+     AC_MSG_RESULT(yes)
+     AC_DEFINE(PLATFORM_OSX, 1, [define to 1 if compiling for Mac OS X])
+     platform_osx=yes
+     ;;
+  *)
+     ;;
+esac
+AC_MSG_RESULT($platform_osx)
+AM_CONDITIONAL(PLATFORM_OSX, test "x$platform_osx" = xyes)
 
 
 ###############
@@ -1000,8 +1023,8 @@ if test "x$enable_altivec" = xyes; then
     AC_MSG_RESULT(no)
     AC_MSG_WARN([The compiler does not support the AltiVec command set.])
   else
-    case "$target_or_host" in
-      *-*-darwin*)
+    case "$host_os" in
+      darwin*)
         can_use_altivec=yes
         AC_DEFINE(HAVE_ALTIVEC_SYSCTL, 1,
          [Define to 1 if the altivec runtime test should use a sysctl.])
@@ -1030,8 +1053,8 @@ fi
 ###################################
 
 # MacOS X has broken SysV shm
-case "$target_or_host" in
-  *-*-darwin* | *-*-rhapsody* | *-*-machten*)
+case "$host_os" in
+  darwin* | rhapsody* | machten*)
     shmdefault=posix
     ;;
   *)
@@ -1820,24 +1843,53 @@ if test "x$have_libgudev" = xyes; then
 fi
 
 
-####################
-# Check for sendmail
-####################
+##########################
+# Check for Email Settings
+##########################
 
-AC_ARG_WITH(sendmail,[  --with-sendmail=DIR     set sendmail command location])
+# The default behavior is that xdg-email is searched in the user PATH,
+# and email plugin is enabled if found.
+# Sendmail can be used instead of xdg-email, but must be explicitly
+# enabled with --with-sendmail.
 
-if test "x$with_sendmail" != "x"; then
-  sendmail_path=$with_sendmail
-else
-  sendmail_path=$PATH:/usr/sbin:/usr/lib
+have_email="no (xdg-email not found)"
+
+AC_ARG_WITH(sendmail,[  --with-sendmail[=DIR]     use sendmail instead of xdg-email])
+
+have_sendmail=no
+# Sendmail must be explicitely enabled to replace xdg-email implementation.
+if test "x$with_sendmail" != "x" && test "x$with_sendmail" != "xno"; then
+  if test "x$with_sendmail" = "xyes"; then
+      sendmail_path=$PATH:/usr/sbin:/usr/lib
+      AC_DEFINE_UNQUOTED(SENDMAIL, "",
+                         [The MTA used by the mail plug-in.])
+  else
+      sendmail_path=$with_sendmail
+      AC_DEFINE_UNQUOTED(SENDMAIL, "$with_sendmail",
+                         [The MTA used by the mail plug-in.])
+  fi
+
+  AC_PATH_PROG(SENDMAIL, sendmail, , $sendmail_path)
+  if test "x$SENDMAIL" != "x"; then
+    have_email="yes (sendmail)"
+  else
+    # Not having sendmail at runtime is not a blocker.
+    have_email="needs runtime dependency: sendmail"
+  fi
+  have_sendmail=yes
 fi
 
-AC_PATH_PROG(SENDMAIL, sendmail, , $sendmail_path)
-if test "x$SENDMAIL" != "x"; then
-  AC_DEFINE_UNQUOTED(SENDMAIL, "$SENDMAIL",
-	             [The MTA used by the mail plug-in.])
+if test "x$have_sendmail" = xno; then
+  AC_PATH_PROG(XDG_EMAIL, xdg-email)
+  if test "x$XDG_EMAIL" != "x"; then
+    have_email="yes (xdg-email)"
+  else
+    # Not having xdg-email at runtime is not a blocker.
+    # But let's inform the builder that for the feature to be available,
+    # xdg-email is a runtime dependency.
+    have_email="needs runtime dependency: xdg-email"
+  fi
 fi
-
 
 ################
 # Check for perl
@@ -1940,26 +1992,6 @@ if test "x$os_win32" = xno; then
 fi
 
 AC_SUBST(MAIL)
-
-
-####################
-# Check for Mac OS X
-####################
-
-platform_osx=no
-AC_MSG_CHECKING([if compiling for Mac OS X])
-case "$target_or_host" in
-  *-*-darwin*)
-     AC_MSG_RESULT(yes)
-     AC_DEFINE(PLATFORM_OSX, 1, [define to 1 if compiling for Mac OS X])
-     platform_osx=yes
-     ;;
-  *)
-     AC_MSG_RESULT(no)
-     ;;
-esac
-
-AM_CONDITIONAL(PLATFORM_OSX, test "x$platform_osx" = xyes)
 
 
 ###############################
@@ -2373,7 +2405,6 @@ plug-ins/script-fu/scripts/images/Makefile
 plug-ins/script-fu/tinyscheme/Makefile
 plug-ins/selection-to-path/Makefile
 plug-ins/twain/Makefile
-plug-ins/win-snap/Makefile
 plug-ins/common/Makefile
 modules/Makefile
 devel-docs/Makefile
@@ -2505,6 +2536,7 @@ Optional Plug-Ins:
   WMF:                 $have_libwmf
   X11 Mouse Cursor:    $have_xmc
   XPM:                 $have_libxpm
+  Email:               $have_email
 
 Optional Modules:
   ALSA (MIDI Input):   $have_alsa
@@ -2524,11 +2556,13 @@ $optional_deps]);
 else
   AC_MSG_ERROR([
 
+== Summary of optional features ==
+$optional_deps
+
+== Missing mandatory dependencies ==
+
 GIMP configuration failed.
 The following mandatory dependencies are missing:$required_deps
 
-See the file 'INSTALL' for more help
-
-== Additional information (options) ==
-$optional_deps]);
+See the file 'INSTALL' for more help.]);
 fi

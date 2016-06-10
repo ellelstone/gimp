@@ -25,7 +25,6 @@ EXPORTS
 	gimp_color_managed_get_icc_profile
 	gimp_color_managed_interface_get_type
 	gimp_color_managed_profile_changed
-	gimp_color_profile_get_colorants
 	gimp_color_profile_get_copyright
 	gimp_color_profile_get_description
 	gimp_color_profile_get_format
@@ -53,6 +52,12 @@ EXPORTS
 	gimp_color_profile_new_rgb_srgb_linear
 	gimp_color_profile_new_srgb_trc_from_color_profile
 	gimp_color_profile_save_to_file
+	gimp_color_transform_can_gegl_copy
+	gimp_color_transform_get_type
+	gimp_color_transform_new
+	gimp_color_transform_new_proofing
+	gimp_color_transform_process_buffer
+	gimp_color_transform_process_pixels
 	gimp_get_Y
 	gimp_hsl_get_type
 	gimp_hsl_set
@@ -81,6 +86,8 @@ EXPORTS
 	gimp_rgb_get_pixel
 	gimp_rgb_get_type
 	gimp_rgb_get_uchar
+	gimp_rgb_intensity
+	gimp_rgb_intensity_uchar
 	gimp_rgb_list_names
 	gimp_rgb_luminance
 	gimp_rgb_luminance_uchar

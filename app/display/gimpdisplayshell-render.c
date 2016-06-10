@@ -33,9 +33,7 @@
 #include "core/gimpdrawable.h"
 #include "core/gimpimage.h"
 #include "core/gimppickable.h"
-#ifdef USE_NODE_BLIT
 #include "core/gimpprojectable.h"
-#endif
 
 #include "gimpdisplay.h"
 #include "gimpdisplayshell.h"
@@ -204,7 +202,7 @@ gimp_display_shell_render (GimpDisplayShell *shell,
                            GEGL_RECTANGLE (scaled_x, scaled_y,
                                            scaled_width, scaled_height),
                            buffer_scale,
-                           shell->profile_src_format,
+                           gimp_projectable_get_format (GIMP_PROJECTABLE (image)),
                            shell->profile_data, shell->profile_stride,
                            GEGL_ABYSS_CLAMP);
 #else
@@ -212,7 +210,7 @@ gimp_display_shell_render (GimpDisplayShell *shell,
                           buffer_scale,
                           GEGL_RECTANGLE (scaled_x, scaled_y,
                                           scaled_width, scaled_height),
-                          shell->profile_src_format,
+                          gimp_projectable_get_format (GIMP_PROJECTABLE (image)),
                           shell->profile_data, shell->profile_stride,
                           GEGL_BLIT_CACHE);
 #endif
@@ -222,30 +220,30 @@ gimp_display_shell_render (GimpDisplayShell *shell,
               /*  if there are filters, convert the pixels from the
                *  profile_buffer to the filter_buffer
                */
-              gimp_display_shell_profile_convert_buffer (shell,
-                                                         shell->profile_buffer,
-                                                         GEGL_RECTANGLE (0, 0,
-                                                                         scaled_width,
-                                                                         scaled_height),
-                                                         shell->filter_buffer,
-                                                         GEGL_RECTANGLE (0, 0,
-                                                                         scaled_width,
-                                                                         scaled_height));
+              gimp_color_transform_process_buffer (shell->profile_transform,
+                                                   shell->profile_buffer,
+                                                   GEGL_RECTANGLE (0, 0,
+                                                                   scaled_width,
+                                                                   scaled_height),
+                                                   shell->filter_buffer,
+                                                   GEGL_RECTANGLE (0, 0,
+                                                                   scaled_width,
+                                                                   scaled_height));
             }
           else
             {
               /*  otherwise, convert the profile_buffer directly into
                *  the cairo_buffer
                */
-              gimp_display_shell_profile_convert_buffer (shell,
-                                                         shell->profile_buffer,
-                                                         GEGL_RECTANGLE (0, 0,
-                                                                         scaled_width,
-                                                                         scaled_height),
-                                                         cairo_buffer,
-                                                         GEGL_RECTANGLE (0, 0,
-                                                                         scaled_width,
-                                                                         scaled_height));
+              gimp_color_transform_process_buffer (shell->profile_transform,
+                                                   shell->profile_buffer,
+                                                   GEGL_RECTANGLE (0, 0,
+                                                                   scaled_width,
+                                                                   scaled_height),
+                                                   cairo_buffer,
+                                                   GEGL_RECTANGLE (0, 0,
+                                                                   scaled_width,
+                                                                   scaled_height));
             }
         }
       else

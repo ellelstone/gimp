@@ -156,7 +156,12 @@ void   gimp_view_renderer_render_pixbuf          (GimpViewRenderer *renderer,
 void   gimp_view_renderer_render_icon            (GimpViewRenderer *renderer,
                                                   GtkWidget        *widget,
                                                   const gchar      *icon_name);
-
+GimpColorTransform *
+       gimp_view_renderer_get_color_transform    (GimpViewRenderer *renderer,
+                                                  GtkWidget        *widget,
+                                                  const Babl       *src_format,
+                                                  const Babl       *dest_format);
+void   gimp_view_renderer_free_color_transform   (GimpViewRenderer *renderer);
 
 
 #endif /* __GIMP_VIEW_RENDERER_H__ */

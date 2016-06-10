@@ -62,7 +62,7 @@
 #include "gimpimage-undo-push.h"
 #include "gimpitemtree.h"
 #include "gimplayer.h"
-#include "gimplayer-floating-sel.h"
+#include "gimplayer-floating-selection.h"
 #include "gimplayermask.h"
 #include "gimpmarshal.h"
 #include "gimpparasitelist.h"
@@ -204,6 +204,14 @@ static gboolean     gimp_image_get_pixel_at      (GimpPickable      *pickable,
 static gdouble      gimp_image_get_opacity_at    (GimpPickable      *pickable,
                                                   gint               x,
                                                   gint               y);
+static void         gimp_image_pixel_to_srgb     (GimpPickable      *pickable,
+                                                  const Babl        *format,
+                                                  gpointer           pixel,
+                                                  GimpRGB           *color);
+static void         gimp_image_srgb_to_pixel     (GimpPickable      *pickable,
+                                                  const GimpRGB     *color,
+                                                  const Babl        *format,
+                                                  gpointer           pixel);
 
 static void     gimp_image_mask_update           (GimpDrawable      *drawable,
                                                   gint               x,
@@ -668,6 +676,8 @@ gimp_pickable_iface_init (GimpPickableInterface *iface)
   iface->get_buffer            = gimp_image_get_buffer;
   iface->get_pixel_at          = gimp_image_get_pixel_at;
   iface->get_opacity_at        = gimp_image_get_opacity_at;
+  iface->pixel_to_srgb         = gimp_image_pixel_to_srgb;
+  iface->srgb_to_pixel         = gimp_image_srgb_to_pixel;
 }
 
 static void
@@ -836,10 +846,6 @@ gimp_image_constructed (GObject *object)
                            private->layers->container, G_CONNECT_SWAPPED);
   g_signal_connect_object (config, "notify::layer-previews",
                            G_CALLBACK (gimp_viewable_size_changed),
-                           image, G_CONNECT_SWAPPED);
-
-  g_signal_connect_object (config->color_management, "notify",
-                           G_CALLBACK (gimp_color_managed_profile_changed),
                            image, G_CONNECT_SWAPPED);
 
   gimp_container_add (image->gimp->images, GIMP_OBJECT (image));
@@ -1570,6 +1576,26 @@ gimp_image_get_opacity_at (GimpPickable *pickable,
 
   return gimp_pickable_get_opacity_at (GIMP_PICKABLE (private->projection),
                                        x, y);
+}
+
+static void
+gimp_image_pixel_to_srgb (GimpPickable *pickable,
+                          const Babl   *format,
+                          gpointer      pixel,
+                          GimpRGB      *color)
+{
+  gimp_image_color_profile_pixel_to_srgb (GIMP_IMAGE (pickable),
+                                          format, pixel, color);
+}
+
+static void
+gimp_image_srgb_to_pixel (GimpPickable  *pickable,
+                          const GimpRGB *color,
+                          const Babl    *format,
+                          gpointer       pixel)
+{
+  gimp_image_color_profile_srgb_to_pixel (GIMP_IMAGE (pickable),
+                                          color, format, pixel);
 }
 
 static GeglNode *
@@ -3381,6 +3407,25 @@ gimp_image_parasite_validate (GimpImage           *image,
   if (strcmp (name, GIMP_ICC_PROFILE_PARASITE_NAME) == 0)
     {
       return gimp_image_validate_icc_parasite (image, parasite, NULL, error);
+    }
+  else if (strcmp (name, "gimp-comment") == 0)
+    {
+      const gchar *data   = gimp_parasite_data (parasite);
+      gssize       length = gimp_parasite_data_size (parasite);
+      gboolean     valid;
+
+      if (data[length - 1] == '\0')
+        valid = g_utf8_validate (data, -1, NULL);
+      else
+        valid = g_utf8_validate (data, length, NULL);
+
+      if (! valid)
+        {
+          g_set_error (error, GIMP_ERROR, GIMP_FAILED,
+                       _("'gimp-comment' parasite validation failed: "
+                         "comment contains invalid UTF-8"));
+          return FALSE;
+        }
     }
 
   return TRUE;

@@ -17,8 +17,6 @@
 
 #include "config.h"
 
-#include <lcms2.h>
-
 #include <gegl.h>
 #include <gtk/gtk.h>
 
@@ -67,9 +65,12 @@ gimp_display_shell_profile_init (GimpDisplayShell *shell)
 
   shell->color_config = gimp_config_duplicate (GIMP_CONFIG (color_config));
 
-  g_signal_connect (shell->color_config, "notify",
-                    G_CALLBACK (gimp_display_shell_color_config_notify),
-                    shell);
+  /* use after so we are called after the profile cache is invalidated
+   * in gimp_widget_get_color_transform()
+   */
+  g_signal_connect_after (shell->color_config, "notify",
+                          G_CALLBACK (gimp_display_shell_color_config_notify),
+                          shell);
 }
 
 void
@@ -129,16 +130,13 @@ gimp_display_shell_profile_update (GimpDisplayShell *shell)
     gimp_widget_get_color_transform (gtk_widget_get_toplevel (GTK_WIDGET (shell)),
                                      gimp_display_shell_get_color_config (shell),
                                      src_profile,
-                                     &src_format,
-                                     &dest_format);
+                                     src_format,
+                                     dest_format);
 
   if (shell->profile_transform)
     {
       gint w = GIMP_DISPLAY_RENDER_BUF_WIDTH  * GIMP_DISPLAY_RENDER_MAX_SCALE;
       gint h = GIMP_DISPLAY_RENDER_BUF_HEIGHT * GIMP_DISPLAY_RENDER_MAX_SCALE;
-
-      shell->profile_src_format  = src_format;
-      shell->profile_dest_format = dest_format;
 
       shell->profile_data =
         gegl_malloc (w * h * babl_format_get_bytes_per_pixel (src_format));
@@ -159,9 +157,7 @@ gimp_display_shell_profile_update (GimpDisplayShell *shell)
 gboolean
 gimp_display_shell_profile_can_convert_to_u8 (GimpDisplayShell *shell)
 {
-  GimpImage *image;
-
-  image = gimp_display_get_image (shell->display);
+  GimpImage *image = gimp_display_get_image (shell->display);
 
   if (image)
     {
@@ -185,43 +181,6 @@ gimp_display_shell_profile_can_convert_to_u8 (GimpDisplayShell *shell)
   return FALSE;
 }
 
-void
-gimp_display_shell_profile_convert_buffer (GimpDisplayShell *shell,
-                                           GeglBuffer       *src_buffer,
-                                           GeglRectangle    *src_area,
-                                           GeglBuffer       *dest_buffer,
-                                           GeglRectangle    *dest_area)
-{
-  GeglBufferIterator *iter;
-  const Babl         *fish;
-
-  if (! shell->profile_transform)
-    return;
-
-  iter = gegl_buffer_iterator_new (src_buffer, src_area, 0,
-                                   shell->profile_src_format,
-                                   GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
-
-  gegl_buffer_iterator_add (iter, dest_buffer, dest_area, 0,
-                            shell->profile_dest_format,
-                            GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
-
-  fish = babl_fish (shell->profile_src_format,
-                    shell->profile_dest_format);
-
-  while (gegl_buffer_iterator_next (iter))
-    {
-      gpointer src_data  = iter->data[0];
-      gpointer dest_data = iter->data[1];
-
-      babl_process (fish, src_data, dest_data, iter->length);
-
-      cmsDoTransform (shell->profile_transform,
-                      src_data, dest_data,
-                      iter->length);
-    }
-}
-
 
 /*  private functions  */
 
@@ -230,10 +189,8 @@ gimp_display_shell_profile_free (GimpDisplayShell *shell)
 {
   if (shell->profile_transform)
     {
-      cmsDeleteTransform (shell->profile_transform);
-      shell->profile_transform   = NULL;
-      shell->profile_src_format  = NULL;
-      shell->profile_dest_format = NULL;
+      g_object_unref (shell->profile_transform);
+      shell->profile_transform = NULL;
     }
 
   if (shell->profile_buffer)
@@ -257,10 +214,9 @@ gimp_display_shell_color_config_notify (GimpColorConfig  *config,
       ! strcmp (pspec->name, "simulation-use-black-point-compensation") ||
       ! strcmp (pspec->name, "simulation-gamut-check"))
     {
-      GimpColorRenderingIntent intent  = GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL;
-      gboolean                 managed = TRUE;
-      gboolean                 bpc     = TRUE;
-      const gchar             *action  = NULL;
+      gboolean     managed   = FALSE;
+      gboolean     softproof = FALSE;
+      const gchar *action    = NULL;
 
 #define SET_SENSITIVE(action, sensitive) \
       gimp_display_shell_set_action_sensitive (shell, action, sensitive);
@@ -268,65 +224,87 @@ gimp_display_shell_color_config_notify (GimpColorConfig  *config,
 #define SET_ACTIVE(action, active) \
       gimp_display_shell_set_action_active (shell, action, active);
 
-      switch (config->mode)
+      switch (gimp_color_config_get_mode (config))
         {
         case GIMP_COLOR_MANAGEMENT_OFF:
-          action  = "view-color-management-mode-off";
-          managed = FALSE;
           break;
 
         case GIMP_COLOR_MANAGEMENT_DISPLAY:
-          action = "view-color-management-mode-display";
-          intent = config->display_intent;
-          bpc    = config->display_use_black_point_compensation;
+          managed = TRUE;
           break;
 
         case GIMP_COLOR_MANAGEMENT_SOFTPROOF:
-          action = "view-color-management-mode-softproof";
-          intent = config->simulation_intent;
-          bpc    = config->simulation_use_black_point_compensation;
+          managed   = TRUE;
+          softproof = TRUE;
           break;
         }
 
-      SET_ACTIVE (action, TRUE);
+      SET_ACTIVE ("view-color-management-enable",    managed);
+      SET_ACTIVE ("view-color-management-softproof", softproof);
 
-      switch (intent)
+      switch (gimp_color_config_get_display_intent (config))
         {
         case GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL:
-          action = "view-color-management-intent-perceptual";
+          action = "view-display-intent-perceptual";
           break;
 
         case GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC:
-          action = "view-color-management-intent-relative-colorimetric";
+          action = "view-display-intent-relative-colorimetric";
           break;
 
         case GIMP_COLOR_RENDERING_INTENT_SATURATION:
-          action = "view-color-management-intent-saturation";
+          action = "view-display-intent-saturation";
           break;
 
         case GIMP_COLOR_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC:
-          action = "view-color-management-intent-absolute-colorimetric";
+          action = "view-display-intent-absolute-colorimetric";
           break;
         }
 
-      SET_SENSITIVE ("view-color-management-intent-perceptual",
-                     managed);
-      SET_SENSITIVE ("view-color-management-intent-relative-colorimetric",
-                     managed);
-      SET_SENSITIVE ("view-color-management-intent-saturation",
-                     managed);
-      SET_SENSITIVE ("view-color-management-intent-absolute-colorimetric",
-                     managed);
+      SET_SENSITIVE ("view-display-intent-perceptual",            managed);
+      SET_SENSITIVE ("view-display-intent-relative-colorimetric", managed);
+      SET_SENSITIVE ("view-display-intent-saturation",            managed);
+      SET_SENSITIVE ("view-display-intent-absolute-colorimetric", managed);
 
       SET_ACTIVE (action, TRUE);
 
-      SET_SENSITIVE ("view-color-management-black-point-compensation", managed);
-      SET_ACTIVE    ("view-color-management-black-point-compensation", bpc);
+      SET_SENSITIVE ("view-display-black-point-compensation", managed);
+      SET_ACTIVE    ("view-display-black-point-compensation",
+                     gimp_color_config_get_display_bpc (config));
 
-      SET_SENSITIVE ("view-color-management-gamut-check",
-                     config->mode == GIMP_COLOR_MANAGEMENT_SOFTPROOF);
-      SET_ACTIVE    ("view-color-management-gamut-check",
-                     config->simulation_gamut_check);
+      switch (gimp_color_config_get_simulation_intent (config))
+        {
+        case GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL:
+          action = "view-softproof-intent-perceptual";
+          break;
+
+        case GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC:
+          action = "view-softproof-intent-relative-colorimetric";
+          break;
+
+        case GIMP_COLOR_RENDERING_INTENT_SATURATION:
+          action = "view-softproof-intent-saturation";
+          break;
+
+        case GIMP_COLOR_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC:
+          action = "view-softproof-intent-absolute-colorimetric";
+          break;
+        }
+
+      SET_SENSITIVE ("view-softproof-intent-perceptual",            softproof);
+      SET_SENSITIVE ("view-softproof-intent-relative-colorimetric", softproof);
+      SET_SENSITIVE ("view-softproof-intent-saturation",            softproof);
+      SET_SENSITIVE ("view-softproof-intent-absolute-colorimetric", softproof);
+
+      SET_ACTIVE (action, TRUE);
+
+      SET_SENSITIVE ("view-softproof-black-point-compensation", softproof);
+      SET_ACTIVE    ("view-softproof-black-point-compensation",
+                     gimp_color_config_get_simulation_bpc (config));
+
+      SET_SENSITIVE ("view-softproof-gamut-check", softproof);
+      SET_ACTIVE    ("view-softproof-gamut-check",
+                     gimp_color_config_get_simulation_gamut_check (config));
     }
 
   gimp_color_managed_profile_changed (GIMP_COLOR_MANAGED (shell));

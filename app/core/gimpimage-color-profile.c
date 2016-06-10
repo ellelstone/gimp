@@ -21,7 +21,6 @@
 #include "config.h"
 
 #include <string.h>
-#include <lcms2.h>
 
 #include <cairo.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
@@ -449,10 +448,14 @@ gimp_image_import_color_profile (GimpImage    *image,
   if (gimp_image_get_is_color_managed (image) &&
       gimp_image_get_color_profile (image))
     {
-      GimpColorProfilePolicy  policy;
-      GimpColorProfile       *dest_profile = NULL;
+      GimpColorProfilePolicy     policy;
+      GimpColorProfile          *dest_profile = NULL;
+      GimpColorRenderingIntent   intent;
+      gboolean                   bpc;
 
       policy = image->gimp->config->color_profile_policy;
+      intent = GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC;
+      bpc    = TRUE;
 
       if (policy == GIMP_COLOR_PROFILE_POLICY_ASK)
         {
@@ -461,7 +464,9 @@ gimp_image_import_color_profile (GimpImage    *image,
               gboolean dont_ask = FALSE;
 
               policy = gimp_query_profile_policy (image->gimp, image, context,
-                                                  &dest_profile, &dont_ask);
+                                                  &dest_profile,
+                                                  &intent, &bpc,
+                                                  &dont_ask);
 
               if (dont_ask)
                 {
@@ -478,21 +483,6 @@ gimp_image_import_color_profile (GimpImage    *image,
 
       if (policy == GIMP_COLOR_PROFILE_POLICY_CONVERT)
         {
-          GimpColorConfig           *config;
-          GimpColorRenderingIntent   intent;
-          gboolean                   bpc;
-
-          config = image->gimp->config->color_management;
-
-          if (! dest_profile)
-            {
-              dest_profile = gimp_image_get_builtin_color_profile (image);
-              g_object_ref (dest_profile);
-            }
-
-          intent = config->display_intent;
-          bpc    = (intent == GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC);
-
           gimp_image_convert_color_profile (image, dest_profile,
                                             intent, bpc,
                                             progress, NULL);
@@ -502,110 +492,62 @@ gimp_image_import_color_profile (GimpImage    *image,
     }
 }
 
-GimpColorTransform
-gimp_image_get_color_transform_to_srgb_u8 (GimpImage   *image,
-                                           const Babl **pixel_format,
-                                           const Babl **srgb_u8_format)
+GimpColorTransform *
+gimp_image_get_color_transform_to_srgb_u8 (GimpImage *image)
 {
   GimpImagePrivate *private;
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (pixel_format != NULL, NULL);
-  g_return_val_if_fail (srgb_u8_format != NULL, NULL);
 
   private = GIMP_IMAGE_GET_PRIVATE (image);
 
   if (private->is_color_managed)
-    {
-      *pixel_format   = private->transform_layer_format;
-      *srgb_u8_format = private->transform_srgb_u8_format;
-
-      return private->transform_to_srgb_u8;
-    }
-
-  *pixel_format   = NULL;
-  *srgb_u8_format = NULL;
+    return private->transform_to_srgb_u8;
 
   return NULL;
 }
 
-GimpColorTransform
-gimp_image_get_color_transform_from_srgb_u8 (GimpImage   *image,
-                                             const Babl **pixel_format,
-                                             const Babl **srgb_u8_format)
+GimpColorTransform *
+gimp_image_get_color_transform_from_srgb_u8 (GimpImage *image)
 {
   GimpImagePrivate *private;
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (pixel_format != NULL, NULL);
-  g_return_val_if_fail (srgb_u8_format != NULL, NULL);
 
   private = GIMP_IMAGE_GET_PRIVATE (image);
 
   if (private->is_color_managed)
-    {
-      *pixel_format   = private->transform_layer_format;
-      *srgb_u8_format = private->transform_srgb_u8_format;
-
-      return private->transform_from_srgb_u8;
-    }
-
-  *pixel_format   = NULL;
-  *srgb_u8_format = NULL;
+    return private->transform_from_srgb_u8;
 
   return NULL;
 }
 
-GimpColorTransform
-gimp_image_get_color_transform_to_srgb_double (GimpImage   *image,
-                                               const Babl **pixel_format,
-                                               const Babl **srgb_double_format)
+GimpColorTransform *
+gimp_image_get_color_transform_to_srgb_double (GimpImage *image)
 {
   GimpImagePrivate *private;
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (pixel_format != NULL, NULL);
-  g_return_val_if_fail (srgb_double_format != NULL, NULL);
 
   private = GIMP_IMAGE_GET_PRIVATE (image);
 
   if (private->is_color_managed)
-    {
-      *pixel_format       = private->transform_layer_format;
-      *srgb_double_format = private->transform_srgb_double_format;
-
-      return private->transform_to_srgb_double;
-    }
-
-  *pixel_format       = NULL;
-  *srgb_double_format = NULL;
+    return private->transform_to_srgb_double;
 
   return NULL;
 }
 
-GimpColorTransform
-gimp_image_get_color_transform_from_srgb_double (GimpImage   *image,
-                                                 const Babl **pixel_format,
-                                                 const Babl **srgb_double_format)
+GimpColorTransform *
+gimp_image_get_color_transform_from_srgb_double (GimpImage *image)
 {
   GimpImagePrivate *private;
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (pixel_format != NULL, NULL);
-  g_return_val_if_fail (srgb_double_format != NULL, NULL);
 
   private = GIMP_IMAGE_GET_PRIVATE (image);
 
   if (private->is_color_managed)
-    {
-      *pixel_format       = private->transform_layer_format;
-      *srgb_double_format = private->transform_srgb_double_format;
-
-      return private->transform_from_srgb_double;
-    }
-
-  *pixel_format       = NULL;
-  *srgb_double_format = NULL;
+    return private->transform_from_srgb_double;
 
   return NULL;
 }
@@ -621,34 +563,43 @@ gimp_image_color_profile_pixel_to_srgb (GimpImage  *image,
   if (private->is_color_managed &&
       private->transform_to_srgb_double)
     {
-      guchar srgb_pixel[32];
-
-      /* for the alpha channel */
-      gimp_rgba_set_pixel (color, pixel_format, pixel);
-
-      if (pixel_format == private->transform_layer_format)
-        {
-          cmsDoTransform (private->transform_to_srgb_double,
-                          pixel, srgb_pixel, 1);
-        }
-      else
-        {
-          guchar src_pixel[32];
-
-          babl_process (babl_fish (pixel_format,
-                                   private->transform_layer_format),
-                        pixel, src_pixel, 1);
-
-          cmsDoTransform (private->transform_to_srgb_double,
-                          src_pixel, srgb_pixel, 1);
-        }
-
-      gimp_rgb_set_pixel (color, private->transform_srgb_double_format,
-                          srgb_pixel);
+      gimp_color_transform_process_pixels (private->transform_to_srgb_double,
+                                           pixel_format,
+                                           pixel,
+                                           babl_format ("R'G'B'A double"),
+                                           color,
+                                           1);
     }
   else
     {
       gimp_rgba_set_pixel (color, pixel_format, pixel);
+    }
+}
+
+void
+gimp_image_color_profile_srgb_to_pixel (GimpImage     *image,
+                                        const GimpRGB *color,
+                                        const Babl    *pixel_format,
+                                        gpointer       pixel)
+{
+  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+
+  if (private->is_color_managed &&
+      private->transform_from_srgb_double)
+    {
+      /* for the alpha channel */
+      gimp_rgba_get_pixel (color, pixel_format, pixel);
+
+      gimp_color_transform_process_pixels (private->transform_from_srgb_double,
+                                           babl_format ("R'G'B'A double"),
+                                           color,
+                                           pixel_format,
+                                           pixel,
+                                           1);
+    }
+  else
+    {
+      gimp_rgba_get_pixel (color, pixel_format, pixel);
     }
 }
 
@@ -668,31 +619,27 @@ _gimp_image_free_color_profile (GimpImage *image)
 
   if (private->transform_to_srgb_u8)
     {
-      cmsDeleteTransform (private->transform_to_srgb_u8);
+      g_object_unref (private->transform_to_srgb_u8);
       private->transform_to_srgb_u8 = NULL;
     }
 
   if (private->transform_from_srgb_u8)
     {
-      cmsDeleteTransform (private->transform_from_srgb_u8);
+      g_object_unref (private->transform_from_srgb_u8);
       private->transform_from_srgb_u8 = NULL;
     }
 
   if (private->transform_to_srgb_double)
     {
-      cmsDeleteTransform (private->transform_to_srgb_double);
+      g_object_unref (private->transform_to_srgb_double);
       private->transform_to_srgb_double = NULL;
     }
 
   if (private->transform_from_srgb_double)
     {
-      cmsDeleteTransform (private->transform_from_srgb_double);
+      g_object_unref (private->transform_from_srgb_double);
       private->transform_from_srgb_double = NULL;
     }
-
-  private->transform_layer_format       = NULL;
-  private->transform_srgb_u8_format     = NULL;
-  private->transform_srgb_double_format = NULL;
 }
 
 void
@@ -712,62 +659,45 @@ _gimp_image_update_color_profile (GimpImage          *image,
 
       if (private->color_profile)
         {
-          GimpColorProfile *srgb_profile;
-          cmsHPROFILE       image_lcms;
-          cmsHPROFILE       srgb_lcms;
-          cmsUInt32Number   image_lcms_format;
-          cmsUInt32Number   srgb_u8_lcms_format;
-          cmsUInt32Number   srgb_double_lcms_format;
-          cmsUInt32Number   flags;
+          GimpColorProfile        *srgb_profile;
+          GimpColorTransformFlags  flags = 0;
 
           srgb_profile = gimp_color_profile_new_rgb_srgb ();
 
-          image_lcms = gimp_color_profile_get_lcms_profile (private->color_profile);
-          srgb_lcms  = gimp_color_profile_get_lcms_profile (srgb_profile);
-
-          private->transform_layer_format = gimp_image_get_layer_format (image,
-                                                                         TRUE);
-          private->transform_srgb_u8_format     = babl_format ("R'G'B'A u8");
-          private->transform_srgb_double_format = babl_format ("R'G'B'A double");
-
-          private->transform_layer_format =
-            gimp_color_profile_get_format (private->transform_layer_format,
-                                           &image_lcms_format);
-
-          private->transform_srgb_u8_format =
-            gimp_color_profile_get_format (private->transform_srgb_u8_format,
-                                           &srgb_u8_lcms_format);
-
-          private->transform_srgb_double_format =
-            gimp_color_profile_get_format (private->transform_srgb_double_format,
-                                           &srgb_double_lcms_format);
-
-          flags = cmsFLAGS_NOOPTIMIZE;
-          flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+          flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
+          flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
 
           private->transform_to_srgb_u8 =
-            cmsCreateTransform (image_lcms, image_lcms_format,
-                                srgb_lcms,  srgb_u8_lcms_format,
-                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                flags);
+            gimp_color_transform_new (private->color_profile,
+                                      gimp_image_get_layer_format (image, TRUE),
+                                      srgb_profile,
+                                      babl_format ("R'G'B'A u8"),
+                                      GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                      flags);
 
           private->transform_from_srgb_u8 =
-            cmsCreateTransform (srgb_lcms,  srgb_u8_lcms_format,
-                                image_lcms, image_lcms_format,
-                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                flags);
+            gimp_color_transform_new (srgb_profile,
+                                      babl_format ("R'G'B'A u8"),
+                                      private->color_profile,
+                                      gimp_image_get_layer_format (image, TRUE),
+                                      GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                      flags);
 
           private->transform_to_srgb_double =
-            cmsCreateTransform (image_lcms, image_lcms_format,
-                                srgb_lcms,  srgb_double_lcms_format,
-                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                flags);
+            gimp_color_transform_new (private->color_profile,
+                                      gimp_image_get_layer_format (image, TRUE),
+                                      srgb_profile,
+                                      babl_format ("R'G'B'A double"),
+                                      GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                      flags);
 
           private->transform_from_srgb_double =
-            cmsCreateTransform (srgb_lcms,  srgb_double_lcms_format,
-                                image_lcms, image_lcms_format,
-                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
-                                flags);
+            gimp_color_transform_new (srgb_profile,
+                                      babl_format ("R'G'B'A double"),
+                                      private->color_profile,
+                                      gimp_image_get_layer_format (image, TRUE),
+                                      GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
+                                      flags);
 
           g_object_unref (srgb_profile);
         }
@@ -850,28 +780,30 @@ gimp_image_convert_profile_colormap (GimpImage                *image,
                                      gboolean                  bpc,
                                      GimpProgress             *progress)
 {
-  cmsHPROFILE         src_lcms;
-  cmsHPROFILE         dest_lcms;
-  guchar             *cmap;
-  gint                n_colors;
-  GimpColorTransform  transform;
-
-  src_lcms  = gimp_color_profile_get_lcms_profile (src_profile);
-  dest_lcms = gimp_color_profile_get_lcms_profile (dest_profile);
+  GimpColorTransform      *transform;
+  GimpColorTransformFlags  flags = 0;
+  guchar                  *cmap;
+  gint                     n_colors;
 
   n_colors = gimp_image_get_colormap_size (image);
   cmap     = g_memdup (gimp_image_get_colormap (image), n_colors * 3);
 
-  transform = cmsCreateTransform (src_lcms,  TYPE_RGB_8,
-                                  dest_lcms, TYPE_RGB_8,
-                                  intent,
-                                  cmsFLAGS_NOOPTIMIZE |
-                                  (bpc ? cmsFLAGS_BLACKPOINTCOMPENSATION : 0));
+  if (bpc)
+    flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
+
+  transform = gimp_color_transform_new (src_profile,
+                                        babl_format ("R'G'B' u8"),
+                                        dest_profile,
+                                        babl_format ("R'G'B' u8"),
+                                        intent, flags);
 
   if (transform)
     {
-      cmsDoTransform (transform, cmap, cmap, n_colors);
-      cmsDeleteTransform (transform);
+      gimp_color_transform_process_pixels (transform,
+                                           babl_format ("R'G'B' u8"), cmap,
+                                           babl_format ("R'G'B' u8"), cmap,
+                                           n_colors);
+      g_object_unref (transform);
 
       gimp_image_set_colormap (image, cmap, n_colors, TRUE);
     }
