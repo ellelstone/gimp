@@ -94,7 +94,7 @@ gimp_drawable_get_preview_format (GimpDrawable *drawable)
   g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
 
   alpha  = gimp_drawable_has_alpha (drawable);
-  linear = FALSE; //gimp_drawable_get_linear (drawable);
+  linear = FALSE;
 
   switch (gimp_drawable_get_base_type (drawable))
     {

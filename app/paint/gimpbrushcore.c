@@ -852,9 +852,6 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
-      /*if (gimp_drawable_get_linear (drawable))
-        format = babl_format ("RGBA float");
-      else*/
         format = babl_format ("R'G'B'A float");
 
       if (paint_core->paint_buffer                                       &&

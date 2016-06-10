@@ -532,7 +532,7 @@ gimp_layer_update_mode_node (GimpLayer *layer)
           visible_mode = layer->mode;
         }
 
-      linear = FALSE; /*gimp_drawable_get_linear (GIMP_DRAWABLE (layer));*/
+      linear = FALSE;
     }
 
   gimp_gegl_mode_node_set_mode (mode_node, visible_mode, linear);
@@ -1198,7 +1198,7 @@ gimp_layer_set_buffer (GimpDrawable *drawable,
                        gint          offset_x,
                        gint          offset_y)
 {
-  gboolean old_linear = FALSE; /*gimp_drawable_get_linear (drawable);*/
+  gboolean old_linear = FALSE;
 
   GIMP_DRAWABLE_CLASS (parent_class)->set_buffer (drawable,
                                                   push_undo, undo_desc,
@@ -1207,7 +1207,7 @@ gimp_layer_set_buffer (GimpDrawable *drawable,
 
   if (gimp_filter_peek_node (GIMP_FILTER (drawable)))
     {
-      gboolean new_linear = FALSE; /*gimp_drawable_get_linear (drawable);*/
+      gboolean new_linear = FALSE;
 
       if (old_linear != new_linear)
         gimp_layer_update_mode_node (GIMP_LAYER (drawable));

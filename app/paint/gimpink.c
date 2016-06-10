@@ -255,9 +255,6 @@ gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
-      /*if (gimp_drawable_get_linear (drawable))
-        format = babl_format ("RGBA float");
-      else*/
         format = babl_format ("R'G'B'A float");
 
       temp_buf = gimp_temp_buf_new ((x2 - x1), (y2 - y1),

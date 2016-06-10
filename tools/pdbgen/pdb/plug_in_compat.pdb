@@ -4617,8 +4617,8 @@ wrap_in_selection_bounds (GeglNode     *node,
 static GeglNode *
 wrap_in_gamma_cast (GeglNode     *node,
                     GimpDrawable *drawable)
-{printf("wrap_in_gamma_cast\n");
-  if (! FALSE /*gimp_drawable_get_linear (drawable)*/)
+{/*printf("wrap_in_gamma_cast\n");*/
+  if (! FALSE )
     {
       const Babl *drawable_format;
       const Babl *cast_format;
