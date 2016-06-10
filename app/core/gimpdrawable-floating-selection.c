@@ -175,7 +175,7 @@ _gimp_drawable_add_floating_sel_filter (GimpDrawable *drawable)
   node = gimp_filter_get_node (private->fs_filter);
 
   fs_source = gimp_drawable_get_source_node (GIMP_DRAWABLE (fs));
-  linear    = gimp_drawable_get_linear (GIMP_DRAWABLE (fs));
+  linear    = FALSE; //gimp_drawable_get_linear (GIMP_DRAWABLE (fs));
 
   /* rip the fs' source node out of its graph */
   if (fs->layer_offset_node)

@@ -208,7 +208,7 @@ gimp_drawable_filter_new (GimpDrawable *drawable,
 
   filter->applicator =
     gimp_applicator_new (node,
-                         gimp_drawable_get_linear (filter->drawable),
+                         FALSE /*gimp_drawable_get_linear (filter->drawable)*/,
                          TRUE, TRUE);
 
   gimp_filter_set_applicator (GIMP_FILTER (filter), filter->applicator);

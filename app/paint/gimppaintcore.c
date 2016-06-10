@@ -442,7 +442,7 @@ gimp_paint_core_start (GimpPaintCore     *core,
       core->mask_buffer = NULL;
     }
 
-  core->linear_mode = gimp_drawable_get_linear (drawable);
+  core->linear_mode = FALSE; //gimp_drawable_get_linear (drawable);
 
   if (paint_options->use_applicator)
     {

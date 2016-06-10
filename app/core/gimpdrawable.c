@@ -780,7 +780,7 @@ gimp_drawable_real_estimate_memsize (GimpDrawable      *drawable,
                                      gint               height)
 {
   GimpImage  *image  = gimp_item_get_image (GIMP_ITEM (drawable));
-  gboolean    linear = gimp_drawable_get_linear (drawable);
+  gboolean    linear = FALSE; //gimp_drawable_get_linear (drawable);
   const Babl *format;
 
   format = gimp_image_get_format (image,
@@ -1332,17 +1332,17 @@ gimp_drawable_get_format_without_alpha (GimpDrawable *drawable)
                                 FALSE);
 }
 
-gboolean
+/*  gboolean
 gimp_drawable_get_linear (GimpDrawable *drawable)
 {
-  const Babl *format;
+const Babl *format;
 
   g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
 
   format = gegl_buffer_get_format (drawable->private->buffer);
 
   return FALSE; //gimp_babl_format_get_linear (format);
-}
+}*/
 
 gboolean
 gimp_drawable_has_alpha (GimpDrawable *drawable)

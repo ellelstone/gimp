@@ -203,7 +203,7 @@ const Babl      * gimp_drawable_get_format           (GimpDrawable    *drawable)
 const Babl      * gimp_drawable_get_format_with_alpha(GimpDrawable    *drawable);
 const Babl      * gimp_drawable_get_format_without_alpha
                                                      (GimpDrawable    *drawable);
-gboolean          gimp_drawable_get_linear           (GimpDrawable    *drawable);
+//gboolean          gimp_drawable_get_linear           (GimpDrawable    *drawable);
 gboolean          gimp_drawable_has_alpha            (GimpDrawable    *drawable);
 GimpImageBaseType gimp_drawable_get_base_type        (GimpDrawable    *drawable);
 GimpComponentType gimp_drawable_get_component_type   (GimpDrawable    *drawable);
