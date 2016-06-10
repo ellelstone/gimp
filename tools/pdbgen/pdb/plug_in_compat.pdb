@@ -865,7 +865,7 @@ HELP
                                   "border",       border,
                                   NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Convolution Matrix"),
@@ -986,7 +986,7 @@ HELP
                                   "size",        1,
                                   NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Deinterlace"),
@@ -3392,7 +3392,7 @@ HELP
                                   "seed",        g_random_int_range (0, G_MAXINT),
                                   NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "RGB Noise"),
@@ -3528,7 +3528,7 @@ HELP
                                   "seed",        g_random_int_range (0, G_MAXINT),
                                   NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Noisify"),
@@ -3849,7 +3849,7 @@ HELP
                              "keep-sign",  keep_sign,
                              NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Sobel"),
@@ -4837,7 +4837,7 @@ gaussian_blur (GimpDrawable  *drawable,
 				  "abyss-policy", 1,
                                   NULL);
 
-      node = wrap_in_gamma_cast (node, drawable);
+      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Gaussian Blur"),

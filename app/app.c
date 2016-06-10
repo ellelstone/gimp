@@ -78,7 +78,7 @@ static void       app_restore_after_callback (Gimp               *gimp,
 static gboolean   app_exit_after_callback    (Gimp               *gimp,
                                               gboolean            kill_it,
                                               GMainLoop         **loop);
-
+static void       app_initialize_colorants    (void);
 
 /*  local variables  */
 
@@ -165,6 +165,9 @@ app_run (const gchar         *full_prog_name,
   GMainLoop          *run_loop;
   GFile              *default_folder = NULL;
   GFile              *gimpdir;
+
+  app_initialize_colorants ();/* initializes contents of colorant_data for "anyrgb" */
+
 
   if (filenames && filenames[0] && ! filenames[1] &&
       g_file_test (filenames[0], G_FILE_TEST_IS_DIR))
@@ -322,6 +325,29 @@ app_run (const gchar         *full_prog_name,
 
 
 /*  private functions  */
+
+static void
+app_initialize_colorants ()
+{
+  double *colorants;
+  colorant_babl = babl_format ("Y u8");
+  colorants = malloc( 9 * sizeof(double));
+  colorants[0] = 0.43603516;
+  colorants[1] = 0.22248840;
+  colorants[2] = 0.01391602;
+  colorants[3] = 0.38511658;
+  colorants[4] = 0.71690369;
+  colorants[5] = 0.09706116;
+  colorants[6] = 0.14305115;
+  colorants[7] = 0.06060791;
+  colorants[8] = 0.71392822;
+  /** Uncomment below to print values to screen:*/
+  printf("app_initialize_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);
+
+  colorant_data = (double *)malloc(sizeof(double));
+  colorant_data = &colorants[0];
+  babl_set_user_data (colorant_babl, colorant_data);
+}
 
 static void
 app_init_update_noop (const gchar *text1,
