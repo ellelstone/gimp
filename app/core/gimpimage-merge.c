@@ -618,7 +618,7 @@ gimp_image_merge_layers (GimpImage     *image,
 
       applicator =
         gimp_applicator_new (NULL,
-                             FALSEs,
+                             FALSE,
                              FALSE, FALSE);
 
       if (gimp_layer_get_mask (layer) &&

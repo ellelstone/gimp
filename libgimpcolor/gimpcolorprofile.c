@@ -104,8 +104,8 @@ void gimp_color_profile_get_colorants (GimpColorProfile *profile)
     colorants[6]= matrix.coeff[2][0];
     colorants[7]= matrix.coeff[2][1];
     colorants[8]= matrix.coeff[2][2];
-    /** Uncomment below to print values to screen:*/
-    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);
+    /** Uncomment below to print values to screen:
+    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);*/
 
     colorant_data = (double *)malloc(sizeof(double));
     colorant_data = &colorants[0];
@@ -871,7 +871,7 @@ gimp_color_profile_new_rgb_srgb (void)
   cmsCIEXYZ blue;
 
   double colorants[3][3], *new_colorant_data;
-  printf("gimpcolorprofile.c gimp_color_profile_new_rgb_srgb\n");
+  //printf("gimpcolorprofile.c gimp_color_profile_new_rgb_srgb\n");
   
   new_colorant_data  = babl_get_user_data (colorant_babl);
 
@@ -890,9 +890,9 @@ gimp_color_profile_new_rgb_srgb (void)
     //printf("gimp_color_profile_new_rgb_srgb: colorants[0][0]=%.8f\n", colorants[0][0]);
     //printf("gimp_color_profile_new_rgb_srgb: colorants[0][1]=%.8f\n", colorants[0][1]);
     //printf("gimp_color_profile_new_rgb_srgb: colorants[0][2]=%.8f\n", colorants[0][2]);
-    printf("gimp_color_profile_new_rgb_srgb: colorants[1][0]=%.8f\n", colorants[1][0]);
-    printf("gimp_color_profile_new_rgb_srgb: colorants[1][1]=%.8f\n", colorants[1][1]);
-    printf("gimp_color_profile_new_rgb_srgb: colorants[1][2]=%.8f\n", colorants[1][2]);
+    //printf("gimp_color_profile_new_rgb_srgb: colorants[1][0]=%.8f\n", colorants[1][0]);
+    //printf("gimp_color_profile_new_rgb_srgb: colorants[1][1]=%.8f\n", colorants[1][1]);
+    //printf("gimp_color_profile_new_rgb_srgb: colorants[1][2]=%.8f\n", colorants[1][2]);
     //printf("gimp_color_profile_new_rgb_srgb: colorants[2][0]=%.8f\n", colorants[2][0]);
     //printf("gimp_color_profile_new_rgb_srgb: colorants[2][1]=%.8f\n", colorants[2][1]);
     //printf("gimp_color_profile_new_rgb_srgb: colorants[2][2]=%.8f\n", colorants[2][2]); 

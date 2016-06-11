@@ -401,7 +401,7 @@ gimp_babl_format_get_description (const Babl *babl)
 
 GimpColorProfile *
 gimp_babl_format_get_color_profile (const Babl *format)
-{ printf("app/gegl/gimp-babl.c: gimp_babl_format_get_color_profile\n");
+{ //printf("app/gegl/gimp-babl.c: gimp_babl_format_get_color_profile\n");
   static GimpColorProfile *srgb_profile        = NULL;
   static GimpColorProfile *gray_profile        = NULL;
   //static GimpColorProfile *linear_gray_profile = NULL;
@@ -436,7 +436,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
   else
     {
           if (! srgb_profile)
-            {printf("app/gegl/gimp-babl.c: gimp_babl_format_get_color_profile - if not srgb_profile\n");
+            {//printf("app/gegl/gimp-babl.c: gimp_babl_format_get_color_profile - if not srgb_profile\n");
               srgb_profile = gimp_color_profile_new_rgb_srgb ();
               g_object_add_weak_pointer (G_OBJECT (srgb_profile),
                                          (gpointer) &srgb_profile);
