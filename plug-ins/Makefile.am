@@ -31,26 +31,10 @@ SUBDIRS = \
 	file-bmp		\
 	$(file_darktable)	\
 	$(file_exr)		\
-	file-faxg3		\
 	file-fits		\
-	file-fli		\
-	file-ico		\
 	file-jpeg		\
 	file-psd		\
-	file-sgi		\
 	file-tiff		\
-	flame			\
-	fractal-explorer	\
-	gfig			\
-	gimpressionist		\
-	gradient-flare		\
-	help			\
-	$(help_browser)		\
-	ifs-compose		\
-	imagemap		\
-	lighting		\
-	map-object		\
-	pagecurl		\
 	$(print)		\
 	screenshot		\
 	selection-to-path	\
