@@ -78,39 +78,21 @@ gimp_image_convert_precision (GimpImage     *image,
 
   switch (precision)
     {
-    /*case GIMP_PRECISION_U8_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 8 bit linear integer");
-      break;*/
     case GIMP_PRECISION_U8_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 8 bit integer");
       break;
-    /*case GIMP_PRECISION_U16_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 16 bit linear integer");
-      break;*/
     case GIMP_PRECISION_U16_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 16 bit integer");
       break;
-    /*case GIMP_PRECISION_U32_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 32 bit linear integer");
-      break;*/
     case GIMP_PRECISION_U32_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 32 bit integer");
       break;
-    /*case GIMP_PRECISION_HALF_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 16 bit linear floating point");
-      break;*/
     case GIMP_PRECISION_HALF_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 16 bit floating point");
       break;
-    /*case GIMP_PRECISION_FLOAT_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 32 bit linear floating point");
-      break;*/
     case GIMP_PRECISION_FLOAT_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 32 bit floating point");
       break;
-    /*case GIMP_PRECISION_DOUBLE_LINEAR:
-      undo_desc = C_("undo-type", "Convert Image to 64 bit linear floating point");
-      break;*/
     case GIMP_PRECISION_DOUBLE_GAMMA:
       undo_desc = C_("undo-type", "Convert Image to 64 bit floating point");
       break;
@@ -128,48 +110,10 @@ gimp_image_convert_precision (GimpImage     *image,
   gimp_image_undo_push_image_precision (image, NULL);
 
   old_profile = gimp_image_get_color_profile (image);
-  //old_format  = gimp_image_get_layer_format (image, FALSE);
+  new_profile = old_profile;/*elle: prevents unwanted ICC profile conversion*/
 
   /*  Set the new precision  */
   g_object_set (image, "precision", precision, NULL);
-  new_profile = old_profile;/*elle: prevents unwanted ICC profile conversion*/
-  //new_format = gimp_image_get_layer_format (image, FALSE);
-
-/*  if (old_profile)
-    {
-      if (gimp_babl_format_get_linear (old_format) !=
-          gimp_babl_format_get_linear (new_format))
-        {
-           when converting between linear and gamma, we create a new
-           * profile using the original profile's chromacities and
-           * whitepoint, but a linear/sRGB-gamma TRC.
-           */
-/*
-          if (gimp_babl_format_get_linear (new_format))
-            {
-              new_profile =
-                gimp_color_profile_new_linear_from_color_profile (old_profile);
-            }
-          else
-            {
-              new_profile =
-                gimp_color_profile_new_srgb_trc_from_color_profile (old_profile);
-            }
-
-           if a new profile cannot be be generated, convert to the
-           * builtin profile, which is better than leaving the user with
-           * broken colors
-           
-          if (! new_profile)
-            {
-              new_profile = gimp_image_get_builtin_color_profile (image);
-              g_object_ref (new_profile);
-            }
-        }
-
-      if (! new_profile)
-        new_profile = g_object_ref (old_profile);
-    }*/
 
   for (list = all_drawables, nth_drawable = 0;
        list;
