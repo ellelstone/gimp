@@ -220,6 +220,7 @@ AS_IF([test "x$0" != "x./configure"], [
 
 # Determine a C compiler to use
 AC_PROG_CC
+AX_PROG_CC_FOR_BUILD
 AM_PROG_CC_C_O
 
 # Determine a C++ compiler to use
@@ -813,11 +814,17 @@ PKG_CHECK_MODULES(GEXIV2, gexiv2 >= gexiv2_required_version,,
 # Check for Dr. Mingw
 #####################
 
+enable_drmingw="no"
 if test "x$platform_win32" = "xyes"; then
    # Check for Dr. Mingw
    AC_CHECK_LIB(exchndl, ExcHndlSetLogFileNameA,
-		[AC_DEFINE(HAVE_EXCHNDL, 1, [Define to 1 when Dr. MingW is available])]
-		)
+                [
+                 AC_DEFINE(HAVE_EXCHNDL, 1, [Define to 1 when Dr. MingW is available])
+                 LIBS="-lexchndl $LIBS"
+                 enable_drmingw="yes"
+                ],
+                [enable_drmingw="no (ExcHndl library missing)"]
+               )
 fi
 AM_CONDITIONAL(HAVE_EXCHNDL, test "x$ac_cv_lib_exchndl_ExcHndlSetLogFileNameA" = "xyes")
 
@@ -2055,11 +2062,32 @@ if test "x$enable_vector_icons" = "xyes"; then
   else
     # Check if librsvg was built with --disable-pixbuf-loader.
     gdk_pixbuf_moduledir=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
-    AC_CHECK_FILE(["$gdk_pixbuf_moduledir/libpixbufloader-svg.*"],
-                  [enable_vector_icons="yes"],
-                  [enable_vector_icons="no (librsvg GdkPixbuf loader missing)"])
+    # AC_CHECK_FILE macro does not work when cross-compiling and exits with:
+    # error: cannot check for file existence when cross compiling
+    # So let's test files the shell way.
+    if (test "x$platform_win32" = "xyes" &&
+        test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.dll") ||
+       test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.so"; then
+      enable_vector_icons="yes"
+    else
+      enable_vector_icons="no (librsvg GdkPixbuf loader missing)"
+    fi
   fi
 fi
+
+if test "x$enable_vector_icons" = "xyes"; then
+  # We must not use $PKG_CONFIG nor PKG_CHECK_* macros because we need
+  # to make sure we use the native pkg-config (in case we cross-compile).
+  if pkg-config --atleast-version=glib_required_version glib-2.0 &&
+     pkg-config gio-2.0; then
+    NATIVE_GLIB_LIBS=`pkg-config --libs gio-2.0 glib-2.0`
+    NATIVE_GLIB_CFLAGS=`pkg-config --cflags gio-2.0 glib-2.0`
+  else
+    enable_vector_icons="no (missing native glib > glib_required_version or gio)"
+  fi
+fi
+AC_SUBST(NATIVE_GLIB_LIBS)
+AC_SUBST(NATIVE_GLIB_CFLAGS)
 AM_CONDITIONAL(ENABLE_VECTOR_ICONS, test "x$enable_vector_icons" = "xyes")
 
 if test "x$enable_vector_icons" = "xyes"; then
@@ -2517,6 +2545,7 @@ Extra Binaries:
 Optional Features:
   Language selection:  $have_iso_codes
   Vectorial icons:     $enable_vector_icons
+  Dr. Mingw (Win32):   $enable_drmingw
 
 Optional Plug-Ins:
   Ascii Art:           $have_libaa

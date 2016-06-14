@@ -1541,7 +1541,7 @@ prefs_dialog_new (Gimp       *gimp,
                           _("_Save tool options on exit"),
                           GTK_BOX (vbox2));
 
-  button = prefs_button_add ("document-save",
+  button = prefs_button_add (GIMP_STOCK_SAVE,
                              _("Save Tool Options _Now"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
@@ -1727,7 +1727,7 @@ prefs_dialog_new (Gimp       *gimp,
                           _("_Save keyboard shortcuts on exit"),
                           GTK_BOX (vbox2));
 
-  button = prefs_button_add ("document-save",
+  button = prefs_button_add (GIMP_STOCK_SAVE,
                              _("Save Keyboard Shortcuts _Now"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
@@ -1743,7 +1743,7 @@ prefs_dialog_new (Gimp       *gimp,
 
   g_object_set_data (G_OBJECT (button), "clear-button", button2);
 
-  button = prefs_button_add ("edit-clear",
+  button = prefs_button_add (GIMP_STOCK_EDIT_CLEAR,
                              _("Remove _All Keyboard Shortcuts"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
@@ -2096,7 +2096,7 @@ prefs_dialog_new (Gimp       *gimp,
                          _("Maximum History Size:"),
                          GTK_TABLE (table), 0, size_group);
 
-  button = prefs_button_add ("edit-clear",
+  button = prefs_button_add (GIMP_STOCK_SHRED,
                              _("Clear Action History"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
@@ -2268,7 +2268,7 @@ prefs_dialog_new (Gimp       *gimp,
                           _("Open windows on the same _monitor they were open before"),
                           GTK_BOX (vbox2));
 
-  button = prefs_button_add ("document-save",
+  button = prefs_button_add (GIMP_STOCK_SAVE,
                              _("Save Window Positions _Now"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
@@ -2369,7 +2369,7 @@ prefs_dialog_new (Gimp       *gimp,
   /*  Image Windows / Appearance  */
   /********************************/
   vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
-                                  "gimp-prefs-image-windows",
+                                  "gimp-prefs-image-windows-appearance",
                                   _("Image Window Appearance"),
                                   _("Appearance"),
                                   GIMP_HELP_PREFS_IMAGE_WINDOW_APPEARANCE,
@@ -2514,7 +2514,7 @@ prefs_dialog_new (Gimp       *gimp,
   /*  Image Windows / Snapping  */
   /******************************/
   vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
-                                  "gimp-prefs-tool-options",
+                                  "gimp-prefs-image-windows-snapping",
                                   _("Image Window Snapping Behavior"),
                                   _("Snapping"),
                                   GIMP_HELP_PREFS_IMAGE_WINDOW_APPEARANCE,
@@ -2566,7 +2566,7 @@ prefs_dialog_new (Gimp       *gimp,
                           _("_Save input device settings on exit"),
                           GTK_BOX (vbox2));
 
-  button = prefs_button_add ("document-save",
+  button = prefs_button_add (GIMP_STOCK_SAVE,
                              _("Save Input Device Settings _Now"),
                              GTK_BOX (vbox2));
   g_signal_connect (button, "clicked",
