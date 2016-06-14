@@ -119,62 +119,6 @@ wrap_in_selection_bounds (GeglNode     *node,
 }
 
 static GeglNode *
-wrap_in_gamma_cast (GeglNode     *node,
-                    GimpDrawable *drawable)
-{printf("wrap_in_gamma_cast\n");
-  if (! FALSE /*gimp_drawable_get_linear (drawable)*/)
-    {
-      const Babl *drawable_format;
-      const Babl *cast_format;
-      GeglNode   *new_node;
-      GeglNode   *input;
-      GeglNode   *output;
-      GeglNode   *cast_before;
-      GeglNode   *cast_after;
-
-      drawable_format = gimp_drawable_get_format (drawable);
-
-      cast_format =
-        gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
-                          gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format),
-                                               TRUE),
-                          babl_format_has_alpha (drawable_format));
-
-      new_node = gegl_node_new ();
-
-      gegl_node_add_child (new_node, node);
-      g_object_unref (node);
-
-      input  = gegl_node_get_input_proxy  (new_node, "input");
-      output = gegl_node_get_output_proxy (new_node, "output");
-
-      cast_before = gegl_node_new_child (new_node,
-                                         "operation",     "gegl:cast-format",
-                                         "input-format",  drawable_format,
-                                         "output-format", cast_format,
-                                         NULL);
-      cast_after  = gegl_node_new_child (new_node,
-                                         "operation",     "gegl:cast-format",
-                                         "input-format",  cast_format,
-                                         "output-format", drawable_format,
-                                         NULL);
-
-      gegl_node_link_many (input,
-                           cast_before,
-                           node,
-                           cast_after,
-                           output,
-                           NULL);
-
-      return new_node;
-    }
-  else
-    {
-      return node;
-    }
-}
-
-static GeglNode *
 create_buffer_source_node (GeglNode     *parent,
                            GimpDrawable *drawable)
 {
@@ -340,8 +284,6 @@ gaussian_blur (GimpDrawable  *drawable,
                                   "std-dev-y",    vertical   * 0.32,
 				  "abyss-policy", 1,
                                   NULL);
-
-      /*node = wrap_in_gamma_cast (node, drawable);*/
 
       gimp_drawable_apply_operation (drawable, progress,
                                      C_("undo-type", "Gaussian Blur"),
@@ -1107,8 +1049,6 @@ plug_in_convmatrix_invoker (GimpProcedure         *procedure,
                                       "border",       border,
                                       NULL);
 
-          /*node = wrap_in_gamma_cast (node, drawable);*/
-
           gimp_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Convolution Matrix"),
                                          node);
@@ -1213,8 +1153,6 @@ plug_in_deinterlace_invoker (GimpProcedure         *procedure,
                                       "orientation", 0, /* HORIZONTAL */
                                       "size",        1,
                                       NULL);
-
-          /*node = wrap_in_gamma_cast (node, drawable);*/
 
           gimp_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Deinterlace"),
@@ -3332,8 +3270,6 @@ plug_in_rgb_noise_invoker (GimpProcedure         *procedure,
                                       "seed",        g_random_int_range (0, G_MAXINT),
                                       NULL);
 
-          /*node = wrap_in_gamma_cast (node, drawable);*/
-
           gimp_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "RGB Noise"),
                                          node);
@@ -3454,8 +3390,6 @@ plug_in_noisify_invoker (GimpProcedure         *procedure,
                                       "alpha",       a,
                                       "seed",        g_random_int_range (0, G_MAXINT),
                                       NULL);
-
-          /*node = wrap_in_gamma_cast (node, drawable);*/
 
           gimp_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Noisify"),
@@ -3736,8 +3670,6 @@ plug_in_sobel_invoker (GimpProcedure         *procedure,
                                  "vertical",   vertical,
                                  "keep-sign",  keep_sign,
                                  NULL);
-
-          /*node = wrap_in_gamma_cast (node, drawable);*/
 
           gimp_drawable_apply_operation (drawable, progress,
                                          C_("undo-type", "Sobel"),
