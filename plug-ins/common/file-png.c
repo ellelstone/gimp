@@ -838,7 +838,6 @@ load_image (const gchar  *filename,
   GimpImageType     layer_type;           /* Type of drawable/layer */
   GimpColorProfile *profile      = NULL;  /* Color profile */
   gchar            *profile_name = NULL;  /* Profile's name */
-  gboolean          linear       = FALSE; /* Linear RGB */
   FILE             *fp;                   /* File pointer */
   volatile gint32   image        = -1;    /* Image -- protected for setjmp() */
   gint32            layer;                /* Layer */
@@ -909,14 +908,7 @@ load_image (const gchar  *filename,
   if (G_BYTE_ORDER == G_LITTLE_ENDIAN)
     png_set_swap (pp);
 
-  /*
-   * Get the iCCP (color profile) chunk, if any, and figure if it's
-   * a linear RGB profile
-   */
   profile = load_color_profile (pp, info, &profile_name);
-
-  /*if (profile)
-    linear = gimp_color_profile_is_linear (profile);*/
 
   /*
    * Get image precision and color model
@@ -924,16 +916,10 @@ load_image (const gchar  *filename,
 
   if (png_get_bit_depth (pp, info) == 16)
     {
-      if (linear)
-        image_precision = GIMP_PRECISION_U16_GAMMA;
-      else
         image_precision = GIMP_PRECISION_U16_GAMMA;
     }
   else
     {
-      if (linear)
-        image_precision = GIMP_PRECISION_U8_GAMMA;
-      else
         image_precision = GIMP_PRECISION_U8_GAMMA;
     }
 

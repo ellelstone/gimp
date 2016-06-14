@@ -247,7 +247,6 @@ load_image (GFile              *file,
       gushort           photomet;
       gshort            sampleformat;
       GimpColorProfile *profile;
-      gboolean          profile_linear = FALSE;
       GimpPrecision     image_precision;
       const Babl       *type;
       const Babl       *base_format = NULL;
@@ -282,8 +281,6 @@ load_image (GFile              *file,
       TIFFGetFieldDefaulted (tif, TIFFTAG_SAMPLEFORMAT, &sampleformat);
 
       profile = load_profile (tif);
-      if (profile)
-        profile_linear = FALSE;//gimp_color_profile_is_linear (profile);
 
       if (bps > 8 && bps != 8 && bps != 16 && bps != 32 && bps != 64)
         worst_case = TRUE; /* Wrong sample width => RGBA */
@@ -292,9 +289,6 @@ load_image (GFile              *file,
         {
         case 1:
         case 8:
-          if (profile_linear)
-            image_precision = GIMP_PRECISION_U8_GAMMA;
-          else
             image_precision = GIMP_PRECISION_U8_GAMMA;
 
           type = babl_type ("u8");
@@ -303,19 +297,13 @@ load_image (GFile              *file,
         case 16:
           if (sampleformat == SAMPLEFORMAT_IEEEFP)
             {
-              if (profile_linear)
-                image_precision = GIMP_PRECISION_HALF_GAMMA;
-              else
-                image_precision = GIMP_PRECISION_HALF_GAMMA;
+              image_precision = GIMP_PRECISION_HALF_GAMMA;
 
               type = babl_type ("half");
             }
           else
             {
-              if (profile_linear)
-                image_precision = GIMP_PRECISION_U16_GAMMA;
-              else
-                image_precision = GIMP_PRECISION_U16_GAMMA;
+              image_precision = GIMP_PRECISION_U16_GAMMA;
 
               type = babl_type ("u16");
             }
@@ -324,38 +312,26 @@ load_image (GFile              *file,
         case 32:
           if (sampleformat == SAMPLEFORMAT_IEEEFP)
             {
-              if (profile_linear)
-                image_precision = GIMP_PRECISION_FLOAT_GAMMA;
-              else
-                image_precision = GIMP_PRECISION_FLOAT_GAMMA;
+              image_precision = GIMP_PRECISION_FLOAT_GAMMA;
 
               type = babl_type ("float");
             }
           else
             {
-              if (profile_linear)
-                image_precision = GIMP_PRECISION_U32_GAMMA;
-              else
-                image_precision = GIMP_PRECISION_U32_GAMMA;
+              image_precision = GIMP_PRECISION_U32_GAMMA;
 
               type = babl_type ("u32");
             }
           break;
 
         case 64:
-          if (profile_linear)
-            image_precision = GIMP_PRECISION_DOUBLE_GAMMA;
-          else
-            image_precision = GIMP_PRECISION_DOUBLE_GAMMA;
+          image_precision = GIMP_PRECISION_DOUBLE_GAMMA;
 
           type = babl_type ("double");
           break;
 
         default:
-          if (profile_linear)
-            image_precision = GIMP_PRECISION_U16_GAMMA;
-          else
-            image_precision = GIMP_PRECISION_U16_GAMMA;
+          image_precision = GIMP_PRECISION_U16_GAMMA;
 
           type = babl_type ("u16");
         }
@@ -473,59 +449,27 @@ load_image (GFile              *file,
                 {
                   if (tsvals.save_transp_pixels)
                     {
-                      if (profile_linear)
-                        {
-                          base_format = babl_format_new (babl_model ("YA"),
-                                                         type,
-                                                         babl_component ("Y"),
-                                                         babl_component ("A"),
-                                                         NULL);
-                        }
-                      else
-                        {
                           base_format = babl_format_new (babl_model ("Y'A"),
                                                          type,
                                                          babl_component ("Y'"),
                                                          babl_component ("A"),
                                                          NULL);
-                        }
                     }
                   else
                     {
-                      if (profile_linear)
-                        {
-                          base_format = babl_format_new (babl_model ("YaA"),
-                                                         type,
-                                                         babl_component ("Ya"),
-                                                         babl_component ("A"),
-                                                         NULL);
-                        }
-                      else
-                        {
                           base_format = babl_format_new (babl_model ("Y'aA"),
                                                          type,
                                                          babl_component ("Y'a"),
                                                          babl_component ("A"),
                                                          NULL);
-                        }
                     }
                 }
               else
                 {
-                  if (profile_linear)
-                    {
                       base_format = babl_format_new (babl_model ("Y'"),
                                                      type,
                                                      babl_component ("Y'"),
                                                      NULL);
-                    }
-                  else
-                    {
-                      base_format = babl_format_new (babl_model ("Y'"),
-                                                     type,
-                                                     babl_component ("Y'"),
-                                                     NULL);
-                    }
                 }
             }
           break;
@@ -538,18 +482,6 @@ load_image (GFile              *file,
             {
               if (tsvals.save_transp_pixels)
                 {
-                  if (profile_linear)
-                    {
-                      base_format = babl_format_new (babl_model ("RGBA"),
-                                                     type,
-                                                     babl_component ("R"),
-                                                     babl_component ("G"),
-                                                     babl_component ("B"),
-                                                     babl_component ("A"),
-                                                     NULL);
-                    }
-                  else
-                    {
                       base_format = babl_format_new (babl_model ("R'G'B'A"),
                                                      type,
                                                      babl_component ("R'"),
@@ -557,22 +489,9 @@ load_image (GFile              *file,
                                                      babl_component ("B'"),
                                                      babl_component ("A"),
                                                      NULL);
-                    }
                 }
               else
                 {
-                  if (profile_linear)
-                    {
-                      base_format = babl_format_new (babl_model ("RaGaBaA"),
-                                                     type,
-                                                     babl_component ("Ra"),
-                                                     babl_component ("Ga"),
-                                                     babl_component ("Ba"),
-                                                     babl_component ("A"),
-                                                     NULL);
-                    }
-                  else
-                    {
                       base_format = babl_format_new (babl_model ("R'aG'aB'aA"),
                                                      type,
                                                      babl_component ("R'a"),
@@ -580,29 +499,16 @@ load_image (GFile              *file,
                                                      babl_component ("B'a"),
                                                      babl_component ("A"),
                                                      NULL);
-                    }
                 }
             }
           else
             {
-              if (profile_linear)
-                {
-                  base_format = babl_format_new (babl_model ("RGB"),
-                                                 type,
-                                                 babl_component ("R"),
-                                                 babl_component ("G"),
-                                                 babl_component ("B"),
-                                                 NULL);
-                }
-              else
-                {
                   base_format = babl_format_new (babl_model ("R'G'B'"),
                                                  type,
                                                  babl_component ("R'"),
                                                  babl_component ("G'"),
                                                  babl_component ("B'"),
                                                  NULL);
-                }
             }
           break;
 
@@ -654,18 +560,6 @@ load_image (GFile              *file,
           image_type  = GIMP_RGB;
           layer_type  = GIMP_RGBA_IMAGE;
 
-          if (profile_linear)
-            {
-              base_format = babl_format_new (babl_model ("RaGaBaA"),
-                                             type,
-                                             babl_component ("Ra"),
-                                             babl_component ("Ga"),
-                                             babl_component ("Ba"),
-                                             babl_component ("A"),
-                                             NULL);
-            }
-          else
-            {
               base_format = babl_format_new (babl_model ("R'aG'aB'aA"),
                                              type,
                                              babl_component ("R'a"),
@@ -673,7 +567,6 @@ load_image (GFile              *file,
                                              babl_component ("B'a"),
                                              babl_component ("A"),
                                              NULL);
-            }
         }
 
       if (pages->target == GIMP_PAGE_SELECTOR_TARGET_LAYERS)
