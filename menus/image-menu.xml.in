@@ -379,7 +379,7 @@
         <separator />-->
         <menuitem action="image-color-profile-assign" />
         <menuitem action="image-color-profile-convert" />
-        <menuitem action="image-color-profile-discard" />
+<!--        <menuitem action="image-color-profile-discard" />-->
         <separator />
         <menuitem action="image-color-profile-save" />
      </menu>

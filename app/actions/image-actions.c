@@ -94,11 +94,11 @@ static const GimpActionEntry image_actions[] =
     G_CALLBACK (image_color_profile_convert_cmd_callback),
     GIMP_HELP_IMAGE_COLOR_PROFILE_CONVERT },
 
-  { "image-color-profile-discard", NULL,
+/*  { "image-color-profile-discard", NULL,
     NC_("image-action", "_Discard Color Profile"), NULL,
     NC_("image-action", "Remove the image's color profile"),
     G_CALLBACK (image_color_profile_discard_cmd_callback),
-    GIMP_HELP_IMAGE_COLOR_PROFILE_DISCARD },
+    GIMP_HELP_IMAGE_COLOR_PROFILE_DISCARD },*/
 
   { "image-color-profile-save", NULL,
     NC_("image-action", "_Save Color Profile to File..."), NULL,
@@ -445,7 +445,7 @@ image_actions_update (GimpActionGroup *group,
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);
-  SET_SENSITIVE ("image-color-profile-discard", image && profile);
+/*  SET_SENSITIVE ("image-color-profile-discard", image && profile);*/
   SET_SENSITIVE ("image-color-profile-save",    image);
 
   SET_SENSITIVE ("image-flip-horizontal", image);
