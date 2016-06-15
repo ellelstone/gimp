@@ -1095,7 +1095,6 @@ gimp_color_profile_policy_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_COLOR_PROFILE_POLICY_ASK, "GIMP_COLOR_PROFILE_POLICY_ASK", "ask" },
     { GIMP_COLOR_PROFILE_POLICY_KEEP, "GIMP_COLOR_PROFILE_POLICY_KEEP", "keep" },
     { GIMP_COLOR_PROFILE_POLICY_CONVERT, "GIMP_COLOR_PROFILE_POLICY_CONVERT", "convert" },
     { 0, NULL, NULL }
@@ -1103,9 +1102,8 @@ gimp_color_profile_policy_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_COLOR_PROFILE_POLICY_ASK, NC_("color-profile-policy", "Ask what to do"), NULL },
     { GIMP_COLOR_PROFILE_POLICY_KEEP, NC_("color-profile-policy", "Keep embedded profile"), NULL },
-    { GIMP_COLOR_PROFILE_POLICY_CONVERT, NC_("color-profile-policy", "Convert to preferred RGB color profile"), NULL },
+    { GIMP_COLOR_PROFILE_POLICY_CONVERT, NC_("color-profile-policy", "Convert to RGB workspace"), NULL },
     { 0, NULL, NULL }
   };
 

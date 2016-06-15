@@ -610,7 +610,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                          "Color profile policy",
                          COLOR_PROFILE_POLICY_BLURB,
                          GIMP_TYPE_COLOR_PROFILE_POLICY,
-                         GIMP_COLOR_PROFILE_POLICY_ASK,
+                         GIMP_COLOR_PROFILE_POLICY_KEEP,
                          GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_SAVE_DOCUMENT_HISTORY,

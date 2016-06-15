@@ -456,7 +456,7 @@ gimp_image_import_color_profile (GimpImage    *image,
       policy = image->gimp->config->color_profile_policy;
       intent = GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC;
       bpc    = TRUE;
-
+/*elle: this dialog calls on the built-in profile
       if (policy == GIMP_COLOR_PROFILE_POLICY_ASK)
         {
           if (interactive)
@@ -479,7 +479,7 @@ gimp_image_import_color_profile (GimpImage    *image,
             {
               policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
             }
-        }
+        }*/
 
       if (policy == GIMP_COLOR_PROFILE_POLICY_CONVERT)
         {
