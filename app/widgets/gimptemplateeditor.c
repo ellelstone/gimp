@@ -758,12 +758,12 @@ gimp_template_editor_template_notify (GimpTemplate       *template,
       filename = gimp_personal_rc_file ("profilerc");
       profile_store = gimp_color_profile_store_new (filename);
       g_free (filename);
-
-      gimp_color_profile_store_add_defaults (GIMP_COLOR_PROFILE_STORE (profile_store),
+/*elle: commit 831cd43df4cfbbf0d82329c40b10ff4942995d4b makes following just return true */
+/*      gimp_color_profile_store_add_defaults (GIMP_COLOR_PROFILE_STORE (profile_store),
                                              private->gimp->config->color_management,
                                              gimp_template_get_base_type (template),
                                              gimp_template_get_precision (template),
-                                             NULL);
+                                             NULL);*/
 
       gtk_combo_box_set_model (GTK_COMBO_BOX (private->profile_combo),
                                GTK_TREE_MODEL (profile_store));

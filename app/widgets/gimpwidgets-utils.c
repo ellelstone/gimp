@@ -1378,14 +1378,14 @@ gimp_print_event (const GdkEvent *event)
   return str;
 }
 
-gboolean
+/*gboolean
 gimp_color_profile_store_add_defaults (GimpColorProfileStore  *store,
                                        GimpColorConfig        *config,
                                        GimpImageBaseType       base_type,
                                        GimpPrecision           precision,
                                        GError                **error)
 {
-/*  GimpColorProfile *profile;
+  GimpColorProfile *profile;
   const Babl       *format;
   gchar            *label;
   GError           *my_error = NULL;
@@ -1449,6 +1449,6 @@ gimp_color_profile_store_add_defaults (GimpColorProfileStore  *store,
 
       return FALSE;
     }
-*/
+
   return TRUE;
-}
+}*/
