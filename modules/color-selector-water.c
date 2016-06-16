@@ -265,7 +265,7 @@ colorsel_water_create_transform (ColorselWater *water)
       static GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("cairo-RGB24");
-
+//printf("modules/color-selector-water.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
         profile = gimp_color_profile_new_rgb_srgb ();
 

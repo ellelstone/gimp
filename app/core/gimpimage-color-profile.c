@@ -661,7 +661,7 @@ _gimp_image_update_color_profile (GimpImage          *image,
         {
           GimpColorProfile        *srgb_profile;
           GimpColorTransformFlags  flags = 0;
-//printf("gimpimage-color-profile.c: _gimp_image_update_color_profile - if (private->color_profile)\n");
+//printf("gimpimage-color-profile.c: _gimp_image_update_color_profile - if (private->color_profile) gimp_color_profile_new_rgb_srgb\n");
           srgb_profile = gimp_color_profile_new_rgb_srgb ();
 
           flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;

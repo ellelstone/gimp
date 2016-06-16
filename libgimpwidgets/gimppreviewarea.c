@@ -397,7 +397,7 @@ gimp_preview_area_create_transform (GimpPreviewArea *area)
       static GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("R'G'B' u8");
-
+//printf("libgimpwidgets/gimppreviewarea.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
         profile = gimp_color_profile_new_rgb_srgb ();
 

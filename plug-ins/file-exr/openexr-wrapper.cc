@@ -235,7 +235,8 @@ struct _EXRLoader
                                           whiteLuminance } };
 
     // get the primaries + wp from GIMP's internal linear sRGB profile
-    linear_srgb_profile = gimp_color_profile_new_rgb_srgb ();
+    //printf("plug-ins/file-exr: gimp_color_profile_make_builtin_rgb_profile\n");
+    linear_srgb_profile = gimp_color_profile_make_builtin_rgb_profile ();
     linear_srgb_lcms = gimp_color_profile_get_lcms_profile (linear_srgb_profile);
 
     gimp_r_XYZ = (cmsCIEXYZ *) cmsReadTag (linear_srgb_lcms, cmsSigRedColorantTag);

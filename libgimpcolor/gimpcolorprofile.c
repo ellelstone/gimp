@@ -83,7 +83,7 @@ gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
  * for use in all babl/GEGL/GIMP functions that use calculations
  * involving Y and XYZ.
  *
- * Since: 2.10, hopefully!
+ * Since: elle's version of 2.10
  **/
 void gimp_color_profile_get_colorants (GimpColorProfile *profile)
 {
@@ -871,7 +871,7 @@ gimp_color_profile_new_rgb_srgb (void)
   cmsCIEXYZ blue;
 
   double colorants[3][3], *new_colorant_data;
-  //printf("gimpcolorprofile.c gimp_color_profile_new_rgb_srgb\n");
+  //printf("libgimpcolor/gimpcolorprofile.c: gimp_color_profile_new_rgb_srgb\n");
   
   new_colorant_data  = babl_get_user_data (colorant_babl);
 
@@ -933,6 +933,87 @@ gimp_color_profile_new_rgb_srgb (void)
 
   return new_profile;
 }
+
+
+
+static cmsHPROFILE *
+gimp_color_profile_make_builtin_rgb_profile_internal (void)
+{
+  cmsHPROFILE profile;
+
+  /* white point is D65 from the sRGB specs */
+  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
+
+  /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
+   * from the sRGB specs, modified to properly account for hexadecimal
+   * quantization during the profile making process.
+   */
+  cmsCIExyYTRIPLE primaries =
+    {
+      /* R { 0.6400, 0.3300, 1.0 }, */
+      /* G { 0.3000, 0.6000, 1.0 }, */
+      /* B { 0.1500, 0.0600, 1.0 }  */
+      /* R */ { 0.639998686, 0.330010138, 1.0 },
+      /* G */ { 0.300003784, 0.600003357, 1.0 },
+      /* B */ { 0.150002046, 0.059997204, 1.0 }
+    };
+
+  cmsFloat64Number srgb_parameters[5] =
+    { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
+
+  cmsToneCurve *curve[3];
+
+  /* sRGB curve */
+  curve[0] = curve[1] = curve[2] = cmsBuildParametricToneCurve (NULL, 4,
+                                                                srgb_parameters);
+
+  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
+
+  cmsFreeToneCurve (curve[0]);
+
+  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
+                              "GIMP built-in sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
+                              "GIMP");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
+                              "sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
+                              "Public Domain");
+
+  return profile;
+}
+
+/**
+ * gimp_color_profile_make_builtin_rgb_profile:
+ *
+ * This function makes the built-in rgb profile.
+ *
+ * Since: elle's version of 2.10
+ **/
+GimpColorProfile *
+gimp_color_profile_make_builtin_rgb_profile (void)
+{
+  static GimpColorProfile *profile = NULL;
+
+  const guint8 *data;
+  gsize         length;
+
+  if (G_UNLIKELY (profile == NULL))
+    {
+      cmsHPROFILE lcms_profile = gimp_color_profile_make_builtin_rgb_profile_internal ();
+
+      profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
+
+      cmsCloseProfile (lcms_profile);
+    }
+
+  data = gimp_color_profile_get_icc_profile (profile, &length);
+
+  return gimp_color_profile_new_from_icc_profile (data, length, NULL);
+}
+
+
+
 
 static cmsHPROFILE *
 gimp_color_profile_new_rgb_adobe_internal (void)

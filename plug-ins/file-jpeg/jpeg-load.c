@@ -631,7 +631,8 @@ jpeg_load_cmyk_transform (guint8 *profile_data,
     }
 
   /*  always convert to sRGB  */
-  rgb_profile = gimp_color_profile_new_rgb_srgb ();
+  //printf("plug-ins/file-jpeg: gimp_color_profile_make_builtin_rgb_profile\n");
+  rgb_profile = gimp_color_profile_make_builtin_rgb_profile ();
 
   cmyk_lcms = gimp_color_profile_get_lcms_profile (cmyk_profile);
   rgb_lcms  = gimp_color_profile_get_lcms_profile (rgb_profile);

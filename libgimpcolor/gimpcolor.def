@@ -47,7 +47,6 @@ EXPORTS
 	gimp_color_profile_new_rgb_adobe
 	gimp_color_profile_new_rgb_srgb
 	gimp_color_profile_save_to_file
-	gimp_color_transform_can_gegl_copy
 	gimp_color_transform_get_type
 	gimp_color_transform_new
 	gimp_color_transform_new_proofing

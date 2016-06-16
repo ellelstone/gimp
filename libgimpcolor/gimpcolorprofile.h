@@ -107,6 +107,8 @@ const Babl       * gimp_color_profile_get_format            (const Babl        *
 
 void               gimp_color_profile_get_colorants         (GimpColorProfile *profile);
 
+GimpColorProfile * gimp_color_profile_make_builtin_rgb_profile (void);
+
 G_END_DECLS
 
 #endif  /* __GIMP_COLOR_PROFILE_H__ */

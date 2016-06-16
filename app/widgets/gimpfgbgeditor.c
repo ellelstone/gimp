@@ -669,7 +669,7 @@ gimp_fg_bg_editor_create_transform (GimpFgBgEditor *editor)
   if (editor->color_config)
     {
       static GimpColorProfile *profile = NULL;
-
+//printf("widgets/gimpfgbgeditor.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
         profile = gimp_color_profile_new_rgb_srgb ();
 

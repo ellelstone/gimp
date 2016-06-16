@@ -590,7 +590,7 @@ get_display_profile (GtkWidget       *widget,
 
   if (! profile)
     profile = gimp_color_config_get_display_color_profile (config, NULL);
-
+//printf("libgimpwidgets/gimpwidgetsutils.c: gimp_color_profile_new_rgb_srgb\n");
   if (! profile)
     profile = gimp_color_profile_new_rgb_srgb ();
 

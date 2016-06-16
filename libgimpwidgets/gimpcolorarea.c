@@ -922,7 +922,7 @@ gimp_color_area_create_transform (GimpColorArea *area)
       static GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("cairo-RGB24");
-
+//printf("libgimpwidgets/gimpcolorarea.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
         profile = gimp_color_profile_new_rgb_srgb ();
 
