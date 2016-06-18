@@ -327,7 +327,7 @@ sub drawable_has_alpha {
     $help = <<'HELP';
 This procedure returns whether the specified drawable has an alpha channel.
 This can only be true for layers, and the associated type will be one of:
-{ RGBA , GRAYA, INDEXEDA }.
+{ RGBA , GRAYA }.
 HELP
 
     &std_pdb_misc;
@@ -439,35 +439,6 @@ HELP
 	code => <<'CODE'
 {
   is_gray = gimp_drawable_is_gray (drawable);
-}
-CODE
-    );
-}
-
-sub drawable_is_indexed {
-    $blurb = 'Returns whether the drawable is an indexed type.';
-
-    $help = <<HELP;
-This procedure returns TRUE if the specified drawable
-is of type { Indexed, IndexedA }.
-HELP
-
-    &std_pdb_misc;
-
-    @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' }
-    );
-
-    @outargs = (
-	{ name => 'is_indexed', type => 'boolean',
-	  desc => 'TRUE if the drawable is an indexed type' }
-    );
-
-    %invoke = (
-	code => <<'CODE'
-{
-  is_indexed = gimp_drawable_is_indexed (drawable);
 }
 CODE
     );

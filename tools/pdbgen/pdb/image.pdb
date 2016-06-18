@@ -1782,8 +1782,6 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//  else if (component == GIMP_INDEXED_CHANNEL)
-//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1820,8 +1818,6 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//  else if (component == GIMP_INDEXED_CHANNEL)
-//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1861,8 +1857,6 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//  else if (component == GIMP_INDEXED_CHANNEL)
-//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1899,8 +1893,6 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//  else if (component == GIMP_INDEXED_CHANNEL)
-//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
