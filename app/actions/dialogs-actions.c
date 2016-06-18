@@ -85,11 +85,11 @@ const GimpStringActionEntry dialogs_dockable_actions[] =
     "gimp-vectors-list",
     GIMP_HELP_PATH_DIALOG },
 
-  { "dialogs-indexed-palette", GIMP_STOCK_COLORMAP,
+/*  { "dialogs-indexed-palette", GIMP_STOCK_COLORMAP,
     NC_("dialogs-action", "Color_map"), NULL,
     NC_("dialogs-action", "Open the colormap dialog"),
     "gimp-indexed-palette",
-    GIMP_HELP_INDEXED_PALETTE_DIALOG },
+    GIMP_HELP_INDEXED_PALETTE_DIALOG },*/
 
   { "dialogs-histogram", GIMP_STOCK_HISTOGRAM,
     NC_("dialogs-action", "Histogra_m"), NULL,

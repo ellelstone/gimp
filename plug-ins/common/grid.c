@@ -146,7 +146,7 @@ void query (void)
                           "Tim Newsome, Sven Neumann, Tom Rathborne, TC",
                           "1997 - 2000",
                           N_("_Grid..."),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",//, INDEXED*
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
@@ -309,12 +309,12 @@ pix_composite (guchar   *p1,
           *p1 = *p1 * (1.0 - p2[3]/255.0) + p2[b] * p2[3]/255.0;
           p1++;
         }
-    }
+    }/*
   else
     {
-      /* blend should only be TRUE for indexed (bytes == 1) */
+      /* blend should only be TRUE for indexed (bytes == 1) 
       *p1++ = *p2;
-    }
+    }*/
 
   if (alpha && *p1 < 255)
     {
@@ -362,7 +362,7 @@ grid (gint32        image_ID,
       blend = TRUE;
       break;
 
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       cmap = gimp_image_get_colormap (image_ID, &ncolors);
 
       hcolor[0] = best_cmap_match (cmap, ncolors, &grid_cfg.hcolor);
@@ -371,7 +371,7 @@ grid (gint32        image_ID,
 
       g_free (cmap);
       blend = FALSE;
-      break;
+      break;*/
 
     default:
       g_assert_not_reached ();

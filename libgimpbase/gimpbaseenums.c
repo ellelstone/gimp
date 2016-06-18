@@ -221,7 +221,6 @@ gimp_channel_type_get_type (void)
     { GIMP_GREEN_CHANNEL, "GIMP_GREEN_CHANNEL", "green-channel" },
     { GIMP_BLUE_CHANNEL, "GIMP_BLUE_CHANNEL", "blue-channel" },
     { GIMP_GRAY_CHANNEL, "GIMP_GRAY_CHANNEL", "gray-channel" },
-    { GIMP_INDEXED_CHANNEL, "GIMP_INDEXED_CHANNEL", "indexed-channel" },
     { GIMP_ALPHA_CHANNEL, "GIMP_ALPHA_CHANNEL", "alpha-channel" },
     { 0, NULL, NULL }
   };
@@ -232,7 +231,6 @@ gimp_channel_type_get_type (void)
     { GIMP_GREEN_CHANNEL, NC_("channel-type", "Green"), NULL },
     { GIMP_BLUE_CHANNEL, NC_("channel-type", "Blue"), NULL },
     { GIMP_GRAY_CHANNEL, NC_("channel-type", "Gray"), NULL },
-    { GIMP_INDEXED_CHANNEL, NC_("channel-type", "Indexed"), NULL },
     { GIMP_ALPHA_CHANNEL, NC_("channel-type", "Alpha"), NULL },
     { 0, NULL, NULL }
   };
@@ -813,7 +811,6 @@ gimp_image_base_type_get_type (void)
   {
     { GIMP_RGB, "GIMP_RGB", "rgb" },
     { GIMP_GRAY, "GIMP_GRAY", "gray" },
-    { GIMP_INDEXED, "GIMP_INDEXED", "indexed" },
     { 0, NULL, NULL }
   };
 
@@ -821,7 +818,6 @@ gimp_image_base_type_get_type (void)
   {
     { GIMP_RGB, NC_("image-base-type", "RGB color"), NULL },
     { GIMP_GRAY, NC_("image-base-type", "Grayscale"), NULL },
-    { GIMP_INDEXED, NC_("image-base-type", "Indexed color"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -847,8 +843,6 @@ gimp_image_type_get_type (void)
     { GIMP_RGBA_IMAGE, "GIMP_RGBA_IMAGE", "rgba-image" },
     { GIMP_GRAY_IMAGE, "GIMP_GRAY_IMAGE", "gray-image" },
     { GIMP_GRAYA_IMAGE, "GIMP_GRAYA_IMAGE", "graya-image" },
-    { GIMP_INDEXED_IMAGE, "GIMP_INDEXED_IMAGE", "indexed-image" },
-    { GIMP_INDEXEDA_IMAGE, "GIMP_INDEXEDA_IMAGE", "indexeda-image" },
     { 0, NULL, NULL }
   };
 
@@ -858,8 +852,6 @@ gimp_image_type_get_type (void)
     { GIMP_RGBA_IMAGE, NC_("image-type", "RGB-alpha"), NULL },
     { GIMP_GRAY_IMAGE, NC_("image-type", "Grayscale"), NULL },
     { GIMP_GRAYA_IMAGE, NC_("image-type", "Grayscale-alpha"), NULL },
-    { GIMP_INDEXED_IMAGE, NC_("image-type", "Indexed"), NULL },
-    { GIMP_INDEXEDA_IMAGE, NC_("image-type", "Indexed-alpha"), NULL },
     { 0, NULL, NULL }
   };
 

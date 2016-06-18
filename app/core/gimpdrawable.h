@@ -209,14 +209,14 @@ GimpComponentType gimp_drawable_get_component_type   (GimpDrawable    *drawable)
 GimpPrecision     gimp_drawable_get_precision        (GimpDrawable    *drawable);
 gboolean          gimp_drawable_is_rgb               (GimpDrawable    *drawable);
 gboolean          gimp_drawable_is_gray              (GimpDrawable    *drawable);
-gboolean          gimp_drawable_is_indexed           (GimpDrawable    *drawable);
+//gboolean          gimp_drawable_is_indexed           (GimpDrawable    *drawable);
 
 const Babl      * gimp_drawable_get_component_format (GimpDrawable    *drawable,
                                                       GimpChannelType  channel);
 gint              gimp_drawable_get_component_index  (GimpDrawable    *drawable,
                                                       GimpChannelType  channel);
 
-const guchar    * gimp_drawable_get_colormap         (GimpDrawable    *drawable);
+/*const guchar    * gimp_drawable_get_colormap         (GimpDrawable    *drawable);*/
 
 
 #endif /* __GIMP_DRAWABLE_H__ */

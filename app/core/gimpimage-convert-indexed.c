@@ -151,7 +151,7 @@
 #include "gimperror.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-undo.h"
 #include "gimpimage-undo-push.h"
 #include "gimplayer.h"

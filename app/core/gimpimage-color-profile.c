@@ -43,7 +43,7 @@
 #include "gimperror.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-private.h"
 #include "gimpimage-undo.h"
 #include "gimpimage-undo-push.h"
@@ -61,12 +61,12 @@ static void   gimp_image_convert_profile_layers   (GimpImage                *ima
                                                    GimpColorRenderingIntent  intent,
                                                    gboolean                  bpc,
                                                    GimpProgress             *progress);
-static void   gimp_image_convert_profile_colormap (GimpImage                *image,
+/*static void   gimp_image_convert_profile_colormap (GimpImage                *image,
                                                    GimpColorProfile         *src_profile,
                                                    GimpColorProfile         *dest_profile,
                                                    GimpColorRenderingIntent  intent,
                                                    gboolean                  bpc,
-                                                   GimpProgress             *progress);
+                                                   GimpProgress             *progress);*/
 
 
 /*  public functions  */
@@ -414,12 +414,12 @@ gimp_image_convert_color_profile (GimpImage                *image,
                                          progress);
       break;
 
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       gimp_image_convert_profile_colormap (image,
                                            src_profile, dest_profile,
                                            intent, bpc,
                                            progress);
-      break;
+      break;*/
     }
 
   gimp_image_set_is_color_managed (image, TRUE, TRUE);
@@ -772,7 +772,7 @@ gimp_image_convert_profile_layers (GimpImage                *image,
   g_list_free (layers);
 }
 
-static void
+/*static void //this is for indexed images
 gimp_image_convert_profile_colormap (GimpImage                *image,
                                      GimpColorProfile         *src_profile,
                                      GimpColorProfile         *dest_profile,
@@ -813,4 +813,4 @@ gimp_image_convert_profile_colormap (GimpImage                *image,
     }
 
   g_free (cmap);
-}
+}*/

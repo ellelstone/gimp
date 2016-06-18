@@ -35,7 +35,7 @@
 #include "core/gimpmarshal.h"
 #include "core/gimpsamplepoint.h"
 
-#include "widgets/gimpcolormapeditor.h"
+//#include "widgets/gimpcolormapeditor.h"
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpdockable.h"
 #include "widgets/gimppaletteeditor.h"
@@ -455,7 +455,7 @@ gimp_color_tool_real_picked (GimpColorTool      *color_tool,
     {
       GtkWidget *widget;
 
-      if (babl_format_is_palette (sample_format))
+/*      if (babl_format_is_palette (sample_format))
         {
           widget = gimp_dialog_factory_find_widget (gimp_dialog_factory_get_singleton (),
                                                     "gimp-indexed-palette");
@@ -467,7 +467,7 @@ gimp_color_tool_real_picked (GimpColorTool      *color_tool,
               gimp_colormap_editor_set_index (GIMP_COLORMAP_EDITOR (editor),
                                               *index, NULL);
             }
-        }
+        }*/
 
       widget = gimp_dialog_factory_find_widget (gimp_dialog_factory_get_singleton (),
                                                 "gimp-palette-editor");

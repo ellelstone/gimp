@@ -161,7 +161,7 @@ HELP
   if (gimp->plug_in_manager->current_plug_in)
     gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
 
-  if (type != GIMP_INDEXED || precision == GIMP_PRECISION_U8_GAMMA)
+  if (precision == GIMP_PRECISION_U8_GAMMA)
     {
       image = gimp_create_image (gimp, width, height, type,
                                  precision, FALSE);
@@ -1316,72 +1316,6 @@ CODE
     );
 }
 
-sub image_get_colormap {
-    $blurb = "Returns the image's colormap";
-
-    $help = <<'HELP';
-This procedure returns an actual pointer to the image's colormap, as well as
-the number of bytes contained in the colormap. The actual number of colors in
-the transmitted colormap will be 'num-bytes' / 3. If the image is not in
-Indexed color mode, no colormap is returned.
-HELP
-
-    &std_pdb_misc;
-
-    @inargs = (
-        { name => 'image', type => 'image',
-          desc => 'The image' }
-    );
-
-    @outargs = (
-        { name => 'colormap', type => 'int8array', wrap => 1,
-          desc => "The image's colormap. The returned value must be freed with g_free()",
-          array => { name => 'num_bytes',
-                     desc => 'Number of bytes in the colormap array' } }
-    );
-
-    %invoke = (
-        headers => [ qw("core/gimpimage-colormap.h") ],
-        code => <<'CODE'
-{
-  num_bytes = 3 * gimp_image_get_colormap_size (image);
-  colormap = g_memdup (gimp_image_get_colormap (image), num_bytes);
-}
-CODE
-    );
-}
-
-sub image_set_colormap {
-    $blurb = "Sets the entries in the image's colormap.";
-
-    $help = <<'HELP';
-This procedure sets the entries in the specified image's colormap. The number
-of entries is specified by the 'num-bytes' parameter and corresponds to the
-number of INT8 triples that must be contained in the 'colormap' array. The
-actual number of colors in the transmitted colormap is 'num-bytes' / 3.
-HELP
-
-    &std_pdb_misc;
-
-    @inargs = (
-        { name => 'image', type => 'image',
-          desc => 'The image' },
-        { name => 'colormap', type => 'int8array', wrap => 1,
-          desc => 'The new colormap values',
-          array => { name => 'num_bytes', type => '0 <= int32 <= 768',
-                     desc => 'Number of bytes in the colormap array' } }
-    );
-
-    %invoke = (
-        headers => [ qw("core/gimpimage-colormap.h") ],
-        code => <<'CODE'
-{
-  gimp_image_set_colormap (image, colormap, num_bytes / 3, TRUE);
-}
-CODE
-    );
-}
-
 sub image_get_metadata {
     $blurb = "Returns the image's metadata.";
     $help  = 'Returns exif/iptc/xmp metadata from the image.';
@@ -1848,8 +1782,8 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+//  else if (component == GIMP_INDEXED_CHANNEL)
+//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1886,8 +1820,8 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+//  else if (component == GIMP_INDEXED_CHANNEL)
+//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1927,8 +1861,8 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+//  else if (component == GIMP_INDEXED_CHANNEL)
+//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1965,8 +1899,8 @@ HELP
 {
   if (component == GIMP_GRAY_CHANNEL)
     success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-  else if (component == GIMP_INDEXED_CHANNEL)
-    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
+//  else if (component == GIMP_INDEXED_CHANNEL)
+//    success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
   else
     success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -2859,7 +2793,6 @@ CODE
             image_reorder_item
             image_flatten image_merge_visible_layers image_merge_down
             image_add_layer_mask image_remove_layer_mask
-            image_get_colormap image_set_colormap
             image_get_metadata image_set_metadata
             image_clean_all image_is_dirty
             image_thumbnail

@@ -30,11 +30,11 @@
 #include "core/gimpcontext.h"
 #include "core/gimpcontainer.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
+//#include "core/gimpimage-colormap.h"
 #include "core/gimpmarshal.h"
 #include "core/gimppalette.h"
 
-#include "gimpcolormapeditor.h"
+//#include "gimpcolormapeditor.h"
 #include "gimpdnd.h"
 #include "gimpdocked.h"
 #include "gimpmenufactory.h"

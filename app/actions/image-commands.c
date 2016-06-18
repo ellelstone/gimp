@@ -247,12 +247,12 @@ image_convert_base_type_cmd_callback (GtkAction *action,
         }
       break;
 
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       dialog = convert_indexed_dialog_new (image,
                                            action_data_get_context (data),
                                            widget,
                                            GIMP_PROGRESS (display));
-      break;
+      break;*/
     }
 
   if (dialog)

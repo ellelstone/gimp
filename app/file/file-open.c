@@ -400,7 +400,7 @@ file_open_thumbnail (Gimp           *gimp,
                                                   TRUE);
                       break;
 
-                    case GIMP_INDEXED_IMAGE:
+/*                    case GIMP_INDEXED_IMAGE:
                     case GIMP_INDEXEDA_IMAGE:
                       {
                         const Babl *rgb;
@@ -414,7 +414,7 @@ file_open_thumbnail (Gimp           *gimp,
                         else
                           *format = rgba;
                       }
-                      break;
+                      break;*/
 
                     default:
                       break;

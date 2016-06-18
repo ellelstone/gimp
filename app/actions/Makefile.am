@@ -32,10 +32,6 @@ libappactions_a_SOURCES = \
 	channels-actions.h		\
 	channels-commands.c		\
 	channels-commands.h		\
-	colormap-actions.c		\
-	colormap-actions.h		\
-	colormap-commands.c		\
-	colormap-commands.h		\
 	context-actions.c		\
 	context-actions.h		\
 	context-commands.c		\

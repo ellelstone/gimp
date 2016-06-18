@@ -183,33 +183,6 @@ export_convert_grayscale (gint32  image_ID,
 }
 
 static void
-export_convert_indexed (gint32  image_ID,
-                        gint32 *drawable_ID)
-{
-  gint32 nlayers;
-
-  /* check alpha */
-  g_free (gimp_image_get_layers (image_ID, &nlayers));
-  if (nlayers > 1 || gimp_drawable_has_alpha (*drawable_ID))
-    gimp_image_convert_indexed (image_ID, GIMP_NO_DITHER,
-                                GIMP_MAKE_PALETTE, 255, FALSE, FALSE, "");
-  else
-    gimp_image_convert_indexed (image_ID, GIMP_NO_DITHER,
-                                GIMP_MAKE_PALETTE, 256, FALSE, FALSE, "");
-}
-
-static void
-export_convert_bitmap (gint32  image_ID,
-                       gint32 *drawable_ID)
-{
-  if (gimp_image_base_type (image_ID) == GIMP_INDEXED)
-    gimp_image_convert_rgb (image_ID);
-
-  gimp_image_convert_indexed (image_ID, GIMP_FS_DITHER,
-                              GIMP_MAKE_PALETTE, 2, FALSE, FALSE, "");
-}
-
-static void
 export_add_alpha (gint32  image_ID,
                   gint32 *drawable_ID)
 {
@@ -317,53 +290,12 @@ static ExportAction export_action_convert_grayscale =
   0
 };
 
-static ExportAction export_action_convert_indexed =
-{
-  export_convert_indexed,
-  NULL,
-  N_("%s plug-in can only handle indexed images"),
-  { N_("Convert to Indexed using default settings\n"
-       "(Do it manually to tune the result)"), NULL },
-  0
-};
-
-static ExportAction export_action_convert_bitmap =
-{
-  export_convert_bitmap,
-  NULL,
-  N_("%s plug-in can only handle bitmap (two color) indexed images"),
-  { N_("Convert to Indexed using bitmap default settings\n"
-       "(Do it manually to tune the result)"), NULL },
-  0
-};
-
 static ExportAction export_action_convert_rgb_or_grayscale =
 {
   export_convert_rgb,
   export_convert_grayscale,
   N_("%s plug-in can only handle RGB or grayscale images"),
   { N_("Convert to RGB"), N_("Convert to Grayscale")},
-  0
-};
-
-static ExportAction export_action_convert_rgb_or_indexed =
-{
-  export_convert_rgb,
-  export_convert_indexed,
-  N_("%s plug-in  can only handle RGB or indexed images"),
-  { N_("Convert to RGB"), N_("Convert to Indexed using default settings\n"
-                             "(Do it manually to tune the result)")},
-  0
-};
-
-static ExportAction export_action_convert_indexed_or_grayscale =
-{
-  export_convert_indexed,
-  export_convert_grayscale,
-  N_("%s plug-in can only handle grayscale or indexed images"),
-  { N_("Convert to Indexed using default settings\n"
-       "(Do it manually to tune the result)"),
-    N_("Convert to Grayscale") },
   0
 };
 
@@ -877,66 +809,21 @@ gimp_export_image (gint32                 *image_ID,
     case GIMP_RGB:
       if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB))
         {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_indexed_or_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY)
+          if (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_bitmap);
         }
       break;
 
     case GIMP_GRAY:
       if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
         {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_RGB) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED))
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_rgb_or_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB)
+          if (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB)
             actions = g_slist_prepend (actions,
                                        &export_action_convert_rgb);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_indexed);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_bitmap);
         }
       break;
 
-    case GIMP_INDEXED:
-      if (! (capabilities & GIMP_EXPORT_CAN_HANDLE_INDEXED))
-        {
-          if ((capabilities & GIMP_EXPORT_CAN_HANDLE_RGB) &&
-              (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY))
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_rgb_or_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_RGB)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_rgb);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_GRAY)
-            actions = g_slist_prepend (actions,
-                                       &export_action_convert_grayscale);
-          else if (capabilities & GIMP_EXPORT_CAN_HANDLE_BITMAP)
-            {
-              gint n_colors;
-
-              g_free (gimp_image_get_colormap (*image_ID, &n_colors));
-
-              if (n_colors > 2)
-                actions = g_slist_prepend (actions,
-                                           &export_action_convert_bitmap);
-            }
-        }
-      break;
     }
 
   if (actions)

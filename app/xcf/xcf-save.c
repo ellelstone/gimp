@@ -347,11 +347,11 @@ xcf_save_image_props (XcfInfo    *info,
 
   gimp_image_get_resolution (image, &xres, &yres);
 
-  /* check and see if we should save the colormap property */
+  /* check and see if we should save the colormap property 
   if (gimp_image_get_colormap (image))
     xcf_check_error (xcf_save_prop (info, image, PROP_COLORMAP, error,
                                     gimp_image_get_colormap_size (image),
-                                    gimp_image_get_colormap (image)));
+                                    gimp_image_get_colormap (image)));*/
 
   if (info->compression != COMPRESS_NONE)
     xcf_check_error (xcf_save_prop (info, image, PROP_COMPRESSION, error,
@@ -645,7 +645,7 @@ xcf_save_prop (XcfInfo    *info,
       xcf_write_int32_check_error (info, &size, 1);
       break;
 
-    case PROP_COLORMAP:
+/*    case PROP_COLORMAP:
       {
         guint32  n_colors;
         guchar  *colors;
@@ -659,7 +659,7 @@ xcf_save_prop (XcfInfo    *info,
         xcf_write_int32_check_error (info, &n_colors, 1);
         xcf_write_int8_check_error  (info, colors, n_colors * 3);
       }
-      break;
+      break;*/
 
     case PROP_ACTIVE_LAYER:
     case PROP_ACTIVE_CHANNEL:

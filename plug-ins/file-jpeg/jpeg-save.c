@@ -364,7 +364,7 @@ save_image (const gchar  *filename,
       format = babl_format ("Y' u8");
       break;
 
-    case GIMP_INDEXED_IMAGE:
+    /*case GIMP_INDEXED_IMAGE:*/
     default:
       return FALSE;
     }

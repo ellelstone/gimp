@@ -381,13 +381,13 @@ gimp_babl_format_get_description (const Babl *babl)
                              gettext (babl_descriptions[i].description));
     }
 
-  if (babl_format_is_palette (babl))
+/*  if (babl_format_is_palette (babl))
     {
       if (babl_format_has_alpha (babl))
         return _("Indexed-alpha");
       else
         return _("Indexed");
-    }
+    }*/
 
   description = g_hash_table_lookup (babl_description_hash,
                                      babl_get_name (babl));
@@ -491,10 +491,10 @@ gimp_babl_format_get_base_type (const Babl *format)
     {
       return GIMP_RGB;
     }
-  else if (babl_format_is_palette (format))
+/*  else if (babl_format_is_palette (format))
     {
       return GIMP_INDEXED;
-    }
+    }*/
 
   g_return_val_if_reached (-1);
 }
@@ -710,9 +710,9 @@ gimp_babl_format (GimpImageBaseType  base_type,
         }
       break;
 
-    case GIMP_INDEXED:
-      /* need to use the image's api for this */
-      break;
+/*    case GIMP_INDEXED:
+       need to use the image's api for this 
+      break;*/
     }
 
   g_return_val_if_reached (NULL);
@@ -892,9 +892,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         }
       break;
 
-    case GIMP_INDEXED:
-      /* need to use the image's api for this */
-      break;
+/*    case GIMP_INDEXED:
+       need to use the image's api for this 
+      break;*/
     }
 
   g_return_val_if_reached (NULL);

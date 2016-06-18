@@ -561,7 +561,7 @@ gimp_drawable_preview_set_drawable_id (GimpDrawablePreview *drawable_preview,
 
   gimp_preview_set_bounds (preview, x1, y1, x2, y2);
 
-  if (gimp_drawable_is_indexed (drawable_ID))
+/*  if (gimp_drawable_is_indexed (drawable_ID))
     {
       guint32  image_ID = gimp_item_get_image (drawable_ID);
       guchar  *cmap;
@@ -571,7 +571,7 @@ gimp_drawable_preview_set_drawable_id (GimpDrawablePreview *drawable_preview,
       gimp_preview_area_set_colormap (GIMP_PREVIEW_AREA (preview->area),
                                       cmap, num_colors);
       g_free (cmap);
-    }
+    }*/
 }
 
 

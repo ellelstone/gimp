@@ -368,11 +368,11 @@ gimp_preview_area_image_type_bytes (GimpImageType type)
   switch (type)
     {
     case GIMP_GRAY_IMAGE:
-    case GIMP_INDEXED_IMAGE:
+//    case GIMP_INDEXED_IMAGE:
       return 1;
 
     case GIMP_GRAYA_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
+//    case GIMP_INDEXEDA_IMAGE:
       return 2;
 
     case GIMP_RGB_IMAGE:
@@ -624,7 +624,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -643,9 +643,9 @@ gimp_preview_area_draw (GimpPreviewArea *area,
           src  += rowstride;
           dest += area->rowstride;
         }
-      break;
+      break;*/
 
-    case GIMP_INDEXEDA_IMAGE:
+/*    case GIMP_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -684,7 +684,7 @@ gimp_preview_area_draw (GimpPreviewArea *area,
           src  += rowstride;
           dest += area->rowstride;
         }
-      break;
+      break;*/
     }
 
   gimp_preview_area_queue_draw (area, x, y, width, height);
@@ -971,7 +971,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -993,9 +993,9 @@ gimp_preview_area_blend (GimpPreviewArea *area,
           src2 += rowstride2;
           dest += area->rowstride;
         }
-      break;
+      break;*/
 
-    case GIMP_INDEXEDA_IMAGE:
+/*    case GIMP_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -1065,7 +1065,7 @@ gimp_preview_area_blend (GimpPreviewArea *area,
           src2 += rowstride2;
           dest += area->rowstride;
         }
-      break;
+      break;*/
     }
 
   gimp_preview_area_queue_draw (area, x, y, width, height);
@@ -1465,7 +1465,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = 0; row < height; row++)
         {
@@ -1489,9 +1489,9 @@ gimp_preview_area_mask (GimpPreviewArea *area,
           src_mask += rowstride_mask;
           dest     += area->rowstride;
         }
-      break;
+      break;*/
 
-    case GIMP_INDEXEDA_IMAGE:
+/*    case GIMP_INDEXEDA_IMAGE:
       g_return_if_fail (area->colormap != NULL);
       for (row = y; row < y + height; row++)
         {
@@ -1626,7 +1626,7 @@ gimp_preview_area_mask (GimpPreviewArea *area,
           src_mask += rowstride_mask;
           dest     += area->rowstride;
         }
-      break;
+      break;*/
     }
 
   gimp_preview_area_queue_draw (area, x, y, width, height);
@@ -1752,7 +1752,7 @@ gimp_preview_area_set_offsets (GimpPreviewArea *area,
  * an image type of %GIMP_INDEXED_IMAGE or %GIMP_INDEXEDA_IMAGE.
  *
  * Since GIMP 2.2
- **/
+ *
 void
 gimp_preview_area_set_colormap (GimpPreviewArea *area,
                                 const guchar    *colormap,
@@ -1776,7 +1776,7 @@ gimp_preview_area_set_colormap (GimpPreviewArea *area,
       g_free (area->colormap);
       area->colormap = NULL;
     }
-}
+}*/
 
 /**
  * gimp_preview_area_set_color_config:

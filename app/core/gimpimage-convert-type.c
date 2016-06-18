@@ -31,7 +31,7 @@
 #include "gimpdrawable.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-convert-type.h"
 #include "gimpimage-undo.h"
 #include "gimpimage-undo-push.h"
@@ -59,7 +59,7 @@ gimp_image_convert_type (GimpImage          *image,
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
   g_return_val_if_fail (new_type != gimp_image_get_base_type (image), FALSE);
-  g_return_val_if_fail (new_type != GIMP_INDEXED, FALSE);
+//  g_return_val_if_fail (new_type != GIMP_INDEXED, FALSE);
   g_return_val_if_fail (dest_profile == NULL || GIMP_IS_COLOR_PROFILE (dest_profile),
                         FALSE);
   g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), FALSE);
@@ -139,8 +139,8 @@ gimp_image_convert_type (GimpImage          *image,
                                   TRUE, sub_progress);
     }
 
-  if (old_type == GIMP_INDEXED)
-    gimp_image_unset_colormap (image, TRUE);
+/*  if (old_type == GIMP_INDEXED)
+    gimp_image_unset_colormap (image, TRUE);*/
 
   /*  When converting to/from GRAY, set the new profile.
    */

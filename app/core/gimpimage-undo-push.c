@@ -136,7 +136,7 @@ gimp_image_undo_push_image_grid (GimpImage   *image,
                                NULL);
 }
 
-GimpUndo *
+/*GimpUndo *
 gimp_image_undo_push_image_colormap (GimpImage   *image,
                                      const gchar *undo_desc)
 {
@@ -146,7 +146,7 @@ gimp_image_undo_push_image_colormap (GimpImage   *image,
                                GIMP_UNDO_IMAGE_COLORMAP, undo_desc,
                                GIMP_DIRTY_IMAGE,
                                NULL);
-}
+}*/
 
 GimpUndo *
 gimp_image_undo_push_image_color_managed (GimpImage   *image,

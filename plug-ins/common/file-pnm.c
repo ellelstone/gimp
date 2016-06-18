@@ -157,12 +157,12 @@ static gboolean   pnmsaverow_raw_pbm       (PNMRowInfo    *ri,
 static gboolean   pnmsaverow_ascii_pbm     (PNMRowInfo    *ri,
                                             const guchar  *data,
                                             GError       **error);
-static gboolean   pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
+/*static gboolean   pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
                                             const guchar  *data,
-                                            GError       **error);
-static gboolean   pnmsaverow_raw_indexed   (PNMRowInfo    *ri,
+                                            GError       **error);*/
+/*static gboolean   pnmsaverow_raw_indexed   (PNMRowInfo    *ri,
                                             const guchar  *data,
-                                            GError       **error);
+                                            GError       **error);*/
 
 static void       pnmscanner_destroy       (PNMScanner    *s);
 static void       pnmscanner_createbuffer  (PNMScanner    *s,
@@ -284,7 +284,7 @@ query (void)
                           "Erik Nygren",
                           "1996",
                           N_("PNM image"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",/*, INDEXED*/
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -296,7 +296,7 @@ query (void)
                           "Erik Nygren",
                           "2006",
                           N_("PBM image"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",//, INDEXED
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -308,7 +308,7 @@ query (void)
                           "Erik Nygren",
                           "1996",
                           N_("PGM image"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",//, INDEXED
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -320,7 +320,7 @@ query (void)
                           "Erik Nygren",
                           "1996",
                           N_("PPM image"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",//, INDEXED
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -332,7 +332,7 @@ query (void)
                           "Mukund Sivaraman",
                           "2015",
                           N_("PFM image"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",//, INDEXED
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (pfm_save_args), 0,
                           pfm_save_args, NULL);
@@ -419,8 +419,8 @@ run (const gchar      *name,
             {
               export = gimp_export_image (&image_ID, &drawable_ID, "PNM",
                                           GIMP_EXPORT_CAN_HANDLE_RGB  |
-                                          GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                          GIMP_EXPORT_CAN_HANDLE_INDEXED);
+                                          GIMP_EXPORT_CAN_HANDLE_GRAY /*|
+                                          GIMP_EXPORT_CAN_HANDLE_INDEXED*/);
             }
           else if (strcmp (name, PBM_SAVE_PROC) == 0)
             {
@@ -436,8 +436,8 @@ run (const gchar      *name,
           else if (strcmp (name, PPM_SAVE_PROC) == 0)
             {
               export = gimp_export_image (&image_ID, &drawable_ID, "PPM",
-                                          GIMP_EXPORT_CAN_HANDLE_RGB |
-                                          GIMP_EXPORT_CAN_HANDLE_INDEXED);
+                                          GIMP_EXPORT_CAN_HANDLE_RGB /*|
+                                          GIMP_EXPORT_CAN_HANDLE_INDEXED*/);
             }
           else
             {
@@ -1111,7 +1111,7 @@ pnmsaverow_float (PNMRowInfo    *ri,
                        error);
 }
 
-/* Writes out indexed raw rows */
+/* Writes out indexed raw rows 
 static gboolean
 pnmsaverow_raw_indexed (PNMRowInfo    *ri,
                         const guchar  *data,
@@ -1128,7 +1128,7 @@ pnmsaverow_raw_indexed (PNMRowInfo    *ri,
     }
 
   return output_write (ri->output, ri->rowbuf, ri->xres * 3, error);
-}
+}*/
 
 /* Writes out RGB and grayscale ascii rows */
 static gboolean
@@ -1150,7 +1150,7 @@ pnmsaverow_ascii (PNMRowInfo    *ri,
 }
 
 /* Writes out RGB and grayscale ascii rows */
-static gboolean
+/*static gboolean
 pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
                           const guchar  *data,
                           GError       **error)
@@ -1170,7 +1170,7 @@ pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
 
   return output_write (ri->output, ri->rowbuf, strlen ((char *) ri->rowbuf),
                        error);
-}
+}*/
 
 static gboolean
 save_image (GFile     *file,
@@ -1253,13 +1253,13 @@ save_image (GFile     *file,
               saverow = pnmsaverow_ascii;
               break;
 
-            case GIMP_INDEXED_IMAGE:
+/*            case GIMP_INDEXED_IMAGE:
               header_string = "P3\n";
               format = gegl_buffer_get_format (buffer);
               np = 1;
               rowbufsize = xres * 12;
               saverow = pnmsaverow_ascii_indexed;
-              break;
+              break;*/
 
             default:
               g_warning ("PNM: Unknown drawable_type\n");
@@ -1297,13 +1297,13 @@ save_image (GFile     *file,
               saverow = pnmsaverow_raw;
               break;
 
-            case GIMP_INDEXED_IMAGE:
+/*            case GIMP_INDEXED_IMAGE:
               header_string = "P6\n";
               format = gegl_buffer_get_format (buffer);
               np = 1;
               rowbufsize = xres * 3;
               saverow = pnmsaverow_raw_indexed;
-              break;
+              break;*/
 
             default:
               g_warning ("PNM: Unknown drawable_type\n");
@@ -1338,7 +1338,7 @@ save_image (GFile     *file,
 
   rowinfo.zero_is_black = FALSE;
 
-  if (drawable_type == GIMP_INDEXED_IMAGE)
+/*  if (drawable_type == GIMP_INDEXED_IMAGE)
     {
       guchar *cmap;
       gint    num_colors;
@@ -1349,7 +1349,7 @@ save_image (GFile     *file,
 
       if (pbm)
         {
-          /*  Test which of the two colors is white and which is black  */
+          // Test which of the two colors is white and which is black
           switch (num_colors)
             {
             case 1:
@@ -1387,7 +1387,7 @@ save_image (GFile     *file,
 
       g_free (cmap);
     }
-
+*/
   if (!float_format)
     {
       /* write out comment string */

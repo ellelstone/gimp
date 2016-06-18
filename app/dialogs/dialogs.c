@@ -373,10 +373,10 @@ static const GimpDialogFactoryEntry entries[] =
             N_("Paths"), NULL, GIMP_STOCK_PATHS,
             GIMP_HELP_PATH_DIALOG,
             dialogs_vectors_list_view_new, 0, FALSE),
-  DOCKABLE ("gimp-indexed-palette",
+/*  DOCKABLE ("gimp-indexed-palette",
             N_("Colormap"), NULL, GIMP_STOCK_COLORMAP,
             GIMP_HELP_INDEXED_PALETTE_DIALOG,
-            dialogs_colormap_editor_new, 0, FALSE),
+            dialogs_colormap_editor_new, 0, FALSE),*/
   DOCKABLE ("gimp-histogram-editor",
             N_("Histogram"), NULL, GIMP_STOCK_HISTOGRAM,
             GIMP_HELP_HISTOGRAM_DIALOG,

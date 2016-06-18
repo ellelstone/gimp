@@ -84,15 +84,6 @@ HELP
       has_alpha = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
-      base_type = GIMP_INDEXED;
-      has_alpha = FALSE;
-      break;
-
-    case GIMP_INDEXEDA_IMAGE:
-      base_type = GIMP_INDEXED;
-      has_alpha = TRUE;
-      break;
     }
 
   /* do not use gimp_image_get_layer_format() because it might
@@ -650,8 +641,8 @@ BLURB
 This procedure adds an additional component to the specified layer if
 it does not already possess an alpha channel. An alpha channel makes
 it possible to clear and erase to transparency, instead of the
-background color. This transforms layers of type RGB to RGBA, GRAY to
-GRAYA, and INDEXED to INDEXEDA.
+background color. This transforms layers of type RGB to RGBA and GRAY to
+GRAYA.
 HELP
 
     &std_pdb_misc;
@@ -683,8 +674,8 @@ BLURB
     $help = <<'HELP';
 This procedure removes the alpha channel from a layer, blending all
 (partially) transparent pixels in the layer against the background
-color. This transforms layers of type RGBA to RGB, GRAYA to
-GRAY, and INDEXEDA to INDEXED.
+color. This transforms layers of type RGBA to RGB and GRAYA to
+GRAY.
 HELP
 
     &mitch_pdb_misc('2007', '2.4');

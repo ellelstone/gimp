@@ -34,9 +34,9 @@
  * well as the number of colors contained in the colormap. If the image
  * is not of base type INDEXED, this pointer will be NULL.
  *
- * Returns: The image's colormap.
- */
-guchar *
+ * Returns: The image's colormap. */
+
+/*guchar *
 gimp_image_get_colormap (gint32  image_ID,
                          gint   *num_colors)
 {
@@ -49,7 +49,7 @@ gimp_image_get_colormap (gint32  image_ID,
     *num_colors = num_bytes / 3;
 
   return cmap;
-}
+}*/
 
 /**
  * gimp_image_set_colormap:
@@ -66,13 +66,13 @@ gimp_image_get_colormap (gint32  image_ID,
  *
  * Returns: TRUE on success.
  */
-gboolean
+/*gboolean
 gimp_image_set_colormap (gint32        image_ID,
                          const guchar *colormap,
                          gint          num_colors)
 {
   return _gimp_image_set_colormap (image_ID, num_colors * 3, colormap);
-}
+}*/
 
 guchar *
 gimp_image_get_thumbnail_data (gint32  image_ID,
@@ -169,12 +169,12 @@ gimp_image_set_metadata (gint32        image_ID,
  *
  * Returns: The image's colormap.
  */
-guchar *
+/*guchar *
 gimp_image_get_cmap (gint32  image_ID,
                      gint   *num_colors)
 {
   return gimp_image_get_colormap (image_ID, num_colors);
-}
+}*/
 
 /**
  * gimp_image_set_cmap:
@@ -186,13 +186,13 @@ gimp_image_get_cmap (gint32  image_ID,
  *
  * Returns: TRUE on success.
  */
-gboolean
+/*gboolean
 gimp_image_set_cmap (gint32        image_ID,
                      const guchar *cmap,
                      gint          num_colors)
 {
   return gimp_image_set_colormap (image_ID, cmap, num_colors);
-}
+}*/
 
 /**
  * gimp_image_get_layer_position:

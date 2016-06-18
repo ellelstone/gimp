@@ -32,7 +32,7 @@
 #include "core/gimp.h"
 #include "core/gimpcontainer.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
+//#include "core/gimpimage-colormap.h"
 #include "core/gimpimage-undo.h"
 #include "core/gimpundostack.h"
 #include "core/gimp-utils.h"
@@ -471,11 +471,11 @@ gimp_image_prop_view_update (GimpImagePropView *view)
     case GIMP_GRAY:
       g_snprintf (buf, sizeof (buf), "%s", desc);
       break;
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       g_snprintf (buf, sizeof (buf),
                   "%s (%d %s)", desc, gimp_image_get_colormap_size (image),
                   _("colors"));
-      break;
+      break;*/
     }
 
   gtk_label_set_text (GTK_LABEL (view->colorspace_label), buf);

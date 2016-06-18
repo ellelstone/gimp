@@ -34,7 +34,7 @@
 #include "widgets/gimpbufferview.h"
 #include "widgets/gimpchanneltreeview.h"
 #include "widgets/gimpcoloreditor.h"
-#include "widgets/gimpcolormapeditor.h"
+//#include "widgets/gimpcolormapeditor.h"
 #include "widgets/gimpdevicestatus.h"
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpdockwindow.h"
@@ -710,14 +710,14 @@ dialogs_vectors_list_view_new (GimpDialogFactory *factory,
                                   "/vectors-popup");
 }
 
-GtkWidget *
+/*GtkWidget *
 dialogs_colormap_editor_new (GimpDialogFactory *factory,
                              GimpContext       *context,
                              GimpUIManager     *ui_manager,
                              gint               view_size)
 {
   return gimp_colormap_editor_new (gimp_dialog_factory_get_menu_factory (factory));
-}
+}*/
 
 GtkWidget *
 dialogs_histogram_editor_new (GimpDialogFactory *factory,

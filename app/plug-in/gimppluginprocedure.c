@@ -367,12 +367,12 @@ gimp_plug_in_procedure_get_sensitive (GimpProcedure *procedure,
     case GIMP_GRAYA_IMAGE:
       sensitive = proc->image_types_val & GIMP_PLUG_IN_GRAYA_IMAGE;
       break;
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       sensitive = proc->image_types_val & GIMP_PLUG_IN_INDEXED_IMAGE;
       break;
     case GIMP_INDEXEDA_IMAGE:
       sensitive = proc->image_types_val & GIMP_PLUG_IN_INDEXEDA_IMAGE;
-      break;
+      break;*/
     default:
       break;
     }
@@ -935,7 +935,7 @@ image_types_parse (const gchar *name,
               types |= GIMP_PLUG_IN_GRAY_IMAGE;
               image_types += strlen ("GRAY");
             }
-          else if (g_str_has_prefix (image_types, "INDEXEDA"))
+/*          else if (g_str_has_prefix (image_types, "INDEXEDA"))
             {
               types |= GIMP_PLUG_IN_INDEXEDA_IMAGE;
               image_types += strlen ("INDEXEDA");
@@ -949,12 +949,12 @@ image_types_parse (const gchar *name,
             {
               types |= GIMP_PLUG_IN_INDEXED_IMAGE;
               image_types += strlen ("INDEXED");
-            }
+            }*/
           else if (g_str_has_prefix (image_types, "*"))
             {
               types |= (GIMP_PLUG_IN_RGB_IMAGE     | GIMP_PLUG_IN_RGBA_IMAGE  |
-                        GIMP_PLUG_IN_GRAY_IMAGE    | GIMP_PLUG_IN_GRAYA_IMAGE |
-                        GIMP_PLUG_IN_INDEXED_IMAGE | GIMP_PLUG_IN_INDEXEDA_IMAGE);
+                        GIMP_PLUG_IN_GRAY_IMAGE    | GIMP_PLUG_IN_GRAYA_IMAGE /*|
+                        GIMP_PLUG_IN_INDEXED_IMAGE | GIMP_PLUG_IN_INDEXEDA_IMAGE*/);
               image_types += strlen ("*");
             }
           else

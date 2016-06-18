@@ -34,7 +34,7 @@
 #include "gimpgrid.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-grid.h"
 #include "gimpimage-metadata.h"
 #include "gimpimage-private.h"
@@ -182,11 +182,11 @@ gimp_image_undo_constructed (GObject *object)
       g_assert (GIMP_IS_GRID (image_undo->grid));
       break;
 
-    case GIMP_UNDO_IMAGE_COLORMAP:
+/*    case GIMP_UNDO_IMAGE_COLORMAP:
       image_undo->num_colors = gimp_image_get_colormap_size (image);
       image_undo->colormap   = g_memdup (gimp_image_get_colormap (image),
                                          GIMP_IMAGE_COLORMAP_SIZE);
-      break;
+      break;*/
 
     case GIMP_UNDO_IMAGE_COLOR_MANAGED:
       image_undo->is_color_managed = gimp_image_get_is_color_managed (image);
@@ -292,8 +292,8 @@ gimp_image_undo_get_memsize (GimpObject *object,
   GimpImageUndo *image_undo = GIMP_IMAGE_UNDO (object);
   gint64         memsize    = 0;
 
-  if (image_undo->colormap)
-    memsize += GIMP_IMAGE_COLORMAP_SIZE;
+/*  if (image_undo->colormap)
+    memsize += GIMP_IMAGE_COLORMAP_SIZE;*/
 
   if (image_undo->metadata)
     memsize += gimp_g_object_get_memsize (G_OBJECT (image_undo->metadata));
@@ -328,7 +328,7 @@ gimp_image_undo_pop (GimpUndo            *undo,
         image_undo->base_type = gimp_image_get_base_type (image);
         g_object_set (image, "base-type", base_type, NULL);
 
-        gimp_image_colormap_changed (image, -1);
+        //gimp_image_colormap_changed (image, -1);
 
         if (image_undo->base_type != gimp_image_get_base_type (image))
           {
@@ -448,7 +448,7 @@ gimp_image_undo_pop (GimpUndo            *undo,
       }
       break;
 
-    case GIMP_UNDO_IMAGE_COLORMAP:
+/*    case GIMP_UNDO_IMAGE_COLORMAP:
       {
         guchar *colormap;
         gint    num_colors;
@@ -470,7 +470,7 @@ gimp_image_undo_pop (GimpUndo            *undo,
         image_undo->num_colors = num_colors;
         image_undo->colormap   = colormap;
       }
-      break;
+      break;*/
 
     case GIMP_UNDO_IMAGE_COLOR_MANAGED:
       {

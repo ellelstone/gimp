@@ -31,7 +31,7 @@
 #include "gimpcontainer.h"
 #include "gimpdatafactory.h"
 #include "gimpimage.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-private.h"
 #include "gimpimage-undo-push.h"
 #include "gimppalette.h"

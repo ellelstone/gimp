@@ -29,7 +29,7 @@
 #include "gimpguide.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-duplicate.h"
 #include "gimpimage-grid.h"
 #include "gimpimage-guides.h"
@@ -51,8 +51,8 @@ static void          gimp_image_duplicate_resolution       (GimpImage *image,
                                                             GimpImage *new_image);
 static void          gimp_image_duplicate_save_source_file (GimpImage *image,
                                                             GimpImage *new_image);
-static void          gimp_image_duplicate_colormap         (GimpImage *image,
-                                                            GimpImage *new_image);
+/*static void          gimp_image_duplicate_colormap         (GimpImage *image,
+                                                            GimpImage *new_image);*/
 static GimpItem    * gimp_image_duplicate_item             (GimpItem  *item,
                                                             GimpImage *new_image);
 static GimpLayer   * gimp_image_duplicate_layers           (GimpImage *image,
@@ -107,8 +107,8 @@ gimp_image_duplicate (GimpImage *image)
   /*  Store the source uri to be used by the save dialog  */
   gimp_image_duplicate_save_source_file (image, new_image);
 
-  /*  Copy the colormap if necessary  */
-  gimp_image_duplicate_colormap (image, new_image);
+  /*  Copy the colormap if necessary  
+  gimp_image_duplicate_colormap (image, new_image);*/
 
   /*  Copy resolution information  */
   gimp_image_duplicate_resolution (image, new_image);
@@ -189,7 +189,7 @@ gimp_image_duplicate_save_source_file (GimpImage *image,
                             (GDestroyNotify) g_object_unref);
 }
 
-static void
+/*static void
 gimp_image_duplicate_colormap (GimpImage *image,
                                GimpImage *new_image)
 {
@@ -198,7 +198,7 @@ gimp_image_duplicate_colormap (GimpImage *image,
                              gimp_image_get_colormap (image),
                              gimp_image_get_colormap_size (image),
                              FALSE);
-}
+}*/
 
 static GimpItem *
 gimp_image_duplicate_item (GimpItem  *item,

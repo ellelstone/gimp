@@ -151,7 +151,7 @@ query (void)
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "1997-2000",
                           N_("GIMP brush"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",//, INDEXED*
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -226,7 +226,7 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_ID, "GBR",
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
+                                      //GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)

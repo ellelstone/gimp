@@ -749,8 +749,8 @@ gimp_drawable_get_format (gint32 drawable_ID)
 
   if (format_str)
     {
-      if (gimp_drawable_is_indexed (drawable_ID))
-        {
+//      if (gimp_drawable_is_indexed (drawable_ID))
+        /*{
           gint32      image_ID = gimp_item_get_image (drawable_ID);
           guchar     *colormap;
           gint        n_colors;
@@ -788,11 +788,11 @@ gimp_drawable_get_format (gint32 drawable_ID)
                                         colormap, n_colors);
               g_free (colormap);
             }
-        }
-      else
-        {
+        }*/
+      //else
+        //{
           format = babl_format (format_str);
-        }
+        //}
 
       g_free (format_str);
     }

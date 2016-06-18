@@ -57,13 +57,13 @@ gimp_babl_format_get_image_type (const Babl *format)
     {
       return GIMP_RGBA_IMAGE;
     }
-  else if (babl_format_is_palette (format))
+/*  else if (babl_format_is_palette (format))
     {
       if (babl_format_has_alpha (format))
         return GIMP_INDEXEDA_IMAGE;
       else
         return GIMP_INDEXED_IMAGE;
-    }
+    }*/
 
   g_return_val_if_reached (-1);
 }
@@ -73,9 +73,9 @@ gimp_babl_compat_u8_format (const Babl *format)
 {
   g_return_val_if_fail (format != NULL, NULL);
 
-  /*  indexed images only exist in u8, return the same format  */
+  /*  indexed images only exist in u8, return the same format  
   if (babl_format_is_palette (format))
-    return format;
+    return format;*/
 
   return gimp_babl_format (gimp_babl_format_get_base_type (format),
                            GIMP_PRECISION_U8_GAMMA,

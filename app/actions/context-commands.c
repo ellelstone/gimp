@@ -40,7 +40,7 @@
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpsessioninfo.h"
 #include "widgets/gimppaletteeditor.h"
-#include "widgets/gimpcolormapeditor.h"
+//#include "widgets/gimpcolormapeditor.h"
 
 #include "actions.h"
 #include "context-commands.h"
@@ -104,7 +104,7 @@ static gboolean context_set_color_index  (gint                  index,
                                           GimpRGB              *color);
 
 static GimpPaletteEditor  * context_get_palette_editor  (void);
-static GimpColormapEditor * context_get_colormap_editor (void);
+//static GimpColormapEditor * context_get_colormap_editor (void);
 
 
 /*  public functions  */
@@ -128,8 +128,8 @@ context_colors_swap_cmd_callback (GtkAction *action,
 
   gimp_context_swap_colors (context);
 }
-
-#define SELECT_COLOR_CMD_CALLBACK(name, fgbg, use_colormap, use_palette) \
+/*elle: was (name, fgbg, use_colormap, use_palette)*/
+#define SELECT_COLOR_CMD_CALLBACK(name, fgbg, FALSE, use_palette) \
 void \
 context_##name##_##fgbg##ground_cmd_callback (GtkAction *action, \
                                               gint       value, \
@@ -141,9 +141,9 @@ context_##name##_##fgbg##ground_cmd_callback (GtkAction *action, \
 \
   gimp_context_get_##fgbg##ground (context, &color); \
   context_select_color ((GimpActionSelectType) value, &color, \
-                        use_colormap, use_palette); \
+                        FALSE, use_palette); \
   gimp_context_set_##fgbg##ground (context, &color); \
-}
+}/*elle: was (name, fgbg, use_colormap, use_palette)*/
 
 SELECT_COLOR_CMD_CALLBACK (palette,  fore, FALSE, TRUE)
 SELECT_COLOR_CMD_CALLBACK (palette,  back, FALSE, TRUE)
@@ -767,7 +767,7 @@ context_select_color (GimpActionSelectType  select_type,
 {
   gint index;
   gint max;
-
+use_colormap=FALSE;
   index = context_get_color_index (use_colormap, use_palette, color);
   max   = context_max_color_index (use_colormap, use_palette);
 
@@ -784,7 +784,7 @@ context_get_color_index (gboolean       use_colormap,
                          gboolean       use_palette,
                          const GimpRGB *color)
 {
-  if (use_colormap)
+/*  if (use_colormap)
     {
       GimpColormapEditor *editor = context_get_colormap_editor ();
 
@@ -795,7 +795,7 @@ context_get_color_index (gboolean       use_colormap,
           if (index != -1)
             return index;
         }
-    }
+    }*/
 
   if (use_palette)
     {
@@ -817,7 +817,7 @@ static gint
 context_max_color_index (gboolean use_colormap,
                          gboolean use_palette)
 {
-  if (use_colormap)
+/*  if (use_colormap)
     {
       GimpColormapEditor *editor = context_get_colormap_editor ();
 
@@ -828,7 +828,7 @@ context_max_color_index (gboolean use_colormap,
           if (index != -1)
             return index;
         }
-    }
+    }*/
 
   if (use_palette)
     {
@@ -852,13 +852,13 @@ context_set_color_index (gint      index,
                          gboolean  use_palette,
                          GimpRGB  *color)
 {
-  if (use_colormap)
+/*  if (use_colormap)
     {
       GimpColormapEditor *editor = context_get_colormap_editor ();
 
       if (editor && gimp_colormap_editor_set_index (editor, index, color))
         return TRUE;
-    }
+    }*/
 
   if (use_palette)
     {
@@ -886,7 +886,7 @@ context_get_palette_editor (void)
   return NULL;
 }
 
-static GimpColormapEditor *
+/*static GimpColormapEditor *
 context_get_colormap_editor (void)
 {
   GtkWidget *widget;
@@ -899,4 +899,4 @@ context_get_colormap_editor (void)
     return GIMP_COLORMAP_EDITOR (gtk_bin_get_child (GTK_BIN (widget)));
 
   return NULL;
-}
+}*/

@@ -624,7 +624,7 @@ gimp_gegl_replace (GeglBuffer          *top_buffer,
     }
 }
 
-void
+/*void
 gimp_gegl_index_to_mask (GeglBuffer          *indexed_buffer,
                          const GeglRectangle *indexed_rect,
                          const Babl          *indexed_format,
@@ -659,7 +659,7 @@ gimp_gegl_index_to_mask (GeglBuffer          *indexed_buffer,
           mask++;
         }
     }
-}
+}*/
 
 void
 gimp_gegl_convert_color_profile (GeglBuffer               *src_buffer,

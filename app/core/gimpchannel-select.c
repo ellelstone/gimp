@@ -583,7 +583,7 @@ gimp_channel_select_by_color (GimpChannel         *channel,
   g_object_unref (add_on);
 }
 
-void
+/*void
 gimp_channel_select_by_index (GimpChannel    *channel,
                               GimpDrawable   *drawable,
                               gint            index,
@@ -599,7 +599,7 @@ gimp_channel_select_by_index (GimpChannel    *channel,
   g_return_if_fail (GIMP_IS_CHANNEL (channel));
   g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (channel)));
   g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
-  g_return_if_fail (gimp_drawable_is_indexed (drawable));
+//  g_return_if_fail (gimp_drawable_is_indexed (drawable));
 
   add_on = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                             gimp_item_get_width  (GIMP_ITEM (drawable)),
@@ -620,4 +620,4 @@ gimp_channel_select_by_index (GimpChannel    *channel,
                               feather_radius_x,
                               feather_radius_y);
   g_object_unref (add_on);
-}
+}*/

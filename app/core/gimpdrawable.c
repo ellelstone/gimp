@@ -42,7 +42,7 @@
 #include "gimpdrawable-transform.h"
 #include "gimpfilterstack.h"
 #include "gimpimage.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-undo-push.h"
 #include "gimpmarshal.h"
 #include "gimppickable.h"
@@ -1396,13 +1396,13 @@ gimp_drawable_is_gray (GimpDrawable *drawable)
   return (gimp_drawable_get_base_type (drawable) == GIMP_GRAY);
 }
 
-gboolean
+/*gboolean
 gimp_drawable_is_indexed (GimpDrawable *drawable)
 {
   g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), FALSE);
 
   return (gimp_drawable_get_base_type (drawable) == GIMP_INDEXED);
-}
+}*/
 
 const Babl *
 gimp_drawable_get_component_format (GimpDrawable    *drawable,
@@ -1437,8 +1437,8 @@ gimp_drawable_get_component_format (GimpDrawable    *drawable,
                                          gimp_drawable_get_precision (drawable),
                                          GRAY);
 
-    case GIMP_INDEXED_CHANNEL:
-      return babl_format ("Y u8"); /* will extract grayscale, the best
+/*    case GIMP_INDEXED_CHANNEL:
+      return babl_format ("Y u8");  will extract grayscale, the best
                                     * we can do here */
     }
 
@@ -1457,20 +1457,20 @@ gimp_drawable_get_component_index (GimpDrawable    *drawable,
     case GIMP_GREEN_CHANNEL:   return GREEN;
     case GIMP_BLUE_CHANNEL:    return BLUE;
     case GIMP_GRAY_CHANNEL:    return GRAY;
-    case GIMP_INDEXED_CHANNEL: return INDEXED;
+//    case GIMP_INDEXED_CHANNEL: return INDEXED;
     case GIMP_ALPHA_CHANNEL:
       switch (gimp_drawable_get_base_type (drawable))
         {
         case GIMP_RGB:     return ALPHA;
         case GIMP_GRAY:    return ALPHA_G;
-        case GIMP_INDEXED: return ALPHA_I;
+//        case GIMP_INDEXED: return ALPHA_I;
         }
     }
 
   return -1;
 }
 
-const guchar *
+/*const guchar *
 gimp_drawable_get_colormap (GimpDrawable *drawable)
 {
   GimpImage *image;
@@ -1480,4 +1480,4 @@ gimp_drawable_get_colormap (GimpDrawable *drawable)
   image = gimp_item_get_image (GIMP_ITEM (drawable));
 
   return image ? gimp_image_get_colormap (image) : NULL;
-}
+}*/

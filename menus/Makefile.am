@@ -14,7 +14,6 @@ menudata_DATA = \
 	brushes-menu.xml		\
 	buffers-menu.xml		\
 	channels-menu.xml		\
-	colormap-menu.xml		\
 	cursor-info-menu.xml		\
 	documents-menu.xml		\
 	dynamics-editor-menu.xml	\

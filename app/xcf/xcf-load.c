@@ -39,7 +39,7 @@
 #include "core/gimpgrid.h"
 #include "core/gimpgrouplayer.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
+//#include "core/gimpimage-colormap.h"
 #include "core/gimpimage-grid.h"
 #include "core/gimpimage-guides.h"
 #include "core/gimpimage-metadata.h"
@@ -162,7 +162,7 @@ xcf_load_image (Gimp     *gimp,
   info->cp += xcf_read_int32 (info->input, (guint32 *) &width, 1);
   info->cp += xcf_read_int32 (info->input, (guint32 *) &height, 1);
   info->cp += xcf_read_int32 (info->input, (guint32 *) &image_type, 1);
-  if (image_type < GIMP_RGB || image_type > GIMP_INDEXED ||
+  if (image_type < GIMP_RGB || image_type > GIMP_GRAY ||
       width <= 0 || height <= 0)
     goto hard_error;
 
@@ -629,7 +629,7 @@ xcf_load_image_props (XcfInfo   *info,
         case PROP_END:
           return TRUE;
 
-        case PROP_COLORMAP:
+/*        case PROP_COLORMAP:
           {
             guint32 n_colors;
             guchar  cmap[GIMP_IMAGE_COLORMAP_SIZE];
@@ -670,16 +670,16 @@ xcf_load_image_props (XcfInfo   *info,
                 info->cp += xcf_read_int8 (info->input, cmap, n_colors * 3);
               }
 
-            /* only set color map if image is indexed, this is just
-             * sanity checking to make sure gimp doesn't end up with
-             * an image state that is impossible.
-             */
-            if (gimp_image_get_base_type (image) == GIMP_INDEXED)
-              gimp_image_set_colormap (image, cmap, n_colors, FALSE);
+//             only set color map if image is indexed, this is just
+//             sanity checking to make sure gimp doesn't end up with
+//             an image state that is impossible.
+//             
+//            if (gimp_image_get_base_type (image) == GIMP_INDEXED)
+//              gimp_image_set_colormap (image, cmap, n_colors, FALSE);
 
-            GIMP_LOG (XCF, "prop colormap n_colors=%d", n_colors);
+//            GIMP_LOG (XCF, "prop colormap n_colors=%d", n_colors);
           }
-          break;
+          break;*/
 
         case PROP_COMPRESSION:
           {
@@ -1457,7 +1457,7 @@ xcf_load_layer (XcfInfo    *info,
       has_alpha = TRUE;
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       base_type = GIMP_INDEXED;
       has_alpha = FALSE;
       break;
@@ -1465,7 +1465,7 @@ xcf_load_layer (XcfInfo    *info,
     case GIMP_INDEXEDA_IMAGE:
       base_type = GIMP_INDEXED;
       has_alpha = TRUE;
-      break;
+      break;*/
 
     default:
       return NULL;

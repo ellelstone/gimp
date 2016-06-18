@@ -111,7 +111,7 @@ xcf_init (Gimp *gimp)
   gimp_plug_in_procedure_set_icon (proc, GIMP_ICON_TYPE_ICON_NAME,
                                    (const guint8 *) "gimp-wilber",
                                    strlen ("gimp-wilber") + 1);
-  gimp_plug_in_procedure_set_image_types (proc, "RGB*, GRAY*, INDEXED*");
+  gimp_plug_in_procedure_set_image_types (proc, "RGB*, GRAY*");
   gimp_plug_in_procedure_set_file_proc (proc, "xcf", "", NULL);
   gimp_plug_in_procedure_set_mime_type (proc, "image/xcf");
   gimp_plug_in_procedure_set_handles_uri (proc);

@@ -45,26 +45,11 @@ AM_CPPFLAGS = \
 
 libexec_PROGRAMS = \
 	compose \
-	crop-zealous \
 	decompose \
 	file-gbr \
 	file-gegl \
-	file-gif-load \
-	file-gif-save \
-	file-gih \
-	file-pat \
-	$(FILE_PDF_LOAD) \
-	$(FILE_PDF_SAVE) \
-	file-png \
-	file-pnm \
 	grid \
-	metadata \
-	plugin-browser \
-	procedure-browser
-
-EXTRA_PROGRAMS = \
-	file-pdf-load \
-	file-pdf-save
+	metadata
 
 install-%: %
 	@$(NORMAL_INSTALL)
@@ -95,22 +80,6 @@ compose_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(compose_RC)
-
-crop_zealous_SOURCES = \
-	crop-zealous.c
-
-crop_zealous_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(CAIRO_LIBS)		\
-	$(GDK_PIXBUF_LIBS)	\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(crop_zealous_RC)
 
 decompose_SOURCES = \
 	decompose.c
@@ -166,156 +135,6 @@ file_gegl_LDADD = \
 	$(INTLLIBS)		\
 	$(file_gegl_RC)
 
-file_gif_load_SOURCES = \
-	file-gif-load.c
-
-file_gif_load_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(CAIRO_LIBS)		\
-	$(GDK_PIXBUF_LIBS)	\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_gif_load_RC)
-
-file_gif_save_SOURCES = \
-	file-gif-save.c
-
-file_gif_save_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_gif_save_RC)
-
-file_gih_SOURCES = \
-	file-gih.c
-
-file_gih_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_gih_RC)
-
-file_pat_SOURCES = \
-	file-pat.c
-
-file_pat_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_pat_RC)
-
-file_pdf_load_CFLAGS = $(POPPLER_CFLAGS)
-
-file_pdf_load_SOURCES = \
-	file-pdf-load.c
-
-file_pdf_load_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(POPPLER_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_pdf_load_RC)
-
-file_pdf_save_CFLAGS = $(CAIRO_PDF_CFLAGS)
-
-file_pdf_save_SOURCES = \
-	file-pdf-save.c
-
-file_pdf_save_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(CAIRO_PDF_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_pdf_save_RC)
-
-file_png_CFLAGS = $(PNG_CFLAGS)
-
-file_png_SOURCES = \
-	file-png.c
-
-file_png_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(PNG_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_png_RC)
-
-file_pnm_SOURCES = \
-	file-pnm.c
-
-file_pnm_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_pnm_RC)
-
 grid_SOURCES = \
 	grid.c
 
@@ -352,37 +171,3 @@ metadata_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(metadata_RC)
-
-plugin_browser_SOURCES = \
-	plugin-browser.c
-
-plugin_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(plugin_browser_RC)
-
-procedure_browser_SOURCES = \
-	procedure-browser.c
-
-procedure_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(procedure_browser_RC)

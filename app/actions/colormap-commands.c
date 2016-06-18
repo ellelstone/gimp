@@ -28,10 +28,10 @@
 #include "core/gimpchannel-select.h"
 #include "core/gimpcontext.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-colormap.h"
+//#include "core/gimpimage-colormap.h"
 
 #include "widgets/gimpcolordialog.h"
-#include "widgets/gimpcolormapeditor.h"
+//#include "widgets/gimpcolormapeditor.h"
 #include "widgets/gimpdialogfactory.h"
 
 #include "actions.h"

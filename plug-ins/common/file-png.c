@@ -313,7 +313,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*,INDEXED*",
+                          "RGB*,GRAY*",//,INDEXED*
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -333,7 +333,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*,INDEXED*",
+                          "RGB*,GRAY*",//,INDEXED*
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args2), 0,
                           save_args2, NULL);
@@ -350,7 +350,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*,INDEXED*",
+                          "RGB*,GRAY*",//,INDEXED*
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args_defaults), 0,
                           save_args_defaults, NULL);
@@ -508,8 +508,8 @@ run (const gchar      *name,
 
           export = gimp_export_image (&image_ID, &drawable_ID, "PNG",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
+                                      GIMP_EXPORT_CAN_HANDLE_GRAY    /*|
+                                      GIMP_EXPORT_CAN_HANDLE_INDEXED*/ |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)
@@ -949,7 +949,7 @@ load_image (const gchar  *filename,
 
   /*
    * Special handling for INDEXED + tRNS (transparency palette)
-   */
+
 
   if (png_get_valid (pp, info, PNG_INFO_tRNS) &&
       png_get_color_type (pp, info) == PNG_COLOR_TYPE_PALETTE)
@@ -958,16 +958,16 @@ load_image (const gchar  *filename,
 
       png_get_tRNS (pp, info, &alpha_ptr, &num, NULL);
 
-      /* Copy the existing alpha values from the tRNS chunk */
+      /* Copy the existing alpha values from the tRNS chunk 
       for (i = 0; i < num; ++i)
-        alpha[i] = alpha_ptr[i];
+        alpha[i] = alpha_ptr[i];*/
 
-      /* And set any others to fully opaque (255)  */
+      /* And set any others to fully opaque (255) 
       for (i = num; i < 256; ++i)
         alpha[i] = 255;
 
-      trns = 1;
-    }
+      trns = 1; 
+    }*/
   else
     {
       trns = 0;
@@ -1001,10 +1001,10 @@ load_image (const gchar  *filename,
       layer_type = GIMP_GRAYA_IMAGE;
       break;
 
-    case PNG_COLOR_TYPE_PALETTE:
+/*    case PNG_COLOR_TYPE_PALETTE:
       image_type = GIMP_INDEXED;
       layer_type = GIMP_INDEXED_IMAGE;
-      break;
+      break;*/
 
     default:
       g_set_error (error, 0, 0,
@@ -1547,7 +1547,7 @@ save_image (const gchar  *filename,
         file_format = babl_format ("Y'A u16");
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       color_type = PNG_COLOR_TYPE_PALETTE;
       file_format = gimp_drawable_get_format (drawable_ID);
       pngg.has_plte = TRUE;
@@ -1561,7 +1561,7 @@ save_image (const gchar  *filename,
       file_format = gimp_drawable_get_format (drawable_ID);
       /* fix up transparency */
       bit_depth = respin_cmap (pp, info, remap, image_ID, drawable_ID);
-      break;
+      break;*/
 
     default:
       g_set_error (error, 0, 0, "Image type can't be exported as PNG");

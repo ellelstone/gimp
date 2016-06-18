@@ -31,7 +31,7 @@
 #include "gimpcontext.h"
 #include "gimpgradient.h"
 #include "gimpimage.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimppalette.h"
 #include "gimppalette-import.h"
 #include "gimppalette-load.h"
@@ -391,7 +391,7 @@ gimp_palette_import_from_image (GimpImage   *image,
 
 /*  create a palette from an indexed image  **********************************/
 
-GimpPalette *
+/*GimpPalette *
 gimp_palette_import_from_indexed_image (GimpImage   *image,
                                         GimpContext *context,
                                         const gchar *palette_name)
@@ -404,7 +404,7 @@ gimp_palette_import_from_indexed_image (GimpImage   *image,
 
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
   g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (gimp_image_get_base_type (image) == GIMP_INDEXED, NULL);
+//  g_return_val_if_fail (gimp_image_get_base_type (image) == GIMP_INDEXED, NULL);
   g_return_val_if_fail (palette_name != NULL, NULL);
 
   palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
@@ -429,7 +429,7 @@ gimp_palette_import_from_indexed_image (GimpImage   *image,
 
   return palette;
 }
-
+*/
 
 /*  create a palette from a drawable  ****************************************/
 

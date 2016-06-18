@@ -86,13 +86,12 @@ package Gimp::CodeGen::enums;
 	  header => 'libgimpbase/gimpbaseenums.h',
 	  symbols => [ qw(GIMP_RED_CHANNEL GIMP_GREEN_CHANNEL
 			  GIMP_BLUE_CHANNEL GIMP_GRAY_CHANNEL
-			  GIMP_INDEXED_CHANNEL GIMP_ALPHA_CHANNEL) ],
+			  GIMP_ALPHA_CHANNEL) ],
 	  mapping => { GIMP_RED_CHANNEL => '0',
 		       GIMP_GREEN_CHANNEL => '1',
 		       GIMP_BLUE_CHANNEL => '2',
 		       GIMP_GRAY_CHANNEL => '3',
-		       GIMP_INDEXED_CHANNEL => '4',
-		       GIMP_ALPHA_CHANNEL => '5' }
+		       GIMP_ALPHA_CHANNEL => '4' }
 	},
     GimpCloneType =>
 	{ contig => 1,
@@ -259,23 +258,19 @@ package Gimp::CodeGen::enums;
     GimpImageBaseType =>
 	{ contig => 1,
 	  header => 'libgimpbase/gimpbaseenums.h',
-	  symbols => [ qw(GIMP_RGB GIMP_GRAY GIMP_INDEXED) ],
+	  symbols => [ qw(GIMP_RGB GIMP_GRAY) ],
 	  mapping => { GIMP_RGB => '0',
-		       GIMP_GRAY => '1',
-		       GIMP_INDEXED => '2' }
+		       GIMP_GRAY => '1' }
 	},
     GimpImageType =>
 	{ contig => 1,
 	  header => 'libgimpbase/gimpbaseenums.h',
 	  symbols => [ qw(GIMP_RGB_IMAGE GIMP_RGBA_IMAGE GIMP_GRAY_IMAGE
-			  GIMP_GRAYA_IMAGE GIMP_INDEXED_IMAGE
-			  GIMP_INDEXEDA_IMAGE) ],
+			  GIMP_GRAYA_IMAGE) ],
 	  mapping => { GIMP_RGB_IMAGE => '0',
 		       GIMP_RGBA_IMAGE => '1',
 		       GIMP_GRAY_IMAGE => '2',
-		       GIMP_GRAYA_IMAGE => '3',
-		       GIMP_INDEXED_IMAGE => '4',
-		       GIMP_INDEXEDA_IMAGE => '5' }
+		       GIMP_GRAYA_IMAGE => '3' }
 	},
     GimpInkBlobType =>
 	{ contig => 1,

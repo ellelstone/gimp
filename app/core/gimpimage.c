@@ -49,7 +49,7 @@
 #include "gimpidtable.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-#include "gimpimage-colormap.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-guides.h"
 #include "gimpimage-item-list.h"
 #include "gimpimage-metadata.h"
@@ -118,7 +118,7 @@ enum
   SAMPLE_POINT_MOVED,
   PARASITE_ATTACHED,
   PARASITE_DETACHED,
-  COLORMAP_CHANGED,
+//  COLORMAP_CHANGED,
   UNDO_EVENT,
   LAST_SIGNAL
 };
@@ -177,8 +177,8 @@ static void     gimp_image_real_size_changed_detailed
                                                   gint               previous_width,
                                                   gint               previous_height);
 static void     gimp_image_real_unit_changed     (GimpImage         *image);
-static void     gimp_image_real_colormap_changed (GimpImage         *image,
-                                                  gint               color_index);
+/*static void     gimp_image_real_colormap_changed (GimpImage         *image,
+                                                  gint               color_index);*/
 
 static const guint8 *
         gimp_image_color_managed_get_icc_profile (GimpColorManaged  *managed,
@@ -523,7 +523,7 @@ gimp_image_class_init (GimpImageClass *klass)
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
-  gimp_image_signals[COLORMAP_CHANGED] =
+/*  gimp_image_signals[COLORMAP_CHANGED] =
     g_signal_new ("colormap-changed",
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
@@ -531,7 +531,7 @@ gimp_image_class_init (GimpImageClass *klass)
                   NULL, NULL,
                   gimp_marshal_VOID__INT,
                   G_TYPE_NONE, 1,
-                  G_TYPE_INT);
+                  G_TYPE_INT);*/
 
   gimp_image_signals[UNDO_EVENT] =
     g_signal_new ("undo-event",
@@ -590,7 +590,7 @@ gimp_image_class_init (GimpImageClass *klass)
   klass->sample_point_moved           = NULL;
   klass->parasite_attached            = NULL;
   klass->parasite_detached            = NULL;
-  klass->colormap_changed             = gimp_image_real_colormap_changed;
+//  klass->colormap_changed             = gimp_image_real_colormap_changed;
   klass->undo_event                   = NULL;
 
   g_object_class_install_property (object_class, PROP_GIMP,
@@ -699,7 +699,7 @@ gimp_image_init (GimpImage *image)
   private->base_type           = GIMP_RGB;
   private->precision           = GIMP_PRECISION_U8_GAMMA;
 
-  private->colormap            = NULL;
+//  private->colormap            = NULL;
   private->n_colors            = 0;
   private->palette             = NULL;
 
@@ -830,8 +830,8 @@ gimp_image_constructed (GObject *object)
 
   private->quick_mask_color = config->quick_mask_color;
 
-  if (private->base_type == GIMP_INDEXED)
-    gimp_image_colormap_init (image);
+/*  if (private->base_type == GIMP_INDEXED)
+    gimp_image_colormap_init (image);*/
 
   selection = gimp_selection_new (image,
                                   gimp_image_get_width  (image),
@@ -978,8 +978,8 @@ gimp_image_dispose (GObject *object)
   GimpImage        *image   = GIMP_IMAGE (object);
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
 
-  if (private->colormap)
-    gimp_image_colormap_dispose (image);
+/*  if (private->colormap)
+    gimp_image_colormap_dispose (image);*/
 
   gimp_image_undo_free (image);
 
@@ -1035,8 +1035,8 @@ gimp_image_finalize (GObject *object)
       private->visible_mask = NULL;
     }
 
-  if (private->colormap)
-    gimp_image_colormap_free (image);
+/*  if (private->colormap)
+    gimp_image_colormap_free (image);*/
 
   if (private->color_profile)
     _gimp_image_free_color_profile (image);
@@ -1218,8 +1218,8 @@ gimp_image_get_memsize (GimpObject *object,
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
   gint64            memsize = 0;
 
-  if (gimp_image_get_colormap (image))
-    memsize += GIMP_IMAGE_COLORMAP_SIZE;
+/*  if (gimp_image_get_colormap (image))
+    memsize += GIMP_IMAGE_COLORMAP_SIZE;*/
 
   memsize += gimp_object_get_memsize (GIMP_OBJECT (private->palette),
                                       gui_size);
@@ -1411,7 +1411,7 @@ gimp_image_real_unit_changed (GimpImage *image)
     }
 }
 
-static void
+/*static void
 gimp_image_real_colormap_changed (GimpImage *image,
                                   gint       color_index)
 {
@@ -1433,7 +1433,7 @@ gimp_image_real_colormap_changed (GimpImage *image,
 
   if (gimp_image_get_base_type (image) == GIMP_INDEXED)
     {
-      /* A colormap alteration affects the whole image */
+       A colormap alteration affects the whole image 
       gimp_image_invalidate (image,
                              0, 0,
                              gimp_image_get_width  (image),
@@ -1441,7 +1441,7 @@ gimp_image_real_colormap_changed (GimpImage *image,
 
       gimp_item_stack_invalidate_previews (GIMP_ITEM_STACK (private->layers->container));
     }
-}
+}*/
 
 static const guint8 *
 gimp_image_color_managed_get_icc_profile (GimpColorManaged *managed,
@@ -1524,7 +1524,7 @@ gimp_image_get_proj_format (GimpProjectable *projectable)
   switch (private->base_type)
     {
     case GIMP_RGB:
-    case GIMP_INDEXED:
+//    case GIMP_INDEXED:
       return gimp_image_get_format (image, GIMP_RGB,
                                     gimp_image_get_precision (image), TRUE);
 
@@ -1770,7 +1770,7 @@ gimp_image_new (Gimp              *gimp,
                 GimpPrecision      precision)
 {
   g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
-  g_return_val_if_fail (base_type != GIMP_INDEXED ||
+  g_return_val_if_fail ( /*base_type != GIMP_INDEXED ||*/
                         precision == GIMP_PRECISION_U8_GAMMA, NULL);
 
   return g_object_new (GIMP_TYPE_IMAGE,
@@ -1895,14 +1895,14 @@ gimp_image_get_format (GimpImage         *image,
     case GIMP_GRAY:
       return gimp_babl_format (base_type, precision, with_alpha);
 
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       if (precision == GIMP_PRECISION_U8_GAMMA)
         {
           if (with_alpha)
             return gimp_image_colormap_get_rgba_format (image);
           else
             return gimp_image_colormap_get_rgb_format (image);
-        }
+        }*/
     }
 
   g_return_val_if_reached (NULL);
@@ -2377,9 +2377,9 @@ gimp_image_get_xcf_version (GimpImage    *image,
   GList *list;
   gint   version = 0;  /* default to oldest */
 
-  /* need version 1 for colormaps */
+  /* need version 1 for colormaps 
   if (gimp_image_get_colormap (image))
-    version = 1;
+    version = 1;*/
 
   layers = gimp_image_get_layer_list (image);
 
@@ -2713,8 +2713,8 @@ gimp_image_get_component_format (GimpImage       *image,
                                          gimp_image_get_precision (image),
                                          GRAY);
 
-    case GIMP_INDEXED_CHANNEL:
-      return babl_format ("Y u8"); /* will extract grayscale, the best
+/*    case GIMP_INDEXED_CHANNEL:
+      return babl_format ("Y u8");  will extract grayscale, the best
                                     * we can do here */
     }
 
@@ -2733,13 +2733,13 @@ gimp_image_get_component_index (GimpImage       *image,
     case GIMP_GREEN_CHANNEL:   return GREEN;
     case GIMP_BLUE_CHANNEL:    return BLUE;
     case GIMP_GRAY_CHANNEL:    return GRAY;
-    case GIMP_INDEXED_CHANNEL: return INDEXED;
+//    case GIMP_INDEXED_CHANNEL: return INDEXED;
     case GIMP_ALPHA_CHANNEL:
       switch (gimp_image_get_base_type (image))
         {
         case GIMP_RGB:     return ALPHA;
         case GIMP_GRAY:    return ALPHA_G;
-        case GIMP_INDEXED: return ALPHA_I;
+//        case GIMP_INDEXED: return ALPHA_I;
         }
     }
 
@@ -2827,7 +2827,7 @@ gimp_image_get_active_mask (GimpImage *image)
       break;
 
     case GIMP_GRAY:
-    case GIMP_INDEXED:
+//    case GIMP_INDEXED:
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_RED   : 0;
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_GREEN : 0;
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_BLUE  : 0;
@@ -2930,7 +2930,7 @@ gimp_image_get_visible_mask (GimpImage *image)
       break;
 
     case GIMP_GRAY:
-    case GIMP_INDEXED:
+//    case GIMP_INDEXED:
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_RED   : 0;
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_GREEN : 0;
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_BLUE  : 0;
@@ -3077,7 +3077,7 @@ gimp_image_size_changed_detailed (GimpImage *image,
                  previous_height);
 }
 
-void
+/*void
 gimp_image_colormap_changed (GimpImage *image,
                              gint       color_index)
 {
@@ -3087,7 +3087,7 @@ gimp_image_colormap_changed (GimpImage *image,
 
   g_signal_emit (image, gimp_image_signals[COLORMAP_CHANGED], 0,
                  color_index);
-}
+}*/
 
 void
 gimp_image_selection_invalidate (GimpImage *image)
