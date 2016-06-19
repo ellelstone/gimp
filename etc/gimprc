@@ -411,7 +411,7 @@
 # %F  full path to file, or "Untitled"
 # %p  PDB image id
 # %i  view instance number
-# %t  image type (RGB, grayscale, indexed)
+# %t  image type (RGB, grayscale)
 # %z  zoom factor as a percentage
 # %s  source scale factor
 # %d  destination scale factor
@@ -449,7 +449,7 @@
 # %F  full path to file, or "Untitled"
 # %p  PDB image id
 # %i  view instance number
-# %t  image type (RGB, grayscale, indexed)
+# %t  image type (RGB, grayscale)
 # %z  zoom factor as a percentage
 # %s  source scale factor
 # %d  destination scale factor

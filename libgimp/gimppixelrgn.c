@@ -185,8 +185,8 @@ gimp_pixel_rgn_resize (GimpPixelRgn *pr,
  *
  * Fill the buffer pointed by @buf with the value of the pixel at (@x, @y)
  * in the region @pr. @buf should be large enough to hold the pixel value
- * (1 #guchar for an indexed or grayscale drawable, 2 #guchar for
- * indexed with alpha or grayscale with alpha drawable, 3 #guchar for
+ * (1 #guchar for a grayscale drawable, 2 #guchar for
+ * grayscale with alpha drawable, 3 #guchar for
  * rgb drawable and 4 #guchar for rgb with alpha drawable.
  **/
 void

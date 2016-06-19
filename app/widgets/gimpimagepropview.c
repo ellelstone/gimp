@@ -470,11 +470,6 @@ gimp_image_prop_view_update (GimpImagePropView *view)
     case GIMP_GRAY:
       g_snprintf (buf, sizeof (buf), "%s", desc);
       break;
-/*    case GIMP_INDEXED:
-      g_snprintf (buf, sizeof (buf),
-                  "%s (%d %s)", desc, gimp_image_get_colormap_size (image),
-                  _("colors"));
-      break;*/
     }
 
   gtk_label_set_text (GTK_LABEL (view->colorspace_label), buf);

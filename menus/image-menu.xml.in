@@ -359,7 +359,6 @@
       <menu action="image-mode-menu" name="Mode">
         <menuitem action="image-convert-rgb" />
         <menuitem action="image-convert-grayscale" />
-<!--        <menuitem action="image-convert-indexed" />-->
 	<separator />
       </menu>
       <menu action="image-precision-menu" name="Precision">

@@ -162,7 +162,6 @@ gimp_view_renderer_image_render (GimpViewRenderer *renderer,
     case GIMP_GREEN_CHANNEL:   icon_name = GIMP_STOCK_CHANNEL_GREEN;   break;
     case GIMP_BLUE_CHANNEL:    icon_name = GIMP_STOCK_CHANNEL_BLUE;    break;
     case GIMP_GRAY_CHANNEL:    icon_name = GIMP_STOCK_CHANNEL_GRAY;    break;
-//    case GIMP_INDEXED_CHANNEL: icon_name = GIMP_STOCK_CHANNEL_INDEXED; break;
     case GIMP_ALPHA_CHANNEL:   icon_name = GIMP_STOCK_CHANNEL_ALPHA;   break;
 
     default:

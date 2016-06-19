@@ -145,7 +145,6 @@ typedef enum
   GIMP_GREEN_CHANNEL,    /*< desc="Green"   >*/
   GIMP_BLUE_CHANNEL,     /*< desc="Blue"    >*/
   GIMP_GRAY_CHANNEL,     /*< desc="Gray"    >*/
-//  GIMP_INDEXED_CHANNEL,  /*< desc="Indexed" >*/
   GIMP_ALPHA_CHANNEL     /*< desc="Alpha"   >*/
 } GimpChannelType;
 
@@ -404,7 +403,6 @@ typedef enum
 {
   GIMP_RGB,     /*< desc="RGB color"     >*/
   GIMP_GRAY,    /*< desc="Grayscale"     >*/
-//  GIMP_INDEXED  /*< desc="Indexed color" >*/
 } GimpImageBaseType;
 
 
@@ -418,8 +416,6 @@ typedef enum
   GIMP_RGBA_IMAGE,     /*< desc="RGB-alpha"       >*/
   GIMP_GRAY_IMAGE,     /*< desc="Grayscale"       >*/
   GIMP_GRAYA_IMAGE,    /*< desc="Grayscale-alpha" >*/
-//  GIMP_INDEXED_IMAGE,  /*< desc="Indexed"         >*/
-//  GIMP_INDEXEDA_IMAGE  /*< desc="Indexed-alpha"   >*/
 } GimpImageType;
 
 
