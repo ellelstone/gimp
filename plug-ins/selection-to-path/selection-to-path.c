@@ -130,7 +130,7 @@ query (void)
                           "Andy Thomas",
                           "1999",
                           NULL,
-                          "RGB*, INDEXED*, GRAY*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
@@ -142,7 +142,7 @@ query (void)
                           "Andy Thomas",
                           "1999",
                           NULL,
-                          "RGB*, INDEXED*, GRAY*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (advanced_args), 0,
                           advanced_args, NULL);

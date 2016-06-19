@@ -137,7 +137,7 @@ query (void)
                           "Alexander Schulz",
                           "1997",
                           N_("Windows BMP image"),
-                          "INDEXED, GRAY, RGB*",
+                          "GRAY, RGB*",//INDEXED, 
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -219,8 +219,8 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_ID, "BMP",
                                       GIMP_EXPORT_CAN_HANDLE_RGB   |
                                       GIMP_EXPORT_CAN_HANDLE_GRAY  |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED);
+                                      GIMP_EXPORT_CAN_HANDLE_ALPHA/* |
+                                      GIMP_EXPORT_CAN_HANDLE_INDEXED*/);
 
           if (export == GIMP_EXPORT_CANCEL)
             {

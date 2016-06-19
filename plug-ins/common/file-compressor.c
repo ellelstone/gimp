@@ -299,7 +299,7 @@ query (void)
                               "Daniel Risacher, Spencer Kimball and Peter Mattis",
                               "1995-1997",
                               compressor->file_type,
-                              "RGB*, GRAY*, INDEXED*",
+                              "RGB*, GRAY*",
                               GIMP_PLUGIN,
                               G_N_ELEMENTS (save_args), 0,
                               save_args, NULL);

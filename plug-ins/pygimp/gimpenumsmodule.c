@@ -160,10 +160,6 @@ add_compat_enums(PyObject *m)
                             GIMP_EXPORT_CAN_HANDLE_RGB);
     PyModule_AddIntConstant(m, "EXPORT_CAN_HANDLE_GRAY",
                             GIMP_EXPORT_CAN_HANDLE_GRAY);
-    PyModule_AddIntConstant(m, "EXPORT_CAN_HANDLE_INDEXED",
-                            GIMP_EXPORT_CAN_HANDLE_INDEXED);
-    PyModule_AddIntConstant(m, "EXPORT_CAN_HANDLE_BITMAP",
-                            GIMP_EXPORT_CAN_HANDLE_BITMAP);
     PyModule_AddIntConstant(m, "EXPORT_CAN_HANDLE_ALPHA",
                             GIMP_EXPORT_CAN_HANDLE_ALPHA);
     PyModule_AddIntConstant(m, "EXPORT_CAN_HANDLE_LAYERS",

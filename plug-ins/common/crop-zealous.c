@@ -72,7 +72,7 @@ query (void)
                           "Adam D. Moss",
                           "1997",
                           N_("_Zealous Crop"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (args), 0,
                           args, NULL);
@@ -115,10 +115,9 @@ run (const gchar      *name,
       image_id    = param[1].data.d_int32;
       drawable_id = param[2].data.d_int32;
 
-      /*  Make sure that the drawable is gray or RGB or indexed  */
+      /*  Make sure that the drawable is gray or RGB */
       if (gimp_drawable_is_rgb (drawable_id) ||
-          gimp_drawable_is_gray (drawable_id) ||
-          gimp_drawable_is_indexed (drawable_id))
+          gimp_drawable_is_gray (drawable_id))
         {
           gimp_progress_init (_("Zealous cropping"));
 

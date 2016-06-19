@@ -184,7 +184,7 @@ query (void)
                           "Peter Kirchgessner (peter@kirchgessner.net)",
                           "1997",
                           N_("Flexible Image Transport System"),
-                          "RGB, GRAY, INDEXED",
+                          "RGB, GRAY",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -284,8 +284,7 @@ run (const gchar      *name,
 
           export = gimp_export_image (&image_ID, &drawable_ID, "FITS",
                                       GIMP_EXPORT_CAN_HANDLE_RGB  |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED);
+                                      GIMP_EXPORT_CAN_HANDLE_GRAY);
 
         if (export == GIMP_EXPORT_CANCEL)
           {
@@ -460,7 +459,6 @@ save_image (const gchar  *filename,
 
   switch (drawable_type)
     {
-    case GIMP_INDEXED_IMAGE: case GIMP_INDEXEDA_IMAGE:
     case GIMP_GRAY_IMAGE:    case GIMP_GRAYA_IMAGE:
     case GIMP_RGB_IMAGE:     case GIMP_RGBA_IMAGE:
       break;
@@ -971,7 +969,6 @@ save_fits (FitsFile *ofp,
       break;
 
     case GIMP_RGB_IMAGE:
-    case GIMP_INDEXED_IMAGE:
       format = babl_format_new (babl_model ("R'G'B'"),
                                 type,
                                 babl_component ("R'"),
@@ -981,7 +978,6 @@ save_fits (FitsFile *ofp,
       break;
 
     case GIMP_RGBA_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
       format = babl_format_new (babl_model ("R'G'B'A"),
                                 type,
                                 babl_component ("R'"),

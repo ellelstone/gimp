@@ -490,7 +490,6 @@ decompose (gint32       image_ID,
     }
 
   requirments |= (gimp_drawable_is_rgb (drawable_ID));
-//  requirments |= (gimp_drawable_is_indexed (drawable_ID));
   requirments |= (gimp_drawable_is_gray (drawable_ID)
                   && gimp_drawable_has_alpha (drawable_ID)
                   && (num_layers <= 2)
@@ -608,9 +607,6 @@ create_new_layer (gint32             image_ID,
     case GIMP_GRAY:
       gdtype = GIMP_GRAY_IMAGE;
       break;
-/*    case GIMP_INDEXED:
-      gdtype = GIMP_INDEXED_IMAGE;
-      break;*/
     }
 
   if (! layername)

@@ -110,7 +110,7 @@ query (void)
                           "robert@experimental.net",
                           "June 20th, 1997",
                           N_("Colorcube A_nalysis..."),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (args), G_N_ELEMENTS (return_vals),
                           args, return_vals);
@@ -150,8 +150,7 @@ run (const gchar      *name,
       imageID  = param[1].data.d_image;
 
       if (gimp_drawable_is_rgb (drawable->drawable_id) ||
-          gimp_drawable_is_gray (drawable->drawable_id) ||
-          gimp_drawable_is_indexed (drawable->drawable_id))
+          gimp_drawable_is_gray (drawable->drawable_id))
         {
           memset (hist_red, 0, sizeof (hist_red));
           memset (hist_green, 0, sizeof (hist_green));
@@ -243,22 +242,8 @@ analyze (GimpDrawable *drawable)
         {
           /* Start with full opacity.  */
           a = 255;
-
-          /*
-           * If the image is indexed, fetch RGB values
-           * from colormap.
-           */
-          if (cmap)
-            {
-              idx = src_row[x * bpp];
-
-              r = cmap[idx * 3];
-              g = cmap[idx * 3 + 1];
-              b = cmap[idx * 3 + 2];
-              if (has_alpha)
-                a = src_row[x * bpp + 1];
-            }
-          else if (gray)
+          
+          if (gray)
             {
               r = g = b = src_row[x * bpp];
               if (has_alpha)

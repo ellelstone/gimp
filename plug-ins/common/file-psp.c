@@ -621,7 +621,7 @@ query (void)
                           "Tor Lillqvist",
                           "1999",
                           N_("Paint Shop Pro image"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -1950,7 +1950,6 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_ID, "PSP",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA   |
                                       GIMP_EXPORT_CAN_HANDLE_LAYERS);
 

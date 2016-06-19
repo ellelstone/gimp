@@ -158,9 +158,6 @@ img_new_layer(PyGimpImage *self, PyObject *args, PyObject *kwargs)
         case GIMP_GRAY:
             layer_type = alpha ? GIMP_GRAYA_IMAGE: GIMP_GRAY_IMAGE;
             break;
-        case GIMP_INDEXED:
-            layer_type = alpha ? GIMP_INDEXEDA_IMAGE: GIMP_INDEXED_IMAGE;
-            break;
         default:
             PyErr_SetString(pygimp_error, "Unknown image base type");
             return NULL;
@@ -1066,50 +1063,6 @@ img_get_channels(PyGimpImage *self, void *closure)
 }
 
 static PyObject *
-img_get_colormap(PyGimpImage *self, void *closure)
-{
-    guchar *cmap;
-    gint n_colours;
-    PyObject *ret;
-
-    cmap = gimp_image_get_colormap(self->ID, &n_colours);
-
-    if (cmap == NULL) {
-	PyErr_Format(pygimp_error, "could not get colormap for image (ID %d)",
-		     self->ID);
-	return NULL;
-    }
-
-    ret = PyString_FromStringAndSize((char *)cmap, n_colours * 3);
-    g_free(cmap);
-
-    return ret;
-}
-
-static int
-img_set_colormap(PyGimpImage *self, PyObject *value, void *closure)
-{
-    if (value == NULL) {
-	PyErr_SetString(PyExc_TypeError, "cannot delete colormap");
-	return -1;
-    }
-
-    if (!PyString_Check(value)) {
-	PyErr_SetString(PyExc_TypeError, "type mismatch");
-	return -1;
-    }
-
-    if (!gimp_image_set_colormap(self->ID, (guchar *)PyString_AsString(value),
-                                 PyString_Size(value) / 3)) {
-	PyErr_Format(pygimp_error, "could not set colormap on image (ID %d)",
-		     self->ID);
-        return -1;
-    }
-
-    return 0;
-}
-
-static PyObject *
 img_get_is_dirty(PyGimpImage *self, void *closure)
 {
     return PyBool_FromLong(gimp_image_is_dirty(self->ID));
@@ -1418,7 +1371,6 @@ static PyGetSetDef img_getsets[] = {
       (setter)img_set_active_vectors},
     { "base_type", (getter)img_get_base_type, (setter)0 },
     { "channels", (getter)img_get_channels, (setter)0 },
-    { "colormap", (getter)img_get_colormap, (setter)img_set_colormap },
     { "dirty", (getter)img_get_is_dirty, (setter)0 },
     { "filename", (getter)img_get_filename, (setter)img_set_filename },
     { "floating_selection", (getter)img_get_floating_selection, (setter)0 },

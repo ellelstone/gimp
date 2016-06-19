@@ -432,16 +432,16 @@ load_image (GFile              *file,
         {
         case PHOTOMETRIC_MINISBLACK:
         case PHOTOMETRIC_MINISWHITE:
-          if (bps == 1 && ! alpha && spp == 1)
+/*          if (bps == 1 && ! alpha && spp == 1)
             {
               image_type = GIMP_INDEXED;
               layer_type = GIMP_INDEXED_IMAGE;
 
               is_bw = TRUE;
               fill_bit2byte ();
-            }
-          else
-            {
+            }*/
+//          else
+//            {
               image_type = GIMP_GRAY;
               layer_type = alpha ? GIMP_GRAYA_IMAGE : GIMP_GRAY_IMAGE;
 
@@ -471,7 +471,7 @@ load_image (GFile              *file,
                                                      babl_component ("Y'"),
                                                      NULL);
                 }
-            }
+//            }
           break;
 
         case PHOTOMETRIC_RGB:
@@ -512,10 +512,10 @@ load_image (GFile              *file,
             }
           break;
 
-        case PHOTOMETRIC_PALETTE:
+/*        case PHOTOMETRIC_PALETTE:
           image_type = GIMP_INDEXED;
           layer_type = alpha ? GIMP_INDEXEDA_IMAGE : GIMP_INDEXED_IMAGE;
-          break;
+          break;*/
 
         default:
           g_printerr ("photomet: %d (%d)\n", photomet, PHOTOMETRIC_PALETTE);
@@ -750,7 +750,7 @@ load_image (GFile              *file,
       }
 
       /* Install colormap for INDEXED images only */
-      if (image_type == GIMP_INDEXED)
+/*      if (image_type == GIMP_INDEXED)
         {
           guchar cmap[768];
 
@@ -792,7 +792,7 @@ load_image (GFile              *file,
 
           gimp_image_set_colormap (image, cmap, (1 << bps));
         }
-
+*/
       load_paths (tif, image);
 
       /* Allocate ChannelData for all channels, even the background layer */
@@ -822,13 +822,13 @@ load_image (GFile              *file,
           g_free (name);
         }
 
-      if (! base_format && image_type == GIMP_INDEXED)
+/*      if (! base_format && image_type == GIMP_INDEXED)
         {
-          /* can't create the palette format here, need to get it from
+           can't create the palette format here, need to get it from
            * an existing layer
-           */
+           
           base_format = gimp_drawable_get_format (layer);
-        }
+        }*/
 
       channel[0].ID     = layer;
       channel[0].buffer = gimp_drawable_get_buffer (layer);

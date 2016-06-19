@@ -699,16 +699,16 @@ ReadImage (FILE                 *fd,
     case 8:
     case 4:
     case 1:
-      if (gray)
-        {
+//      if (gray)
+//        {
           base_type = GIMP_GRAY;
           image_type = GIMP_GRAY_IMAGE;
-        }
-      else
-        {
-          base_type = GIMP_INDEXED;
-          image_type = GIMP_INDEXED_IMAGE;
-        }
+//        }
+//      else
+//        {
+//          base_type = GIMP_INDEXED;
+//          image_type = GIMP_INDEXED_IMAGE;
+//        }
 
       channels = 1;
       break;
@@ -1012,9 +1012,6 @@ ReadImage (FILE                 *fd,
   g_object_unref (buffer);
 
   g_free (dest);
-
-  if ((! gray) && (bpp <= 8))
-    gimp_image_set_colormap (image, gimp_cmap, ncols);
 
   gimp_progress_update (1.0);
 

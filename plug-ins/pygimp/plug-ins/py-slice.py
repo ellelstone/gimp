@@ -149,22 +149,6 @@ def slice(image, drawable, image_path, image_basename, image_extension,
         temp_image = image.duplicate()
         temp_drawable = temp_image.active_layer
     else:
-        if image.base_type == INDEXED:
-            #gimp_layer_new_from_drawable doesn't work for indexed images.
-            #(no colormap on new images)
-            original_active = image.active_layer
-            image.active_layer = drawable
-            temp_image = image.duplicate()
-            temp_drawable = temp_image.active_layer
-            image.active_layer = original_active
-            temp_image.disable_undo()
-            #remove all layers but the intended one
-            while len (temp_image.layers) > 1:
-                if temp_image.layers[0] != temp_drawable:
-                    pdb.gimp_image_remove_layer (temp_image, temp_image.layers[0])
-                else:
-                    pdb.gimp_image_remove_layer (temp_image, temp_image.layers[1])
-        else:
             temp_image = pdb.gimp_image_new (drawable.width, drawable.height,
                                          image.base_type)
             temp_drawable = pdb.gimp_layer_new_from_drawable (drawable, temp_image)
@@ -172,11 +156,6 @@ def slice(image, drawable, image_path, image_basename, image_extension,
 
     temp_image.disable_undo()
     temp_image.crop(right - left, bottom - top, left, top)
-    if image_extension == "gif" and image.base_type == RGB:
-        pdb.gimp_image_convert_indexed (temp_image,NO_DITHER, MAKE_PALETTE, 255,
-                                        True, False, False)
-    if image_extension == "jpg" and image.base_type == INDEXED:
-        pdb.gimp_image_convert_rgb (temp_image)
 
     pdb.gimp_file_save(temp_image, temp_drawable, filename, filename)
 

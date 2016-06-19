@@ -1163,12 +1163,6 @@ drw_get_is_gray(PyGimpDrawable *self, void *closure)
 }
 
 static PyObject *
-drw_get_is_indexed(PyGimpDrawable *self, void *closure)
-{
-    return PyBool_FromLong(gimp_drawable_is_indexed(self->ID));
-}
-
-static PyObject *
 drw_get_is_layer_mask(PyGimpDrawable *self, void *closure)
 {
     return PyBool_FromLong(gimp_item_is_layer_mask(self->ID));
@@ -1303,7 +1297,6 @@ static  PyGetSetDef drw_getsets[] = {
     { "is_rgb", (getter)drw_get_is_rgb, (setter)0 },
     { "is_gray", (getter)drw_get_is_gray, (setter)0 },
     { "is_grey", (getter)drw_get_is_gray, (setter)0 },
-    { "is_indexed", (getter)drw_get_is_indexed, (setter)0 },
     { "is_layer_mask", (getter)drw_get_is_layer_mask, (setter)0 },
     { "mask_bounds", (getter)drw_get_mask_bounds, (setter)0 },
     { "mask_intersect", (getter)drw_get_mask_intersect, (setter)0 },

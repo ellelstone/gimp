@@ -160,7 +160,7 @@ query (void)
                           "Spencer Kimball & Peter Mattis",
                           "1995-1996,2000-2003",
                           N_("TIFF image"),
-                          "RGB*, GRAY*, INDEXED",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args_old), 0,
                           save_args_old, NULL);
@@ -178,7 +178,7 @@ query (void)
                           "Spencer Kimball & Peter Mattis",
                           "1995-1996,2000-2003",
                           N_("TIFF image"),
-                          "RGB*, GRAY*, INDEXED",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -345,7 +345,6 @@ run (const gchar      *name,
           export = gimp_export_image (&image, &drawable, "TIFF",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)
@@ -400,7 +399,7 @@ run (const gchar      *name,
                              SAVE_PROC,
                              gimp_drawable_has_alpha (drawable),
                              image_is_monochrome (image),
-                             gimp_image_base_type (image) == GIMP_INDEXED,
+                             FALSE /*gimp_image_base_type (image) == GIMP_INDEXED*/,
                              &image_comment))
             {
               status = GIMP_PDB_CANCEL;
@@ -542,7 +541,7 @@ image_is_monochrome (gint32 image)
 
   g_return_val_if_fail (image != -1, FALSE);
 
-  colors = gimp_image_get_colormap (image, &num_colors);
+/*  colors = gimp_image_get_colormap (image, &num_colors);
 
   if (colors)
     {
@@ -559,7 +558,7 @@ image_is_monochrome (gint32 image)
         }
 
       g_free (colors);
-    }
+    }*/
 
   return monochrome;
 }

@@ -210,14 +210,14 @@ save_image (const gchar  *filename,
         }
       break;
 
-    case GIMP_INDEXEDA_IMAGE:
+/*    case GIMP_INDEXEDA_IMAGE:
       if (run_mode == GIMP_RUN_INTERACTIVE &&
           ! warning_dialog (_("Cannot export indexed image with "
                               "transparency in BMP file format."),
                             _("Alpha channel will be ignored.")))
         return GIMP_PDB_CANCEL;
 
-     /* fallthrough */
+      fallthrough 
 
     case GIMP_INDEXED_IMAGE:
       format   = gimp_drawable_get_format (drawable_ID);
@@ -242,7 +242,7 @@ save_image (const gchar  *filename,
           Green[i] = *cmap++;
           Blue[i]  = *cmap++;
         }
-      break;
+      break;*/
 
     default:
       g_assert_not_reached ();

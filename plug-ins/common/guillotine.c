@@ -79,7 +79,7 @@ query (void)
                           "Adam D. Moss (adam@foxbox.org)",
                           "1998",
                           N_("_Guillotine"),
-                          "RGB*, INDEXED*, GRAY*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (args), G_N_ELEMENTS (return_vals),
                           args, return_vals);

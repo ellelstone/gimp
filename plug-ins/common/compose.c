@@ -1020,8 +1020,6 @@ create_new_image (const gchar    *filename,
 
   if ((gdtype == GIMP_GRAY_IMAGE) || (gdtype == GIMP_GRAYA_IMAGE))
     gitype = GIMP_GRAY;
-/*  else if ((gdtype == GIMP_INDEXED_IMAGE) || (gdtype == GIMP_INDEXEDA_IMAGE))
-    gitype = GIMP_INDEXED;*/
   else
     gitype = GIMP_RGB;
 

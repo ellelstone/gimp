@@ -143,8 +143,6 @@
     '("rgba" "GIMP_RGBA_IMAGE")
     '("gray" "GIMP_GRAY_IMAGE")
     '("graya" "GIMP_GRAYA_IMAGE")
-    '("indexed" "GIMP_INDEXED_IMAGE")
-    '("indexeda" "GIMP_INDEXEDA_IMAGE")
   )
 )
 

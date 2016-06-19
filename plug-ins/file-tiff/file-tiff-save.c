@@ -67,10 +67,10 @@ static gboolean  save_paths             (TIFF          *tif,
 static void      comment_entry_callback (GtkWidget     *widget,
                                          gchar        **comment);
 
-static void      byte2bit               (const guchar  *byteline,
+/*(static void      byte2bit               (const guchar  *byteline,
                                          gint           width,
                                          guchar        *bitline,
-                                         gboolean       invert);
+                                         gboolean       invert);*/
 
 
 static void
@@ -266,10 +266,10 @@ save_image (GFile        *file,
 {
   gboolean       status = FALSE;
   TIFF          *tif;
-  gushort        red[256];
-  gushort        grn[256];
-  gushort        blu[256];
-  gint           cols, rows, row, i;
+//  gushort        red[256];
+//  gushort        grn[256];
+//  gushort        blu[256];
+  gint           cols, rows, row;//, i;
   glong          rowsperstrip;
   gushort        compression;
   gushort        extra_samples[1];
@@ -284,19 +284,60 @@ save_image (GFile        *file,
   gint           bytesperrow;
   guchar        *src = NULL;
   guchar        *data = NULL;
-  guchar        *cmap;
-  gint           num_colors;
+//  guchar        *cmap;
+//  gint           num_colors;
   gint           success;
   GimpImageType  drawable_type;
   GeglBuffer    *buffer = NULL;
   gint           tile_height;
   gint           y, yend;
-  gboolean       is_bw    = FALSE;
-  gboolean       invert   = TRUE;
-  const guchar   bw_map[] = { 0, 0, 0, 255, 255, 255 };
-  const guchar   wb_map[] = { 255, 255, 255, 0, 0, 0 };
+//  gboolean       is_bw    = FALSE;
+//  gboolean       invert   = TRUE;
+//  const guchar   bw_map[] = { 0, 0, 0, 255, 255, 255 };
+//  const guchar   wb_map[] = { 255, 255, 255, 0, 0, 0 };
   gint           number_of_sub_IFDs = 1;
   toff_t         sub_IFDs_offsets[1] = { 0UL };
+
+
+/*
+
+file-tiff-save.c: In function 'save_image':
+file-tiff-save.c:297:18: warning: unused variable 'wb_map' [-Wunused-variable]
+   const guchar   wb_map[] = { 255, 255, 255, 0, 0, 0 };
+                  ^
+file-tiff-save.c:296:18: warning: unused variable 'bw_map' [-Wunused-variable]
+   const guchar   bw_map[] = { 0, 0, 0, 255, 255, 255 };
+                  ^
+file-tiff-save.c:295:18: warning: unused variable 'invert' [-Wunused-variable]
+   gboolean       invert   = TRUE;
+                  ^
+file-tiff-save.c:294:18: warning: unused variable 'is_bw' [-Wunused-variable]
+   gboolean       is_bw    = FALSE;
+                  ^
+file-tiff-save.c:288:18: warning: unused variable 'num_colors' [-Wunused-variable]
+   gint           num_colors;
+                  ^
+file-tiff-save.c:287:18: warning: unused variable 'cmap' [-Wunused-variable]
+   guchar        *cmap;
+                  ^
+file-tiff-save.c:272:35: warning: unused variable 'i' [-Wunused-variable]
+   gint           cols, rows, row, i;
+                                   ^
+file-tiff-save.c:271:18: warning: unused variable 'blu' [-Wunused-variable]
+   gushort        blu[256];
+                  ^
+file-tiff-save.c:270:18: warning: unused variable 'grn' [-Wunused-variable]
+   gushort        grn[256];
+                  ^
+file-tiff-save.c:269:18: warning: unused variable 'red' [-Wunused-variable]
+   gushort        red[256];
+                  ^
+file-tiff-save.c: At top level:
+file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-function]
+ byte2bit (const guchar *byteline,
+
+*/
+
 
   compression = tsvals->compression;
 
@@ -435,7 +476,7 @@ save_image (GFile        *file,
         }
       break;
 
-    case GIMP_INDEXED_IMAGE:
+/*    case GIMP_INDEXED_IMAGE:
       cmap = gimp_image_get_colormap (image, &num_colors);
 
       if (num_colors == 2 || num_colors == 1)
@@ -475,12 +516,12 @@ save_image (GFile        *file,
       format          = gimp_drawable_get_format (layer);
 
       g_free (cmap);
-      break;
+      break;*/
 
-    case GIMP_INDEXEDA_IMAGE:
+/*    case GIMP_INDEXEDA_IMAGE:
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED,
                    _("TIFF export cannot handle indexed images with "
-                     "an alpha channel."));
+                     "an alpha channel."));*/
     default:
       goto out;
     }
@@ -501,7 +542,7 @@ save_image (GFile        *file,
         }
     }
 
-  if (compression == COMPRESSION_JPEG)
+/*  if (compression == COMPRESSION_JPEG)
     {
       if (gimp_image_base_type (image) == GIMP_INDEXED)
         {
@@ -510,7 +551,7 @@ save_image (GFile        *file,
                                  "with \"JPEG\"."));
           goto out;
         }
-    }
+    }*/
 
   tif = tiff_open (file, "w", error);
 
@@ -653,8 +694,8 @@ save_image (GFile        *file,
   /* save path data */
   save_paths (tif, orig_image);
 
-  if (!is_bw && drawable_type == GIMP_INDEXED_IMAGE)
-    TIFFSetField (tif, TIFFTAG_COLORMAP, red, grn, blu);
+//  if (!is_bw && drawable_type == GIMP_INDEXED_IMAGE)
+//    TIFFSetField (tif, TIFFTAG_COLORMAP, red, grn, blu);
 
   /* array to rearrange data */
   src  = g_new (guchar, bytesperrow * tile_height);
@@ -677,7 +718,7 @@ save_image (GFile        *file,
 
           switch (drawable_type)
             {
-            case GIMP_INDEXED_IMAGE:
+/*            case GIMP_INDEXED_IMAGE:
               if (is_bw)
                 {
                   byte2bit (t, bytesperrow, data, invert);
@@ -687,7 +728,7 @@ save_image (GFile        *file,
                 {
                   success = (TIFFWriteScanline (tif, t, row, 0) >= 0);
                 }
-              break;
+              break;*/
 
             case GIMP_GRAY_IMAGE:
             case GIMP_GRAYA_IMAGE:
@@ -827,6 +868,8 @@ save_dialog (TiffSaveVals  *tsvals,
   GtkBuilder  *builder;
   gchar       *ui_file;
   gboolean     run;
+  
+  is_indexed = FALSE;
 
   dialog = gimp_export_dialog_new (_("TIFF"), PLUG_IN_ROLE, help_id);
 
@@ -870,7 +913,7 @@ save_dialog (TiffSaveVals  *tsvals,
 
   gtk_widget_set_sensitive (cmp_g3, is_monochrome);
   gtk_widget_set_sensitive (cmp_g4, is_monochrome);
-  gtk_widget_set_sensitive (cmp_jpeg, ! is_indexed);
+//  gtk_widget_set_sensitive (cmp_jpeg, ! is_indexed);
 
   if (! is_monochrome)
     {
@@ -882,11 +925,11 @@ save_dialog (TiffSaveVals  *tsvals,
         }
     }
 
-  if (is_indexed && tsvals->compression == COMPRESSION_JPEG)
+/*  if (is_indexed && tsvals->compression == COMPRESSION_JPEG)
     {
       gimp_int_radio_group_set_active (GTK_RADIO_BUTTON (cmp_jpeg),
                                        COMPRESSION_NONE);
-    }
+    }*/
 
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
@@ -953,7 +996,7 @@ comment_entry_callback (GtkWidget  *widget,
   *comment = g_strdup (text);
 }
 
-/* Convert n bytes of 0/1 to a line of bits */
+/* Convert n bytes of 0/1 to a line of bits 
 static void
 byte2bit (const guchar *byteline,
           gint          width,
@@ -993,4 +1036,4 @@ byte2bit (const guchar *byteline,
       if (*(byteline++)) bitval |= 0x02;
       *bitline = invert ? ~bitval & (0xff << (8 - width)) : bitval;
     }
-}
+}*/

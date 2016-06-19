@@ -317,7 +317,7 @@ query (void)
                           "Copyright Barak Itkin",
                           "August 2009",
                           N_("Portable Document Format"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -332,7 +332,7 @@ query (void)
                           "Copyright Barak Itkin",
                           "August 2009",
                           N_("_Create multipage PDF..."),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_multi_args), 0,
                           save_multi_args, NULL);
@@ -455,8 +455,7 @@ run (const gchar      *name,
   capabilities = (GIMP_EXPORT_CAN_HANDLE_RGB    |
                   GIMP_EXPORT_CAN_HANDLE_ALPHA  |
                   GIMP_EXPORT_CAN_HANDLE_GRAY   |
-                  GIMP_EXPORT_CAN_HANDLE_LAYERS |
-                  GIMP_EXPORT_CAN_HANDLE_INDEXED);
+                  GIMP_EXPORT_CAN_HANDLE_LAYERS);
   if (optimize.apply_masks)
     capabilities |= GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS;
 

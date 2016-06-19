@@ -44,12 +44,33 @@ AM_CPPFLAGS = \
 	-I$(includedir)
 
 libexec_PROGRAMS = \
+	align-layers
+	color-cube-analyze \
 	compose \
+	crop-zealous \
 	decompose \
+	file-compressor \
+	file-dicom \
 	file-gbr \
-	file-gegl \
-	grid \
-	metadata
+	file-gih \
+	file-glob \
+	$(FILE_JP2_LOAD) \
+	$(FILE_PDF_LOAD) \
+	$(FILE_PDF_SAVE) \
+	file-png \
+	file-psp \
+	guillotine \
+	metadata \
+	plugin-browser \
+	procedure-browser \
+	smooth-palette \
+	unit-editor
+
+EXTRA_PROGRAMS = \
+	file-jp2-load \
+	file-pdf-load \
+	file-pdf-save \
+	file-ps
 
 install-%: %
 	@$(NORMAL_INSTALL)
@@ -62,6 +83,40 @@ install-%: %
 	  echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(libexecdir)/$$f"; \
 	  $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(INSTALL_PROGRAM) $$p $(DESTDIR)$(libexecdir)/$$f || exit 1; \
 	else :; fi
+
+align_layers_SOURCES = \
+	align-layers.c
+
+align_layers_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(align_layers_RC)
+
+color_cube_analyze_SOURCES = \
+	color-cube-analyze.c
+
+color_cube_analyze_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(color_cube_analyze_RC)
 
 compose_SOURCES = \
 	compose.c
@@ -81,6 +136,22 @@ compose_LDADD = \
 	$(INTLLIBS)		\
 	$(compose_RC)
 
+crop_zealous_SOURCES = \
+	crop-zealous.c
+
+crop_zealous_LDADD = \
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(CAIRO_LIBS)		\
+	$(GDK_PIXBUF_LIBS)	\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(crop_zealous_RC)
+
 decompose_SOURCES = \
 	decompose.c
 
@@ -98,6 +169,47 @@ decompose_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(decompose_RC)
+
+file_compressor_CFLAGS = $(LZMA_CFLAGS)
+
+file_compressor_SOURCES = \
+	file-compressor.c
+
+file_compressor_LDADD = \
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(CAIRO_LIBS)		\
+	$(GDK_PIXBUF_LIBS)	\
+	$(GIO_LIBS)		\
+	$(LZMA_LIBS)		\
+	$(BZIP2_LIBS)		\
+	$(Z_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_compressor_RC)
+
+file_dicom_CFLAGS = -fno-strict-aliasing
+
+file_dicom_SOURCES = \
+	file-dicom.c
+
+file_dicom_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_dicom_RC)
 
 file_gbr_SOURCES = \
 	file-gbr.c
@@ -117,10 +229,10 @@ file_gbr_LDADD = \
 	$(INTLLIBS)		\
 	$(file_gbr_RC)
 
-file_gegl_SOURCES = \
-	file-gegl.c
+file_gih_SOURCES = \
+	file-gih.c
 
-file_gegl_LDADD = \
+file_gih_LDADD = \
 	$(libgimpui)		\
 	$(libgimpwidgets)	\
 	$(libgimpmodule)	\
@@ -133,12 +245,30 @@ file_gegl_LDADD = \
 	$(GEGL_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
-	$(file_gegl_RC)
+	$(file_gih_RC)
 
-grid_SOURCES = \
-	grid.c
+file_glob_SOURCES = \
+	file-glob.c
 
-grid_LDADD = \
+file_glob_LDADD = \
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(CAIRO_LIBS)		\
+	$(GDK_PIXBUF_LIBS)	\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_glob_RC)
+
+file_header_SOURCES = \
+	file-header.c
+
+file_jp2_load_SOURCES = \
+	file-jp2-load.c
+
+file_jp2_load_LDADD = \
 	$(libgimpui)		\
 	$(libgimpwidgets)	\
 	$(libgimpmodule)	\
@@ -148,9 +278,92 @@ grid_LDADD = \
 	$(libgimpcolor)		\
 	$(libgimpbase)		\
 	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(JP2_LIBS)		\
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
-	$(grid_RC)
+	$(file_jp2_load_RC)
+
+file_pdf_load_CFLAGS = $(POPPLER_CFLAGS)
+
+file_pdf_load_SOURCES = \
+	file-pdf-load.c
+
+file_pdf_load_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(POPPLER_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_pdf_load_RC)
+
+file_pdf_save_CFLAGS = $(CAIRO_PDF_CFLAGS)
+
+file_pdf_save_SOURCES = \
+	file-pdf-save.c
+
+file_pdf_save_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(CAIRO_PDF_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_pdf_save_RC)
+
+file_png_CFLAGS = $(PNG_CFLAGS)
+
+file_png_SOURCES = \
+	file-png.c
+
+file_png_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(PNG_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_png_RC)
+
+file_psp_SOURCES = \
+	file-psp.c
+
+file_psp_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(Z_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_psp_RC)
 
 metadata_CFLAGS = $(GEXIV2_CFLAGS)
 
@@ -171,3 +384,71 @@ metadata_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(metadata_RC)
+
+plugin_browser_SOURCES = \
+	plugin-browser.c
+
+plugin_browser_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(plugin_browser_RC)
+
+procedure_browser_SOURCES = \
+	procedure-browser.c
+
+procedure_browser_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(procedure_browser_RC)
+
+smooth_palette_SOURCES = \
+	smooth-palette.c
+
+smooth_palette_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(smooth_palette_RC)
+
+unit_editor_SOURCES = \
+	unit-editor.c
+
+unit_editor_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(unit_editor_RC)
