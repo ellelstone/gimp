@@ -50,12 +50,6 @@ struct _GimpImagePrivate
   GimpImageBaseType  base_type;             /*  base gimp_image type         */
   GimpPrecision      precision;             /*  image's precision            */
 
-  guchar            *colormap;              /*  colormap (for indexed)       */
-  gint               n_colors;              /*  # of colors (for indexed)    */
-  GimpPalette       *palette;               /*  palette of colormap          */
-  const Babl        *babl_palette_rgb;      /*  palette's RGB Babl format    */
-  const Babl        *babl_palette_rgba;     /*  palette's RGBA Babl format   */
-
   gboolean           is_color_managed;      /*  is this image color managed  */
   GimpColorProfile  *color_profile;         /*  image's color profile        */
 

@@ -110,11 +110,6 @@ gimp_drawable_get_preview_format (GimpDrawable *drawable)
                                                     linear),
                                alpha);
 
-/*    case GIMP_INDEXED:
-      if (alpha)
-        return babl_format ("R'G'B'A u8");
-      else
-        return babl_format ("R'G'B' u8");*/
     }
 
   g_return_val_if_reached (NULL);

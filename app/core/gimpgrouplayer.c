@@ -863,7 +863,6 @@ get_projection_format (GimpProjectable   *projectable,
   switch (base_type)
     {
     case GIMP_RGB:
-//    case GIMP_INDEXED:
       return gimp_image_get_format (image, GIMP_RGB, precision, TRUE);
 
     case GIMP_GRAY:

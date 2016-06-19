@@ -919,10 +919,6 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
     {
       gint x, y, w, h;
 
-      /* set the keep_indexed flag to FALSE here, since we use
-       * gimp_layer_new_from_gegl_buffer() later which assumes that
-       * the buffer are either RGB or GRAY.  Eeek!!!  (Sven)
-       */
       if (gimp_item_mask_intersect (GIMP_ITEM (drawable), &x, &y, &w, &h))
         {
           buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),

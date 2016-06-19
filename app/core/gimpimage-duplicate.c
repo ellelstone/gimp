@@ -50,8 +50,6 @@ static void          gimp_image_duplicate_resolution       (GimpImage *image,
                                                             GimpImage *new_image);
 static void          gimp_image_duplicate_save_source_file (GimpImage *image,
                                                             GimpImage *new_image);
-/*static void          gimp_image_duplicate_colormap         (GimpImage *image,
-                                                            GimpImage *new_image);*/
 static GimpItem    * gimp_image_duplicate_item             (GimpItem  *item,
                                                             GimpImage *new_image);
 static GimpLayer   * gimp_image_duplicate_layers           (GimpImage *image,
@@ -105,9 +103,6 @@ gimp_image_duplicate (GimpImage *image)
 
   /*  Store the source uri to be used by the save dialog  */
   gimp_image_duplicate_save_source_file (image, new_image);
-
-  /*  Copy the colormap if necessary  
-  gimp_image_duplicate_colormap (image, new_image);*/
 
   /*  Copy resolution information  */
   gimp_image_duplicate_resolution (image, new_image);
@@ -187,17 +182,6 @@ gimp_image_duplicate_save_source_file (GimpImage *image,
                             g_object_ref (file),
                             (GDestroyNotify) g_object_unref);
 }
-
-/*static void
-gimp_image_duplicate_colormap (GimpImage *image,
-                               GimpImage *new_image)
-{
-  if (gimp_image_get_base_type (new_image) == GIMP_INDEXED)
-    gimp_image_set_colormap (new_image,
-                             gimp_image_get_colormap (image),
-                             gimp_image_get_colormap_size (image),
-                             FALSE);
-}*/
 
 static GimpItem *
 gimp_image_duplicate_item (GimpItem  *item,

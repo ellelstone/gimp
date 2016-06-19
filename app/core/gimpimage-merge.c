@@ -518,9 +518,7 @@ gimp_image_merge_layers (GimpImage     *image,
 
   name = g_strdup (gimp_object_get_name (layer));
 
-  if ( merge_type == GIMP_FLATTEN_IMAGE /*||
-      (gimp_drawable_is_indexed (GIMP_DRAWABLE (layer)) &&
-       ! gimp_drawable_has_alpha (GIMP_DRAWABLE (layer)))*/ )
+  if ( merge_type == GIMP_FLATTEN_IMAGE )
     {
       GeglColor *color;
       GimpRGB    bg;

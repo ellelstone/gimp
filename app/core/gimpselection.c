@@ -788,7 +788,7 @@ gimp_selection_extract (GimpSelection *selection,
   dest_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, x2 - x1, y2 - y1),
                                  dest_format);
 
-  /*  First, copy the pixels, possibly doing INDEXED->RGB and adding alpha  */
+  /*  First, copy the pixels, possibly adding alpha  */
   gegl_buffer_copy (src_buffer,  GEGL_RECTANGLE (x1, y1, x2 - x1, y2 - y1),
                     GEGL_ABYSS_NONE,
                     dest_buffer, GEGL_RECTANGLE (0, 0, 0, 0));

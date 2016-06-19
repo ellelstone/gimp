@@ -30,9 +30,6 @@ GimpPalette * gimp_palette_import_from_image         (GimpImage    *image,
                                                       gint          n_colors,
                                                       gint          treshold,
                                                       gboolean      selection_only);
-/*GimpPalette * gimp_palette_import_from_indexed_image (GimpImage    *image,
-                                                      GimpContext  *context,
-                                                      const gchar  *palette_name);*/
 GimpPalette * gimp_palette_import_from_drawable      (GimpDrawable *drawable,
                                                       GimpContext  *context,
                                                       const gchar  *palette_name,

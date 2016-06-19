@@ -42,7 +42,6 @@
 #define GRAY          0
 #define ALPHA_G       1
 
-//#define INDEXED       0
 #define ALPHA_I       1
 
 

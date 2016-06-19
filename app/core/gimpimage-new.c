@@ -191,12 +191,6 @@ gimp_image_new_from_drawable (Gimp         *gimp,
                                  TRUE);
   gimp_image_undo_disable (new_image);
 
-/*  if (type == GIMP_INDEXED)
-    gimp_image_set_colormap (new_image,
-                             gimp_image_get_colormap (image),
-                             gimp_image_get_colormap_size (image),
-                             FALSE);*/
-
   gimp_image_get_resolution (image, &xres, &yres);
   gimp_image_set_resolution (new_image, xres, yres);
   gimp_image_set_unit (new_image, gimp_image_get_unit (image));

@@ -415,7 +415,6 @@ typedef enum /*< pdb-skip >*/
   GIMP_UNDO_IMAGE_RESOLUTION,         /*< desc="Image resolution change"     >*/
   GIMP_UNDO_IMAGE_GRID,               /*< desc="Grid"                        >*/
   GIMP_UNDO_IMAGE_METADATA,           /*< desc="Change metadata"             >*/
-//  GIMP_UNDO_IMAGE_COLORMAP,           /*< desc="Change indexed palette"      >*/
   GIMP_UNDO_IMAGE_COLOR_MANAGED,      /*< desc="Change color managed state"  >*/
   GIMP_UNDO_GUIDE,                    /*< desc="Guide"                       >*/
   GIMP_UNDO_SAMPLE_POINT,             /*< desc="Sample Point"                >*/

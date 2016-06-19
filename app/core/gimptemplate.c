@@ -431,9 +431,6 @@ gimp_template_set_from_image (GimpTemplate *template,
 
   base_type = gimp_image_get_base_type (image);
 
-/*  if (base_type == GIMP_INDEXED)
-    base_type = GIMP_RGB;*/
-
   parasite =  gimp_image_parasite_find (image, "gimp-comment");
   if (parasite)
     comment = g_strndup (gimp_parasite_data (parasite),

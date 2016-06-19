@@ -60,12 +60,6 @@ static void   gimp_image_convert_profile_layers   (GimpImage                *ima
                                                    GimpColorRenderingIntent  intent,
                                                    gboolean                  bpc,
                                                    GimpProgress             *progress);
-/*static void   gimp_image_convert_profile_colormap (GimpImage                *image,
-                                                   GimpColorProfile         *src_profile,
-                                                   GimpColorProfile         *dest_profile,
-                                                   GimpColorRenderingIntent  intent,
-                                                   gboolean                  bpc,
-                                                   GimpProgress             *progress);*/
 
 
 /*  public functions  */
@@ -413,12 +407,6 @@ gimp_image_convert_color_profile (GimpImage                *image,
                                          progress);
       break;
 
-/*    case GIMP_INDEXED:
-      gimp_image_convert_profile_colormap (image,
-                                           src_profile, dest_profile,
-                                           intent, bpc,
-                                           progress);
-      break;*/
     }
 
   gimp_image_set_is_color_managed (image, TRUE, TRUE);
@@ -771,45 +759,3 @@ gimp_image_convert_profile_layers (GimpImage                *image,
   g_list_free (layers);
 }
 
-/*static void //this is for indexed images
-gimp_image_convert_profile_colormap (GimpImage                *image,
-                                     GimpColorProfile         *src_profile,
-                                     GimpColorProfile         *dest_profile,
-                                     GimpColorRenderingIntent  intent,
-                                     gboolean                  bpc,
-                                     GimpProgress             *progress)
-{
-  GimpColorTransform      *transform;
-  GimpColorTransformFlags  flags = 0;
-  guchar                  *cmap;
-  gint                     n_colors;
-
-  n_colors = gimp_image_get_colormap_size (image);
-  cmap     = g_memdup (gimp_image_get_colormap (image), n_colors * 3);
-
-  if (bpc)
-    flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
-
-  transform = gimp_color_transform_new (src_profile,
-                                        babl_format ("R'G'B' u8"),
-                                        dest_profile,
-                                        babl_format ("R'G'B' u8"),
-                                        intent, flags);
-
-  if (transform)
-    {
-      gimp_color_transform_process_pixels (transform,
-                                           babl_format ("R'G'B' u8"), cmap,
-                                           babl_format ("R'G'B' u8"), cmap,
-                                           n_colors);
-      g_object_unref (transform);
-
-      gimp_image_set_colormap (image, cmap, n_colors, TRUE);
-    }
-  else
-    {
-      g_warning ("cmsCreateTransform() failed!");
-    }
-
-  g_free (cmap);
-}*/
