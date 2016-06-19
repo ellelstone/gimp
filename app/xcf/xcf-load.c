@@ -628,58 +628,6 @@ xcf_load_image_props (XcfInfo   *info,
         case PROP_END:
           return TRUE;
 
-/*        case PROP_COLORMAP:
-          {
-            guint32 n_colors;
-            guchar  cmap[GIMP_IMAGE_COLORMAP_SIZE];
-
-            info->cp += xcf_read_int32 (info->input, &n_colors, 1);
-
-            if (n_colors > (GIMP_IMAGE_COLORMAP_SIZE / 3))
-              {
-                gimp_message (info->gimp, G_OBJECT (info->progress),
-                              GIMP_MESSAGE_ERROR,
-                              "Maximum colormap size (%d) exceeded",
-                              GIMP_IMAGE_COLORMAP_SIZE);
-                return FALSE;
-              }
-
-            if (info->file_version == 0)
-              {
-                gint i;
-
-                gimp_message_literal (info->gimp, G_OBJECT (info->progress),
-                                      GIMP_MESSAGE_WARNING,
-                                      _("XCF warning: version 0 of XCF file format\n"
-                                        "did not save indexed colormaps correctly.\n"
-                                        "Substituting grayscale map."));
-
-                if (! xcf_seek_pos (info, info->cp + n_colors, NULL))
-                  return FALSE;
-
-                for (i = 0; i < n_colors; i++)
-                  {
-                    cmap[i * 3 + 0] = i;
-                    cmap[i * 3 + 1] = i;
-                    cmap[i * 3 + 2] = i;
-                  }
-              }
-            else
-              {
-                info->cp += xcf_read_int8 (info->input, cmap, n_colors * 3);
-              }
-
-//             only set color map if image is indexed, this is just
-//             sanity checking to make sure gimp doesn't end up with
-//             an image state that is impossible.
-//             
-//            if (gimp_image_get_base_type (image) == GIMP_INDEXED)
-//              gimp_image_set_colormap (image, cmap, n_colors, FALSE);
-
-//            GIMP_LOG (XCF, "prop colormap n_colors=%d", n_colors);
-          }
-          break;*/
-
         case PROP_COMPRESSION:
           {
             guint8 compression;
@@ -1455,16 +1403,6 @@ xcf_load_layer (XcfInfo    *info,
       base_type = GIMP_GRAY;
       has_alpha = TRUE;
       break;
-
-/*    case GIMP_INDEXED_IMAGE:
-      base_type = GIMP_INDEXED;
-      has_alpha = FALSE;
-      break;
-
-    case GIMP_INDEXEDA_IMAGE:
-      base_type = GIMP_INDEXED;
-      has_alpha = TRUE;
-      break;*/
 
     default:
       return NULL;

@@ -139,13 +139,6 @@ gimp_heal_start (GimpPaintCore     *paint_core,
       return FALSE;
     }
 
-/*  if (! source_core->set_source && gimp_drawable_is_indexed (drawable))
-    {
-      g_set_error_literal (error, GIMP_ERROR, GIMP_FAILED,
-                           _("Healing does not operate on indexed layers."));
-      return FALSE;
-    }*/
-
   return TRUE;
 }
 

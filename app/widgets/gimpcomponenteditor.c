@@ -351,11 +351,6 @@ gimp_component_editor_create_components (GimpComponentEditor *editor)
       n_components  = 1;
       components[0] = GIMP_GRAY_CHANNEL;
       break;
-
-/*    case GIMP_INDEXED:
-      n_components  = 1;
-      components[0] = GIMP_INDEXED_CHANNEL;
-      break;*/
     }
 
   if (gimp_image_has_alpha (image))

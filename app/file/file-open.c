@@ -400,22 +400,6 @@ file_open_thumbnail (Gimp           *gimp,
                                                   TRUE);
                       break;
 
-/*                    case GIMP_INDEXED_IMAGE:
-                    case GIMP_INDEXEDA_IMAGE:
-                      {
-                        const Babl *rgb;
-                        const Babl *rgba;
-
-                        babl_new_palette ("-gimp-indexed-format-dummy",
-                                          &rgb, &rgba);
-
-                        if (value == GIMP_INDEXED_IMAGE)
-                          *format = rgb;
-                        else
-                          *format = rgba;
-                      }
-                      break;*/
-
                     default:
                       break;
                     }
