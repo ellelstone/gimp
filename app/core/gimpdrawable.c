@@ -42,7 +42,6 @@
 #include "gimpdrawable-transform.h"
 #include "gimpfilterstack.h"
 #include "gimpimage.h"
-//#include "gimpimage-colormap.h"
 #include "gimpimage-undo-push.h"
 #include "gimpmarshal.h"
 #include "gimppickable.h"

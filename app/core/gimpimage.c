@@ -49,7 +49,6 @@
 #include "gimpidtable.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-//#include "gimpimage-colormap.h"
 #include "gimpimage-guides.h"
 #include "gimpimage-item-list.h"
 #include "gimpimage-metadata.h"

@@ -40,7 +40,6 @@
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpsessioninfo.h"
 #include "widgets/gimppaletteeditor.h"
-//#include "widgets/gimpcolormapeditor.h"
 
 #include "actions.h"
 #include "context-commands.h"

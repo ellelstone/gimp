@@ -38,7 +38,6 @@
 #include "gimpdrawable-fill.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-//#include "gimpimage-colormap.h"
 #include "gimpimage-new.h"
 #include "gimpimage-undo.h"
 #include "gimplayer.h"

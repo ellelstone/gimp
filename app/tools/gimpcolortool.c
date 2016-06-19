@@ -35,7 +35,6 @@
 #include "core/gimpmarshal.h"
 #include "core/gimpsamplepoint.h"
 
-//#include "widgets/gimpcolormapeditor.h"
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpdockable.h"
 #include "widgets/gimppaletteeditor.h"

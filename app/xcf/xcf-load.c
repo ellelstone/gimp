@@ -39,7 +39,6 @@
 #include "core/gimpgrid.h"
 #include "core/gimpgrouplayer.h"
 #include "core/gimpimage.h"
-//#include "core/gimpimage-colormap.h"
 #include "core/gimpimage-grid.h"
 #include "core/gimpimage-guides.h"
 #include "core/gimpimage-metadata.h"

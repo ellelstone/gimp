@@ -31,7 +31,6 @@
 #include "gimpcontext.h"
 #include "gimpgradient.h"
 #include "gimpimage.h"
-//#include "gimpimage-colormap.h"
 #include "gimppalette.h"
 #include "gimppalette-import.h"
 #include "gimppalette-load.h"

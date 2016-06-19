@@ -32,7 +32,6 @@
 #include "core/gimp.h"
 #include "core/gimpcontainer.h"
 #include "core/gimpimage.h"
-//#include "core/gimpimage-colormap.h"
 #include "core/gimpimage-undo.h"
 #include "core/gimpundostack.h"
 #include "core/gimp-utils.h"

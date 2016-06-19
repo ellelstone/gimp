@@ -29,7 +29,6 @@
 #include "gimpguide.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
-//#include "gimpimage-colormap.h"
 #include "gimpimage-duplicate.h"
 #include "gimpimage-grid.h"
 #include "gimpimage-guides.h"

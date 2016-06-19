@@ -34,7 +34,6 @@
 #include "widgets/gimpbufferview.h"
 #include "widgets/gimpchanneltreeview.h"
 #include "widgets/gimpcoloreditor.h"
-//#include "widgets/gimpcolormapeditor.h"
 #include "widgets/gimpdevicestatus.h"
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpdockwindow.h"
