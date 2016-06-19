@@ -93,10 +93,6 @@ as an argument will fail. Layers can be created using the
 gimp_layer_new() commands. They can be added to an image using the
 gimp_image_insert_layer() command.
 
-
-If your image's type if INDEXED, a colormap must also be added with
-gimp_image_set_colormap(). An indexed image without a colormap will
-output unexpected colors.
 HELP
 
     &std_pdb_misc;
@@ -133,8 +129,7 @@ sub image_new_with_precision {
 
     $help = <<'HELP';
 Creates a new image, undisplayed with the specified extents, type
-and precision. Indexed images can only be created at GIMP_PRECISION_U8_GAMMA
-precision. See gimp_image_new() for further details.
+and precision. See gimp_image_new() for further details.
 HELP
 
     &mitch_pdb_misc('2012', '2.10');
@@ -418,7 +413,7 @@ BLURB
 
     $help = <<'HELP';
 This tool determines the color at the specified coordinates. The
-returned color is an RGB triplet even for grayscale and indexed
+returned color is an RGB triplet even for grayscale
 drawables. If the coordinates lie outside of the extents of the
 specified drawable, then an error is returned. If the drawable has an
 alpha channel, the algorithm examines the alpha value of the drawable

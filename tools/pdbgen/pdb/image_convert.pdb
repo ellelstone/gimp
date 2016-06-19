@@ -21,8 +21,7 @@ sub image_convert_rgb {
 
     $help = <<'HELP';
 This procedure converts the specified image to RGB color. This process
-requires an image in Grayscale or Indexed color mode. No image content is
-lost in this process aside from the colormap for an indexed image.
+requires an image in Grayscale mode.
 HELP
 
     &std_pdb_misc;
@@ -53,7 +52,7 @@ sub image_convert_grayscale {
 
     $help = <<'HELP';
 This procedure converts the specified image to grayscale. This process
-requires an image in RGB or Indexed color mode.
+requires an image in RGB mode.
 HELP
 
     &std_pdb_misc;
@@ -83,9 +82,7 @@ sub image_convert_precision {
     $blurb = 'Convert the image to the specified precision';
 
     $help = <<'HELP';
-This procedure converts the image to the specified precision. Note
-that indexed images cannot be converted and are always in
-GIMP_PRECISION_U8.
+This procedure converts the image to the specified precision.
 HELP
 
     &mitch_pdb_misc('2012', '2.10');

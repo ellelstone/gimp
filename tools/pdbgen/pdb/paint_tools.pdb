@@ -140,8 +140,7 @@ pattern and mods the sum of the src coordinates and subsequent stroke offsets
 with the width and height of the pattern. For image cloning, if the sum of the
 src coordinates and subsequent stroke offsets exceeds the extents of the src
 drawable, then no paint is transferred. The clone tool is capable of
-transforming between any image types including RGB->Indexed--although
-converting from any type to indexed is significantly slower.
+transforming between any image types.
 HELP
 
     &std_pdb_misc;
@@ -502,7 +501,7 @@ This tool heals the source drawable starting at the specified
 source coordinates to the dest drawable. For image healing, if the sum of the
 src coordinates and subsequent stroke offsets exceeds the extents of the src
 drawable, then no paint is transferred. The healing tool is capable of
-transforming between any image types except RGB->Indexed.
+transforming between any image types.
 HELP
 
     &kevins_pdb_misc('2006', '2.4');
