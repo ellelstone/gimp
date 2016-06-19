@@ -54,7 +54,6 @@
 #include "brushes-actions.h"
 #include "buffers-actions.h"
 #include "channels-actions.h"
-#include "colormap-actions.h"
 #include "context-actions.h"
 #include "cursor-info-actions.h"
 #include "debug-actions.h"
@@ -119,9 +118,6 @@ static const GimpActionFactoryEntry action_groups[] =
   { "channels", N_("Channels"), GIMP_STOCK_CHANNEL,
     channels_actions_setup,
     channels_actions_update },
-/*  { "colormap", N_("Colormap"), GIMP_STOCK_COLORMAP,
-    colormap_actions_setup,
-    colormap_actions_update },*/
   { "context", N_("Context"), GIMP_STOCK_TOOL_OPTIONS /* well... */,
     context_actions_setup,
     context_actions_update },

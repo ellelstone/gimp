@@ -195,12 +195,7 @@ static const GimpRadioActionEntry image_convert_base_type_actions[] =
   { "image-convert-grayscale", GIMP_STOCK_CONVERT_GRAYSCALE,
     NC_("image-convert-action", "_Grayscale"), NULL,
     NC_("image-convert-action", "Convert the image to grayscale"),
-    GIMP_GRAY, GIMP_HELP_IMAGE_CONVERT_GRAYSCALE }/*,
-
-  { "image-convert-indexed", GIMP_STOCK_CONVERT_INDEXED,
-    NC_("image-convert-action", "_Indexed..."), NULL,
-    NC_("image-convert-action", "Convert the image to indexed colors"),
-    GIMP_INDEXED, GIMP_HELP_IMAGE_CONVERT_INDEXED }*/
+    GIMP_GRAY, GIMP_HELP_IMAGE_CONVERT_GRAYSCALE }
 };
 
 static const GimpRadioActionEntry image_convert_precision_actions[] =
@@ -348,7 +343,6 @@ image_actions_update (GimpActionGroup *group,
                       gpointer         data)
 {
   GimpImage *image         = action_data_get_image (data);
-  gboolean   is_indexed    = FALSE;
   gboolean   is_u8_gamma   = FALSE;
   gboolean   aux           = FALSE;
   gboolean   lp            = FALSE;
@@ -371,7 +365,6 @@ image_actions_update (GimpActionGroup *group,
         {
         case GIMP_RGB:     action = "image-convert-rgb";       break;
         case GIMP_GRAY:    action = "image-convert-grayscale"; break;
-//        case GIMP_INDEXED: action = "image-convert-indexed";   break;
         }
 
       gimp_action_group_set_action_active (group, action, TRUE);
@@ -388,7 +381,6 @@ image_actions_update (GimpActionGroup *group,
 
       gimp_action_group_set_action_active (group, action, TRUE);
 
-      is_indexed  = FALSE; //(base_type == GIMP_INDEXED);
       is_u8_gamma = (precision == GIMP_PRECISION_U8_GAMMA);
       aux         = (gimp_image_get_active_channel (image) != NULL);
       lp          = ! gimp_image_is_empty (image);
@@ -428,17 +420,16 @@ image_actions_update (GimpActionGroup *group,
 
   SET_SENSITIVE ("image-convert-rgb",       image);
   SET_SENSITIVE ("image-convert-grayscale", image);
-//  SET_SENSITIVE ("image-convert-indexed",   image && !groups && is_u8_gamma);
 
   SET_SENSITIVE ("image-convert-u8",     image);
-  SET_SENSITIVE ("image-convert-u16",    image && !is_indexed);
-  SET_SENSITIVE ("image-convert-u32",    image && !is_indexed);
-  SET_SENSITIVE ("image-convert-half",   image && !is_indexed);
-  SET_SENSITIVE ("image-convert-float",  image && !is_indexed);
-  SET_SENSITIVE ("image-convert-double", image && !is_indexed);
+  SET_SENSITIVE ("image-convert-u16",    image);
+  SET_SENSITIVE ("image-convert-u32",    image);
+  SET_SENSITIVE ("image-convert-half",   image);
+  SET_SENSITIVE ("image-convert-float",  image );
+  SET_SENSITIVE ("image-convert-double", image);
 
 /*  SET_SENSITIVE ("image-convert-gamma",  image);
-  SET_SENSITIVE ("image-convert-linear", image && !is_indexed);*/
+  SET_SENSITIVE ("image-convert-linear", image);*/
 
 /*  SET_SENSITIVE ("image-color-management-enabled", image);
   SET_ACTIVE    ("image-color-management-enabled", image && color_managed);*/

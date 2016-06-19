@@ -530,7 +530,6 @@ layers_actions_update (GimpActionGroup *group,
   gboolean       ac             = FALSE;    /*  active channel         */
   gboolean       sel            = FALSE;
   gboolean       alpha          = FALSE;    /*  alpha channel present  */
-  gboolean       indexed        = FALSE;    /*  is indexed             */
   gboolean       lock_alpha     = FALSE;
   gboolean       can_lock_alpha = FALSE;
   gboolean       text_layer     = FALSE;
@@ -546,7 +545,6 @@ layers_actions_update (GimpActionGroup *group,
       fs      = (gimp_image_get_floating_selection (image) != NULL);
       ac      = (gimp_image_get_active_channel (image) != NULL);
       sel     = ! gimp_channel_is_empty (gimp_image_get_mask (image));
-//      indexed = (gimp_image_get_base_type (image) == GIMP_INDEXED);
 
       layer = gimp_image_get_active_layer (image);
 
@@ -622,7 +620,7 @@ layers_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("layers-new",              image);
   SET_SENSITIVE ("layers-new-last-values",  image);
   SET_SENSITIVE ("layers-new-from-visible", image);
-  SET_SENSITIVE ("layers-new-group",        image && !indexed);
+  SET_SENSITIVE ("layers-new-group",        image);
   SET_SENSITIVE ("layers-duplicate",        layer && !fs && !ac);
   SET_SENSITIVE ("layers-delete",           layer && !ac);
 

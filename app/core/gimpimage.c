@@ -684,8 +684,8 @@ gimp_image_init (GimpImage *image)
   private->base_type           = GIMP_RGB;
   private->precision           = GIMP_PRECISION_U8_GAMMA;
 
-  private->n_colors            = 0;
-  private->palette             = NULL;
+//  private->n_colors            = 0;
+//  private->palette             = NULL;
 
   private->is_color_managed    = TRUE;
 
@@ -1192,9 +1192,6 @@ gimp_image_get_memsize (GimpObject *object,
   GimpImage        *image   = GIMP_IMAGE (object);
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
   gint64            memsize = 0;
-
-  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->palette),
-                                      gui_size);
 
   memsize += gimp_object_get_memsize (GIMP_OBJECT (private->projection),
                                       gui_size);

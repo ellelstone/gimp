@@ -58,7 +58,6 @@
 #include "display/gimpdisplayshell.h"
 
 #include "dialogs/color-profile-dialog.h"
-#include "dialogs/convert-indexed-dialog.h"
 #include "dialogs/convert-precision-dialog.h"
 #include "dialogs/grid-dialog.h"
 #include "dialogs/image-merge-layers-dialog.h"
@@ -246,13 +245,6 @@ image_convert_base_type_cmd_callback (GtkAction *action,
           g_clear_error (&error);
         }
       break;
-
-/*    case GIMP_INDEXED:
-      dialog = convert_indexed_dialog_new (image,
-                                           action_data_get_context (data),
-                                           widget,
-                                           GIMP_PROGRESS (display));
-      break;*/
     }
 
   if (dialog)
@@ -267,7 +259,7 @@ image_convert_base_type_cmd_callback (GtkAction *action,
       gtk_window_present (GTK_WINDOW (dialog));
     }
 
-  /*  always flush, also when only the indexed dialog was shown, so the
+  /*  always flush, so the
    *  menu items get updated back to the current image type
    */
   gimp_image_flush (image);

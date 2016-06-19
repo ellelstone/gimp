@@ -103,8 +103,6 @@ static gboolean context_set_color_index  (gint                  index,
                                           GimpRGB              *color);
 
 static GimpPaletteEditor  * context_get_palette_editor  (void);
-//static GimpColormapEditor * context_get_colormap_editor (void);
-
 
 /*  public functions  */
 
@@ -783,19 +781,6 @@ context_get_color_index (gboolean       use_colormap,
                          gboolean       use_palette,
                          const GimpRGB *color)
 {
-/*  if (use_colormap)
-    {
-      GimpColormapEditor *editor = context_get_colormap_editor ();
-
-      if (editor)
-        {
-          gint index = gimp_colormap_editor_get_index (editor, color);
-
-          if (index != -1)
-            return index;
-        }
-    }*/
-
   if (use_palette)
     {
       GimpPaletteEditor *editor = context_get_palette_editor ();
@@ -816,19 +801,6 @@ static gint
 context_max_color_index (gboolean use_colormap,
                          gboolean use_palette)
 {
-/*  if (use_colormap)
-    {
-      GimpColormapEditor *editor = context_get_colormap_editor ();
-
-      if (editor)
-        {
-          gint index = gimp_colormap_editor_max_index (editor);
-
-          if (index != -1)
-            return index;
-        }
-    }*/
-
   if (use_palette)
     {
       GimpPaletteEditor *editor = context_get_palette_editor ();
@@ -851,13 +823,6 @@ context_set_color_index (gint      index,
                          gboolean  use_palette,
                          GimpRGB  *color)
 {
-/*  if (use_colormap)
-    {
-      GimpColormapEditor *editor = context_get_colormap_editor ();
-
-      if (editor && gimp_colormap_editor_set_index (editor, index, color))
-        return TRUE;
-    }*/
 
   if (use_palette)
     {
@@ -884,18 +849,3 @@ context_get_palette_editor (void)
 
   return NULL;
 }
-
-/*static GimpColormapEditor *
-context_get_colormap_editor (void)
-{
-  GtkWidget *widget;
-
-  g_return_val_if_fail (GIMP_IS_DIALOG_FACTORY (gimp_dialog_factory_get_singleton ()), NULL);
-
-  widget = gimp_dialog_factory_find_widget (gimp_dialog_factory_get_singleton (),
-                                            "gimp-indexed-palette");
-  if (widget)
-    return GIMP_COLORMAP_EDITOR (gtk_bin_get_child (GTK_BIN (widget)));
-
-  return NULL;
-}*/
