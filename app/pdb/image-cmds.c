@@ -37,7 +37,6 @@
 #include "core/gimpchannel.h"
 #include "core/gimpcontainer.h"
 #include "core/gimpdrawable.h"
-#include "core/gimpimage-colormap.h"
 #include "core/gimpimage-duplicate.h"
 #include "core/gimpimage-merge.h"
 #include "core/gimpimage-metadata.h"
@@ -197,7 +196,7 @@ image_new_with_precision_invoker (GimpProcedure         *procedure,
       if (gimp->plug_in_manager->current_plug_in)
         gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
 
-      if (type != GIMP_INDEXED || precision == GIMP_PRECISION_U8_GAMMA)
+      if (precision == GIMP_PRECISION_U8_GAMMA)
         {
           image = gimp_create_image (gimp, width, height, type,
                                      precision, FALSE);
@@ -1427,66 +1426,6 @@ image_remove_layer_mask_invoker (GimpProcedure         *procedure,
 }
 
 static GimpValueArray *
-image_get_colormap_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
-                            GError               **error)
-{
-  gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpImage *image;
-  gint32 num_bytes = 0;
-  guint8 *colormap = NULL;
-
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-
-  if (success)
-    {
-      num_bytes = 3 * gimp_image_get_colormap_size (image);
-      colormap = g_memdup (gimp_image_get_colormap (image), num_bytes);
-    }
-
-  return_vals = gimp_procedure_get_return_values (procedure, success,
-                                                  error ? *error : NULL);
-
-  if (success)
-    {
-      g_value_set_int (gimp_value_array_index (return_vals, 1), num_bytes);
-      gimp_value_take_int8array (gimp_value_array_index (return_vals, 2), colormap, num_bytes);
-    }
-
-  return return_vals;
-}
-
-static GimpValueArray *
-image_set_colormap_invoker (GimpProcedure         *procedure,
-                            Gimp                  *gimp,
-                            GimpContext           *context,
-                            GimpProgress          *progress,
-                            const GimpValueArray  *args,
-                            GError               **error)
-{
-  gboolean success = TRUE;
-  GimpImage *image;
-  gint32 num_bytes;
-  const guint8 *colormap;
-
-  image = gimp_value_get_image (gimp_value_array_index (args, 0), gimp);
-  num_bytes = g_value_get_int (gimp_value_array_index (args, 1));
-  colormap = gimp_value_get_int8array (gimp_value_array_index (args, 2));
-
-  if (success)
-    {
-      gimp_image_set_colormap (image, colormap, num_bytes / 3, TRUE);
-    }
-
-  return gimp_procedure_get_return_values (procedure, success,
-                                           error ? *error : NULL);
-}
-
-static GimpValueArray *
 image_get_metadata_invoker (GimpProcedure         *procedure,
                             Gimp                  *gimp,
                             GimpContext           *context,
@@ -1887,8 +1826,6 @@ image_get_component_active_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_GRAY_CHANNEL)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-      else if (component == GIMP_INDEXED_CHANNEL)
-        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1926,8 +1863,6 @@ image_set_component_active_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_GRAY_CHANNEL)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-      else if (component == GIMP_INDEXED_CHANNEL)
-        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1960,8 +1895,6 @@ image_get_component_visible_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_GRAY_CHANNEL)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-      else if (component == GIMP_INDEXED_CHANNEL)
-        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1999,8 +1932,6 @@ image_set_component_visible_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_GRAY_CHANNEL)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-      else if (component == GIMP_INDEXED_CHANNEL)
-        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -4084,74 +4015,6 @@ register_image_procs (GimpPDB *pdb)
                                                   GIMP_TYPE_MASK_APPLY_MODE,
                                                   GIMP_MASK_APPLY,
                                                   GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-image-get-colormap
-   */
-  procedure = gimp_procedure_new (image_get_colormap_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-get-colormap");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-get-colormap",
-                                     "Returns the image's colormap",
-                                     "This procedure returns an actual pointer to the image's colormap, as well as the number of bytes contained in the colormap. The actual number of colors in the transmitted colormap will be 'num-bytes' / 3. If the image is not in Indexed color mode, no colormap is returned.",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1995-1996",
-                                     NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
-                                                         "image",
-                                                         "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int32 ("num-bytes",
-                                                          "num bytes",
-                                                          "Number of bytes in the colormap array",
-                                                          0, G_MAXINT32, 0,
-                                                          GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   gimp_param_spec_int8_array ("colormap",
-                                                               "colormap",
-                                                               "The image's colormap. The returned value must be freed with g_free()",
-                                                               GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-image-set-colormap
-   */
-  procedure = gimp_procedure_new (image_set_colormap_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-image-set-colormap");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-image-set-colormap",
-                                     "Sets the entries in the image's colormap.",
-                                     "This procedure sets the entries in the specified image's colormap. The number of entries is specified by the 'num-bytes' parameter and corresponds to the number of INT8 triples that must be contained in the 'colormap' array. The actual number of colors in the transmitted colormap is 'num-bytes' / 3.",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1995-1996",
-                                     NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_image_id ("image",
-                                                         "image",
-                                                         "The image",
-                                                         pdb->gimp, FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("num-bytes",
-                                                      "num bytes",
-                                                      "Number of bytes in the colormap array",
-                                                      0, 768, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int8_array ("colormap",
-                                                           "colormap",
-                                                           "The new colormap values",
-                                                           GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 

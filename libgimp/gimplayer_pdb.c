@@ -251,8 +251,8 @@ _gimp_layer_copy (gint32   layer_ID,
  * This procedure adds an additional component to the specified layer
  * if it does not already possess an alpha channel. An alpha channel
  * makes it possible to clear and erase to transparency, instead of the
- * background color. This transforms layers of type RGB to RGBA, GRAY
- * to GRAYA, and INDEXED to INDEXEDA.
+ * background color. This transforms layers of type RGB to RGBA and
+ * GRAY to GRAYA.
  *
  * Returns: TRUE on success.
  **/
@@ -283,8 +283,7 @@ gimp_layer_add_alpha (gint32 layer_ID)
  *
  * This procedure removes the alpha channel from a layer, blending all
  * (partially) transparent pixels in the layer against the background
- * color. This transforms layers of type RGBA to RGB, GRAYA to GRAY,
- * and INDEXEDA to INDEXED.
+ * color. This transforms layers of type RGBA to RGB and GRAYA to GRAY.
  *
  * Returns: TRUE on success.
  *

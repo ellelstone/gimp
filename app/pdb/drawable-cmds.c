@@ -234,35 +234,6 @@ drawable_is_gray_invoker (GimpProcedure         *procedure,
 }
 
 static GimpValueArray *
-drawable_is_indexed_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
-                             GError               **error)
-{
-  gboolean success = TRUE;
-  GimpValueArray *return_vals;
-  GimpDrawable *drawable;
-  gboolean is_indexed = FALSE;
-
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-
-  if (success)
-    {
-      is_indexed = gimp_drawable_is_indexed (drawable);
-    }
-
-  return_vals = gimp_procedure_get_return_values (procedure, success,
-                                                  error ? *error : NULL);
-
-  if (success)
-    g_value_set_boolean (gimp_value_array_index (return_vals, 1), is_indexed);
-
-  return return_vals;
-}
-
-static GimpValueArray *
 drawable_bpp_invoker (GimpProcedure         *procedure,
                       Gimp                  *gimp,
                       GimpContext           *context,
@@ -1075,8 +1046,6 @@ register_drawable_procs (GimpPDB *pdb)
                                       GIMP_RGB_IMAGE);
   gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
                                       GIMP_GRAY_IMAGE);
-  gimp_param_spec_enum_exclude_value (GIMP_PARAM_SPEC_ENUM (procedure->values[0]),
-                                      GIMP_INDEXED_IMAGE);
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 
@@ -1089,7 +1058,7 @@ register_drawable_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-drawable-has-alpha",
                                      "Returns TRUE if the drawable has an alpha channel.",
-                                     "This procedure returns whether the specified drawable has an alpha channel. This can only be true for layers, and the associated type will be one of: { RGBA , GRAYA, INDEXEDA }.",
+                                     "This procedure returns whether the specified drawable has an alpha channel. This can only be true for layers, and the associated type will be one of: { RGBA , GRAYA }.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
@@ -1162,35 +1131,6 @@ register_drawable_procs (GimpPDB *pdb)
                                    g_param_spec_boolean ("is-gray",
                                                          "is gray",
                                                          "TRUE if the drawable is a grayscale type",
-                                                         FALSE,
-                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-drawable-is-indexed
-   */
-  procedure = gimp_procedure_new (drawable_is_indexed_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-is-indexed");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-is-indexed",
-                                     "Returns whether the drawable is an indexed type.",
-                                     "This procedure returns TRUE if the specified drawable is of type { Indexed, IndexedA }.",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1995-1996",
-                                     NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_return_value (procedure,
-                                   g_param_spec_boolean ("is-indexed",
-                                                         "is indexed",
-                                                         "TRUE if the drawable is an indexed type",
                                                          FALSE,
                                                          GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);

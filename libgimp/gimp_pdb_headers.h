@@ -28,6 +28,7 @@
 #define __GIMP_PDB_HEADERS_H__
 
 #include <libgimp/gimp_pdb.h>
+#include <libgimp/gimp_pdb.h>
 #include <libgimp/gimpbrush_pdb.h>
 #include <libgimp/gimpbrushes_pdb.h>
 #include <libgimp/gimpbrushselect_pdb.h>

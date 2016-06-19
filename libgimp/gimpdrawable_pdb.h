@@ -38,7 +38,6 @@ GimpImageType            gimp_drawable_type_with_alpha    (gint32               
 gboolean                 gimp_drawable_has_alpha          (gint32                      drawable_ID);
 gboolean                 gimp_drawable_is_rgb             (gint32                      drawable_ID);
 gboolean                 gimp_drawable_is_gray            (gint32                      drawable_ID);
-gboolean                 gimp_drawable_is_indexed         (gint32                      drawable_ID);
 gint                     gimp_drawable_bpp                (gint32                      drawable_ID);
 gint                     gimp_drawable_width              (gint32                      drawable_ID);
 gint                     gimp_drawable_height             (gint32                      drawable_ID);

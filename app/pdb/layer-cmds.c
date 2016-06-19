@@ -113,15 +113,6 @@ layer_new_invoker (GimpProcedure         *procedure,
           has_alpha = TRUE;
           break;
 
-        case GIMP_INDEXED_IMAGE:
-          base_type = GIMP_INDEXED;
-          has_alpha = FALSE;
-          break;
-
-        case GIMP_INDEXEDA_IMAGE:
-          base_type = GIMP_INDEXED;
-          has_alpha = TRUE;
-          break;
         }
 
       /* do not use gimp_image_get_layer_format() because it might
@@ -1369,7 +1360,7 @@ register_layer_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-layer-add-alpha",
                                      "Add an alpha channel to the layer if it doesn't already have one.",
-                                     "This procedure adds an additional component to the specified layer if it does not already possess an alpha channel. An alpha channel makes it possible to clear and erase to transparency, instead of the background color. This transforms layers of type RGB to RGBA, GRAY to GRAYA, and INDEXED to INDEXEDA.",
+                                     "This procedure adds an additional component to the specified layer if it does not already possess an alpha channel. An alpha channel makes it possible to clear and erase to transparency, instead of the background color. This transforms layers of type RGB to RGBA and GRAY to GRAYA.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
@@ -1392,7 +1383,7 @@ register_layer_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-layer-flatten",
                                      "Remove the alpha channel from the layer if it has one.",
-                                     "This procedure removes the alpha channel from a layer, blending all (partially) transparent pixels in the layer against the background color. This transforms layers of type RGBA to RGB, GRAYA to GRAY, and INDEXEDA to INDEXED.",
+                                     "This procedure removes the alpha channel from a layer, blending all (partially) transparent pixels in the layer against the background color. This transforms layers of type RGBA to RGB and GRAYA to GRAY.",
                                      "Michael Natterer <mitch@gimp.org>",
                                      "Michael Natterer",
                                      "2007",

@@ -139,7 +139,7 @@ gimp_drawable_type_with_alpha (gint32 drawable_ID)
  *
  * This procedure returns whether the specified drawable has an alpha
  * channel. This can only be true for layers, and the associated type
- * will be one of: { RGBA , GRAYA, INDEXEDA }.
+ * will be one of: { RGBA , GRAYA }.
  *
  * Returns: Does the drawable have an alpha channel?
  **/
@@ -223,37 +223,6 @@ gimp_drawable_is_gray (gint32 drawable_ID)
   gimp_destroy_params (return_vals, nreturn_vals);
 
   return is_gray;
-}
-
-/**
- * gimp_drawable_is_indexed:
- * @drawable_ID: The drawable.
- *
- * Returns whether the drawable is an indexed type.
- *
- * This procedure returns TRUE if the specified drawable is of type {
- * Indexed, IndexedA }.
- *
- * Returns: TRUE if the drawable is an indexed type.
- **/
-gboolean
-gimp_drawable_is_indexed (gint32 drawable_ID)
-{
-  GimpParam *return_vals;
-  gint nreturn_vals;
-  gboolean is_indexed = FALSE;
-
-  return_vals = gimp_run_procedure ("gimp-drawable-is-indexed",
-                                    &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_END);
-
-  if (return_vals[0].data.d_status == GIMP_PDB_SUCCESS)
-    is_indexed = return_vals[1].data.d_int32;
-
-  gimp_destroy_params (return_vals, nreturn_vals);
-
-  return is_indexed;
 }
 
 /**

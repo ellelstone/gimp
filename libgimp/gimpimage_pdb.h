@@ -120,11 +120,6 @@ gint32                   gimp_image_merge_visible_layers     (gint32            
 gint32                   gimp_image_merge_down               (gint32               image_ID,
                                                               gint32               merge_layer_ID,
                                                               GimpMergeType        merge_type);
-G_GNUC_INTERNAL guint8*  _gimp_image_get_colormap            (gint32               image_ID,
-                                                              gint                *num_bytes);
-G_GNUC_INTERNAL gboolean _gimp_image_set_colormap            (gint32               image_ID,
-                                                              gint                 num_bytes,
-                                                              const guint8        *colormap);
 G_GNUC_INTERNAL gchar*   _gimp_image_get_metadata            (gint32               image_ID);
 G_GNUC_INTERNAL gboolean _gimp_image_set_metadata            (gint32               image_ID,
                                                               const gchar         *metadata_string);
