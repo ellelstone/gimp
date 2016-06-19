@@ -1330,13 +1330,13 @@ get_layer_color (gint32    layer_ID,
   alpha = 0;
   dev = 0;
 
-  if (gimp_drawable_is_indexed (layer_ID))
-    {
-      /* FIXME: We can't do a propper histogram on indexed layers! */
+/*  if (gimp_drawable_is_indexed (layer_ID))
+    {//this always returns FALSE as I've removed all indexed image support
+       FIXME: We can't do a propper histogram on indexed layers! 
       *single = FALSE;
       col. r = col.g = col.b = col.a = 0;
       return col;
-    }
+    }*/
 
   if (gimp_drawable_bpp (layer_ID) >= 3)
     {

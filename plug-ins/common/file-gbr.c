@@ -151,7 +151,7 @@ query (void)
                           "Tim Newsome, Jens Lautenbacher, Sven Neumann",
                           "1997-2000",
                           N_("GIMP brush"),
-                          "RGB*, GRAY*"*
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);

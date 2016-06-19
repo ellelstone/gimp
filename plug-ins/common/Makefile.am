@@ -44,8 +44,7 @@ AM_CPPFLAGS = \
 	-I$(includedir)
 
 libexec_PROGRAMS = \
-	align-layers
-	color-cube-analyze \
+	align-layers \
 	compose \
 	crop-zealous \
 	decompose \
@@ -57,7 +56,6 @@ libexec_PROGRAMS = \
 	$(FILE_JP2_LOAD) \
 	$(FILE_PDF_LOAD) \
 	$(FILE_PDF_SAVE) \
-	file-png \
 	file-psp \
 	guillotine \
 	metadata \
@@ -100,23 +98,6 @@ align_layers_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(align_layers_RC)
-
-color_cube_analyze_SOURCES = \
-	color-cube-analyze.c
-
-color_cube_analyze_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(color_cube_analyze_RC)
 
 compose_SOURCES = \
 	compose.c
@@ -262,9 +243,6 @@ file_glob_LDADD = \
 	$(INTLLIBS)		\
 	$(file_glob_RC)
 
-file_header_SOURCES = \
-	file-header.c
-
 file_jp2_load_SOURCES = \
 	file-jp2-load.c
 
@@ -325,27 +303,6 @@ file_pdf_save_LDADD = \
 	$(INTLLIBS)		\
 	$(file_pdf_save_RC)
 
-file_png_CFLAGS = $(PNG_CFLAGS)
-
-file_png_SOURCES = \
-	file-png.c
-
-file_png_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(PNG_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_png_RC)
-
 file_psp_SOURCES = \
 	file-psp.c
 
@@ -364,6 +321,21 @@ file_psp_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_psp_RC)
+
+guillotine_SOURCES = \
+	guillotine.c
+
+guillotine_LDADD = \
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(CAIRO_LIBS)		\
+	$(GDK_PIXBUF_LIBS)	\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(guillotine_RC)
 
 metadata_CFLAGS = $(GEXIV2_CFLAGS)
 
