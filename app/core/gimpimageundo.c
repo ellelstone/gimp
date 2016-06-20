@@ -285,9 +285,6 @@ gimp_image_undo_get_memsize (GimpObject *object,
   GimpImageUndo *image_undo = GIMP_IMAGE_UNDO (object);
   gint64         memsize    = 0;
 
-/*  if (image_undo->colormap)
-    memsize += GIMP_IMAGE_COLORMAP_SIZE;*/
-
   if (image_undo->metadata)
     memsize += gimp_g_object_get_memsize (G_OBJECT (image_undo->metadata));
 
@@ -320,8 +317,6 @@ gimp_image_undo_pop (GimpUndo            *undo,
         base_type = image_undo->base_type;
         image_undo->base_type = gimp_image_get_base_type (image);
         g_object_set (image, "base-type", base_type, NULL);
-
-        //gimp_image_colormap_changed (image, -1);
 
         if (image_undo->base_type != gimp_image_get_base_type (image))
           {
@@ -506,12 +501,6 @@ gimp_image_undo_free (GimpUndo     *undo,
     {
       g_object_unref (image_undo->grid);
       image_undo->grid = NULL;
-    }
-
-  if (image_undo->colormap)
-    {
-      g_free (image_undo->colormap);
-      image_undo->colormap = NULL;
     }
 
   if (image_undo->metadata)

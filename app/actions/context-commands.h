@@ -32,13 +32,6 @@ void   context_palette_background_cmd_callback    (GtkAction *action,
                                                    gint       value,
                                                    gpointer   data);
 
-void   context_colormap_foreground_cmd_callback   (GtkAction *action,
-                                                   gint       value,
-                                                   gpointer   data);
-void   context_colormap_background_cmd_callback   (GtkAction *action,
-                                                   gint       value,
-                                                   gpointer   data);
-
 void   context_swatch_foreground_cmd_callback     (GtkAction *action,
                                                    gint       value,
                                                    gpointer   data);

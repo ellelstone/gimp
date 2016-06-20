@@ -897,11 +897,6 @@ gimp_core_config_set_property (GObject      *object,
       gimp_value_get_rgb (value, &core_config->quick_mask_color);
       break;
 
-    case PROP_INSTALL_COLORMAP:
-    case PROP_MIN_COLORS:
-      /*  ignored  */
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;

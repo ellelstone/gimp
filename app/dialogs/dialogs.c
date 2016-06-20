@@ -249,7 +249,6 @@ static const GimpDialogFactoryEntry entries[] =
   FOREIGN ("gimp-toolbox-color-dialog",            TRUE,  FALSE),
   FOREIGN ("gimp-gradient-editor-color-dialog",    TRUE,  FALSE),
   FOREIGN ("gimp-palette-editor-color-dialog",     TRUE,  FALSE),
-  FOREIGN ("gimp-colormap-editor-color-dialog",    TRUE,  FALSE),
 
   FOREIGN ("gimp-controller-editor-dialog",        FALSE, TRUE),
   FOREIGN ("gimp-controller-action-dialog",        FALSE, TRUE),

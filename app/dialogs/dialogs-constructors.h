@@ -232,10 +232,6 @@ GtkWidget * dialogs_path_list_view_new          (GimpDialogFactory *factory,
                                                  GimpContext       *context,
                                                  GimpUIManager     *ui_manager,
                                                  gint               view_size);
-/*GtkWidget * dialogs_colormap_editor_new         (GimpDialogFactory *factory,
-                                                 GimpContext       *context,
-                                                 GimpUIManager     *ui_manager,
-                                                 gint               view_size);*/
 GtkWidget * dialogs_histogram_editor_new        (GimpDialogFactory *factory,
                                                  GimpContext       *context,
                                                  GimpUIManager     *ui_manager,

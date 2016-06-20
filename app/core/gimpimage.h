@@ -94,8 +94,6 @@ struct _GimpImageClass
                                          const gchar          *name);
   void (* parasite_detached)            (GimpImage            *image,
                                          const gchar          *name);
-  void (* colormap_changed)             (GimpImage            *image,
-                                         gint                  color_index);
   void (* undo_event)                   (GimpImage            *image,
                                          GimpUndoEvent         event,
                                          GimpUndo             *undo);
@@ -252,8 +250,6 @@ void            gimp_image_sample_point_removed  (GimpImage          *image,
                                                   GimpSamplePoint    *sample_point);
 void            gimp_image_sample_point_moved    (GimpImage          *image,
                                                   GimpSamplePoint    *sample_point);
-void            gimp_image_colormap_changed      (GimpImage          *image,
-                                                  gint                col);
 void            gimp_image_selection_invalidate  (GimpImage          *image);
 void            gimp_image_quick_mask_changed    (GimpImage          *image);
 void            gimp_image_size_changed_detailed (GimpImage          *image,

@@ -425,7 +425,6 @@ EXPORTS
 	gimp_image_get_channel_by_tattoo
 	gimp_image_get_channel_position
 	gimp_image_get_channels
-	gimp_image_get_cmap
 	gimp_image_get_color_profile
 	gimp_image_get_component_active
 	gimp_image_get_component_visible
