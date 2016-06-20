@@ -107,10 +107,6 @@ enum
   PROP_COLOR_PROFILE_POLICY,
   PROP_SAVE_DOCUMENT_HISTORY,
   PROP_QUICK_MASK_COLOR,
-
-  /* ignored, only for backward compatibility: */
-  PROP_INSTALL_COLORMAP,
-  PROP_MIN_COLORS
 };
 
 
@@ -627,20 +623,6 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                         TRUE, &red,
                         GIMP_PARAM_STATIC_STRINGS);
 
-  /*  only for backward compatibility:  */
-  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
-                            "install-colormap",
-                            NULL, NULL,
-                            FALSE,
-                            GIMP_PARAM_STATIC_STRINGS |
-                            GIMP_CONFIG_PARAM_IGNORE);
-
-  GIMP_CONFIG_PROP_INT (object_class, PROP_MIN_COLORS,
-                        "min-colors",
-                        NULL, NULL,
-                        27, 256, 144,
-                        GIMP_PARAM_STATIC_STRINGS |
-                        GIMP_CONFIG_PARAM_IGNORE);
 }
 
 static void
@@ -1091,11 +1073,6 @@ gimp_core_config_get_property (GObject    *object,
       break;
     case PROP_QUICK_MASK_COLOR:
       gimp_value_set_rgb (value, &core_config->quick_mask_color);
-      break;
-
-    case PROP_INSTALL_COLORMAP:
-    case PROP_MIN_COLORS:
-      /*  ignored  */
       break;
 
     default:

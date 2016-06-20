@@ -25,7 +25,6 @@
 typedef enum
 {
   PROP_END                =  0,
-//  PROP_COLORMAP           =  1,
   PROP_ACTIVE_LAYER       =  2,
   PROP_ACTIVE_CHANNEL     =  3,
   PROP_SELECTION          =  4,

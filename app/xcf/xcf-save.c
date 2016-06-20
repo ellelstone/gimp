@@ -638,22 +638,6 @@ xcf_save_prop (XcfInfo    *info,
       xcf_write_int32_check_error (info, &size, 1);
       break;
 
-/*    case PROP_COLORMAP:
-      {
-        guint32  n_colors;
-        guchar  *colors;
-
-        n_colors = va_arg (args, guint32);
-        colors = va_arg (args, guchar *);
-        size = 4 + n_colors * 3;
-
-        xcf_write_prop_type_check_error (info, prop_type);
-        xcf_write_int32_check_error (info, &size, 1);
-        xcf_write_int32_check_error (info, &n_colors, 1);
-        xcf_write_int8_check_error  (info, colors, n_colors * 3);
-      }
-      break;*/
-
     case PROP_ACTIVE_LAYER:
     case PROP_ACTIVE_CHANNEL:
     case PROP_SELECTION:
