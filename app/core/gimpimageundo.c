@@ -181,12 +181,6 @@ gimp_image_undo_constructed (GObject *object)
       g_assert (GIMP_IS_GRID (image_undo->grid));
       break;
 
-/*    case GIMP_UNDO_IMAGE_COLORMAP:
-      image_undo->num_colors = gimp_image_get_colormap_size (image);
-      image_undo->colormap   = g_memdup (gimp_image_get_colormap (image),
-                                         GIMP_IMAGE_COLORMAP_SIZE);
-      break;*/
-
     case GIMP_UNDO_IMAGE_COLOR_MANAGED:
       image_undo->is_color_managed = gimp_image_get_is_color_managed (image);
       break;
@@ -446,30 +440,6 @@ gimp_image_undo_pop (GimpUndo            *undo,
         image_undo->grid = grid;
       }
       break;
-
-/*    case GIMP_UNDO_IMAGE_COLORMAP:
-      {
-        guchar *colormap;
-        gint    num_colors;
-
-        num_colors = gimp_image_get_colormap_size (image);
-        colormap   = g_memdup (gimp_image_get_colormap (image),
-                               GIMP_IMAGE_COLORMAP_SIZE);
-
-        if (image_undo->colormap)
-          gimp_image_set_colormap (image,
-                                   image_undo->colormap, image_undo->num_colors,
-                                   FALSE);
-        else
-          gimp_image_unset_colormap (image, FALSE);
-
-        if (image_undo->colormap)
-          g_free (image_undo->colormap);
-
-        image_undo->num_colors = num_colors;
-        image_undo->colormap   = colormap;
-      }
-      break;*/
 
     case GIMP_UNDO_IMAGE_COLOR_MANAGED:
       {

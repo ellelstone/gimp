@@ -346,12 +346,6 @@ xcf_save_image_props (XcfInfo    *info,
 
   gimp_image_get_resolution (image, &xres, &yres);
 
-  /* check and see if we should save the colormap property 
-  if (gimp_image_get_colormap (image))
-    xcf_check_error (xcf_save_prop (info, image, PROP_COLORMAP, error,
-                                    gimp_image_get_colormap_size (image),
-                                    gimp_image_get_colormap (image)));*/
-
   if (info->compression != COMPRESS_NONE)
     xcf_check_error (xcf_save_prop (info, image, PROP_COMPRESSION, error,
                                     info->compression));

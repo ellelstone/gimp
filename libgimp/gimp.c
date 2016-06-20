@@ -1303,44 +1303,6 @@ gimp_gamma (void)
 }
 
 /**
- * gimp_install_cmap:
- *
- * Returns whether or not the plug-in should allocate an own colormap
- * when running on an 8 bit display. See also: gimp_min_colors().
- *
- * This is a constant value given at plug-in configuration time.
- *
- * @Deprecated: 2.8
- *
- * Return value: the install_cmap boolean
- **/
-gboolean
-gimp_install_cmap (void)
-{
-  return _install_cmap;
-}
-
-/**
- * gimp_min_colors:
- *
- * Returns the minimum number of colors to use when allocating an own
- * colormap on 8 bit displays.
- *
- * This is a constant value given at plug-in configuration time.
- *
- * See also: gimp_install_cmap()
- *
- * @Deprecated: 2.8
- *
- * Return value: the minimum number of colors to allocate
- **/
-gint
-gimp_min_colors (void)
-{
-  return _min_colors;
-}
-
-/**
  * gimp_show_tool_tips:
  *
  * Returns whether or not the plug-in should show tool-tips.
