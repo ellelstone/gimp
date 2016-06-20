@@ -8110,7 +8110,7 @@ register_plug_in_compat_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "plug-in-vinvert",
                                      "Invert the brightness of each pixel",
-                                     "This function takes an indexed/RGB image and inverts its 'value' in HSV space. The upshot of this is that the color and saturation at any given point remains the same, but its brightness is effectively inverted. Quite strange. Sometimes produces unpleasant color artifacts on images from lossy sources (ie. JPEG).",
+                                     "This function takes an RGB image and inverts its 'value' in HSV space. The upshot of this is that the color and saturation at any given point remains the same, but its brightness is effectively inverted. Quite strange. Sometimes produces unpleasant color artifacts on images from lossy sources (ie. JPEG).",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1997",

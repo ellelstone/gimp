@@ -123,10 +123,6 @@ gimp_image_list (gint *num_images)
  * gimp_layer_new() commands. They can be added to an image using the
  * gimp_image_insert_layer() command.
  *
- * If your image's type if INDEXED, a colormap must also be added with
- * gimp_image_set_colormap(). An indexed image without a colormap will
- * output unexpected colors.
- *
  * Returns: The ID of the newly created image.
  **/
 gint32
@@ -164,9 +160,7 @@ gimp_image_new (gint              width,
  * precision.
  *
  * Creates a new image, undisplayed with the specified extents, type
- * and precision. Indexed images can only be created at
- * GIMP_PRECISION_U8_GAMMA precision. See gimp_image_new() for further
- * details.
+ * and precision. See gimp_image_new() for further details.
  *
  * Returns: The ID of the newly created image.
  *
@@ -690,16 +684,16 @@ gimp_image_floating_sel_attached_to (gint32 image_ID)
  * Determine the color at the given drawable coordinates
  *
  * This tool determines the color at the specified coordinates. The
- * returned color is an RGB triplet even for grayscale and indexed
- * drawables. If the coordinates lie outside of the extents of the
- * specified drawable, then an error is returned. If the drawable has
- * an alpha channel, the algorithm examines the alpha value of the
- * drawable at the coordinates. If the alpha value is completely
- * transparent (0), then an error is returned. If the sample_merged
- * parameter is TRUE, the data of the composite image will be used
- * instead of that for the specified drawable. This is equivalent to
- * sampling for colors after merging all visible layers. In the case of
- * a merged sampling, the supplied drawable is ignored.
+ * returned color is an RGB triplet even for grayscale drawables. If
+ * the coordinates lie outside of the extents of the specified
+ * drawable, then an error is returned. If the drawable has an alpha
+ * channel, the algorithm examines the alpha value of the drawable at
+ * the coordinates. If the alpha value is completely transparent (0),
+ * then an error is returned. If the sample_merged parameter is TRUE,
+ * the data of the composite image will be used instead of that for the
+ * specified drawable. This is equivalent to sampling for colors after
+ * merging all visible layers. In the case of a merged sampling, the
+ * supplied drawable is ignored.
  *
  * Returns: TRUE on success.
  **/

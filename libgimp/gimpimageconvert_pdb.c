@@ -41,9 +41,7 @@
  * Convert specified image to RGB color
  *
  * This procedure converts the specified image to RGB color. This
- * process requires an image in Grayscale or Indexed color mode. No
- * image content is lost in this process aside from the colormap for an
- * indexed image.
+ * process requires an image in Grayscale mode.
  *
  * Returns: TRUE on success.
  **/
@@ -73,7 +71,7 @@ gimp_image_convert_rgb (gint32 image_ID)
  * Convert specified image to grayscale
  *
  * This procedure converts the specified image to grayscale. This
- * process requires an image in RGB or Indexed color mode.
+ * process requires an image in RGB mode.
  *
  * Returns: TRUE on success.
  **/
@@ -103,9 +101,7 @@ gimp_image_convert_grayscale (gint32 image_ID)
  *
  * Convert the image to the specified precision
  *
- * This procedure converts the image to the specified precision. Note
- * that indexed images cannot be converted and are always in
- * GIMP_PRECISION_U8.
+ * This procedure converts the image to the specified precision.
  *
  * Returns: TRUE on success.
  *

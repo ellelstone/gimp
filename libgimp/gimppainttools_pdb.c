@@ -136,9 +136,7 @@ gimp_airbrush_default (gint32         drawable_ID,
  * and height of the pattern. For image cloning, if the sum of the src
  * coordinates and subsequent stroke offsets exceeds the extents of the
  * src drawable, then no paint is transferred. The clone tool is
- * capable of transforming between any image types including
- * RGB-&gt;Indexed--although converting from any type to indexed is
- * significantly slower.
+ * capable of transforming between any image types.
  *
  * Returns: TRUE on success.
  **/
@@ -477,8 +475,7 @@ gimp_eraser_default (gint32         drawable_ID,
  * coordinates to the dest drawable. For image healing, if the sum of
  * the src coordinates and subsequent stroke offsets exceeds the
  * extents of the src drawable, then no paint is transferred. The
- * healing tool is capable of transforming between any image types
- * except RGB-&gt;Indexed.
+ * healing tool is capable of transforming between any image types.
  *
  * Returns: TRUE on success.
  *
