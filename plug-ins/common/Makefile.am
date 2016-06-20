@@ -56,6 +56,7 @@ libexec_PROGRAMS = \
 	$(FILE_JP2_LOAD) \
 	$(FILE_PDF_LOAD) \
 	$(FILE_PDF_SAVE) \
+	file-png \
 	file-psp \
 	guillotine \
 	metadata \
@@ -302,6 +303,27 @@ file_pdf_save_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_pdf_save_RC)
+
+file_png_CFLAGS = $(PNG_CFLAGS)
+
+file_png_SOURCES = \
+	file-png.c
+
+file_png_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(PNG_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_png_RC)
 
 file_psp_SOURCES = \
 	file-psp.c
