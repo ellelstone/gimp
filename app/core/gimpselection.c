@@ -755,21 +755,10 @@ gimp_selection_extract (GimpSelection *selection,
 
   src_format = gimp_pickable_get_format (pickable);
 
-  /*  How many bytes in the temp buffer?  */
-  if (babl_format_is_palette (src_format) && ! keep_indexed)
-    {
-      dest_format = gimp_image_get_format (image, GIMP_RGB,
-                                           gimp_image_get_precision (image),
-                                           add_alpha ||
-                                           babl_format_has_alpha (src_format));
-    }
-  else
-    {
       if (add_alpha)
         dest_format = gimp_pickable_get_format_with_alpha (pickable);
       else
         dest_format = src_format;
-    }
 
   if (GIMP_IS_DRAWABLE (pickable))
     {

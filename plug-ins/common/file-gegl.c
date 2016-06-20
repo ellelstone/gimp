@@ -249,7 +249,6 @@ run (const gchar      *name,
               export = gimp_export_image (&image_ID, &drawable_ID, "GEGL",
                                           GIMP_EXPORT_CAN_HANDLE_RGB     |
                                           GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                          //GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                           GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
               if (export == GIMP_EXPORT_CANCEL)
@@ -345,19 +344,6 @@ load_image (const gchar  *filename,
   height = gegl_buffer_get_height (src_buf);
   format = gegl_buffer_get_format (src_buf);
 
-/*  if (babl_format_is_palette (format))
-    {
-      base_type = GIMP_INDEXED;
-
-      if (babl_format_has_alpha (format))
-        image_type = GIMP_INDEXEDA_IMAGE;
-      else
-        image_type = GIMP_INDEXED_IMAGE;
-
-      precision = GIMP_PRECISION_U8_GAMMA;
-    }*/
-/*  else*/
-    //{
       const Babl *model  = babl_format_get_model (format);
       const Babl *type   = babl_format_get_type (format, 0);
       gboolean    linear = FALSE;
@@ -403,7 +389,6 @@ load_image (const gchar  *filename,
           else
             precision = GIMP_PRECISION_FLOAT_GAMMA;
 
-    //}
 
 
   image_ID = gimp_image_new_with_precision (width, height,

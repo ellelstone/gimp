@@ -251,15 +251,6 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   else
     n_bins = 1024;
 
-  if (babl_format_is_palette (format))
-    {
-      if (babl_format_has_alpha (format))
-        format = babl_format ("R'G'B'A float");
-      else
-        format = babl_format ("R'G'B' float");
-    }
-  else
-    {
       const Babl *model = babl_format_get_model (format);
 
       if (model == babl_model ("Y"))
@@ -310,7 +301,7 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
         {
           g_return_if_reached ();
         }
-    }
+
 
   n_components = babl_format_get_n_components (format);
 

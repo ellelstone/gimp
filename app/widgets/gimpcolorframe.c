@@ -520,15 +520,6 @@ gimp_color_frame_update (GimpColorFrame *frame)
             switch (gimp_babl_format_get_precision (frame->sample_format))
               {
               case GIMP_PRECISION_U8_GAMMA:
-                if (babl_format_is_palette (frame->sample_format))
-                  {
-                    print_format = gimp_babl_format (GIMP_RGB,
-                                                     GIMP_PRECISION_U8_GAMMA,
-                                                     has_alpha);
-                    break;
-                  }
-                /* else fall thru */
-
               case GIMP_PRECISION_U16_GAMMA:
               case GIMP_PRECISION_U32_GAMMA:
               case GIMP_PRECISION_FLOAT_GAMMA:
@@ -576,24 +567,6 @@ gimp_color_frame_update (GimpColorFrame *frame)
             if (has_alpha)
               names[3] = _("Alpha:");
 
-            if (babl_format_is_palette (frame->sample_format))
-              {
-                names[4] = _("Index:");
-
-                if (frame->sample_valid)
-                  {
-                    gchar **v   = g_new0 (gchar *, 6);
-                    gchar **tmp = values;
-
-                    memcpy (v, values, 4 * sizeof (gchar *));
-                    values = v;
-
-                    g_free (tmp);
-
-                    if (! frame->sample_average)
-                      values[4] = g_strdup_printf ("%d", frame->pixel[0]);
-                  }
-              }
           }
       }
       break;

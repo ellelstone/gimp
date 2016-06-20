@@ -894,17 +894,6 @@ gimp_babl_print_pixel (const Babl *format,
 
   precision = gimp_babl_format_get_precision (format);
 
-  if (babl_format_is_palette (format))
-    {
-      const Babl *f = gimp_babl_format (GIMP_RGB, precision,
-                                        babl_format_has_alpha (format));
-
-      babl_process (babl_fish (format, f), pixel, tmp_pixel, 1);
-
-      format = f;
-      pixel  = tmp_pixel;
-    }
-
   n_components = babl_format_get_n_components (format);
 
   strings = g_new0 (gchar *, n_components + 1);
