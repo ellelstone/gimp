@@ -696,7 +696,6 @@ gimp_selection_extract (GimpSelection *selection,
                         GimpPickable  *pickable,
                         GimpContext   *context,
                         gboolean       cut_image,
-//                        gboolean       keep_indexed,
                         gboolean       add_alpha,
                         gint          *offset_x,
                         gint          *offset_y,
@@ -872,7 +871,7 @@ gimp_selection_float (GimpSelection *selection,
 
   /*  Cut or copy the selected region  */
   buffer = gimp_selection_extract (selection, GIMP_PICKABLE (drawable), context,
-                                   cut_image,// FALSE, 
+                                   cut_image,
                                    TRUE,
                                    &x1, &y1, NULL);
 
