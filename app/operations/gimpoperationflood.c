@@ -124,19 +124,19 @@ struct _GimpOperationFloodContext
    * these steps.
    */
 
-  /* Ground level of the current segment, indexed by x-coordinate in the ROI-
+  /* Ground level of the current segment, in_dexed by x-coordinate in the ROI-
    * virtual coordinate system.  Only valid inside the range
    * `[segment.x[0], segment.x[1]]`.
    */
   gfloat                    *ground;
-  /* Water level of the current segment, indexed by x-coordinate in the ROI-
+  /* Water level of the current segment, in_dexed by x-coordinate in the ROI-
    * virtual coordinate system.  Initially only valid inside the range
    * `[segment.x[0], segment.x[1]]`, but may be written-to outside this range
    * during horizontal propagation, if the dirty ranges are extended past the
    * bounds of the segment.
    */
   gfloat                    *water;
-  /* Water level of the source segment, indexed by x-coordinate in the ROI-
+  /* Water level of the source segment, in_dexed by x-coordinate in the ROI-
    * virtual coordinate system.  Only valid inside the range
    * `[segment.x[0], segment.x[1]]`.
    */

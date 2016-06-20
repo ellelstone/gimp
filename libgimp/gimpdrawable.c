@@ -743,7 +743,7 @@ gimp_drawable_get_shadow_buffer (gint32 drawable_ID)
 const Babl *
 gimp_drawable_get_format (gint32 drawable_ID)
 {
-  static GHashTable *palette_formats = NULL;
+//  static GHashTable *palette_formats = NULL;
   const Babl *format     = NULL;
   gchar      *format_str = _gimp_drawable_get_format (drawable_ID);
 

@@ -155,70 +155,6 @@ static GimpEnumActionEntry context_palette_background_actions[] =
     NULL }
 };
 
-static GimpEnumActionEntry context_colormap_foreground_actions[] =
-{
-  { "context-colormap-foreground-set", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Set", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, FALSE,
-    NULL },
-  { "context-colormap-foreground-first", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color First", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
-    NULL },
-  { "context-colormap-foreground-last", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Last", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
-    NULL },
-  { "context-colormap-foreground-previous", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Previous", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
-    NULL },
-  { "context-colormap-foreground-next", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Next", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
-    NULL },
-  { "context-colormap-foreground-previous-skip", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Skip Back", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
-    NULL },
-  { "context-colormap-foreground-next-skip", GIMP_STOCK_COLORMAP,
-    "Foreground Colormap Color Skip Forward", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
-    NULL }
-};
-
-static GimpEnumActionEntry context_colormap_background_actions[] =
-{
-  { "context-colormap-background-set", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Set", NULL, NULL,
-    GIMP_ACTION_SELECT_SET, FALSE,
-    NULL },
-  { "context-colormap-background-first", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color First", NULL, NULL,
-    GIMP_ACTION_SELECT_FIRST, FALSE,
-    NULL },
-  { "context-colormap-background-last", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Last", NULL, NULL,
-    GIMP_ACTION_SELECT_LAST, FALSE,
-    NULL },
-  { "context-colormap-background-previous", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Previous", NULL, NULL,
-    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
-    NULL },
-  { "context-colormap-background-next", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Next", NULL, NULL,
-    GIMP_ACTION_SELECT_NEXT, FALSE,
-    NULL },
-  { "context-colormap-background-previous-skip", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Skip Back", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_PREVIOUS, FALSE,
-    NULL },
-  { "context-colormap-background-next-skip", GIMP_STOCK_COLORMAP,
-    "Background Colormap Color Skip Forward", NULL, NULL,
-    GIMP_ACTION_SELECT_SKIP_NEXT, FALSE,
-    NULL }
-};
-
 static GimpEnumActionEntry context_swatch_foreground_actions[] =
 {
   { "context-swatch-foreground-set", GIMP_STOCK_PALETTE,
@@ -1103,15 +1039,6 @@ context_actions_setup (GimpActionGroup *group)
                                       context_palette_background_actions,
                                       G_N_ELEMENTS (context_palette_background_actions),
                                       G_CALLBACK (context_palette_background_cmd_callback));
-
-  gimp_action_group_add_enum_actions (group, NULL,
-                                      context_colormap_foreground_actions,
-                                      G_N_ELEMENTS (context_colormap_foreground_actions),
-                                      G_CALLBACK (context_colormap_foreground_cmd_callback));
-  gimp_action_group_add_enum_actions (group, NULL,
-                                      context_colormap_background_actions,
-                                      G_N_ELEMENTS (context_colormap_background_actions),
-                                      G_CALLBACK (context_colormap_background_cmd_callback));
 
   gimp_action_group_add_enum_actions (group, NULL,
                                       context_swatch_foreground_actions,

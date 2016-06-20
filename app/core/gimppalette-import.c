@@ -77,7 +77,7 @@ gimp_palette_import_from_gradient (GimpGradient *gradient,
 }
 
 
-/*  create a palette from a non-indexed image  *******************************/
+/*  create a palette from a non-in_dexed image  *******************************/
 
 typedef struct _ImgColors ImgColors;
 
@@ -386,49 +386,6 @@ gimp_palette_import_from_image (GimpImage   *image,
   return gimp_palette_import_make_palette (colors, palette_name, context,
                                            n_colors);
 }
-
-
-/*  create a palette from an indexed image  **********************************/
-
-/*GimpPalette *
-gimp_palette_import_from_indexed_image (GimpImage   *image,
-                                        GimpContext *context,
-                                        const gchar *palette_name)
-{
-  GimpPalette  *palette;
-  const guchar *colormap;
-  guint         n_colors;
-  gint          count;
-  GimpRGB       color;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-  g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
-//  g_return_val_if_fail (gimp_image_get_base_type (image) == GIMP_INDEXED, NULL);
-  g_return_val_if_fail (palette_name != NULL, NULL);
-
-  palette = GIMP_PALETTE (gimp_palette_new (context, palette_name));
-
-  colormap = gimp_image_get_colormap (image);
-  n_colors = gimp_image_get_colormap_size (image);
-
-  for (count = 0; count < n_colors; ++count)
-    {
-      gchar name[256];
-
-      g_snprintf (name, sizeof (name), _("Index %d"), count);
-
-      gimp_rgba_set_uchar (&color,
-                           colormap[count * 3 + 0],
-                           colormap[count * 3 + 1],
-                           colormap[count * 3 + 2],
-                           255);
-
-      gimp_palette_add_entry (palette, -1, name, &color);
-    }
-
-  return palette;
-}
-*/
 
 /*  create a palette from a drawable  ****************************************/
 

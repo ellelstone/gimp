@@ -164,7 +164,6 @@ static const GtkStockItem gimp_stock_items[] =
 
   { GIMP_STOCK_CONVERT_RGB,              NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_CONVERT_GRAYSCALE,        NULL,        0, 0, LIBGIMP_DOMAIN },
-//  { GIMP_STOCK_CONVERT_INDEXED,          NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_INVERT,                   NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_MERGE_DOWN,               NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_LAYER_TO_IMAGESIZE,       NULL,        0, 0, LIBGIMP_DOMAIN },
@@ -200,12 +199,10 @@ static const GtkStockItem gimp_stock_items[] =
   { GIMP_STOCK_CHANNEL_GREEN,            NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_CHANNEL_BLUE,             NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_CHANNEL_GRAY,             NULL,        0, 0, LIBGIMP_DOMAIN },
-//  { GIMP_STOCK_CHANNEL_INDEXED,          NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_CHANNEL_ALPHA,            NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_LAYER_MASK,               NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_PATH,                     NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_TEMPLATE,                 NULL,        0, 0, LIBGIMP_DOMAIN },
-  { GIMP_STOCK_COLORMAP,                 NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_HISTOGRAM,                NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_HISTOGRAM_LINEAR,         NULL,        0, 0, LIBGIMP_DOMAIN },
   { GIMP_STOCK_HISTOGRAM_LOGARITHMIC,    NULL,        0, 0, LIBGIMP_DOMAIN },
@@ -322,7 +319,6 @@ static const GtkStockItem gimp_stock_items[] =
 
 static const GtkStockItem gimp_compat_stock_items[] =
 {
-//  { "gimp-indexed-palette", NULL, 0, 0, LIBGIMP_DOMAIN },
   { "gimp-qmask-off",       NULL, 0, 0, LIBGIMP_DOMAIN },
   { "gimp-qmask-on",        NULL, 0, 0, LIBGIMP_DOMAIN }
 };
@@ -562,8 +558,6 @@ gimp_icons_init (void)
                             GIMP_STOCK_MENU_RIGHT,
                             GIMP_STOCK_MENU_RIGHT, GIMP_STOCK_MENU_LEFT);
 
-/*  register_stock_icon (gimp_stock_factory,
-                       "gimp-indexed-palette", GIMP_STOCK_COLORMAP);*/
   register_stock_icon (gimp_stock_factory,
                        "gimp-qmask-off", GIMP_STOCK_QUICK_MASK_OFF);
   register_stock_icon (gimp_stock_factory,

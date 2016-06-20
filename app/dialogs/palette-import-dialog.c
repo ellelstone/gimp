@@ -516,8 +516,8 @@ palette_import_image_changed (GimpContext  *context,
 
           palette_import_make_palette (dialog);
 
-/*          if (gimp_image_get_base_type (image) != GIMP_INDEXED)
-            sensitive = TRUE;*/
+          /*elle: check this! if (gimp_image_get_base_type (image) != GIMP_IN_DEXED)*/
+            sensitive = TRUE;
         }
 
       gtk_widget_set_sensitive (dialog->sample_merged_toggle, sensitive);
@@ -804,13 +804,7 @@ palette_import_make_palette (ImportDialog *dialog)
           gtk_toggle_button_get_active
           (GTK_TOGGLE_BUTTON (dialog->selection_only_toggle));
 
-        /*if (gimp_image_get_base_type (image) == GIMP_INDEXED)
-          {
-            palette = gimp_palette_import_from_indexed_image (image,
-                                                              dialog->context,
-                                                              palette_name);
-          }
-        else*/ if (sample_merged)
+          if (sample_merged)
           {
             palette = gimp_palette_import_from_image (image,
                                                       dialog->context,
