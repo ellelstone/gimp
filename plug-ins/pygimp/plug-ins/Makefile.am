@@ -3,24 +3,13 @@
 pluginexecdir = $(gimpplugindir)/plug-ins
 
 scripts = \
-	colorxhtml.py		\
 	file-openraster.py	\
-	foggify.py		\
-	gradients-save-as-css.py\
 	histogram-export.py     \
 	palette-offset.py	\
 	palette-sort.py		\
 	palette-to-gradient.py	\
-	py-slice.py		\
 	python-console.py	\
 	python-eval.py
-
-test_scripts = \
-	benchmark-foreground-extract.py	\
-	clothify.py		\
-	shadow_bevel.py		\
-	sphere.py		\
-	whirlpinch.py
 
 pluginexec_SCRIPTS = $(scripts)
 

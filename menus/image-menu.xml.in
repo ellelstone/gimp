@@ -691,12 +691,12 @@
 	</placeholder>
       </menu>
       <menu action="filters-enhance-menu" name="Enhance">
+        <menuitem action="filters-high-pass" />
+        <menuitem action="filters-unsharp-mask" />
+        <menuitem action="filters-noise-reduction" />
         <menuitem action="filters-antialias" />
         <menuitem action="filters-deinterlace" />
-        <menuitem action="filters-high-pass" />
-        <menuitem action="filters-noise-reduction" />
         <menuitem action="filters-red-eye-removal" />
-        <menuitem action="filters-unsharp-mask" />
       </menu>
       <menu action="filters-distorts-menu" name="Distorts">
       	<menuitem action="filters-apply-lens" />
@@ -762,11 +762,11 @@
       <menu action="filters-decor-menu" name="Decor" />-->
       <menu action="filters-map-menu" name="Map">
         <menuitem action="filters-bump-map" />
-        <menuitem action="filters-displace" />
+<!--        <menuitem action="filters-displace" />-->
 <!--        <menuitem action="filters-fractal-trace" />-->
-        <menuitem action="filters-illusion" />
+<!--        <menuitem action="filters-illusion" />-->
         <menuitem action="filters-panorama-projection" />
-        <menuitem action="filters-tile-paper" />
+<!--        <menuitem action="filters-tile-paper" />-->
         <menuitem action="filters-tile-seamless" />
       </menu>
       <menu action="filters-pattern-menu" name="Pattern">
