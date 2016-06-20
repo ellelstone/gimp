@@ -144,8 +144,6 @@ context_##name##_##fgbg##ground_cmd_callback (GtkAction *action, \
 
 SELECT_COLOR_CMD_CALLBACK (palette,  fore, FALSE, TRUE)
 SELECT_COLOR_CMD_CALLBACK (palette,  back, FALSE, TRUE)
-SELECT_COLOR_CMD_CALLBACK (colormap, fore, TRUE,  FALSE)
-SELECT_COLOR_CMD_CALLBACK (colormap, back, TRUE,  FALSE)
 SELECT_COLOR_CMD_CALLBACK (swatch,   fore, TRUE,  TRUE)
 SELECT_COLOR_CMD_CALLBACK (swatch,   back, TRUE,  TRUE)
 
