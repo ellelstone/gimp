@@ -89,16 +89,16 @@ static gint     context_paint_mode_index (GimpLayerModeEffects  paint_mode);
 
 static void     context_select_color     (GimpActionSelectType  select_type,
                                           GimpRGB              *color,
-                                          gboolean              use_colormap,
+//                                          gboolean              use_colormap,
                                           gboolean              use_palette);
 
-static gint     context_get_color_index  (gboolean              use_colormap,
+static gint     context_get_color_index  (//gboolean              use_colormap,
                                           gboolean              use_palette,
                                           const GimpRGB        *color);
-static gint     context_max_color_index  (gboolean              use_colormap,
+static gint     context_max_color_index  (//gboolean              use_colormap,
                                           gboolean              use_palette);
 static gboolean context_set_color_index  (gint                  index,
-                                          gboolean              use_colormap,
+//                                          gboolean              use_colormap,
                                           gboolean              use_palette,
                                           GimpRGB              *color);
 
@@ -125,7 +125,7 @@ context_colors_swap_cmd_callback (GtkAction *action,
 
   gimp_context_swap_colors (context);
 }
-/*elle: was (name, fgbg, use_colormap, use_palette)*/
+/*elle: was #define SELECT_COLOR_CMD_CALLBACK(name, fgbg, use_colormap, use_palette)*/
 #define SELECT_COLOR_CMD_CALLBACK(name, fgbg, FALSE, use_palette) \
 void \
 context_##name##_##fgbg##ground_cmd_callback (GtkAction *action, \
@@ -138,7 +138,7 @@ context_##name##_##fgbg##ground_cmd_callback (GtkAction *action, \
 \
   gimp_context_get_##fgbg##ground (context, &color); \
   context_select_color ((GimpActionSelectType) value, &color, \
-                        FALSE, use_palette); \
+                        use_palette); \
   gimp_context_set_##fgbg##ground (context, &color); \
 }/*elle: was (name, fgbg, use_colormap, use_palette)*/
 
@@ -757,25 +757,25 @@ context_paint_mode_index (GimpLayerModeEffects paint_mode)
 static void
 context_select_color (GimpActionSelectType  select_type,
                       GimpRGB              *color,
-                      gboolean              use_colormap,
+//                      gboolean              use_colormap,
                       gboolean              use_palette)
 {
   gint index;
   gint max;
-use_colormap=FALSE;
-  index = context_get_color_index (use_colormap, use_palette, color);
-  max   = context_max_color_index (use_colormap, use_palette);
+//use_colormap=FALSE;
+  index = context_get_color_index (/*use_colormap, */use_palette, color);
+  max   = context_max_color_index (/*use_colormap, */use_palette);
 
   index = action_select_value (select_type,
                                index,
                                0, max, 0,
                                0, 1, 4, 0, FALSE);
 
-  context_set_color_index (index, use_colormap, use_palette, color);
+  context_set_color_index (index, /*use_colormap, */use_palette, color);
 }
 
 static gint
-context_get_color_index (gboolean       use_colormap,
+context_get_color_index (//gboolean       use_colormap,
                          gboolean       use_palette,
                          const GimpRGB *color)
 {
@@ -796,7 +796,7 @@ context_get_color_index (gboolean       use_colormap,
 }
 
 static gint
-context_max_color_index (gboolean use_colormap,
+context_max_color_index (//gboolean use_colormap,
                          gboolean use_palette)
 {
   if (use_palette)
@@ -817,7 +817,7 @@ context_max_color_index (gboolean use_colormap,
 
 static gboolean
 context_set_color_index (gint      index,
-                         gboolean  use_colormap,
+//                         gboolean  use_colormap,
                          gboolean  use_palette,
                          GimpRGB  *color)
 {
