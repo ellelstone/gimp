@@ -58,7 +58,6 @@ libexec_PROGRAMS = \
 	$(FILE_PDF_SAVE) \
 	file-png \
 	file-psp \
-	guillotine \
 	metadata \
 	plugin-browser \
 	procedure-browser \
@@ -343,21 +342,6 @@ file_psp_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_psp_RC)
-
-guillotine_SOURCES = \
-	guillotine.c
-
-guillotine_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(CAIRO_LIBS)		\
-	$(GDK_PIXBUF_LIBS)	\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(guillotine_RC)
 
 metadata_CFLAGS = $(GEXIV2_CFLAGS)
 
