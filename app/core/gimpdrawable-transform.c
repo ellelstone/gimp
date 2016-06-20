@@ -924,7 +924,8 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
           buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
                                            GIMP_PICKABLE (drawable),
                                            context,
-                                           TRUE, FALSE, TRUE,
+                                           TRUE,// FALSE, 
+                                           TRUE,
                                            offset_x, offset_y,
                                            NULL);
           /*  clear the selection  */
@@ -943,7 +944,8 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
       buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
                                        GIMP_PICKABLE (drawable),
                                        context,
-                                       FALSE, TRUE, GIMP_IS_LAYER (drawable),
+                                       FALSE,// TRUE, 
+                                       GIMP_IS_LAYER (drawable),
                                        offset_x, offset_y,
                                        NULL);
 

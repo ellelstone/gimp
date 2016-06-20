@@ -696,7 +696,7 @@ gimp_selection_extract (GimpSelection *selection,
                         GimpPickable  *pickable,
                         GimpContext   *context,
                         gboolean       cut_image,
-                        gboolean       keep_indexed,
+//                        gboolean       keep_indexed,
                         gboolean       add_alpha,
                         gint          *offset_x,
                         gint          *offset_y,
@@ -872,7 +872,8 @@ gimp_selection_float (GimpSelection *selection,
 
   /*  Cut or copy the selected region  */
   buffer = gimp_selection_extract (selection, GIMP_PICKABLE (drawable), context,
-                                   cut_image, FALSE, TRUE,
+                                   cut_image,// FALSE, 
+                                   TRUE,
                                    &x1, &y1, NULL);
 
   profile = gimp_color_managed_get_color_profile (GIMP_COLOR_MANAGED (drawable));

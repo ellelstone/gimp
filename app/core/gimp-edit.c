@@ -519,7 +519,7 @@ gimp_edit_extract (GimpImage     *image,
   /*  Cut/copy the mask portion from the image  */
   buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
                                    pickable, context,
-                                   cut_pixels, FALSE, FALSE,
+                                   cut_pixels, FALSE,//FALSE,
                                    &offset_x, &offset_y, error);
 
   if (cut_pixels)
