@@ -458,6 +458,7 @@ icons16_images = \
 	16/gimp-channel-red.png				\
 	16/gimp-channel.png				\
 	16/gimp-channels.png				\
+	16/gimp-char-picker.png				\
 	16/gimp-clipboard.png				\
 	16/gimp-close-all.png				\
 	16/gimp-color-pick-from-screen.png		\
@@ -553,6 +554,7 @@ icons16_images = \
 	16/gimp-prefs-folders-icon-themes.png		\
 	16/gimp-prefs-folders-interp.png		\
 	16/gimp-prefs-folders-modules.png		\
+	16/gimp-prefs-folders-mypaint-brushes.png	\
 	16/gimp-prefs-folders-palettes.png		\
 	16/gimp-prefs-folders-patterns.png		\
 	16/gimp-prefs-folders-plug-ins.png		\
