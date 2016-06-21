@@ -64,7 +64,8 @@ gimp_image_convert_precision (GimpImage     *image,
 
   g_return_if_fail (GIMP_IS_IMAGE (image));
   g_return_if_fail (precision != gimp_image_get_precision (image));
-  g_return_if_fail (precision == GIMP_PRECISION_U8_GAMMA );
+  g_return_if_fail (precision == GIMP_PRECISION_U8_GAMMA ||
+                    TRUE);
   g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
 
   all_drawables = g_list_concat (gimp_image_get_layer_list (image),
