@@ -403,6 +403,7 @@ typedef enum
 {
   GIMP_RGB,     /*< desc="RGB color"     >*/
   GIMP_GRAY,    /*< desc="Grayscale"     >*/
+  GIMP_INDEXED  /*< desc="Indexed color" >*/
 } GimpImageBaseType;
 
 

@@ -156,7 +156,7 @@ HELP
   if (gimp->plug_in_manager->current_plug_in)
     gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
 
-  if (precision == GIMP_PRECISION_U8_GAMMA)
+  if (type != GIMP_INDEXED || precision == GIMP_PRECISION_U8_GAMMA)
     {
       image = gimp_create_image (gimp, width, height, type,
                                  precision, FALSE);
