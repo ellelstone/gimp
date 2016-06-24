@@ -193,18 +193,12 @@ image_new_with_precision_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (gimp->plug_in_manager->current_plug_in)
-        gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
+        if (gimp->plug_in_manager->current_plug_in)
+          gimp_plug_in_enable_precision (gimp->plug_in_manager->current_plug_in);
 
-      if (precision == GIMP_PRECISION_U8_GAMMA)
-        {
-          image = gimp_create_image (gimp, width, height, type,
-                                     precision, FALSE);
-          if (! image)
-            success = FALSE;
-        }
-      else
-        success = FALSE;
+        image = gimp_create_image (gimp, width, height, type,
+                                         precision, FALSE);
+        if (! image) success = FALSE; 
     }
 
   return_vals = gimp_procedure_get_return_values (procedure, success,
