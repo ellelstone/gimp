@@ -29,11 +29,6 @@
  *  added by Sylvain FORET.
  */
 
-/*
- * All redundant _256 versions of YCbCr* are here only for compatibility .
- * They can be dropped for GIMP 3.0
- */
-
 #include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -184,14 +179,6 @@ static void      type_combo_callback    (GimpIntComboBox *combo,
 #define CPN_LCH_C  { "CIE C(ab)", N_("_C"), NULL, 0.0, 200.0, TRUE}
 #define CPN_LCH_H  { "CIE H(ab)", N_("_H"), NULL, 0.0, 360.0, TRUE}
 
-#define CPN_YCBCR_Y  { "Y'", N_("_Luma y470:"),      NULL,  0.0, 1.0, TRUE }
-#define CPN_YCBCR_CB { "Cb", N_("_Blueness cb470:"), NULL, -0.5, 0.5, TRUE }
-#define CPN_YCBCR_CR { "Cr", N_("_Redness cr470:"),  NULL, -0.5, 0.5, TRUE }
-
-#define CPN_YCBCR709_Y  { "Y'", N_("_Luma y709:"),      NULL,  0.0, 1.0, TRUE }
-#define CPN_YCBCR709_CB { "Cb", N_("_Blueness cb709:"), NULL, -0.5, 0.5, TRUE }
-#define CPN_YCBCR709_CR { "Cr", N_("_Redness cr709:"),  NULL, -0.5, 0.5, TRUE }
-
 
 static COMPOSE_DSC compose_dsc[] =
 {
@@ -251,35 +238,7 @@ static COMPOSE_DSC compose_dsc[] =
     { CPN_LCH_L,
       CPN_LCH_C,
       CPN_LCH_H },
-    "lch-compose" }/*,
-
-  { "Y'CbCr",
-    N_("YCbCr_ITU_R470"), 3,
-    { CPN_YCBCR_Y,
-      CPN_YCBCR_CB,
-      CPN_YCBCR_CR },
-    "ycbcr470-compose" },
-
-  { "Y'CbCr709",
-    N_("YCbCr_ITU_R709"), 3,
-    { CPN_YCBCR709_Y,
-      CPN_YCBCR709_CB,
-      CPN_YCBCR709_CR },
-    "ycbcr709-compose" },
-
-  { "Y'CbCr",
-    N_("YCbCr_ITU_R470_256"), 3,
-    { CPN_YCBCR_Y,
-      CPN_YCBCR_CB,
-      CPN_YCBCR_CR },
-    "ycbcr470F-compose" },
-
-  { "Y'CbCr709",
-    N_("YCbCr_ITU_R709_256"), 3,
-    { CPN_YCBCR709_Y,
-      CPN_YCBCR709_CB,
-      CPN_YCBCR709_CR },
-    "ycbcr709F-compose" }*/
+    "lch-compose" }
 };
 
 

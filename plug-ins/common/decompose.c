@@ -164,15 +164,7 @@ static gchar   * generate_filename           (guint32              image_ID,
 #define CPN_LCH_L       { "CIE L",      N_("L"),             0.0, 100.0, TRUE }
 #define CPN_LCH_C       { "CIE C(ab)",  N_("C"),             0.0, 200.0, TRUE }
 #define CPN_LCH_H       { "CIE H(ab)",  N_("H"),             0.0, 360.0, TRUE }
-/*
-#define CPN_YCBCR_Y     { "Y'",         N_("luma-y470"),       0.0, 1.0, TRUE }
-#define CPN_YCBCR_CB    { "Cb",         N_("blueness-cb470"), -0.5, 0.5, TRUE }
-#define CPN_YCBCR_CR    { "Cr",         N_("redness-cr470"),  -0.5, 0.5, TRUE }
 
-#define CPN_YCBCR709_Y  { "Y'",         N_("luma-y709"),       0.0, 1.0, TRUE }
-#define CPN_YCBCR709_CB { "Cb",         N_("blueness-cb709"), -0.5, 0.5, TRUE }
-#define CPN_YCBCR709_CR { "Cr",         N_("redness-cr709"),  -0.5, 0.5, TRUE }
-*/
 
 static const Extract extract[] =
 {
@@ -207,12 +199,6 @@ static const Extract extract[] =
   { N_("LAB"), "CIE Lab",     TRUE, 3, FALSE, { CPN_LAB_L, CPN_LAB_A, CPN_LAB_B } },
 
   { N_("LCH"), "CIE LCH(ab)", TRUE, 3, FALSE, { CPN_LCH_L, CPN_LCH_C, CPN_LCH_H } },
-/*
-  { N_("YCbCr_ITU_R470"),     "Y'CbCr", TRUE, 3, FALSE, { CPN_YCBCR_Y, CPN_YCBCR_CB, CPN_YCBCR_CR} },
-  { N_("YCbCr_ITU_R470_256"), "Y'CbCr", TRUE, 3, TRUE,  { CPN_YCBCR_Y, CPN_YCBCR_CB, CPN_YCBCR_CR} },
-
-  { N_("YCbCr_ITU_R709"),     "Y'CbCr709", TRUE, 3, FALSE, { CPN_YCBCR709_Y, CPN_YCBCR709_CB, CPN_YCBCR709_CR} },
-  { N_("YCbCr_ITU_R709_256"), "Y'CbCr709", TRUE, 3, TRUE,  { CPN_YCBCR709_Y, CPN_YCBCR709_CB, CPN_YCBCR709_CR} }*/
 };
 
 const GimpPlugInInfo PLUG_IN_INFO =
