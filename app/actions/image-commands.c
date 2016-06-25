@@ -316,32 +316,6 @@ image_convert_precision_cmd_callback (GtkAction *action,
 }
 
 void
-image_convert_gamma_cmd_callback (GtkAction *action,
-                                  GtkAction *current,
-                                  gpointer   data)
-{
-  GimpImage     *image;
-  GimpDisplay   *display;
-  gboolean       value;
-  GimpPrecision  precision;
-  return_if_no_image (image, data);
-  return_if_no_display (display, data);
-
-  value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
-
-  if (value == FALSE /*gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
-                                                                         FALSE))*/ )
-    return;
-
-  precision = gimp_babl_precision (gimp_image_get_component_type (image),
-                                   value);
-
-  gimp_image_convert_precision (image, precision, 0, 0, 0,
-                                GIMP_PROGRESS (display));
-  gimp_image_flush (image);
-}
-
-void
 image_color_management_enabled_cmd_callback (GtkAction *action,
                                              gpointer   data)
 {

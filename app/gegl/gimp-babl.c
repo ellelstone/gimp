@@ -537,12 +537,6 @@ gimp_babl_format_get_precision (const Babl *format)
   g_return_val_if_reached (-1);
 }
 
-/*gboolean
-gimp_babl_format_get_linear (const Babl *format)
-{
-  return FALSE;
-}*/
-
 GimpComponentType
 gimp_babl_component_type (GimpPrecision precision)
 {
@@ -571,8 +565,7 @@ gimp_babl_component_type (GimpPrecision precision)
 }
 
 GimpPrecision
-gimp_babl_precision (GimpComponentType component,
-                     gboolean          linear)
+gimp_babl_precision (GimpComponentType component)
 {
   switch (component)
     {
@@ -935,8 +928,7 @@ gimp_babl_print_pixel (const Babl *format,
         GimpPrecision p;
         const Babl   *f;
 
-        p = gimp_babl_precision (GIMP_COMPONENT_TYPE_FLOAT,
-                                 FALSE /*gimp_babl_format_get_linear (format)*/);
+        p = gimp_babl_precision (GIMP_COMPONENT_TYPE_FLOAT);
 
         f = gimp_babl_format (gimp_babl_format_get_base_type (format),
                               p,

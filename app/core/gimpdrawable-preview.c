@@ -89,25 +89,21 @@ const Babl *
 gimp_drawable_get_preview_format (GimpDrawable *drawable)
 {
   gboolean alpha;
-  gboolean linear;
 
   g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
 
   alpha  = gimp_drawable_has_alpha (drawable);
-  linear = FALSE;
 
   switch (gimp_drawable_get_base_type (drawable))
     {
     case GIMP_GRAY:
       return gimp_babl_format (GIMP_GRAY,
-                               gimp_babl_precision (GIMP_COMPONENT_TYPE_U8,
-                                                    linear),
+                               gimp_babl_precision (GIMP_COMPONENT_TYPE_U8),
                                alpha);
 
     case GIMP_RGB:
       return gimp_babl_format (GIMP_RGB,
-                               gimp_babl_precision (GIMP_COMPONENT_TYPE_U8,
-                                                    linear),
+                               gimp_babl_precision (GIMP_COMPONENT_TYPE_U8),
                                alpha);
 
     }

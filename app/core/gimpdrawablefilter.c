@@ -617,8 +617,7 @@ gimp_drawable_filter_sync_gamma_hack (GimpDrawableFilter *filter)
 
       cast_format =
         gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
-                          gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format),
-                                               ! FALSE /*gimp_babl_format_get_linear (drawable_format)*/),
+                          gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format)),
                           TRUE);
 
       gegl_node_set (filter->cast_before,

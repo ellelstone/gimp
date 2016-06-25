@@ -30,9 +30,6 @@ void   image_convert_base_type_cmd_callback        (GtkAction *action,
 void   image_convert_precision_cmd_callback        (GtkAction *action,
                                                     GtkAction *current,
                                                     gpointer   data);
-void   image_convert_gamma_cmd_callback            (GtkAction *action,
-                                                    GtkAction *current,
-                                                    gpointer   data);
 
 void   image_color_management_enabled_cmd_callback (GtkAction *action,
                                                     gpointer   data);

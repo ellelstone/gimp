@@ -332,7 +332,7 @@ gimp_projection_estimate_memsize (GimpImageBaseType type,
   gint64      bytes;
 
   format = gimp_babl_format (type,
-                             gimp_babl_precision (component_type, FALSE),
+                             gimp_babl_precision (component_type/*, FALSE*/),
                              TRUE);
   bytes  = babl_format_get_bytes_per_pixel (format);
 
