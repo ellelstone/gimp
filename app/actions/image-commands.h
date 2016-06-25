@@ -31,8 +31,6 @@ void   image_convert_precision_cmd_callback        (GtkAction *action,
                                                     GtkAction *current,
                                                     gpointer   data);
 
-void   image_color_management_enabled_cmd_callback (GtkAction *action,
-                                                    gpointer   data);
 void   image_color_profile_assign_cmd_callback     (GtkAction *action,
                                                     gpointer   data);
 void   image_color_profile_convert_cmd_callback    (GtkAction *action,
