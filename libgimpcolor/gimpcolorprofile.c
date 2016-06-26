@@ -1251,7 +1251,6 @@ gimp_color_profile_get_format (const Babl *format,
   gboolean    rgb    = FALSE;
   gboolean    gray   = FALSE;
   gboolean    cmyk   = FALSE;
-  //gboolean    linear = FALSE;
 
   g_return_val_if_fail (format != NULL, NULL);
   g_return_val_if_fail (lcms_format != NULL, NULL);
@@ -1273,34 +1272,19 @@ gimp_color_profile_get_format (const Babl *format,
   else if (format == babl_format ("cairo-ARGB32"))
     {
       *lcms_format = TYPE_RGBA_8;
-
-      return babl_format ("R'G'B'A u8");
+      return babl_format ("RGBA u8");
     }
   else if (model == babl_model ("RGB")  ||
            model == babl_model ("RGBA") ||
            model == babl_model ("RaGaBaA"))
     {
       rgb    = TRUE;
-      //linear = TRUE;
-    }
-  else if (model == babl_model ("R'G'B'")  ||
-           model == babl_model ("R'G'B'A") ||
-           model == babl_model ("R'aG'aB'aA"))
-    {
-      rgb = TRUE;
     }
   else if (model == babl_model ("Y")  ||
            model == babl_model ("YA") ||
            model == babl_model ("YaA"))
     {
       gray   = TRUE;
-      //linear = TRUE;
-    }
-  else if (model == babl_model ("Y'")  ||
-           model == babl_model ("Y'A") ||
-           model == babl_model ("Y'aA"))
-    {
-      gray = TRUE;
     }
   else if (model == babl_model ("CMYK"))
     {
@@ -1449,20 +1433,12 @@ gimp_color_profile_get_format (const Babl *format,
           if (gray)
             {
               *lcms_format = TYPE_GRAYA_FLT;
-/*
-              if (linear)
-                output_format = babl_format ("YA float");
-              else*/
-                output_format = babl_format ("Y'A float");
+              output_format = babl_format ("YA float");
             }
           else
             {
               *lcms_format = TYPE_RGBA_FLT;
-/*
-              if (linear)
-                output_format = babl_format ("RGBA float");
-              else*/
-                output_format = babl_format ("R'G'B'A float");
+              output_format = babl_format ("RGBA float");
             }
         }
       else
@@ -1470,20 +1446,12 @@ gimp_color_profile_get_format (const Babl *format,
           if (gray)
             {
              *lcms_format = TYPE_GRAY_FLT;
-/*
-              if (linear)
-                output_format = babl_format ("Y float");
-              else*/
-                output_format = babl_format ("Y' float");
+              output_format = babl_format ("Y float");
             }
           else
             {
               *lcms_format = TYPE_RGB_FLT;
-/*
-              if (linear)
-                output_format = babl_format ("RGB float");
-              else*/
-                output_format = babl_format ("R'G'B' float");
+              output_format = babl_format ("RGB float");
             }
         }
     }

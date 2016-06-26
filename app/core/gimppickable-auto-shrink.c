@@ -109,7 +109,7 @@ gimp_pickable_auto_shrink (GimpPickable *pickable,
   *shrunk_x2 = x2;
   *shrunk_y2 = y2;
 
-  format = babl_format ("R'G'B'A u8");
+  format = babl_format ("RGBA u8");
 
   switch (gimp_pickable_guess_bgcolor (pickable, bgcolor,
                                        x1, x2 - 1, y1, y2 - 1))
@@ -240,7 +240,7 @@ gimp_pickable_guess_bgcolor (GimpPickable *pickable,
                              gint          y1,
                              gint          y2)
 {
-  const Babl *format = babl_format ("R'G'B'A u8");
+  const Babl *format = babl_format ("RGBA u8");
   guchar      tl[4];
   guchar      tr[4];
   guchar      bl[4];

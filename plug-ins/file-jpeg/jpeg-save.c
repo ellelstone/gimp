@@ -340,28 +340,28 @@ save_image (const gchar  *filename,
       /* # of color components per pixel */
       cinfo.input_components = 3;
       has_alpha = FALSE;
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
 
     case GIMP_GRAY_IMAGE:
       /* # of color components per pixel */
       cinfo.input_components = 1;
       has_alpha = FALSE;
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_RGBA_IMAGE:
       /* # of color components per pixel (minus the GIMP alpha channel) */
       cinfo.input_components = 4 - 1;
       has_alpha = TRUE;
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
       /* # of color components per pixel (minus the GIMP alpha channel) */
       cinfo.input_components = 2 - 1;
       has_alpha = TRUE;
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     /*case GIMP_INDEXED_IMAGE:*/

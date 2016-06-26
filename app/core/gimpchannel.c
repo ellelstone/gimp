@@ -427,7 +427,7 @@ gimp_channel_get_node (GimpFilter *filter)
 
   g_warn_if_fail (channel->color_node == NULL);
 
-    color_format = babl_format ("R'G'B'A float");
+    color_format = babl_format ("RGBA float");
 
   channel->color_node = gegl_node_new_child (node,
                                              "operation", "gegl:color",
@@ -1069,7 +1069,7 @@ gimp_channel_set_buffer (GimpDrawable *drawable,
     {
       const Babl *color_format;
 
-        color_format = babl_format ("R'G'B'A float");
+        color_format = babl_format ("RGBA float");
 
       gegl_node_set (channel->color_node,
                      "format", color_format,

@@ -108,7 +108,7 @@ gimp_color_selector_palette_entry_clicked (GimpPaletteView   *view,
                                            GimpColorSelector *selector)
 {
   selector->rgb = entry->color;
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
 
   gimp_color_selector_color_changed (selector);
 }

@@ -291,7 +291,7 @@ gimp_preview_area_expose (GtkWidget      *widget,
 
   if (priv->transform)
     {
-      const Babl *format    = babl_format ("R'G'B' u8");
+      const Babl *format    = babl_format ("RGB u8");
       gint        rowstride = ((area->width * 3) + 3) & ~3;
       guchar     *buf       = g_new (guchar, rowstride * area->height);
       guchar     *src       = area->buf;
@@ -394,7 +394,7 @@ gimp_preview_area_create_transform (GimpPreviewArea *area)
     {
       static GimpColorProfile *profile = NULL;
 
-      const Babl *format = babl_format ("R'G'B' u8");
+      const Babl *format = babl_format ("RGB u8");
 //printf("libgimpwidgets/gimppreviewarea.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
         profile = gimp_color_profile_new_rgb_srgb ();

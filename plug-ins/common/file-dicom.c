@@ -1339,13 +1339,13 @@ save_image (const gchar  *filename,
   switch (drawable_type)
     {
     case GIMP_GRAY_IMAGE:
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       samples_per_pixel = 1;
       photometric_interp = "MONOCHROME2";
       break;
 
     case GIMP_RGB_IMAGE:
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       samples_per_pixel = 3;
       photometric_interp = "RGB";
       break;

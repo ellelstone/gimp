@@ -1517,33 +1517,33 @@ save_image (const gchar  *filename,
     case GIMP_RGB_IMAGE:
       color_type = PNG_COLOR_TYPE_RGB;
       if (bit_depth == 8)
-        file_format = babl_format ("R'G'B' u8");
+        file_format = babl_format ("RGB u8");
       else
-        file_format = babl_format ("R'G'B' u16");
+        file_format = babl_format ("RGB u16");
       break;
 
     case GIMP_RGBA_IMAGE:
       color_type = PNG_COLOR_TYPE_RGB_ALPHA;
       if (bit_depth == 8)
-        file_format = babl_format ("R'G'B'A u8");
+        file_format = babl_format ("RGBA u8");
       else
-        file_format = babl_format ("R'G'B'A u16");
+        file_format = babl_format ("RGBA u16");
       break;
 
     case GIMP_GRAY_IMAGE:
       color_type = PNG_COLOR_TYPE_GRAY;
       if (bit_depth == 8)
-        file_format = babl_format ("Y' u8");
+        file_format = babl_format ("Y u8");
       else
-        file_format = babl_format ("Y' u16");
+        file_format = babl_format ("Y u16");
       break;
 
     case GIMP_GRAYA_IMAGE:
       color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
       if (bit_depth == 8)
-        file_format = babl_format ("Y'A u8");
+        file_format = babl_format ("YA u8");
       else
-        file_format = babl_format ("Y'A u16");
+        file_format = babl_format ("YA u16");
       break;
 
 /*    case GIMP_INDEXED_IMAGE:

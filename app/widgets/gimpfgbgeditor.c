@@ -343,9 +343,9 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
 
       if (editor->transform)
         gimp_color_transform_process_pixels (editor->transform,
-                                             babl_format ("R'G'B'A double"),
+                                             babl_format ("RGBA double"),
                                              &color,
-                                             babl_format ("R'G'B'A double"),
+                                             babl_format ("RGBA double"),
                                              &color,
                                              1);
 
@@ -376,9 +376,9 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
 
       if (editor->transform)
         gimp_color_transform_process_pixels (editor->transform,
-                                             babl_format ("R'G'B'A double"),
+                                             babl_format ("RGBA double"),
                                              &color,
-                                             babl_format ("R'G'B'A double"),
+                                             babl_format ("RGBA double"),
                                              &color,
                                              1);
 
@@ -677,8 +677,8 @@ gimp_fg_bg_editor_create_transform (GimpFgBgEditor *editor)
         gimp_widget_get_color_transform (GTK_WIDGET (editor),
                                          editor->color_config,
                                          profile,
-                                         babl_format ("R'G'B'A double"),
-                                         babl_format ("R'G'B'A double"));
+                                         babl_format ("RGBA double"),
+                                         babl_format ("RGBA double"));
     }
 }
 

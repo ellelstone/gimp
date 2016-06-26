@@ -151,7 +151,7 @@ gimp_operation_desaturate_prepare (GeglOperation *operation)
     }
   else
     {
-      format = babl_format ("R'G'B'A float");
+      format = babl_format ("RGBA float");
     }
 
   gegl_operation_set_format (operation, "input",  format);

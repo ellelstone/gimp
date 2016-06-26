@@ -479,7 +479,7 @@ gimp_paint_core_start (GimpPaintCore     *core,
           if (core->linear_mode)
             format = babl_format ("RGBA float");
           else
-            format = babl_format ("R'G'B'A float");
+            format = babl_format ("RGBA float");
 
           core->comp_buffer =
             gegl_buffer_new (GEGL_RECTANGLE (0, 0,

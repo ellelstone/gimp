@@ -119,7 +119,7 @@ gimp_color_frame_init (GimpColorFrame *frame)
   gint       i;
 
   frame->sample_valid  = FALSE;
-  frame->sample_format = babl_format ("R'G'B' u8");
+  frame->sample_format = babl_format ("RGB u8");
 
   gimp_rgba_set (&frame->color, 0.0, 0.0, 0.0, GIMP_OPACITY_OPAQUE);
 
@@ -613,7 +613,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
         {
           GimpLch lch;
 
-          babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &frame->color, &lch, 1);
+          babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &frame->color, &lch, 1);
           lch.a = frame->color.a;
 
           values = g_new0 (gchar *, 5);

@@ -308,7 +308,7 @@ do_layer_blend (GeglBuffer  *src_buffer,
   if (linear_mode)
     iterator_format = babl_format ("RGBA float");
   else
-    iterator_format = babl_format ("R'G'B'A float");
+    iterator_format = babl_format ("RGBA float");
 
   roi.x = x_offset;
   roi.y = y_offset;
@@ -388,7 +388,7 @@ mask_components_onto (GeglBuffer        *src_buffer,
   if (linear_mode)
     iterator_format = babl_format ("RGBA float");
   else
-    iterator_format = babl_format ("R'G'B'A float");
+    iterator_format = babl_format ("RGBA float");
 
   iter = gegl_buffer_iterator_new (dst_buffer, roi, 0,
                                    iterator_format,

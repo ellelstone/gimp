@@ -204,7 +204,7 @@ gimp_brush_clipboard_buffer_changed (Gimp      *gimp,
       brush->priv->mask   = gimp_temp_buf_new (width, height,
                                                babl_format ("Y u8"));
       brush->priv->pixmap = gimp_temp_buf_new (width, height,
-                                               babl_format ("R'G'B' u8"));
+                                               babl_format ("RGB u8"));
 
       /*  copy the alpha channel into the brush's mask  */
       if (babl_format_has_alpha (format))

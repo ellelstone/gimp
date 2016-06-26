@@ -1506,7 +1506,7 @@ save_image (const gchar *filename,
       width  = gegl_buffer_get_width  (buffer);
       height = gegl_buffer_get_height (buffer);
 
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
 
       /* get framename of this layer */
       framename = gimp_item_get_name (layers[nlayers - 1 - i]);
@@ -2220,7 +2220,7 @@ get_cropped_region (GeglRectangle *return_rgn,
   gint        width  = gegl_buffer_get_width  (buffer);
   gint        height = gegl_buffer_get_height (buffer);
   guint32    *buf    = g_malloc (MAX (width, height) * sizeof (guint32));
-  const Babl *format = babl_format ("R'G'B'A u8");
+  const Babl *format = babl_format ("RGBA u8");
   guint       i, j;
 
   g_return_if_fail (GEGL_IS_BUFFER (buffer));

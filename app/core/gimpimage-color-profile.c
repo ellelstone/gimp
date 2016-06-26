@@ -553,7 +553,7 @@ gimp_image_color_profile_pixel_to_srgb (GimpImage  *image,
       gimp_color_transform_process_pixels (private->transform_to_srgb_double,
                                            pixel_format,
                                            pixel,
-                                           babl_format ("R'G'B'A double"),
+                                           babl_format ("RGBA double"),
                                            color,
                                            1);
     }
@@ -578,7 +578,7 @@ gimp_image_color_profile_srgb_to_pixel (GimpImage     *image,
       gimp_rgba_get_pixel (color, pixel_format, pixel);
 
       gimp_color_transform_process_pixels (private->transform_from_srgb_double,
-                                           babl_format ("R'G'B'A double"),
+                                           babl_format ("RGBA double"),
                                            color,
                                            pixel_format,
                                            pixel,
@@ -658,13 +658,13 @@ _gimp_image_update_color_profile (GimpImage          *image,
             gimp_color_transform_new (private->color_profile,
                                       gimp_image_get_layer_format (image, TRUE),
                                       srgb_profile,
-                                      babl_format ("R'G'B'A u8"),
+                                      babl_format ("RGBA u8"),
                                       GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
                                       flags);
 
           private->transform_from_srgb_u8 =
             gimp_color_transform_new (srgb_profile,
-                                      babl_format ("R'G'B'A u8"),
+                                      babl_format ("RGBA u8"),
                                       private->color_profile,
                                       gimp_image_get_layer_format (image, TRUE),
                                       GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
@@ -674,13 +674,13 @@ _gimp_image_update_color_profile (GimpImage          *image,
             gimp_color_transform_new (private->color_profile,
                                       gimp_image_get_layer_format (image, TRUE),
                                       srgb_profile,
-                                      babl_format ("R'G'B'A double"),
+                                      babl_format ("RGBA double"),
                                       GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
                                       flags);
 
           private->transform_from_srgb_double =
             gimp_color_transform_new (srgb_profile,
-                                      babl_format ("R'G'B'A double"),
+                                      babl_format ("RGBA double"),
                                       private->color_profile,
                                       gimp_image_get_layer_format (image, TRUE),
                                       GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,

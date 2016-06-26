@@ -219,7 +219,7 @@ save_image (GFile       *file,
             GeglBuffer  *buffer,
             GError     **error)
 {
-  const Babl    *format = babl_format ("R'G'B'A u8");
+  const Babl    *format = babl_format ("RGBA u8");
   GOutputStream *output;
   gint           row, col;
   gint           cols, rows;

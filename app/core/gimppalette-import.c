@@ -281,7 +281,7 @@ gimp_palette_import_extract (GimpImage     *image,
   gint                mask_bpp = 0;
 
   buffer = gimp_pickable_get_buffer (pickable);
-  format = babl_format ("R'G'B'A u8");
+  format = babl_format ("RGBA u8");
 
   iter = gegl_buffer_iterator_new (buffer, &rect, 0, format,
                                    GEGL_ACCESS_READ, GEGL_ABYSS_NONE);

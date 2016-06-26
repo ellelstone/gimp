@@ -852,7 +852,7 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
-        format = babl_format ("R'G'B'A float");
+        format = babl_format ("RGBA float");
 
       if (paint_core->paint_buffer                                       &&
           gegl_buffer_get_width  (paint_core->paint_buffer) == (x2 - x1) &&

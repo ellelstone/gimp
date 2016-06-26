@@ -344,7 +344,7 @@ load_image (const gchar  *filename,
    */
 
   buffer = gimp_drawable_get_buffer (layer_ID);
-  format = babl_format (image_type == GIMP_RGB ? "R'G'B' u8" : "Y' u8");
+  format = babl_format (image_type == GIMP_RGB ? "RGB u8" : "Y u8");
 
   while (cinfo.output_scanline < cinfo.output_height)
     {

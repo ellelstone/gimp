@@ -593,13 +593,13 @@ load_image (GFile   *file,
     case 1:
       base_type = GIMP_GRAY;
       image_type = GIMP_GRAY_IMAGE;
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case 4:
       base_type = GIMP_RGB;
       image_type = GIMP_RGBA_IMAGE;
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
 
     default:
@@ -669,17 +669,17 @@ save_image (GFile   *file,
     {
     case GIMP_GRAY_IMAGE:
       file_bpp = 1;
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
       file_bpp = 1;
-      format = babl_format ("Y'A u8");
+      format = babl_format ("YA u8");
       break;
 
     default:
       file_bpp = 4;
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
     }
 

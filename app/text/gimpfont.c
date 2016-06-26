@@ -290,7 +290,7 @@ gimp_font_get_new_preview (GimpViewable *viewable,
 
   width = cairo_format_stride_for_width (CAIRO_FORMAT_A8, width);
 
-  temp_buf = gimp_temp_buf_new (width, height, babl_format ("Y' u8"));
+  temp_buf = gimp_temp_buf_new (width, height, babl_format ("Y u8"));
   memset (gimp_temp_buf_get_data (temp_buf), 255, width * height);
 
   surface = cairo_image_surface_create_for_data (gimp_temp_buf_get_data (temp_buf),

@@ -680,7 +680,7 @@ save_image (const gchar  *filename,
       pcx_header.planes       = 3;
       pcx_header.color        = GUINT16_TO_LE (1);
       pcx_header.bytesperline = GUINT16_TO_LE (width);
-      format                  = babl_format ("R'G'B' u8");
+      format                  = babl_format ("RGB u8");
       break;
 
     case GIMP_GRAY_IMAGE:
@@ -688,7 +688,7 @@ save_image (const gchar  *filename,
       pcx_header.planes       = 1;
       pcx_header.color        = GUINT16_TO_LE (2);
       pcx_header.bytesperline = GUINT16_TO_LE (width);
-      format                  = babl_format ("Y' u8");
+      format                  = babl_format ("Y u8");
       break;
 
     default:

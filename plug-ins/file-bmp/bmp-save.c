@@ -160,7 +160,7 @@ save_image (const gchar  *filename,
   switch (drawable_type)
     {
     case GIMP_RGBA_IMAGE:
-      format       = babl_format ("R'G'B'A u8");
+      format       = babl_format ("RGBA u8");
       colors       = 0;
       BitsPerPixel = 32;
       MapSize      = 0;
@@ -169,7 +169,7 @@ save_image (const gchar  *filename,
       break;
 
     case GIMP_RGB_IMAGE:
-      format       = babl_format ("R'G'B' u8");
+      format       = babl_format ("RGB u8");
       colors       = 0;
       BitsPerPixel = 24;
       MapSize      = 0;
@@ -193,12 +193,12 @@ save_image (const gchar  *filename,
 
       if (drawable_type == GIMP_GRAYA_IMAGE)
         {
-          format   = babl_format ("Y'A u8");
+          format   = babl_format ("YA u8");
           channels = 2;
         }
       else
         {
-          format   = babl_format ("Y' u8");
+          format   = babl_format ("Y u8");
           channels = 1;
         }
 

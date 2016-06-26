@@ -283,7 +283,7 @@ gimp_pickable_srgb_to_image_color (GimpPickable  *pickable,
 
   gimp_pickable_srgb_to_pixel (pickable,
                                color,
-                               babl_format ("R'G'B'A double"),
+                               babl_format ("RGBA double"),
                                image_color);
 }
 

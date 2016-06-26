@@ -1035,7 +1035,7 @@ load_resource_1033 (const PSDimageres  *res_a,
                              cinfo.output_height,
                              GIMP_RGB_IMAGE, 100, GIMP_NORMAL_MODE);
   buffer = gimp_drawable_get_buffer (layer_id);
-  format = babl_format ("R'G'B' u8");
+  format = babl_format ("RGB u8");
 
   /* Step 6: while (scan lines remain to be read) */
   /*           jpeg_read_scanlines(...); */

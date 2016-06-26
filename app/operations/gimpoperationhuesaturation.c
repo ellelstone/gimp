@@ -142,14 +142,14 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
       rgb.b = src[BLUE];
       rgb.a = src[ALPHA];
 
-      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
+      babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
 
           lch.l = map_lightness  (config, 0, lch.l);
           lch.c = map_saturation (config, 0, lch.c);
           lch.h = map_hue        (config, 0, lch.h);
 
 
-      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, &rgb, 1);
 
       dest[RED]   = rgb.r;
       dest[GREEN] = rgb.g;
@@ -178,11 +178,11 @@ gimp_operation_hue_saturation_map (GimpHueSaturationConfig *config,
   g_return_if_fail (color != NULL);
   g_return_if_fail (result != NULL);
 
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), color, &lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), color, &lch, 1);
 
   lch.l = map_lightness  (config, range, lch.l);
   lch.c = map_saturation (config, range, lch.c);
   lch.h = map_hue        (config, range, lch.h);
 
-  babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, result, 1);
+  babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, result, 1);
 }

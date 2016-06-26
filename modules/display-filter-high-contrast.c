@@ -194,7 +194,7 @@ cdisplay_contrast_convert_buffer (GimpColorDisplay *display,
   c = contrast->contrast * 2 * G_PI;
 
   iter = gegl_buffer_iterator_new (buffer, area, 0,
-                                   babl_format ("R'G'B'A float"),
+                                   babl_format ("RGBA float"),
                                    GEGL_ACCESS_READWRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

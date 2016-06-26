@@ -861,19 +861,19 @@ mng_save_image (const gchar  *filename,
       switch (layer_drawable_type)
         {
         case GIMP_RGB_IMAGE:
-          layer_format        = babl_format ("R'G'B' u8");
+          layer_format        = babl_format ("RGB u8");
           layer_mng_colortype = MNG_COLORTYPE_RGB;
           break;
         case GIMP_RGBA_IMAGE:
-          layer_format        = babl_format ("R'G'B'A u8");
+          layer_format        = babl_format ("RGBA u8");
           layer_mng_colortype = MNG_COLORTYPE_RGBA;
           break;
         case GIMP_GRAY_IMAGE:
-          layer_format        = babl_format ("Y' u8");
+          layer_format        = babl_format ("Y u8");
           layer_mng_colortype = MNG_COLORTYPE_GRAY;
           break;
         case GIMP_GRAYA_IMAGE:
-          layer_format        = babl_format ("Y'A u8");
+          layer_format        = babl_format ("YA u8");
           layer_mng_colortype = MNG_COLORTYPE_GRAYA;
           break;
         case GIMP_INDEXED_IMAGE:

@@ -262,7 +262,7 @@ gimp_mypaint_surface_get_color (MyPaintSurface *base_surface,
 
      /* Read in clamp mode to avoid transparency bleeding in at the edges */
     GeglBufferIterator *iter = gegl_buffer_iterator_new (surface->buffer, &dabRect, 0,
-                                                         babl_format ("R'aG'aB'aA float"),
+                                                         babl_format ("RaGaBaA float"),
                                                          GEGL_BUFFER_READ,
                                                          GEGL_ABYSS_CLAMP);
     if (surface->paint_mask)
@@ -386,7 +386,7 @@ gimp_mypaint_surface_draw_dab (MyPaintSurface *base_surface,
   gegl_rectangle_bounding_box (&surface->dirty, &surface->dirty, &dabRect);
 
   iter = gegl_buffer_iterator_new (surface->buffer, &dabRect, 0,
-                                   babl_format ("R'G'B'A float"),
+                                   babl_format ("RGBA float"),
                                    GEGL_BUFFER_READWRITE,
                                    GEGL_ABYSS_NONE);
   if (surface->paint_mask)

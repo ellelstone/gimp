@@ -156,7 +156,7 @@ gimp_rgb_set_pixel (GimpRGB       *rgb,
   g_return_if_fail (pixel != NULL);
 
   babl_process (babl_fish (format,
-                           babl_format ("R'G'B' double")),
+                           babl_format ("RGB double")),
                 pixel, rgb, 1);
 }
 
@@ -181,7 +181,7 @@ gimp_rgb_get_pixel (const GimpRGB *rgb,
   g_return_if_fail (format != NULL);
   g_return_if_fail (pixel != NULL);
 
-  babl_process (babl_fish (babl_format ("R'G'B' double"),
+  babl_process (babl_fish (babl_format ("RGB double"),
                            format),
                 rgb, pixel, 1);
 }
@@ -460,7 +460,7 @@ gimp_rgba_set_pixel (GimpRGB       *rgba,
   g_return_if_fail (pixel != NULL);
 
   babl_process (babl_fish (format,
-                           babl_format ("R'G'B'A double")),
+                           babl_format ("RGBA double")),
                 pixel, rgba, 1);
 }
 
@@ -485,7 +485,7 @@ gimp_rgba_get_pixel (const GimpRGB *rgba,
   g_return_if_fail (format != NULL);
   g_return_if_fail (pixel != NULL);
 
-  babl_process (babl_fish (babl_format ("R'G'B'A double"),
+  babl_process (babl_fish (babl_format ("RGBA double"),
                            format),
                 rgba, pixel, 1);
 }

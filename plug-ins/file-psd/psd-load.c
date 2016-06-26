@@ -2214,16 +2214,16 @@ get_layer_format (PSDimage *img_a,
       switch (img_a->bps)
         {
         case 32:
-          format = babl_format ("Y' u32");
+          format = babl_format ("Y u32");
           break;
 
         case 16:
-          format = babl_format ("Y' u16");
+          format = babl_format ("Y u16");
           break;
 
         case 8:
         case 1:
-          format = babl_format ("Y' u8");
+          format = babl_format ("Y u8");
           break;
 
         default:
@@ -2236,16 +2236,16 @@ get_layer_format (PSDimage *img_a,
       switch (img_a->bps)
         {
         case 32:
-          format = babl_format ("Y'A u32");
+          format = babl_format ("YA u32");
           break;
 
         case 16:
-          format = babl_format ("Y'A u16");
+          format = babl_format ("YA u16");
           break;
 
         case 8:
         case 1:
-          format = babl_format ("Y'A u8");
+          format = babl_format ("YA u8");
           break;
 
         default:
@@ -2258,16 +2258,16 @@ get_layer_format (PSDimage *img_a,
       switch (img_a->bps)
         {
         case 32:
-          format = babl_format ("R'G'B' u32");
+          format = babl_format ("RGB u32");
           break;
 
         case 16:
-          format = babl_format ("R'G'B' u16");
+          format = babl_format ("RGB u16");
           break;
 
         case 8:
         case 1:
-          format = babl_format ("R'G'B' u8");
+          format = babl_format ("RGB u8");
           break;
 
         default:
@@ -2280,16 +2280,16 @@ get_layer_format (PSDimage *img_a,
       switch (img_a->bps)
         {
         case 32:
-          format = babl_format ("R'G'B'A u32");
+          format = babl_format ("RGBA u32");
           break;
 
         case 16:
-          format = babl_format ("R'G'B'A u16");
+          format = babl_format ("RGBA u16");
           break;
 
         case 8:
         case 1:
-          format = babl_format ("R'G'B'A u8");
+          format = babl_format ("RGBA u8");
           break;
 
         default:

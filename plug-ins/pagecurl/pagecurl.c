@@ -735,7 +735,7 @@ do_curl_effect (gint32 drawable_id)
 
   width  = gegl_buffer_get_width (curl_buffer);
   height = gegl_buffer_get_height (curl_buffer);
-  format = babl_format ("R'G'B'A float");
+  format = babl_format ("RGBA float");
   n_ch   = babl_format_get_n_components (format);
 
   iter = gegl_buffer_iterator_new (curl_buffer,
@@ -901,7 +901,7 @@ clear_curled_region (gint32 drawable_id)
   width  = gegl_buffer_get_width (buf);
   height = gegl_buffer_get_height (buf);
 
-  format = babl_format ("R'G'B'A float");
+  format = babl_format ("RGBA float");
   bpp    = babl_format_get_bytes_per_pixel (format);
   n_ch   = babl_format_get_n_components (format);
 

@@ -236,19 +236,19 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
   switch (gimp_drawable_type (layer))
     {
     case GIMP_RGB_IMAGE:
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
 
     case GIMP_RGBA_IMAGE:
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
 
     case GIMP_GRAY_IMAGE:
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
-      format = babl_format ("Y'A u8");
+      format = babl_format ("YA u8");
       break;
 
     case GIMP_INDEXED_IMAGE:

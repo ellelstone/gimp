@@ -772,9 +772,9 @@ save_image (const gchar  *filename,
       if (gimp_drawable_is_gray (framelist[nframes-cnt]))
         {
           if (gimp_drawable_has_alpha (framelist[nframes-cnt]))
-            format = babl_format ("Y' u8");
+            format = babl_format ("Y u8");
           else
-            format = babl_format ("Y'A u8");
+            format = babl_format ("YA u8");
         }
       else
         {

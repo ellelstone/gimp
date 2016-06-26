@@ -178,7 +178,7 @@ image_compare (gchar *composition_path,
       return FALSE;
     }
 
-  debug_buf = gegl_buffer_new (gegl_buffer_get_extent (bufferA), babl_format ("R'G'B' u8"));
+  debug_buf = gegl_buffer_new (gegl_buffer_get_extent (bufferA), babl_format ("RGB u8"));
 
   {
      gfloat  *bufA, *bufB;
@@ -198,7 +198,7 @@ image_compare (gchar *composition_path,
      bufB = (void*)gegl_buffer_linear_open (bufferB, NULL, &rowstrideB,
                                             babl_format ("CIE Lab float"));
      debug = (void*)gegl_buffer_linear_open (debug_buf, NULL, &dRowstride,
-                                             babl_format ("R'G'B' u8"));
+                                             babl_format ("RGB u8"));
 
      a = bufA;
      b = bufB;

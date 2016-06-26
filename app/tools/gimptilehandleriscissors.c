@@ -204,17 +204,17 @@ gimp_tile_handler_iscissors_validate (GimpTileHandlerValidate *validate,
   temp0 = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                            rect->width,
                                            rect->height),
-                           babl_format ("R'G'B'A u8"));
+                           babl_format ("RGBA u8"));
 
   temp1 = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                            rect->width,
                                            rect->height),
-                           babl_format ("R'G'B'A u8"));
+                           babl_format ("RGBA u8"));
 
   temp2 = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                            rect->width,
                                            rect->height),
-                           babl_format ("R'G'B'A u8"));
+                           babl_format ("RGBA u8"));
 
   /* XXX tile edges? */
 

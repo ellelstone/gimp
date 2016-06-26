@@ -206,7 +206,7 @@ gimp_operation_lch_hue_mode_process_pixels (gfloat              *in,
   const gsize bytes_per_sample = 4 * sizeof * in;
   gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;
 
-  hue_pre_process (babl_format ("R'G'B'A float"), in2, layer, out, samples);
+  hue_pre_process (babl_format ("RGBA float"), in2, layer, out, samples);
   hue_post_process (in2, layer, mask, out, opacity, samples);
 
   if (in != in2)

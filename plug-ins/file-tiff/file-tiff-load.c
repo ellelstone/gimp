@@ -449,26 +449,26 @@ load_image (GFile              *file,
                 {
                   if (tsvals.save_transp_pixels)
                     {
-                          base_format = babl_format_new (babl_model ("Y'A"),
+                          base_format = babl_format_new (babl_model ("YA"),
                                                          type,
-                                                         babl_component ("Y'"),
+                                                         babl_component ("Y"),
                                                          babl_component ("A"),
                                                          NULL);
                     }
                   else
                     {
-                          base_format = babl_format_new (babl_model ("Y'aA"),
+                          base_format = babl_format_new (babl_model ("YaA"),
                                                          type,
-                                                         babl_component ("Y'a"),
+                                                         babl_component ("Ya"),
                                                          babl_component ("A"),
                                                          NULL);
                     }
                 }
               else
                 {
-                      base_format = babl_format_new (babl_model ("Y'"),
+                      base_format = babl_format_new (babl_model ("Y"),
                                                      type,
-                                                     babl_component ("Y'"),
+                                                     babl_component ("Y"),
                                                      NULL);
                 }
 //            }
@@ -482,32 +482,32 @@ load_image (GFile              *file,
             {
               if (tsvals.save_transp_pixels)
                 {
-                      base_format = babl_format_new (babl_model ("R'G'B'A"),
+                      base_format = babl_format_new (babl_model ("RGBA"),
                                                      type,
-                                                     babl_component ("R'"),
-                                                     babl_component ("G'"),
-                                                     babl_component ("B'"),
+                                                     babl_component ("R"),
+                                                     babl_component ("G"),
+                                                     babl_component ("B"),
                                                      babl_component ("A"),
                                                      NULL);
                 }
               else
                 {
-                      base_format = babl_format_new (babl_model ("R'aG'aB'aA"),
+                      base_format = babl_format_new (babl_model ("RaGaBaA"),
                                                      type,
-                                                     babl_component ("R'a"),
-                                                     babl_component ("G'a"),
-                                                     babl_component ("B'a"),
+                                                     babl_component ("Ra"),
+                                                     babl_component ("Ga"),
+                                                     babl_component ("Ba"),
                                                      babl_component ("A"),
                                                      NULL);
                 }
             }
           else
             {
-                  base_format = babl_format_new (babl_model ("R'G'B'"),
+                  base_format = babl_format_new (babl_model ("RGB"),
                                                  type,
-                                                 babl_component ("R'"),
-                                                 babl_component ("G'"),
-                                                 babl_component ("B'"),
+                                                 babl_component ("R"),
+                                                 babl_component ("G"),
+                                                 babl_component ("B"),
                                                  NULL);
             }
           break;
@@ -560,11 +560,11 @@ load_image (GFile              *file,
           image_type  = GIMP_RGB;
           layer_type  = GIMP_RGBA_IMAGE;
 
-              base_format = babl_format_new (babl_model ("R'aG'aB'aA"),
+              base_format = babl_format_new (babl_model ("RaGaBaA"),
                                              type,
-                                             babl_component ("R'a"),
-                                             babl_component ("G'a"),
-                                             babl_component ("B'a"),
+                                             babl_component ("Ra"),
+                                             babl_component ("Ga"),
+                                             babl_component ("Ba"),
                                              babl_component ("A"),
                                              NULL);
         }
@@ -848,9 +848,9 @@ load_image (GFile              *file,
                                                 100.0, &color);
               gimp_image_insert_channel (image, channel[i].ID, -1, 0);
               channel[i].buffer = gimp_drawable_get_buffer (channel[i].ID);
-              channel[i].format = babl_format_new (babl_model ("Y'"),
+              channel[i].format = babl_format_new (babl_model ("Y"),
                                                    type,
-                                                   babl_component ("Y'"),
+                                                   babl_component ("Y"),
                                                    NULL);
             }
         }

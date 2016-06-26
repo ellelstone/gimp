@@ -236,18 +236,18 @@ map (GeglBuffer   *buffer,
       nb_color_chan = 3;
       nb_chan_samp = 4;
       if (has_alpha)
-        format_shadow = babl_format ("R'G'B'A float");
+        format_shadow = babl_format ("RGBA float");
       else
-        format_shadow = babl_format ("R'G'B' float");
+        format_shadow = babl_format ("RGB float");
     }
   else
     {
       nb_color_chan = 1;
       nb_chan_samp = 2;
       if (has_alpha)
-        format_shadow = babl_format ("Y'A float");
+        format_shadow = babl_format ("YA float");
       else
-        format_shadow = babl_format ("Y' float");
+        format_shadow = babl_format ("Y float");
     }
 
 
@@ -255,13 +255,13 @@ map (GeglBuffer   *buffer,
     {
       nb_chan = nb_color_chan + 1;
       nb_chan2 = 2;
-      format_buffer = babl_format ("Y'A float");
+      format_buffer = babl_format ("YA float");
     }
   else
     {
       nb_chan = nb_color_chan;
       nb_chan2 = 1;
-      format_buffer = babl_format ("Y' float");
+      format_buffer = babl_format ("Y float");
     }
 
   gi = gegl_buffer_iterator_new (shadow_buffer, NULL, 0, format_shadow,
@@ -359,8 +359,8 @@ get_samples_gradient (gint32 drawable_id)
 
   if (!gimp_drawable_is_rgb (drawable_id))
     {
-      const Babl *format_src = babl_format ("R'G'B'A double");
-      const Babl *format_dst = babl_format ("Y'A double");
+      const Babl *format_src = babl_format ("RGBA double");
+      const Babl *format_dst = babl_format ("YA double");
       const Babl *fish = babl_fish (format_src, format_dst);
       babl_process (fish, d_samples, d_samples, NSAMPLES);
     }
@@ -390,7 +390,7 @@ get_samples_palette (gint32 drawable_id)
   is_rgb = gimp_drawable_is_rgb (drawable_id);
 
   factor = ((double) num_colors) / NSAMPLES;
-  format = is_rgb ? babl_format ("R'G'B'A double") : babl_format ("Y'A double");
+  format = is_rgb ? babl_format ("RGBA double") : babl_format ("YA double");
   nb_color_chan = is_rgb ? 3 : 1;
   nb_chan = nb_color_chan + 1;
 

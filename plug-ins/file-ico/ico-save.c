@@ -446,19 +446,19 @@ ico_get_layer_num_colors (gint32    layer,
   switch (gimp_drawable_type (layer))
     {
     case GIMP_RGB_IMAGE:
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
 
     case GIMP_RGBA_IMAGE:
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
 
     case GIMP_GRAY_IMAGE:
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
-      format = babl_format ("Y'A u8");
+      format = babl_format ("YA u8");
       break;
 
     case GIMP_INDEXED_IMAGE:
@@ -581,19 +581,19 @@ ico_image_get_reduced_buf (guint32   layer,
   switch (gimp_drawable_type (layer))
     {
     case GIMP_RGB_IMAGE:
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
 
     case GIMP_RGBA_IMAGE:
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
 
     case GIMP_GRAY_IMAGE:
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
-      format = babl_format ("Y'A u8");
+      format = babl_format ("YA u8");
       break;
 
     case GIMP_INDEXED_IMAGE:

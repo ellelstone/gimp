@@ -232,7 +232,7 @@ gimp_pattern_new (GimpContext *context,
                           "name", name,
                           NULL);
 
-  pattern->mask = gimp_temp_buf_new (32, 32, babl_format ("R'G'B' u8"));
+  pattern->mask = gimp_temp_buf_new (32, 32, babl_format ("RGB u8"));
 
   data = gimp_temp_buf_get_data (pattern->mask);
 

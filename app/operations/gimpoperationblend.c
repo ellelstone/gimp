@@ -490,7 +490,7 @@ gimp_operation_blend_set_property (GObject      *object,
 static void
 gimp_operation_blend_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
@@ -966,7 +966,7 @@ gradient_put_pixel (gint      x,
   /* Paint whole row if we are on the rightmost pixel */
   if (index == (ppd->width - 1))
     gegl_buffer_set (ppd->buffer, GEGL_RECTANGLE (ppd->roi_x, y, ppd->width, 1),
-                     0, babl_format ("R'G'B'A float"), ppd->row_data,
+                     0, babl_format ("RGBA float"), ppd->row_data,
                      GEGL_AUTO_ROWSTRIDE);
 }
 
@@ -1093,7 +1093,7 @@ gimp_operation_blend_process (GeglOperation       *operation,
       GeglRectangle      *roi;
 
       iter = gegl_buffer_iterator_new (output, result, 0,
-                                       babl_format ("R'G'B'A float"),
+                                       babl_format ("RGBA float"),
                                        GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
       roi = &iter->roi[0];
 

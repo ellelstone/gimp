@@ -551,9 +551,9 @@ save_image (GFile   *file,
   savingColor = ! gimp_drawable_is_gray (drawable_ID);
 
   if (savingColor)
-    format = babl_format ("R'G'B' u8");
+    format = babl_format ("RGB u8");
   else
-    format = babl_format ("Y' u8");
+    format = babl_format ("Y u8");
 
   depth = babl_format_get_bytes_per_pixel (format);
 

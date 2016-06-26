@@ -1268,28 +1268,28 @@ save_image (const gchar  *filename,
       break;
 
     case GIMP_GRAY_IMAGE:
-      format  = babl_format ("Y' u8");
+      format  = babl_format ("Y u8");
       out_bpp = 1;
       header[16] = 8; /* bpp */
       header[17] = tsvals.origin ? 0 : 0x20; /* alpha + orientation */
       break;
 
     case GIMP_GRAYA_IMAGE:
-      format  = babl_format ("Y'A u8");
+      format  = babl_format ("YA u8");
       out_bpp = 2;
       header[16] = 16; /* bpp */
       header[17] = tsvals.origin ? 8 : 0x28; /* alpha + orientation */
       break;
 
     case GIMP_RGB_IMAGE:
-      format  = babl_format ("R'G'B' u8");
+      format  = babl_format ("RGB u8");
       out_bpp = 3;
       header[16] = 24; /* bpp */
       header[17] = tsvals.origin ? 0 : 0x20; /* alpha + orientation */
       break;
 
     case GIMP_RGBA_IMAGE:
-      format  = babl_format ("R'G'B'A u8");
+      format  = babl_format ("RGBA u8");
       out_bpp = 4;
       header[16] = 32; /* bpp */
       header[17] = tsvals.origin ? 8 : 0x28; /* alpha + orientation */

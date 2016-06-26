@@ -349,9 +349,9 @@ load_image (const gchar  *filename,
       gboolean    linear = FALSE;
 
       if (model == babl_model ("Y")  ||
-          model == babl_model ("Y'") ||
+          model == babl_model ("Y") ||
           model == babl_model ("YA") ||
-          model == babl_model ("Y'A"))
+          model == babl_model ("YA"))
         {
           base_type = GIMP_GRAY;
 
@@ -360,8 +360,8 @@ load_image (const gchar  *filename,
           else
             image_type = GIMP_GRAY_IMAGE;
 
-          if (model == babl_model ("Y'") ||
-              model == babl_model ("Y'A"))
+          if (model == babl_model ("Y") ||
+              model == babl_model ("YA"))
             linear = FALSE;
         }
       else
@@ -373,8 +373,8 @@ load_image (const gchar  *filename,
           else
             image_type = GIMP_RGB_IMAGE;
 
-          if (model == babl_model ("R'G'B'") ||
-              model == babl_model ("R'G'B'A"))
+          if (model == babl_model ("RGB") ||
+              model == babl_model ("RGBA"))
             linear = FALSE;
         }
 

@@ -37,23 +37,19 @@ gimp_babl_format_get_image_type (const Babl *format)
 
   model = babl_format_get_model (format);
 
-  if (model == babl_model ("Y") ||
-      model == babl_model ("Y'"))
+  if (model == babl_model ("Y"))
     {
       return GIMP_GRAY_IMAGE;
     }
-  else if (model == babl_model ("YA") ||
-           model == babl_model ("Y'A"))
+  else if (model == babl_model ("YA"))
     {
       return GIMP_GRAYA_IMAGE;
     }
-  else if (model == babl_model ("RGB") ||
-           model == babl_model ("R'G'B'"))
+  else if (model == babl_model ("RGB"))
     {
       return GIMP_RGB_IMAGE;
     }
-  else if (model == babl_model ("RGBA") ||
-           model == babl_model ("R'G'B'A"))
+  else if (model == babl_model ("RGBA"))
     {
       return GIMP_RGBA_IMAGE;
     }

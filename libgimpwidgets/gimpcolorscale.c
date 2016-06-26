@@ -164,7 +164,7 @@ gimp_color_scale_init (GimpColorScale *scale)
                                   GTK_ORIENTATION_HORIZONTAL);
 
   gimp_rgba_set (&scale->rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &scale->rgb, &scale->lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &scale->rgb, &scale->lch, 1);
 
   gimp_widget_track_monitor (GTK_WIDGET (scale),
                              G_CALLBACK (gimp_color_scale_destroy_transform),
@@ -783,7 +783,7 @@ gimp_color_scale_render (GimpColorScale *scale)
           if (to_rgb)
             {
               *channel_value = value * multiplier;
-              babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
+              babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, &rgb, 1);
             }
           else
             *channel_value = value;
@@ -813,7 +813,7 @@ if (r>=255 || g>=255 || b>=255 || r<=0 || g<=0 || b<=0) {r=0; b=0; g=0;}
           *channel_value = value;
 
           if (to_rgb)
-            babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &lch, &rgb, 1);
+            babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, &rgb, 1);
 
           gimp_rgb_get_uchar (&rgb, &r, &g, &b);
 

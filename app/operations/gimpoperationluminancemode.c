@@ -188,7 +188,7 @@ gimp_operation_luminance_mode_process_pixels (gfloat              *in,
                                                   const GeglRectangle *roi,
                                                   gint                 level)
 {
-  luminance_pre_process (babl_format ("R'G'B'A float"), in, layer, out, samples);
+  luminance_pre_process (babl_format ("RGBA float"), in, layer, out, samples);
   luminance_post_process (in, layer, mask, out, opacity, samples);
 
   return TRUE;

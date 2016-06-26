@@ -260,7 +260,7 @@ choose_format (GeglBuffer          *buffer,
     case GIMP_SELECT_CRITERION_G:
     case GIMP_SELECT_CRITERION_B:
     case GIMP_SELECT_CRITERION_A:
-      format = babl_format ("R'G'B'A float");
+      format = babl_format ("RGBA float");
       break;
 
     case GIMP_SELECT_CRITERION_H:

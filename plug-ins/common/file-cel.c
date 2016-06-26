@@ -762,7 +762,7 @@ save_image (GFile   *file,
   else
     {
       bpp    = 32;
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
     }
 
   /* Find out how offset this layer was */

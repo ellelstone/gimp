@@ -829,9 +829,9 @@ save_image (GFile   *file,
         }
 
       if (drawable_type == GIMP_GRAYA_IMAGE)
-        format = babl_format ("Y'A u8");
+        format = babl_format ("YA u8");
       else
-        format = babl_format ("Y' u8");
+        format = babl_format ("Y u8");
       break;
 
     default:

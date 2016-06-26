@@ -607,9 +607,9 @@ load_fits (const gchar *filename,
     {
       itype = GIMP_GRAY;
       dtype = GIMP_GRAYA_IMAGE;
-      format = babl_format_new (babl_model ("Y'A"),
+      format = babl_format_new (babl_model ("YA"),
                                 type,
-                                babl_component ("Y'"),
+                                babl_component ("Y"),
                                 babl_component ("A"),
                                 NULL);
     }
@@ -617,22 +617,22 @@ load_fits (const gchar *filename,
     {
       itype = GIMP_RGB;
       dtype = GIMP_RGB_IMAGE;
-      format = babl_format_new (babl_model ("R'G'B'"),
+      format = babl_format_new (babl_model ("RGB"),
                                 type,
-                                babl_component ("R'"),
-                                babl_component ("G'"),
-                                babl_component ("B'"),
+                                babl_component ("R"),
+                                babl_component ("G"),
+                                babl_component ("B"),
                                 NULL);
     }
   else if (ncompose == 4)
     {
       itype = GIMP_RGB;
       dtype = GIMP_RGBA_IMAGE;
-      format = babl_format_new (babl_model ("R'G'B'A"),
+      format = babl_format_new (babl_model ("RGBA"),
                                 type,
-                                babl_component ("R'"),
-                                babl_component ("G'"),
-                                babl_component ("B'"),
+                                babl_component ("R"),
+                                babl_component ("G"),
+                                babl_component ("B"),
                                 babl_component ("A"),
                                 NULL);
     }
@@ -641,9 +641,9 @@ load_fits (const gchar *filename,
       ncompose = 1;
       itype = GIMP_GRAY;
       dtype = GIMP_GRAY_IMAGE;
-      format = babl_format_new (babl_model ("Y'"),
+      format = babl_format_new (babl_model ("Y"),
                                 type,
-                                babl_component ("Y'"),
+                                babl_component ("Y"),
                                 NULL);
     }
 
@@ -954,35 +954,35 @@ save_fits (FitsFile *ofp,
   switch (gimp_drawable_type (drawable_ID))
     {
     case GIMP_GRAY_IMAGE:
-      format = babl_format_new (babl_model ("Y'"),
+      format = babl_format_new (babl_model ("Y"),
                                 type,
-                                babl_component ("Y'"),
+                                babl_component ("Y"),
                                 NULL);
       break;
 
     case GIMP_GRAYA_IMAGE:
-      format = babl_format_new (babl_model ("Y'A"),
+      format = babl_format_new (babl_model ("YA"),
                                 type,
-                                babl_component ("Y'"),
+                                babl_component ("Y"),
                                 babl_component ("A"),
                                 NULL);
       break;
 
     case GIMP_RGB_IMAGE:
-      format = babl_format_new (babl_model ("R'G'B'"),
+      format = babl_format_new (babl_model ("RGB"),
                                 type,
-                                babl_component ("R'"),
-                                babl_component ("G'"),
-                                babl_component ("B'"),
+                                babl_component ("R"),
+                                babl_component ("G"),
+                                babl_component ("B"),
                                 NULL);
       break;
 
     case GIMP_RGBA_IMAGE:
-      format = babl_format_new (babl_model ("R'G'B'A"),
+      format = babl_format_new (babl_model ("RGBA"),
                                 type,
-                                babl_component ("R'"),
-                                babl_component ("G'"),
-                                babl_component ("B'"),
+                                babl_component ("R"),
+                                babl_component ("G"),
+                                babl_component ("B"),
                                 babl_component ("A"),
                                 NULL);
       break;

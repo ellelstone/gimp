@@ -70,7 +70,7 @@ typedef struct
   const gchar    *icon;
   const float     range_min;      /* val min of the component */
   const float     range_max;      /* val max of the component */
-  const gboolean  is_perceptual;  /* Take the componenent from an Y' or Y buffer */
+//  const gboolean  is_perceptual;  /* Take the componenent from an Y' or Y buffer */
 } COMPONENT_DSC;
 
 /* Description of a composition */
@@ -705,14 +705,14 @@ perform_composition (COMPOSE_DSC   curr_compose_dsc,
       COMPONENT_DSC  cpn_dsc = components[i];
       const Babl    *gray_format;
 
-      if (cpn_dsc.is_perceptual)
-        gray_format = babl_format ("Y' double");
-      else
+//      if (cpn_dsc.is_perceptual)
+//        gray_format = babl_format ("Y' double");
+//      else
         gray_format = babl_format ("Y double");
 
       if (! inputs[i].is_ID)
         {
-          const Babl *fish = babl_fish (babl_format ("Y' u8"), gray_format);
+          const Babl *fish = babl_fish (babl_format ("Y u8"), gray_format);
 
           babl_process (fish, &inputs[i].comp.val, &mask_vals[i], 1);
 

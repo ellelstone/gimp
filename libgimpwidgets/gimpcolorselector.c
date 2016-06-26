@@ -119,7 +119,7 @@ gimp_color_selector_init (GimpColorSelector *selector)
                                   GTK_ORIENTATION_VERTICAL);
 
   gimp_rgba_set (&selector->rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
 
   selector->channel = GIMP_COLOR_SELECTOR_HUE;
 }

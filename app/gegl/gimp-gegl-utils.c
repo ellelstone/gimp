@@ -68,7 +68,7 @@ gimp_gegl_color_new (const GimpRGB *rgb)
   g_return_val_if_fail (rgb != NULL, NULL);
 
   color = gegl_color_new (NULL);
-  gegl_color_set_pixel (color, babl_format ("R'G'B'A double"), rgb);
+  gegl_color_set_pixel (color, babl_format ("RGBA double"), rgb);
 
   return color;
 }

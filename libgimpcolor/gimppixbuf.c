@@ -54,8 +54,8 @@ gimp_pixbuf_get_format (GdkPixbuf *pixbuf)
 
   switch (gdk_pixbuf_get_n_channels (pixbuf))
     {
-    case 3: return babl_format ("R'G'B' u8");
-    case 4: return babl_format ("R'G'B'A u8");
+    case 3: return babl_format ("RGB u8");
+    case 4: return babl_format ("RGBA u8");
     }
 
   g_return_val_if_reached (NULL);

@@ -53,7 +53,7 @@ typedef struct
 
   const gdouble   range_min;           /* min and max                       */
   const gdouble   range_max;
-  const gboolean  perceptual_channel;  /* "correct" the channel in Y' space */
+//  const gboolean  perceptual_channel;  /* "correct" the channel in Y' space */
 
 } Component;
 
@@ -748,9 +748,9 @@ copy_one_component (GeglBuffer      *src,
    * If the output is "Y" , it will enforce gamma-decoding.
    * A bit tricky and suboptimal...
    */
-  if (component.perceptual_channel)
-    dst_format = babl_format ("Y' double");
-  else
+//  if (component.perceptual_channel)
+//    dst_format = babl_format ("Y' double");
+//  else
     dst_format = babl_format ("Y double");
 
   extent = gegl_buffer_get_extent (src);

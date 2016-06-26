@@ -242,7 +242,7 @@ save_image (GFile   *file,
           goto fail;
         }
 
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
 
       data = g_new (guchar, width * babl_format_get_bytes_per_pixel (format));
 

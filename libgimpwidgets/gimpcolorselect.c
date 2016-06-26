@@ -551,13 +551,13 @@ gimp_color_select_update_values (GimpColorSelect *select)
     case COLOR_SELECT_RED:
     case COLOR_SELECT_GREEN:
     case COLOR_SELECT_BLUE:
-      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+      babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
       break;
 
     case COLOR_SELECT_HUE:
     case COLOR_SELECT_SATURATION:
     case COLOR_SELECT_VALUE:
-      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &selector->lch, &selector->rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &selector->lch, &selector->rgb, 1);
       break;
 
     default:
@@ -953,7 +953,7 @@ color_select_update_hue (ColorSelectFill *csf)
   gint    i;
 
   lch.h = (csf->height - 1 - csf->y) * 360.0 / csf->height;
-  babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
+  babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
   for (i = 0; i < csf->width; i++)
     {
@@ -989,7 +989,7 @@ color_select_update_lightness (ColorSelectFill *csf)
   gint    i;
 
   lch.l = (csf->height - 1 - csf->y) * 100.0 / csf->height;
-  babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
+  babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
   for (i = 0; i < csf->width; i++)
     {
@@ -1089,7 +1089,7 @@ color_select_update_hue_chroma (ColorSelectFill *csf)
     {
       lch.h = i * 360.0 / csf->width;
 
-      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
       *p++ = rgb[0];
       *p++ = rgb[1];
@@ -1112,7 +1112,7 @@ color_select_update_hue_lightness (ColorSelectFill *csf)
     {
       lch.h = i * 360.0 / csf->width;
 
-      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
       *p++ = rgb[0];
       *p++ = rgb[1];
@@ -1135,7 +1135,7 @@ color_select_update_chroma_lightness (ColorSelectFill *csf)
     {
       lch.c = i * 200.0 / csf->width;
 
-      babl_process (babl_fish ("CIE LCH(ab) double", "R'G'B' u8"), &lch, &rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
       *p++ = rgb[0];
       *p++ = rgb[1];

@@ -1199,12 +1199,12 @@ gih_save_one_brush (GOutputStream  *output,
     {
     case GIMP_GRAY_IMAGE:
     case GIMP_GRAYA_IMAGE: /* alpha channel is ignored */
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_RGB_IMAGE: /* alpha channel is added */
     case GIMP_RGBA_IMAGE:
-      format = babl_format ("R'G'B'A u8");
+      format = babl_format ("RGBA u8");
       break;
 
     default:

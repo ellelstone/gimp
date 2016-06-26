@@ -2351,7 +2351,7 @@ save_index (GOutputStream  *output,
   tile_height = gimp_tile_height ();
 
   if (gray)
-    format = babl_format ("Y' u8");
+    format = babl_format ("Y u8");
   else
     format = gegl_buffer_get_format (buffer);
 
@@ -2492,7 +2492,7 @@ save_rgb (GOutputStream  *output,
   width       = gegl_buffer_get_width  (buffer);
   height      = gegl_buffer_get_height (buffer);
   tile_height = gimp_tile_height ();
-  format      = babl_format ("R'G'B' u8");
+  format      = babl_format ("RGB u8");
 
   /* allocate a buffer for retrieving information from the pixel region  */
   src = data = g_new (guchar,

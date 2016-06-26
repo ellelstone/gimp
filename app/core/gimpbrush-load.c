@@ -334,7 +334,7 @@ gimp_brush_load_brush (GimpContext   *context,
         guchar buf[8 * 1024];
 
         brush->priv->pixmap = gimp_temp_buf_new (header.width, header.height,
-                                                 babl_format ("R'G'B' u8"));
+                                                 babl_format ("RGB u8"));
         pixmap = gimp_temp_buf_get_data (brush->priv->pixmap);
 
         for (i = 0; success && i < size;)

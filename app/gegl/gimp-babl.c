@@ -41,30 +41,15 @@ gimp_babl_init (void)
                    babl_type ("u8"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' u8",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u8"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G u8",
                    babl_model ("RGBA"),
                    babl_type ("u8"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' u8",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u8"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B u8",
                    babl_model ("RGBA"),
                    babl_type ("u8"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' u8",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u8"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A u8",
                    babl_model ("RGBA"),
@@ -77,30 +62,15 @@ gimp_babl_init (void)
                    babl_type ("u16"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' u16",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u16"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G u16",
                    babl_model ("RGBA"),
                    babl_type ("u16"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' u16",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u16"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B u16",
                    babl_model ("RGBA"),
                    babl_type ("u16"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' u16",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u16"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A u16",
                    babl_model ("RGBA"),
@@ -113,30 +83,15 @@ gimp_babl_init (void)
                    babl_type ("u32"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' u32",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u32"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G u32",
                    babl_model ("RGBA"),
                    babl_type ("u32"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' u32",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u32"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B u32",
                    babl_model ("RGBA"),
                    babl_type ("u32"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' u32",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("u32"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A u32",
                    babl_model ("RGBA"),
@@ -149,30 +104,15 @@ gimp_babl_init (void)
                    babl_type ("half"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' half",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("half"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G half",
                    babl_model ("RGBA"),
                    babl_type ("half"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' half",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("half"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B half",
                    babl_model ("RGBA"),
                    babl_type ("half"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' half",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("half"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A half",
                    babl_model ("RGBA"),
@@ -185,30 +125,15 @@ gimp_babl_init (void)
                    babl_type ("float"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' float",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("float"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G float",
                    babl_model ("RGBA"),
                    babl_type ("float"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' float",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("float"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B float",
                    babl_model ("RGBA"),
                    babl_type ("float"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' float",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("float"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A float",
                    babl_model ("RGBA"),
@@ -221,30 +146,15 @@ gimp_babl_init (void)
                    babl_type ("double"),
                    babl_component ("R"),
                    NULL);
-  babl_format_new ("name", "R' double",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("double"),
-                   babl_component ("R'"),
-                   NULL);
   babl_format_new ("name", "G double",
                    babl_model ("RGBA"),
                    babl_type ("double"),
                    babl_component ("G"),
                    NULL);
-  babl_format_new ("name", "G' double",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("double"),
-                   babl_component ("G'"),
-                   NULL);
   babl_format_new ("name", "B double",
                    babl_model ("RGBA"),
                    babl_type ("double"),
                    babl_component ("B"),
-                   NULL);
-  babl_format_new ("name", "B' double",
-                   babl_model ("R'G'B'A"),
-                   babl_type ("double"),
-                   babl_component ("B'"),
                    NULL);
   babl_format_new ("name", "A double",
                    babl_model ("RGBA"),
@@ -261,95 +171,53 @@ static const struct
 babl_descriptions[] =
 {
   { "RGB u8",         N_("RGB") },
-  { "R'G'B' u8",      N_("RGB") },
   { "RGB u16",        N_("RGB") },
-  { "R'G'B' u16",     N_("RGB") },
   { "RGB u32",        N_("RGB") },
-  { "R'G'B' u32",     N_("RGB") },
   { "RGB half",       N_("RGB") },
-  { "R'G'B' half",    N_("RGB") },
   { "RGB float",      N_("RGB") },
-  { "R'G'B' float",   N_("RGB") },
   { "RGB double",     N_("RGB") },
-  { "R'G'B' double",  N_("RGB") },
 
   { "RGBA u8",        N_("RGB-alpha") },
-  { "R'G'B'A u8",     N_("RGB-alpha") },
   { "RGBA u16",       N_("RGB-alpha") },
-  { "R'G'B'A u16",    N_("RGB-alpha") },
   { "RGBA u32",       N_("RGB-alpha") },
-  { "R'G'B'A u32",    N_("RGB-alpha") },
   { "RGBA half",      N_("RGB-alpha") },
-  { "R'G'B'A half",   N_("RGB-alpha") },
   { "RGBA float",     N_("RGB-alpha") },
-  { "R'G'B'A float",  N_("RGB-alpha") },
   { "RGBA double",    N_("RGB-alpha") },
-  { "R'G'B'A double", N_("RGB-alpha") },
 
   { "Y u8",           N_("Grayscale") },
-  { "Y' u8",          N_("Grayscale") },
   { "Y u16",          N_("Grayscale") },
-  { "Y' u16",         N_("Grayscale") },
   { "Y u32",          N_("Grayscale") },
-  { "Y' u32",         N_("Grayscale") },
   { "Y half",         N_("Grayscale") },
-  { "Y' half",        N_("Grayscale") },
   { "Y float",        N_("Grayscale") },
-  { "Y' float",       N_("Grayscale") },
   { "Y double",       N_("Grayscale") },
-  { "Y' double",      N_("Grayscale") },
 
   { "YA u8",          N_("Grayscale-alpha") },
-  { "Y'A u8",         N_("Grayscale-alpha") },
   { "YA u16",         N_("Grayscale-alpha") },
-  { "Y'A u16",        N_("Grayscale-alpha") },
   { "YA u32",         N_("Grayscale-alpha") },
-  { "Y'A u32",        N_("Grayscale-alpha") },
   { "YA half",        N_("Grayscale-alpha") },
-  { "Y'A half",       N_("Grayscale-alpha") },
   { "YA float",       N_("Grayscale-alpha") },
-  { "Y'A float",      N_("Grayscale-alpha") },
   { "YA double",      N_("Grayscale-alpha") },
-  { "Y'A double",     N_("Grayscale-alpha") },
 
   { "R u8",           N_("Red component") },
-  { "R' u8",          N_("Red component") },
   { "R u16",          N_("Red component") },
-  { "R' u16",         N_("Red component") },
   { "R u32",          N_("Red component") },
-  { "R' u32",         N_("Red component") },
   { "R half",         N_("Red component") },
-  { "R' half",        N_("Red component") },
   { "R float",        N_("Red component") },
-  { "R' float",       N_("Red component") },
   { "R double",       N_("Red component") },
-  { "R' double",      N_("Red component") },
 
   { "G u8",           N_("Green component") },
-  { "G' u8",          N_("Green component") },
   { "G u16",          N_("Green component") },
-  { "G' u16",         N_("Green component") },
   { "G u32",          N_("Green component") },
-  { "G' u32",         N_("Green component") },
   { "G half",         N_("Green component") },
-  { "G' half",        N_("Green component") },
   { "G float",        N_("Green component") },
-  { "G' float",       N_("Green component") },
   { "G double",       N_("Green component") },
-  { "G' double",      N_("Green component") },
 
   { "B u8",           N_("Blue component") },
-  { "B' u8",          N_("Blue component") },
   { "B u16",          N_("Blue component") },
-  { "B' u16",         N_("Blue component") },
   { "B u32",          N_("Blue component") },
-  { "B' u32",         N_("Blue component") },
   { "B half",         N_("Blue component") },
-  { "B' half",        N_("Blue component") },
   { "B float",        N_("Blue component") },
-  { "B' float",       N_("Blue component") },
   { "B double",       N_("Blue component") },
-  { "B' double",      N_("Blue component") },
 
   { "A u8",          N_("Alpha component") },
   { "A u16",         N_("Alpha component") },
@@ -467,19 +335,14 @@ gimp_babl_format_get_base_type (const Babl *format)
 
   model = babl_format_get_model (format);
 
-  if (model == babl_model ("Y")  ||
-      model == babl_model ("Y'") ||
-      model == babl_model ("YA") ||
-      model == babl_model ("Y'A"))
+  if (model == babl_model ("Y") ||
+      model == babl_model ("YA") )
     {
       return GIMP_GRAY;
     }
-  else if (model == babl_model ("RGB")     ||
-           model == babl_model ("R'G'B'")  ||
-           model == babl_model ("RGBA")    ||
-           model == babl_model ("R'G'B'A") ||
-           model == babl_model ("RaGaBaA") ||
-           model == babl_model ("R'aG'aB'aA"))
+  else if (model == babl_model ("RGB")  ||
+           model == babl_model ("RGBA") ||
+           model == babl_model ("RaGaBaA") )
     {
       return GIMP_RGB;
     }
@@ -607,39 +470,39 @@ gimp_babl_format (GimpImageBaseType  base_type,
 
         case GIMP_PRECISION_U8_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A u8");
+            return babl_format ("RGBA u8");
           else
-            return babl_format ("R'G'B' u8");
+            return babl_format ("RGB u8");
 
         case GIMP_PRECISION_U16_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A u16");
+            return babl_format ("RGBA u16");
           else
-            return babl_format ("R'G'B' u16");
+            return babl_format ("RGB u16");
 
         case GIMP_PRECISION_U32_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A u32");
+            return babl_format ("RGBA u32");
           else
-            return babl_format ("R'G'B' u32");
+            return babl_format ("RGB u32");
 
         case GIMP_PRECISION_HALF_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A half");
+            return babl_format ("RGBA half");
           else
-            return babl_format ("R'G'B' half");
+            return babl_format ("RGB half");
 
         case GIMP_PRECISION_FLOAT_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A float");
+            return babl_format ("RGBA float");
           else
-            return babl_format ("R'G'B' float");
+            return babl_format ("RGB float");
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           if (with_alpha)
-            return babl_format ("R'G'B'A double");
+            return babl_format ("RGBA double");
           else
-            return babl_format ("R'G'B' double");
+            return babl_format ("RGB double");
 
         default:
           break;
@@ -652,39 +515,39 @@ gimp_babl_format (GimpImageBaseType  base_type,
 
         case GIMP_PRECISION_U8_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A u8");
+            return babl_format ("YA u8");
           else
-            return babl_format ("Y' u8");
+            return babl_format ("Y u8");
 
         case GIMP_PRECISION_U16_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A u16");
+            return babl_format ("YA u16");
           else
-            return babl_format ("Y' u16");
+            return babl_format ("Y u16");
 
         case GIMP_PRECISION_U32_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A u32");
+            return babl_format ("YA u32");
           else
-            return babl_format ("Y' u32");
+            return babl_format ("Y u32");
 
         case GIMP_PRECISION_HALF_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A half");
+            return babl_format ("YA half");
           else
-            return babl_format ("Y' half");
+            return babl_format ("Y half");
 
         case GIMP_PRECISION_FLOAT_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A float");
+            return babl_format ("YA float");
           else
-            return babl_format ("Y' float");
+            return babl_format ("Y float");
 
         case GIMP_PRECISION_DOUBLE_GAMMA:
           if (with_alpha)
-            return babl_format ("Y'A double");
+            return babl_format ("YA double");
           else
-            return babl_format ("Y' double");
+            return babl_format ("Y double");
 
         default:
           break;
@@ -725,9 +588,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U8_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' u8");
-            case 1: return babl_format ("G' u8");
-            case 2: return babl_format ("B' u8");
+            case 0: return babl_format ("R u8");
+            case 1: return babl_format ("G u8");
+            case 2: return babl_format ("B u8");
             case 3: return babl_format ("A u8");
             default:
               break;
@@ -737,9 +600,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U16_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' u16");
-            case 1: return babl_format ("G' u16");
-            case 2: return babl_format ("B' u16");
+            case 0: return babl_format ("R u16");
+            case 1: return babl_format ("G u16");
+            case 2: return babl_format ("B u16");
             case 3: return babl_format ("A u16");
             default:
               break;
@@ -749,9 +612,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U32_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' u32");
-            case 1: return babl_format ("G' u32");
-            case 2: return babl_format ("B' u32");
+            case 0: return babl_format ("R u32");
+            case 1: return babl_format ("G u32");
+            case 2: return babl_format ("B u32");
             case 3: return babl_format ("A u32");
             default:
               break;
@@ -761,9 +624,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_HALF_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' half");
-            case 1: return babl_format ("G' half");
-            case 2: return babl_format ("B' half");
+            case 0: return babl_format ("R half");
+            case 1: return babl_format ("G half");
+            case 2: return babl_format ("B half");
             case 3: return babl_format ("A half");
             default:
               break;
@@ -773,9 +636,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_FLOAT_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' float");
-            case 1: return babl_format ("G' float");
-            case 2: return babl_format ("B' float");
+            case 0: return babl_format ("R float");
+            case 1: return babl_format ("G float");
+            case 2: return babl_format ("B float");
             case 3: return babl_format ("A float");
             default:
               break;
@@ -785,9 +648,9 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_DOUBLE_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("R' double");
-            case 1: return babl_format ("G' double");
-            case 2: return babl_format ("B' double");
+            case 0: return babl_format ("R double");
+            case 1: return babl_format ("G double");
+            case 2: return babl_format ("B double");
             case 3: return babl_format ("A double");
             default:
               break;
@@ -806,7 +669,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U8_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' u8");
+            case 0: return babl_format ("Y u8");
             case 1: return babl_format ("A u8");
             default:
               break;
@@ -816,7 +679,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U16_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' u16");
+            case 0: return babl_format ("Y u16");
             case 1: return babl_format ("A u16");
             default:
               break;
@@ -826,7 +689,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_U32_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' u32");
+            case 0: return babl_format ("Y u32");
             case 1: return babl_format ("A u32");
             default:
               break;
@@ -836,7 +699,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_HALF_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' half");
+            case 0: return babl_format ("Y half");
             case 1: return babl_format ("A half");
             default:
               break;
@@ -846,7 +709,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_FLOAT_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' float");
+            case 0: return babl_format ("Y float");
             case 1: return babl_format ("A float");
             default:
               break;
@@ -857,7 +720,7 @@ gimp_babl_component_format (GimpImageBaseType base_type,
         case GIMP_PRECISION_DOUBLE_GAMMA:
           switch (index)
             {
-            case 0: return babl_format ("Y' double");
+            case 0: return babl_format ("Y double");
             case 1: return babl_format ("A double");
             default:
               break;

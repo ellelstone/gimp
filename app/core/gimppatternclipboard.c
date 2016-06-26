@@ -203,7 +203,7 @@ gimp_pattern_clipboard_buffer_changed (Gimp        *gimp,
     }
   else
     {
-      pattern->mask = gimp_temp_buf_new (16, 16, babl_format ("R'G'B' u8"));
+      pattern->mask = gimp_temp_buf_new (16, 16, babl_format ("RGB u8"));
       memset (gimp_temp_buf_get_data (pattern->mask), 255, 16 * 16 * 3);
     }
 

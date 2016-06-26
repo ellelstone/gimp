@@ -1228,7 +1228,7 @@ save_image (GFile     *file,
       if (pbm)
         {
           header_string = "P1\n";
-          format = babl_format ("Y' u8");
+          format = babl_format ("Y u8");
           np = 0;
           rowbufsize = xres + (int) (xres / 70) + 1;
           saverow = pnmsaverow_ascii_pbm;
@@ -1239,7 +1239,7 @@ save_image (GFile     *file,
             {
             case GIMP_GRAY_IMAGE:
               header_string = "P2\n";
-              format = babl_format ("Y' u8");
+              format = babl_format ("Y u8");
               np = 1;
               rowbufsize = xres * 4;
               saverow = pnmsaverow_ascii;
@@ -1247,7 +1247,7 @@ save_image (GFile     *file,
 
             case GIMP_RGB_IMAGE:
               header_string = "P3\n";
-              format = babl_format ("R'G'B' u8");
+              format = babl_format ("RGB u8");
               np = 3;
               rowbufsize = xres * 12;
               saverow = pnmsaverow_ascii;
@@ -1272,7 +1272,7 @@ save_image (GFile     *file,
       if (pbm)
         {
           header_string = "P4\n";
-          format = babl_format ("Y' u8");
+          format = babl_format ("Y u8");
           np = 0;
           rowbufsize = (gint) ceil ((gdouble) xres / 8.0);
           saverow = pnmsaverow_raw_pbm;
@@ -1283,7 +1283,7 @@ save_image (GFile     *file,
             {
             case GIMP_GRAY_IMAGE:
               header_string = "P5\n";
-              format = babl_format ("Y' u8");
+              format = babl_format ("Y u8");
               np = 1;
               rowbufsize = xres;
               saverow = pnmsaverow_raw;
@@ -1291,7 +1291,7 @@ save_image (GFile     *file,
 
             case GIMP_RGB_IMAGE:
               header_string = "P6\n";
-              format = babl_format ("R'G'B' u8");
+              format = babl_format ("RGB u8");
               np = 3;
               rowbufsize = xres * 3;
               saverow = pnmsaverow_raw;

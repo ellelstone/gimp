@@ -361,9 +361,9 @@ cdisplay_proof_changed (GimpColorDisplay *display)
 
       proof->transform =
         gimp_color_transform_new_proofing (rgb_profile,
-                                           babl_format ("R'G'B'A float"),
+                                           babl_format ("RGBA float"),
                                            rgb_profile,
-                                           babl_format ("R'G'B'A float"),
+                                           babl_format ("RGBA float"),
                                            proof_profile,
                                            proof->intent,
                                            proof->intent,

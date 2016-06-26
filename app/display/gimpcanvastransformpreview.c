@@ -954,7 +954,7 @@ gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
       guchar *u8_b;
 
       babl_process (babl_fish (format,
-                               babl_format ("R'G'B'A u8")),
+                               babl_format ("RGBA u8")),
                     buf, u8_buffer, dx);
 
       samples = dx;
@@ -969,7 +969,7 @@ gimp_canvas_transform_preview_draw_tri_row (GimpDrawable    *texture,
           u8_b += 4;
         }
 
-      babl_process (babl_fish (babl_format ("R'G'B'A u8"),
+      babl_process (babl_fish (babl_format ("RGBA u8"),
                                babl_format ("cairo-ARGB32")),
                     u8_buffer, pptr, dx);
     }
@@ -1124,7 +1124,7 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
     guchar *u8_mask_b;
 
     babl_process (babl_fish (format,
-                             babl_format ("R'G'B'A u8")),
+                             babl_format ("RGBA u8")),
                   buf, u8_buffer, dx);
     babl_process (babl_fish (mask_format,
                              babl_format ("Y u8")),
@@ -1144,7 +1144,7 @@ gimp_canvas_transform_preview_draw_tri_row_mask (GimpDrawable    *texture,
         u8_mask_b += 1;
       }
 
-    babl_process (babl_fish (babl_format ("R'G'B'A u8"),
+    babl_process (babl_fish (babl_format ("RGBA u8"),
                              babl_format ("cairo-ARGB32")),
                   u8_buffer, pptr, dx);
   }

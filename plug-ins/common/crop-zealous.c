@@ -189,9 +189,9 @@ do_zcrop (gint32  drawable_id,
   has_alpha = gimp_drawable_has_alpha (drawable_id);
 
   if (has_alpha)
-    format = babl_format ("R'G'B'A float");
+    format = babl_format ("RGBA float");
   else
-    format = babl_format ("R'G'B' float");
+    format = babl_format ("RGB float");
 
   components = babl_format_get_n_components (format);
 

@@ -409,11 +409,11 @@ file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-funct
       samplesperpixel = 3;
       photometric     = PHOTOMETRIC_RGB;
       alpha           = FALSE;
-      format          = babl_format_new (babl_model ("R'G'B'"),
+      format          = babl_format_new (babl_model ("RGB"),
                                          type,
-                                         babl_component ("R'"),
-                                         babl_component ("G'"),
-                                         babl_component ("B'"),
+                                         babl_component ("R"),
+                                         babl_component ("G"),
+                                         babl_component ("B"),
                                          NULL);
       break;
 
@@ -421,9 +421,9 @@ file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-funct
       samplesperpixel = 1;
       photometric     = PHOTOMETRIC_MINISBLACK;
       alpha           = FALSE;
-      format          = babl_format_new (babl_model ("Y'"),
+      format          = babl_format_new (babl_model ("Y"),
                                          type,
-                                         babl_component ("Y'"),
+                                         babl_component ("Y"),
                                          NULL);
       break;
 
@@ -434,21 +434,21 @@ file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-funct
       alpha           = TRUE;
       if (tsvals->save_transp_pixels)
         {
-          format = babl_format_new (babl_model ("R'G'B'A"),
+          format = babl_format_new (babl_model ("RGBA"),
                                     type,
-                                    babl_component ("R'"),
-                                    babl_component ("G'"),
-                                    babl_component ("B'"),
+                                    babl_component ("R"),
+                                    babl_component ("G"),
+                                    babl_component ("B"),
                                     babl_component ("A"),
                                     NULL);
         }
       else
         {
-          format = babl_format_new (babl_model ("R'aG'aB'aA"),
+          format = babl_format_new (babl_model ("RaGaBaA"),
                                     type,
-                                    babl_component ("R'a"),
-                                    babl_component ("G'a"),
-                                    babl_component ("B'a"),
+                                    babl_component ("Ra"),
+                                    babl_component ("Ga"),
+                                    babl_component ("Ba"),
                                     babl_component ("A"),
                                     NULL);
         }
@@ -460,17 +460,17 @@ file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-funct
       alpha           = TRUE;
       if (tsvals->save_transp_pixels)
         {
-          format = babl_format_new (babl_model ("Y'A"),
+          format = babl_format_new (babl_model ("YA"),
                                     type,
-                                    babl_component ("Y'"),
+                                    babl_component ("Y"),
                                     babl_component ("A"),
                                     NULL);
         }
       else
         {
-          format = babl_format_new (babl_model ("Y'aA"),
+          format = babl_format_new (babl_model ("YaA"),
                                     type,
-                                    babl_component ("Y'a"),
+                                    babl_component ("Ya"),
                                     babl_component ("A"),
                                     NULL);
         }

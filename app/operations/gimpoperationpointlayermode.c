@@ -152,7 +152,7 @@ gimp_operation_point_layer_mode_prepare (GeglOperation *operation)
   if (self->linear)
     format = babl_format ("RGBA float");
   else
-    format = babl_format ("R'G'B'A float");
+    format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);

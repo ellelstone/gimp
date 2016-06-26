@@ -124,10 +124,10 @@ gimp_pattern_load (GimpContext   *context,
 
   switch (header.bytes)
     {
-    case 1: format = babl_format ("Y' u8");      break;
-    case 2: format = babl_format ("Y'A u8");     break;
-    case 3: format = babl_format ("R'G'B' u8");  break;
-    case 4: format = babl_format ("R'G'B'A u8"); break;
+    case 1: format = babl_format ("Y u8");      break;
+    case 2: format = babl_format ("YA u8");     break;
+    case 3: format = babl_format ("RGB u8");  break;
+    case 4: format = babl_format ("RGBA u8"); break;
     }
 
   pattern->mask = gimp_temp_buf_new (header.width, header.height, format);

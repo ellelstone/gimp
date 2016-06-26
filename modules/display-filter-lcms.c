@@ -260,8 +260,8 @@ cdisplay_lcms_changed (GimpColorDisplay *display)
   lcms->transform =
     gimp_widget_get_color_transform (widget,
                                      config, src_profile,
-                                     babl_format ("R'G'B'A float"),
-                                     babl_format ("R'G'B'A float"));
+                                     babl_format ("RGBA float"),
+                                     babl_format ("RGBA float"));
 }
 
 static GimpColorProfile *

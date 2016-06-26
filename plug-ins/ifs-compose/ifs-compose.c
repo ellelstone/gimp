@@ -1269,9 +1269,9 @@ ifs_compose (gint32 drawable_id)
   GimpRGB     color;
 
   if (alpha)
-    format = babl_format ("R'G'B'A u8");
+    format = babl_format ("RGBA u8");
   else
-    format = babl_format ("R'G'B' u8");
+    format = babl_format ("RGB u8");
 
   num_bands = ceil ((gdouble) (width * height * SQR (ifsvals.subdivide) * 5)
                    / (1024 * ifsvals.max_memory));

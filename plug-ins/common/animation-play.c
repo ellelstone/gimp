@@ -1147,7 +1147,7 @@ render_frame (gint32 whichframe)
 
   /* Fetch and scale the whole raw new frame */
   gegl_buffer_get (buffer, GEGL_RECTANGLE (0, 0, drawing_width, drawing_height),
-                   drawing_scale, babl_format ("R'G'B'A u8"),
+                   drawing_scale, babl_format ("RGBA u8"),
                    rawframe, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
   /* Number of pixels. */

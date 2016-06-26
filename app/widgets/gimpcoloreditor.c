@@ -165,7 +165,7 @@ gimp_color_editor_init (GimpColorEditor *editor)
   editor->edit_bg = FALSE;
 
   gimp_rgba_set (&rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
 
   gtk_widget_style_get (GTK_WIDGET (editor),
                         "content-spacing",  &content_spacing,
@@ -512,7 +512,7 @@ gimp_color_editor_set_color (GimpColorEditor *editor,
 {
   GimpLch lch;
 
-  babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), rgb, &lch, 1);
+  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), rgb, &lch, 1);
 
   g_signal_handlers_block_by_func (editor->notebook,
                                    gimp_color_editor_color_changed,

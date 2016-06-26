@@ -1003,7 +1003,7 @@ load_image (const gchar  *filename,
   buffer = gimp_drawable_get_buffer (layer);
 
   gegl_buffer_set (buffer, GEGL_RECTANGLE (0, 0, width, height), 0,
-                   babl_format ("R'G'B'A u8"),
+                   babl_format ("RGBA u8"),
                    pixels, GEGL_AUTO_ROWSTRIDE);
 
   g_object_unref (buffer);

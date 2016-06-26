@@ -116,7 +116,7 @@ gimp_display_shell_profile_update (GimpDisplayShell *shell)
     }
   else
     {
-      dest_format = babl_format ("R'G'B'A u8");
+      dest_format = babl_format ("RGBA u8");
     }
 
   g_printerr ("src_profile: %s\n"

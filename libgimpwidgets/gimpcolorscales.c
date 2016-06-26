@@ -402,11 +402,11 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
 
   if ((i >= GIMP_COLOR_SELECTOR_HUE) && (i <= GIMP_COLOR_SELECTOR_LIGHTNESS))
     {
-      babl_process (babl_fish ("CIE LCH(ab) alpha double", "R'G'B'A double"), &selector->lch, &selector->rgb, 1);
+      babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &selector->lch, &selector->rgb, 1);
     }
   else if ((i >= GIMP_COLOR_SELECTOR_RED) && (i <= GIMP_COLOR_SELECTOR_BLUE))
     {
-      babl_process (babl_fish ("R'G'B'A double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+      babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
     }
 
       selector->rgb.r = CLAMP (selector->rgb.r, 0.0, 1.0);

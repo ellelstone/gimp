@@ -472,7 +472,7 @@ add_cursor_image (gint32      image,
                                    GEGL_RECTANGLE (0, 0,
                                                    gimp_drawable_width  (layer),
                                                    gimp_drawable_height (layer)),
-                                   0, babl_format ("R'G'B'A u8"),
+                                   0, babl_format ("RGBA u8"),
                                    GEGL_ACCESS_READWRITE, GEGL_ABYSS_NONE);
   roi = &iter->roi[0];
 

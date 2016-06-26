@@ -221,11 +221,11 @@ gimp_gegl_dodgeburn (GeglBuffer          *src_buffer,
     exposure = -exposure;
 
   iter = gegl_buffer_iterator_new (src_buffer, src_rect, 0,
-                                   babl_format ("R'G'B'A float"),
+                                   babl_format ("RGBA float"),
                                    GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter, dest_buffer, dest_rect, 0,
-                            babl_format ("R'G'B'A float"),
+                            babl_format ("RGBA float"),
                             GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   switch (mode)

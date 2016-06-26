@@ -194,7 +194,7 @@ cdisplay_gamma_convert_buffer (GimpColorDisplay *display,
   one_over_gamma = 1.0 / gamma->gamma;
 
   iter = gegl_buffer_iterator_new (buffer, area, 0,
-                                   babl_format ("R'G'B'A float"),
+                                   babl_format ("RGBA float"),
                                    GEGL_ACCESS_READWRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

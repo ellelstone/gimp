@@ -2468,7 +2468,7 @@ save_ps_preview (GOutputStream  *output,
   switch (drawable_type)
     {
     case GIMP_GRAY_IMAGE:
-      format = babl_format ("Y' u8");
+      format = babl_format ("Y u8");
       break;
 
     case GIMP_INDEXED_IMAGE:
@@ -2479,7 +2479,7 @@ save_ps_preview (GOutputStream  *output,
 
     case GIMP_RGB_IMAGE:
     default:
-      format = babl_format ("R'G'B' u8");
+      format = babl_format ("RGB u8");
       break;
     }
 
@@ -2634,7 +2634,7 @@ save_gray (GOutputStream  *output,
   gboolean    level2 = (psvals.level > 1);
 
   buffer = gimp_drawable_get_buffer (drawable_ID);
-  format = babl_format ("Y' u8");
+  format = babl_format ("Y u8");
   bpp    = babl_format_get_bytes_per_pixel (format);
   width  = gegl_buffer_get_width (buffer);
   height = gegl_buffer_get_height (buffer);
@@ -3152,7 +3152,7 @@ save_rgb (GOutputStream  *output,
   gboolean    level2 = (psvals.level > 1);
 
   buffer = gimp_drawable_get_buffer (drawable_ID);
-  format = babl_format ("R'G'B' u8");
+  format = babl_format ("RGB u8");
   bpp    = babl_format_get_bytes_per_pixel (format);
   width  = gegl_buffer_get_width (buffer);
   height = gegl_buffer_get_height (buffer);

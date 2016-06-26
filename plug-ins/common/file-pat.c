@@ -392,22 +392,22 @@ load_image (GFile   *file,
     case 1:
       base_type = GIMP_GRAY;
       image_type = GIMP_GRAY_IMAGE;
-      file_format = babl_format ("Y' u8");
+      file_format = babl_format ("Y u8");
       break;
     case 2:
       base_type = GIMP_GRAY;
       image_type = GIMP_GRAYA_IMAGE;
-      file_format = babl_format ("Y'A u8");
+      file_format = babl_format ("YA u8");
       break;
     case 3:
       base_type = GIMP_RGB;
       image_type = GIMP_RGB_IMAGE;
-      file_format = babl_format ("R'G'B' u8");
+      file_format = babl_format ("RGB u8");
       break;
     case 4:
       base_type = GIMP_RGB;
       image_type = GIMP_RGBA_IMAGE;
-      file_format = babl_format ("R'G'B'A u8");
+      file_format = babl_format ("RGBA u8");
       break;
     default:
       g_message ("Unsupported pattern depth: %d\n"
@@ -506,21 +506,21 @@ save_image (GFile   *file,
   switch (gimp_drawable_type (drawable_ID))
     {
     case GIMP_GRAY_IMAGE:
-      file_format = babl_format ("Y' u8");
+      file_format = babl_format ("Y u8");
       break;
 
     case GIMP_GRAYA_IMAGE:
-      file_format = babl_format ("Y'A u8");
+      file_format = babl_format ("YA u8");
       break;
 
     case GIMP_RGB_IMAGE:
     case GIMP_INDEXED_IMAGE:
-      file_format = babl_format ("R'G'B' u8");
+      file_format = babl_format ("RGB u8");
       break;
 
     case GIMP_RGBA_IMAGE:
     case GIMP_INDEXEDA_IMAGE:
-      file_format = babl_format ("R'G'B'A u8");
+      file_format = babl_format ("RGBA u8");
       break;
 
     default:

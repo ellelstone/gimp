@@ -227,7 +227,7 @@ colorsel_cmyk_set_color (GimpColorSelector *selector,
       rgb_values[2] = rgb->b;
 
       gimp_color_transform_process_pixels (module->rgb2cmyk,
-                                           babl_format ("R'G'B' double"),
+                                           babl_format ("RGB double"),
                                            rgb_values,
                                            babl_format ("CMYK double"),
                                            cmyk_values,
@@ -337,7 +337,7 @@ colorsel_cmyk_adj_update (GtkAdjustment *adj,
       gimp_color_transform_process_pixels (module->rgb2cmyk,
                                            babl_format ("CMYK double"),
                                            cmyk_values,
-                                           babl_format ("R'G'B' double"),
+                                           babl_format ("RGB double"),
                                            rgb_values,
                                            1);
 
@@ -402,7 +402,7 @@ colorsel_cmyk_config_changed (ColorselCmyk *module)
   flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
 
   module->rgb2cmyk = gimp_color_transform_new (rgb_profile,
-                                               babl_format ("R'G'B' double"),
+                                               babl_format ("RGB double"),
                                                cmyk_profile,
                                                babl_format ("CMYK double"),
                                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
@@ -410,7 +410,7 @@ colorsel_cmyk_config_changed (ColorselCmyk *module)
   module->cmyk2rgb = gimp_color_transform_new (cmyk_profile,
                                                babl_format ("CMYK double"),
                                                rgb_profile,
-                                               babl_format ("R'G'B' double"),
+                                               babl_format ("RGB double"),
                                                GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
                                                flags);
 
