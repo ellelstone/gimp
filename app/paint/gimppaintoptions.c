@@ -294,7 +294,7 @@ gimp_paint_options_class_init (GimpPaintOptionsClass *klass)
                            "jitter-amount",
                            _("Amount"),
                            _("Distance of scattering"),
-                           0.0, 50.0, DEFAULT_JITTER_AMOUNT,
+                           0.0, 2.5, DEFAULT_JITTER_AMOUNT,
                            GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_DYNAMICS_EXPANDED,
