@@ -85,30 +85,27 @@ gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
  *
  * Since: elle's version of 2.10
  **/
+
 void gimp_color_profile_get_colorants (GimpColorProfile *profile)
 {
   GimpMatrix3       matrix = { 0, };
-  double *colorants;
   if (gimp_color_profile_is_rgb (profile))
   {
-    colorants = malloc( 9 * sizeof(double));
     colorant_babl = babl_format ("Y u8");
     gimp_color_profile_get_rgb_matrix_colorants ( profile, &matrix );
-    //printf("gimpcolorprofile.c gimp_color_profile_get_colorants\n");
-    colorants[0]= matrix.coeff[0][0];
-    colorants[1]= matrix.coeff[0][1];
-    colorants[2]= matrix.coeff[0][2];
-    colorants[3]= matrix.coeff[1][0];
-    colorants[4]= matrix.coeff[1][1];
-    colorants[5]= matrix.coeff[1][2];
-    colorants[6]= matrix.coeff[2][0];
-    colorants[7]= matrix.coeff[2][1];
-    colorants[8]= matrix.coeff[2][2];
-    /** Uncomment below to print values to screen:
-    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorants[1], colorants[4], colorants[7]);*/
 
-    colorant_data = (double *)malloc(sizeof(double));
-    colorant_data = &colorants[0];
+    colorant_data[0]= matrix.coeff[0][0];
+    colorant_data[1]= matrix.coeff[0][1];
+    colorant_data[2]= matrix.coeff[0][2];
+    colorant_data[3]= matrix.coeff[1][0];
+    colorant_data[4]= matrix.coeff[1][1];
+    colorant_data[5]= matrix.coeff[1][2];
+    colorant_data[6]= matrix.coeff[2][0];
+    colorant_data[7]= matrix.coeff[2][1];
+    colorant_data[8]= matrix.coeff[2][2];
+    /** Uncomment below to print values to screen:
+    printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);*/
+
     babl_set_user_data (colorant_babl, colorant_data);
   }
 }
