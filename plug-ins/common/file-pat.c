@@ -124,7 +124,7 @@ query (void)
                           "Tim Newsome",
                           "1997",
                           N_("GIMP pattern"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -199,7 +199,6 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_ID, "PAT",
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)
@@ -511,16 +510,6 @@ save_image (GFile   *file,
 
     case GIMP_GRAYA_IMAGE:
       file_format = babl_format ("YA u8");
-      break;
-
-    case GIMP_RGB_IMAGE:
-    case GIMP_INDEXED_IMAGE:
-      file_format = babl_format ("RGB u8");
-      break;
-
-    case GIMP_RGBA_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
-      file_format = babl_format ("RGBA u8");
       break;
 
     default:

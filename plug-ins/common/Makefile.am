@@ -55,6 +55,7 @@ libexec_PROGRAMS = \
 	$(FILE_JP2_LOAD) \
 	$(FILE_PDF_LOAD) \
 	$(FILE_PDF_SAVE) \
+	file-pat \
 	file-png \
 	file-psp \
 	metadata \
@@ -239,6 +240,24 @@ file_jp2_load_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_jp2_load_RC)
+
+file_pat_SOURCES = \
+	file-pat.c
+
+file_pat_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_pat_RC)
 
 file_pdf_load_CFLAGS = $(POPPLER_CFLAGS)
 
