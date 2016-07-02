@@ -442,7 +442,7 @@ gimp_fill_options_create_buffer (GimpFillOptions     *options,
 
         dest_buffer = gegl_buffer_new (gegl_buffer_get_extent (src_buffer),
                                        gegl_buffer_get_format (src_buffer));
-
+ printf("app/core/gimpfilloptions.c: gimp_fill_options_create_buffer case - GIMP_FILL_STYLE_PATTERN:- src_profile  = gimp_babl_format_get_color_profile (format);\n");
         src_profile  = gimp_babl_format_get_color_profile (format);
         dest_profile = gimp_color_managed_get_color_profile (GIMP_COLOR_MANAGED (drawable));
 

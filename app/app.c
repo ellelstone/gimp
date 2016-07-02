@@ -332,17 +332,17 @@ app_initialize_colorants ()
   colorant_babl = babl_format ("Y u8");
   colorant_data = malloc( 9 * sizeof(double));
 
-  colorant_data[0]= 0.43603516;
-  colorant_data[1]= 0.22248840;
-  colorant_data[2]= 0.01391602;
-  colorant_data[3]= 0.38511658;
-  colorant_data[4]= 0.71690369;
-  colorant_data[5]= 0.09706116;
-  colorant_data[6]= 0.14305115;
-  colorant_data[7]= 0.06060791;
-  colorant_data[8]= 0.71392822;
+  colorant_data[0] =  0.43603516;
+  colorant_data[1] =  0.22248840;
+  colorant_data[2] =  0.01391602;
+  colorant_data[3] =  0.38511658;
+  colorant_data[4] =  0.71690369;
+  colorant_data[5] =  0.09706116;
+  colorant_data[6] =  0.14305115;
+  colorant_data[7] =  0.06060791;
+  colorant_data[8] =  0.71392822;
   /* Uncomment below to print values to screen:*/
-  printf("app_initialize_colorants: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+  printf("app_initialize_colorants to built-in linear gamma sRGB: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
 
   babl_set_user_data (colorant_babl, colorant_data);
 }

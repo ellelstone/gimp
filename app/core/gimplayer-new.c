@@ -235,7 +235,6 @@ gimp_layer_new_convert_buffer (GimpLayer         *layer,
   if (! src_profile)
     {
       const Babl *src_format = gegl_buffer_get_format (src_buffer);
-
       src_profile = gimp_babl_format_get_color_profile (src_format);
     }
 

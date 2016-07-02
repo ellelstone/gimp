@@ -345,9 +345,10 @@ cdisplay_proof_changed (GimpColorDisplay *display)
 
   if (! proof->profile)
     return;
-//printf("modules/display-filter-proof.c: gimp_color_profile_new_rgb_srgb\n");
-  rgb_profile = gimp_color_profile_new_rgb_srgb ();
 
+  rgb_profile = gimp_color_profile_new_rgb_built_in ();//elle: why is sRGB called here?
+//elle: Should this be the built-in RGB profile? Or the active image profile?
+printf("display-filter-proof.c cdisplay_proof_changed: rgb_profile = gimp_color_profile_new_rgb_built_in ();\n");
   file = g_file_new_for_path (proof->profile);
   proof_profile = gimp_color_profile_new_from_file (file, NULL);
   g_object_unref (file);
@@ -365,7 +366,7 @@ cdisplay_proof_changed (GimpColorDisplay *display)
                                            rgb_profile,
                                            babl_format ("RGBA float"),
                                            proof_profile,
-                                           proof->intent,
+                                           proof->intent,//elle: should this be proof->display?
                                            proof->intent,
                                            flags);
 

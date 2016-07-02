@@ -204,11 +204,6 @@ gimp_color_transform_new (GimpColorProfile         *src_profile,
   g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (dest_profile), NULL);
   g_return_val_if_fail (dest_format != NULL, NULL);
 
-/*  if (gimp_color_transform_can_gegl_copy (src_profile, dest_profile))
-{printf("gimp_color_transform_new gimp_color_transform_can_gegl_copy return NULL\n");
-      return NULL;
-}
-printf("gimp_color_transform_new apparently gegl can't copy\n");*/
   transform = g_object_new (GIMP_TYPE_COLOR_TRANSFORM, NULL);
 
   priv = transform->priv;
@@ -519,37 +514,6 @@ gimp_color_transform_process_buffer (GimpColorTransform  *transform,
  *               gegl_buffer_copy(), babl_process() or similar.
  *
  * Since: 2.10
- * Elle would like to know why this is a public function
- * as far as Elle can tell, this function always returns FALSE;
+ * Elle: this function seems to always return FALSE,
+ * so it's been removed.
  **/
-/*gboolean
-gimp_color_transform_can_gegl_copy (GimpColorProfile *src_profile,
-                                    GimpColorProfile *dest_profile)
-{
-  static GimpColorProfile *srgb_profile        = NULL;
-  static GimpColorProfile *gray_profile        = NULL;
-printf("\nlibgimpcolor/gimpcolortransform.c: gimp_color_transform_can_gegl_copy\n");
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (src_profile), FALSE);
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (dest_profile), FALSE);
-
-  if (gimp_color_profile_is_equal (src_profile, dest_profile))
-    return TRUE;
-printf("gimp_color_transform_can_gegl_copy got past the first return TRUE, so the src/dest profiles are not equal\n");
-  if (! srgb_profile)
-    {printf("gimp_color_transform_can_gegl_copy 'if (! srgb_profile)'\n");
-      srgb_profile        = gimp_color_profile_new_rgb_srgb ();
-      gray_profile        = gimp_color_profile_new_d65_gray_srgb_trc ();
-    }
-
-  if ((gimp_color_profile_is_equal (src_profile, srgb_profile)        ||
-       gimp_color_profile_is_equal (src_profile, gray_profile))
-      &&
-      (gimp_color_profile_is_equal (dest_profile, srgb_profile)        ||
-       gimp_color_profile_is_equal (dest_profile, gray_profile))
-      )
-    {printf("gimp_color_transform_can_gegl_copy GEGL CAN COPY!!!!!!!!!!!!!!!!!!!!\n");
-      return TRUE;
-    }
-printf("gimp_color_transform_can_gegl_copy return FALSE is about to be executed\n\n");
-  return FALSE;
-}*/

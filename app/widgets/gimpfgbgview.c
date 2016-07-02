@@ -246,9 +246,8 @@ gimp_fg_bg_view_create_transform (GimpFgBgView *view)
   if (view->color_config)
     {
       static GimpColorProfile *profile = NULL;
-//printf("widgets/gimpfgbgview.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_srgb ();
+        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
 
       view->transform =
         gimp_widget_get_color_transform (GTK_WIDGET (view),

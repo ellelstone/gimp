@@ -283,7 +283,7 @@ gimp_image_get_color_profile (GimpImage *image)
 {
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
 
-  GimpColorProfile *profile;
+  GimpColorProfile *profile = NULL;//elle added to troubleshoot a segfault
   profile = GIMP_IMAGE_GET_PRIVATE (image)->color_profile;
   if (! profile) profile = gimp_image_get_builtin_color_profile (image);
   gimp_color_profile_get_colorants (profile);
@@ -632,7 +632,12 @@ _gimp_image_free_color_profile (GimpImage *image)
 void
 _gimp_image_update_color_profile (GimpImage          *image,
                                   const GimpParasite *icc_parasite)
-{
+{ printf("app/core/gimpimage-color-profile.c: _gimp_image_update_color_profile\n");
+//This sets up a bunch of stored? conversions between the image profile
+//and the built-in sRGB profile. This should probably use the
+//image colorants, not the sRGB colorants, in which case this becomes a
+//case of using LCMS to change the buffer format?
+//Which seems like going around the barn to get to the front door.
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
 
   _gimp_image_free_color_profile (image);
@@ -648,8 +653,7 @@ _gimp_image_update_color_profile (GimpImage          *image,
         {
           GimpColorProfile        *srgb_profile;
           GimpColorTransformFlags  flags = 0;
-//printf("gimpimage-color-profile.c: _gimp_image_update_color_profile - if (private->color_profile) gimp_color_profile_new_rgb_srgb\n");
-          srgb_profile = gimp_color_profile_new_rgb_srgb ();
+          srgb_profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
 
           flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
           flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;

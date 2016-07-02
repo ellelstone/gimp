@@ -1397,7 +1397,7 @@ gimp_image_color_managed_get_color_profile (GimpColorManaged *managed)
     profile = gimp_image_get_color_profile (image);
 
   if (! profile)
-    profile = gimp_image_get_builtin_color_profile (image);
+    profile = gimp_image_get_builtin_color_profile (image);//needs built-in sRGB profile
 
   return profile;
 }
@@ -3353,16 +3353,16 @@ gimp_image_parasite_attach (GimpImage          *image,
   if (strcmp (name, GIMP_ICC_PROFILE_PARASITE_NAME) == 0)
     {
       GimpColorProfile *profile;
-      GimpColorProfile *builtin;
+//      GimpColorProfile *builtin;
 
       profile =
         gimp_color_profile_new_from_icc_profile (gimp_parasite_data (parasite),
                                                  gimp_parasite_data_size (parasite),
                                                  NULL);
-      builtin = gimp_image_get_builtin_color_profile (image);
+//      builtin = gimp_image_get_builtin_color_profile (image);//needs built-in sRGB profile
 
-      if (gimp_color_profile_is_equal (profile, builtin))
-        gimp_image_parasite_detach (image, GIMP_ICC_PROFILE_PARASITE_NAME);
+/*      if (gimp_color_profile_is_equal (profile, builtin))
+        gimp_image_parasite_detach (image, GIMP_ICC_PROFILE_PARASITE_NAME);*/
 
       g_object_unref (profile);
     }

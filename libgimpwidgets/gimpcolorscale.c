@@ -1001,9 +1001,8 @@ gimp_color_scale_create_transform (GimpColorScale *scale)
       static GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("cairo-RGB24");
-//printf("libgimpwidgets/gimpcolorscale.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_srgb ();
+        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
 
       priv->transform = gimp_widget_get_color_transform (GTK_WIDGET (scale),
                                                          priv->config,

@@ -64,10 +64,12 @@ struct _GimpColorProfileClass
 
 GType              gimp_color_profile_get_type              (void) G_GNUC_CONST;
 
-GimpColorProfile * gimp_color_profile_new_rgb_srgb          (void);
+GimpColorProfile * gimp_color_profile_new_rgb_from_colorants          (void);
+
+GimpColorProfile * gimp_color_profile_new_rgb_built_in          (void);
 GimpColorProfile * gimp_color_profile_new_rgb_adobe         (void);
 
-GimpColorProfile * gimp_color_profile_new_d65_gray_srgb_trc (void);
+GimpColorProfile * gimp_color_profile_new_gray_built_in (void);
 GimpColorProfile * gimp_color_profile_new_d50_gray_lab_trc  (void);
 
 GimpColorProfile * gimp_color_profile_new_from_file         (GFile             *file,
@@ -107,7 +109,7 @@ const Babl       * gimp_color_profile_get_format            (const Babl        *
 
 void               gimp_color_profile_get_colorants         (GimpColorProfile *profile);
 
-GimpColorProfile * gimp_color_profile_make_builtin_rgb_profile (void);
+//GimpColorProfile * gimp_color_profile_make_builtin_srgb_profile (void);
 
 G_END_DECLS
 

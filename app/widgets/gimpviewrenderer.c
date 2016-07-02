@@ -1111,10 +1111,8 @@ gimp_view_renderer_get_color_transform (GimpViewRenderer *renderer,
   else
     {
       static GimpColorProfile *srgb_profile = NULL;
-//printf("widgets/gimpviewrenderer.c: gimp_color_profile_new_rgb_srgb\n");
       if (G_UNLIKELY (! srgb_profile))
-        srgb_profile = gimp_color_profile_new_rgb_srgb ();
-
+        srgb_profile = gimp_color_profile_new_rgb_built_in ();
       profile = srgb_profile;
     }
 

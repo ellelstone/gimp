@@ -118,7 +118,7 @@ gimp_image_convert_type (GimpImage          *image,
       new_type == GIMP_GRAY)
     {
       if (! dest_profile && gimp_image_get_color_profile (image))
-        dest_profile = gimp_image_get_builtin_color_profile (image);
+        dest_profile = gimp_image_get_builtin_color_profile (image);//needs built-in sRGB profile
     }
 
   for (list = all_layers, nth_layer = 0;

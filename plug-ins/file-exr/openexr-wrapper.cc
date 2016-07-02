@@ -234,9 +234,10 @@ struct _EXRLoader
                                           chromaticities.blue.y,
                                           whiteLuminance } };
 
-    // get the primaries + wp from GIMP's internal linear sRGB profile
-    //printf("plug-ins/file-exr: gimp_color_profile_make_builtin_rgb_profile\n");
-    linear_srgb_profile = gimp_color_profile_make_builtin_rgb_profile ();
+/*    // get the primaries + wp from GIMP's internal linear sRGB profile
+    linear_srgb_profile = gimp_color_profile_new_rgb_built_in ();
+    //elle: this just makes the built-in profile, which
+    //as of June 2016 is the regular sRGB profile, so it's not linear.
     linear_srgb_lcms = gimp_color_profile_get_lcms_profile (linear_srgb_profile);
 
     gimp_r_XYZ = (cmsCIEXYZ *) cmsReadTag (linear_srgb_lcms, cmsSigRedColorantTag);
@@ -260,7 +261,7 @@ struct _EXRLoader
       return linear_srgb_profile;
 
     // nope, it's something else. Clean up and build a new profile
-    g_object_unref (linear_srgb_profile);
+    g_object_unref (linear_srgb_profile);*/
 
     // TODO: maybe factor this out into libgimpcolor/gimpcolorprofile.h ?
     double Parameters[2] = { 1.0, 0.0 };
