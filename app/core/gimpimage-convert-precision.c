@@ -52,8 +52,8 @@ gimp_image_convert_precision (GimpImage     *image,
                               gint           mask_dither_type,
                               GimpProgress  *progress)
 {
-  GimpColorProfile *old_profile;
-  GimpColorProfile *new_profile = NULL;
+  //GimpColorProfile *old_profile;
+  //GimpColorProfile *new_profile = NULL;
   //const Babl       *old_format;
   //const Babl       *new_format;
   GList            *all_drawables;
@@ -109,8 +109,8 @@ gimp_image_convert_precision (GimpImage     *image,
   /*  Push the image precision to the stack  */
   gimp_image_undo_push_image_precision (image, NULL);
 
-  old_profile = gimp_image_get_color_profile (image);
-  new_profile = old_profile;/*elle: prevents unwanted ICC profile conversion*/
+  //old_profile = gimp_image_get_color_profile (image);
+  //new_profile = old_profile;/*elle: prevents unwanted ICC profile conversion*/
 
   /*  Set the new precision  */
   g_object_set (image, "precision", precision, NULL);
@@ -134,7 +134,7 @@ gimp_image_convert_precision (GimpImage     *image,
       gimp_drawable_convert_type (drawable, image,
                                   gimp_drawable_get_base_type (drawable),
                                   precision,
-                                  new_profile,
+                                  /*new_profile*/NULL,
                                   dither_type,
                                   mask_dither_type,
                                   TRUE, sub_progress);
@@ -142,13 +142,13 @@ gimp_image_convert_precision (GimpImage     *image,
 
   g_list_free (all_drawables);
 
-  if (new_profile)
+/*  if (new_profile)
     {
       if (new_profile != old_profile)
         gimp_image_set_color_profile (image, new_profile, NULL);
 
       g_object_unref (new_profile);
-    }
+    }*/
 
   /*  convert the selection mask  */
   {
