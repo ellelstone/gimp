@@ -731,7 +731,6 @@ static GimpColorProfile *
 gimp_drawable_get_color_profile (GimpColorManaged *managed)
 {
   const Babl *format = gimp_drawable_get_format (GIMP_DRAWABLE (managed));
- printf("app/core/gimpdrawable.c - gimp_drawable_get_color_profile: return gimp_babl_format_get_color_profile (format);\n");
   return gimp_babl_format_get_color_profile (format);
 }
 
