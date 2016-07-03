@@ -919,11 +919,12 @@ gimp_color_area_create_transform (GimpColorArea *area)
 
   if (priv->config)
     {
-      static GimpColorProfile *profile = NULL;
+      //static
+      GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("cairo-RGB24");
-      if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
+      //if (G_UNLIKELY (! profile))
+        profile = gimp_color_profile_new_rgb_from_colorants();
 
       priv->transform = gimp_widget_get_color_transform (GTK_WIDGET (area),
                                                          priv->config,

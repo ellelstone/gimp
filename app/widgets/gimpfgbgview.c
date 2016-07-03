@@ -245,9 +245,10 @@ gimp_fg_bg_view_create_transform (GimpFgBgView *view)
 {
   if (view->color_config)
     {
-      static GimpColorProfile *profile = NULL;
-      if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
+      GimpColorProfile *profile = NULL;
+//printf("app/widgets/gimpfgbgview.c gimp_fg_bg_view_create_transform should be getting the profile from colorants 1\n");
+//      if (G_UNLIKELY (! profile))
+          profile = gimp_color_profile_new_rgb_from_colorants ();
 
       view->transform =
         gimp_widget_get_color_transform (GTK_WIDGET (view),
@@ -256,6 +257,7 @@ gimp_fg_bg_view_create_transform (GimpFgBgView *view)
                                          babl_format ("RGBA double"),
                                          babl_format ("RGBA double"));
     }
+//    else printf("app/widgets/gimpfgbgview.c gimp_fg_bg_view_create_transform is not getting the profile from colorants 1\n");
 }
 
 static void

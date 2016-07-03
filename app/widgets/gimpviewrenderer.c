@@ -1105,14 +1105,16 @@ gimp_view_renderer_get_color_transform (GimpViewRenderer *renderer,
   if (GIMP_IS_COLOR_MANAGED (renderer->viewable))
     {
       GimpColorManaged *managed = GIMP_COLOR_MANAGED (renderer->viewable);
-
+//printf("app/widgets/gimpviewrender.c gimp_view_renderer_get_color_transform says (GIMP_IS_COLOR_MANAGED (renderer->viewable))\n");
       profile = gimp_color_managed_get_color_profile (managed);
     }
   else
     {
-      static GimpColorProfile *srgb_profile = NULL;
-      if (G_UNLIKELY (! srgb_profile))
-        srgb_profile = gimp_color_profile_new_rgb_built_in ();
+      //static
+      GimpColorProfile *srgb_profile = NULL;
+//printf("app/widgets/gimpviewrender.c gimp_view_renderer_get_color_transform is about to set profile = srgb_profile (built-in)\n");
+      //if (G_UNLIKELY (! srgb_profile))
+        srgb_profile = gimp_color_profile_new_rgb_from_colorants ();//gimp_color_profile_new_rgb_built_in ();
       profile = srgb_profile;
     }
 

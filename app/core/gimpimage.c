@@ -1397,7 +1397,7 @@ gimp_image_color_managed_get_color_profile (GimpColorManaged *managed)
     profile = gimp_image_get_color_profile (image);
 
   if (! profile)
-    profile = gimp_image_get_builtin_color_profile (image);//needs built-in sRGB profile
+    profile = gimp_image_get_builtin_color_profile (image);//needs built-in RGB profile
 
   return profile;
 }

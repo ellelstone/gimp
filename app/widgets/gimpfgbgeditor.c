@@ -331,10 +331,11 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   editor->rect_width  = rect_w;
   editor->rect_height = rect_h;
 
-
-  if (! editor->transform)
-    gimp_fg_bg_editor_create_transform (editor);
-
+//  if (! editor->transform)
+//    {
+//This transform must be recreated when the image ICC profile changes.
+      gimp_fg_bg_editor_create_transform (editor);
+//    }
   /*  draw the background area  */
 
   if (editor->context)
@@ -668,9 +669,10 @@ gimp_fg_bg_editor_create_transform (GimpFgBgEditor *editor)
 {
   if (editor->color_config)
     {
-      static GimpColorProfile *profile = NULL;
-      if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
+      GimpColorProfile *profile = NULL;
+//printf("app/widgets/gimpfgbgeditor.c gimp_fg_bg_editor_create_transform should be getting the profile from colorants 1\n");
+      //if (G_UNLIKELY (! profile))
+      profile = gimp_color_profile_new_rgb_from_colorants ();
 
       editor->transform =
         gimp_widget_get_color_transform (GTK_WIDGET (editor),
@@ -679,6 +681,7 @@ gimp_fg_bg_editor_create_transform (GimpFgBgEditor *editor)
                                          babl_format ("RGBA double"),
                                          babl_format ("RGBA double"));
     }
+//else printf("app/widgets/gimpfgbgeditor.c gimp_fg_bg_editor_create_transform says there is no color_config\n");
 }
 
 static void

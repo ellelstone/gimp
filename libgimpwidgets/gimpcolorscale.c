@@ -998,11 +998,12 @@ gimp_color_scale_create_transform (GimpColorScale *scale)
 
   if (priv->config)
     {
-      static GimpColorProfile *profile = NULL;
+      //static
+      GimpColorProfile *profile = NULL;
 
       const Babl *format = babl_format ("cairo-RGB24");
-      if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_built_in ();
+      //if (G_UNLIKELY (! profile))
+        profile = gimp_color_profile_new_rgb_from_colorants();
 
       priv->transform = gimp_widget_get_color_transform (GTK_WIDGET (scale),
                                                          priv->config,

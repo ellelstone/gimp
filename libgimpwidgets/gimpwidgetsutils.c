@@ -592,6 +592,7 @@ get_display_profile (GtkWidget       *widget,
     profile = gimp_color_config_get_display_color_profile (config, NULL);
   if (! profile)
     profile = gimp_color_profile_new_rgb_built_in ();
+
   return profile;
 }
 

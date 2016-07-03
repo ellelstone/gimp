@@ -264,11 +264,11 @@ gimp_buffer_get_new_pixbuf (GimpViewable *viewable,
 
   if (buffer->color_profile)
     {
-      GimpColorProfile *srgb_profile;
+      GimpColorProfile *profile;
       GimpTempBuf      *temp_buf;
       GeglBuffer       *src_buf;
       GeglBuffer       *dest_buf;
-      srgb_profile = gimp_color_profile_new_rgb_from_colorants();
+      profile = gimp_color_profile_new_rgb_from_colorants ();
 
       temp_buf = gimp_temp_buf_new (width, height,
                                     gimp_buffer_get_format (buffer));
@@ -290,7 +290,7 @@ gimp_buffer_get_new_pixbuf (GimpViewable *viewable,
                                        buffer->color_profile,
                                        dest_buf,
                                        GEGL_RECTANGLE (0, 0, 0, 0),
-                                       srgb_profile,
+                                       profile,
                                        GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
                                        TRUE,
                                        NULL);
@@ -298,7 +298,7 @@ gimp_buffer_get_new_pixbuf (GimpViewable *viewable,
       g_object_unref (src_buf);
       g_object_unref (dest_buf);
 
-      g_object_unref (srgb_profile);
+      g_object_unref (profile);
     }
   else
     {
@@ -390,7 +390,7 @@ gimp_buffer_new_from_pixbuf (GdkPixbuf   *pixbuf,
                              const gchar *name,
                              gint         offset_x,
                              gint         offset_y)
-{
+{//This function is only used in app/widgets/gimpclipboard.c gimp_clipboard_get_buffer
   GimpBuffer       *gimp_buffer;
   GeglBuffer       *buffer;
   guint8           *icc_data;
@@ -415,7 +415,7 @@ gimp_buffer_new_from_pixbuf (GdkPixbuf   *pixbuf,
 
   if (! profile && gdk_pixbuf_get_colorspace (pixbuf) == GDK_COLORSPACE_RGB)
     {
-      profile = gimp_color_profile_new_rgb_from_colorants();
+      profile = gimp_color_profile_new_rgb_from_colorants ();
     }
 
   if (profile)
