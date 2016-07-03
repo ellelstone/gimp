@@ -859,38 +859,15 @@ gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
 /**
  * gimp_color_profile_new_rgb_built_in:
  *
- * This function is a replacement for cmsCreate_sRGBProfile() and
- * returns an sRGB profile that is functionally the same as the
- * ArgyllCMS sRGB.icm profile. "Functionally the same" means it has
- * the same red, green, and blue colorants and the V4 "chad"
- * equivalent of the ArgyllCMS V2 white point. The profile TRC is also
- * functionally equivalent to the ArgyllCMS sRGB.icm TRC and is the
- * same as the LCMS sRGB built-in profile TRC.
+ * Return value: GimpColorProfile from ICC profile made from colorants
+ * retrieved from the active image's ICC profile.
  *
- * The actual primaries in the sRGB specification are
- * red xy:   {0.6400, 0.3300, 1.0}
- * green xy: {0.3000, 0.6000, 1.0}
- * blue xy:  {0.1500, 0.0600, 1.0}
- *
- * The sRGB primaries given below are "pre-quantized" to compensate
- * for hexadecimal quantization during the profile-making process.
- * Unless the profile-making code compensates for this quantization,
- * the resulting profile's red, green, and blue colorants will deviate
- * slightly from the correct XYZ values.
- *
- * LCMS2 doesn't compensate for hexadecimal quantization. The
- * "pre-quantized" primaries below were back-calculated from the
- * ArgyllCMS sRGB.icm profile. The resulting sRGB profile's colorants
- * exactly matches the ArgyllCMS sRGB.icm profile colorants.
- *
- * Return value: the sRGB #GimpColorProfile.
- *
- * Since: 2.10
+ * Since: elle's 2.10
  **/
 GimpColorProfile *
-gimp_color_profile_new_rgb_from_colorants (void)//gimp_color_profile_new_rgb_built_in (void)
+gimp_color_profile_new_rgb_from_colorants (void)
 {
-  GimpColorProfile *new_profile;
+  GimpColorProfile *new_profile = NULL;
   cmsHPROFILE       target_profile;
   cmsCIEXYZ         whitepoint = {0.964199999, 1.000000000, 0.824899998};
   cmsToneCurve     *curve;
@@ -900,7 +877,6 @@ gimp_color_profile_new_rgb_from_colorants (void)//gimp_color_profile_new_rgb_bui
   cmsCIEXYZ blue;
 
   double colorants[3][3], *new_colorant_data;
-  
   new_colorant_data  = babl_get_user_data (colorant_babl);
 
     colorants[0][0] = new_colorant_data[0];
@@ -914,7 +890,8 @@ gimp_color_profile_new_rgb_from_colorants (void)//gimp_color_profile_new_rgb_bui
     colorants[2][0] = new_colorant_data[2];
     colorants[2][1] = new_colorant_data[5];
     colorants[2][2] = new_colorant_data[8];
-    /** Uncomment the code below to print colorants to screen:*/
+    /** Uncomment the code below to print colorants to screen:
+  printf("libgimpcolor/gimpcolorprofile.c gimp_color_profile_new_rgb_from_colorants: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);*/
 
   target_profile = cmsCreateProfilePlaceholder (0);
   cmsSetProfileVersion (target_profile, 4.3);
@@ -959,7 +936,8 @@ gimp_color_profile_new_rgb_built_in_internal (void)
   cmsHPROFILE profile;
 
   /* white point is D65 from the sRGB specs */
-  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
+  //D50 ICC spec white point
+  cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0}; //{ 0.3127, 0.3290, 1.0 };
 
   /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
    * from the sRGB specs, modified to properly account for hexadecimal
@@ -970,9 +948,12 @@ gimp_color_profile_new_rgb_built_in_internal (void)
       /* R { 0.6400, 0.3300, 1.0 }, */
       /* G { 0.3000, 0.6000, 1.0 }, */
       /* B { 0.1500, 0.0600, 1.0 }  */
-      /* R */ { 0.639998686, 0.330010138, 1.0 },
-      /* G */ { 0.300003784, 0.600003357, 1.0 },
-      /* B */ { 0.150002046, 0.059997204, 1.0 }
+      /* R  { 0.639998686, 0.330010138, 1.0 },*/
+      /* G  { 0.300003784, 0.600003357, 1.0 },*/
+      /* B  { 0.150002046, 0.059997204, 1.0 }*/
+{1.0, 0.0, 1.0},
+{0.0, 1.0, 1.0},
+{0.0, 0.0, 1.0}
     };
 
   cmsToneCurve *curve[3];
@@ -998,14 +979,6 @@ gimp_color_profile_new_rgb_built_in_internal (void)
 /**
  * gimp_color_profile_new_rgb_built_in:
  *
- * This function is a replacement for cmsCreate_sRGBProfile() and
- * returns an sRGB profile that is functionally the same as the
- * ArgyllCMS sRGB.icm profile. "Functionally the same" means it has
- * the same red, green, and blue colorants and the V4 "chad"
- * equivalent of the ArgyllCMS V2 white point. The profile TRC is also
- * functionally equivalent to the ArgyllCMS sRGB.icm TRC and is the
- * same as the LCMS sRGB built-in profile TRC.
- *
  * The actual primaries in the sRGB specification are
  * red xy:   {0.6400, 0.3300, 1.0}
  * green xy: {0.3000, 0.6000, 1.0}
@@ -1022,7 +995,7 @@ gimp_color_profile_new_rgb_built_in_internal (void)
  * ArgyllCMS sRGB.icm profile. The resulting sRGB profile's colorants
  * exactly matches the ArgyllCMS sRGB.icm profile colorants.
  *
- * Return value: the sRGB #GimpColorProfile.
+ * Return value: the linear gamma sRGB #GimpColorProfile.
  *
  * Since: 2.10
  **/
