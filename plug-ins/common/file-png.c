@@ -167,8 +167,8 @@ static gboolean  offsets_dialog            (gint              offset_x,
 
 static gboolean  ia_has_transparent_pixels (GeglBuffer       *buffer);
 
-/*static gint      find_unused_ia_color      (GeglBuffer       *buffer,
-                                            gint             *colors);*/
+static gint      find_unused_ia_color      (GeglBuffer       *buffer,
+                                            gint             *colors);
 
 static void      load_defaults             (void);
 static void      save_defaults             (void);
@@ -313,7 +313,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*",//,INDEXED*
+                          "RGB*,GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -333,7 +333,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*",//,INDEXED*
+                          "RGB*,GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args2), 0,
                           save_args2, NULL);
@@ -350,7 +350,7 @@ query (void)
                           "Nick Lamb <njl195@zepler.org.uk>",
                           PLUG_IN_VERSION,
                           N_("PNG image"),
-                          "RGB*,GRAY*",//,INDEXED*
+                          "RGB*,GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args_defaults), 0,
                           save_args_defaults, NULL);
@@ -508,8 +508,7 @@ run (const gchar      *name,
 
           export = gimp_export_image (&image_ID, &drawable_ID, "PNG",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
-                                      GIMP_EXPORT_CAN_HANDLE_GRAY    /*|
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED*/ |
+                                      GIMP_EXPORT_CAN_HANDLE_GRAY    |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)
@@ -771,7 +770,7 @@ on_read_error (png_structp     png_ptr,
   longjmp (png_jmpbuf (png_ptr), 1);
 }
 
-/*static int
+static int
 get_bit_depth_for_palette (int num_palette)
 {
   if (num_palette <= 2)
@@ -782,7 +781,7 @@ get_bit_depth_for_palette (int num_palette)
     return 4;
   else
     return 8;
-}*/
+}
 
 static GimpColorProfile *
 load_color_profile (png_structp   pp,
@@ -934,11 +933,11 @@ load_image (const gchar  *filename,
 
   /*
    * Expand G+tRNS to GA, RGB+tRNS to RGBA
-   */
+
 
   if (png_get_color_type (pp, info) != PNG_COLOR_TYPE_PALETTE &&
       png_get_valid (pp, info, PNG_INFO_tRNS))
-    png_set_expand (pp);
+    png_set_expand (pp);*/
 
   /*
    * Turn on interlace handling... libpng returns just 1 (ie single pass)
@@ -958,20 +957,20 @@ load_image (const gchar  *filename,
 
       png_get_tRNS (pp, info, &alpha_ptr, &num, NULL);
 
-      /* Copy the existing alpha values from the tRNS chunk 
+      // Copy the existing alpha values from the tRNS chunk
       for (i = 0; i < num; ++i)
-        alpha[i] = alpha_ptr[i];*/
+        alpha[i] = alpha_ptr[i];
 
-      /* And set any others to fully opaque (255) 
+      // And set any others to fully opaque (255)
       for (i = num; i < 256; ++i)
         alpha[i] = 255;
 
-      trns = 1; 
-    }*/
-  else
-    {
-      trns = 0;
+      trns = 1;
     }
+  else
+    {*/
+      trns = 0;
+//    }
 
   /*
    * Update the info structures after the transformations take effect
@@ -1133,7 +1132,7 @@ load_image (const gchar  *filename,
 
   empty = 0; /* by default assume no full transparent palette entries */
 
-  if (png_get_color_type (pp, info) & PNG_COLOR_MASK_PALETTE)
+/*  if (png_get_color_type (pp, info) & PNG_COLOR_MASK_PALETTE)
     {
       png_colorp palette;
       int num_palette;
@@ -1141,10 +1140,10 @@ load_image (const gchar  *filename,
       png_get_PLTE (pp, info, &palette, &num_palette);
       if (png_get_valid (pp, info, PNG_INFO_tRNS))
         {
-          for (empty = 0; empty < 256 && alpha[empty] == 0; ++empty)
-            /* Calculates number of fully transparent "empty" entries */;
+          for (empty = 0; empty < 256 && alpha[empty] == 0; ++empty);
+            // Calculates number of fully transparent "empty" entries
 
-          /*  keep at least one entry  */
+          //  keep at least one entry
           empty = MIN (empty, num_palette - 1);
 
           gimp_image_set_colormap (image, (guchar *) (palette + empty),
@@ -1155,7 +1154,7 @@ load_image (const gchar  *filename,
           gimp_image_set_colormap (image, (guchar *) palette,
                                    num_palette);
         }
-    }
+    }*/
 
   bpp = babl_format_get_bytes_per_pixel (file_format);
 
@@ -1559,7 +1558,7 @@ save_image (const gchar  *filename,
     case GIMP_INDEXEDA_IMAGE:
       color_type = PNG_COLOR_TYPE_PALETTE;
       file_format = gimp_drawable_get_format (drawable_ID);
-      /* fix up transparency 
+       fix up transparency
       bit_depth = respin_cmap (pp, info, remap, image_ID, drawable_ID);
       break;*/
 
@@ -1799,11 +1798,11 @@ save_image (const gchar  *filename,
 
   /*
    * Convert unpacked pixels to packed if necessary
-   */
+
 
   if (color_type == PNG_COLOR_TYPE_PALETTE &&
       bit_depth < 8)
-    png_set_packing (pp);
+    png_set_packing (pp);*/
 
   /*
    * Allocate memory for "tile_height" rows and export the image...
@@ -1971,7 +1970,7 @@ ia_has_transparent_pixels (GeglBuffer *buffer)
 
 /* Try to find a color in the palette which isn't actually
  * used in the image, so that we can use it as the transparency
- * index. Taken from gif.c 
+ * index. Taken from gif.c */
 static gint
 find_unused_ia_color (GeglBuffer *buffer,
                       gint       *colors)
@@ -2006,9 +2005,9 @@ find_unused_ia_color (GeglBuffer *buffer,
 
           data += n_components;
         }
-    }*/
+    }
 
-  /* If there is no transparency, ignore alpha. 
+  /* If there is no transparency, ignore alpha. */
   if (trans_used == FALSE)
     return -1;
 
@@ -2016,11 +2015,11 @@ find_unused_ia_color (GeglBuffer *buffer,
     {
       if (ix_used[i] == FALSE)
         return i;
-    }*/
+    }
 
   /* Couldn't find an unused color index within the number of
      bits per pixel we wanted.  Will have to increment the number
-     of colors in the image and assign a transparent pixel there. 
+     of colors in the image and assign a transparent pixel there. */
   if ((*colors) < 256)
     {
       (*colors)++;
@@ -2029,7 +2028,7 @@ find_unused_ia_color (GeglBuffer *buffer,
     }
 
   return -1;
-}*/
+}
 
 
 /*static int
@@ -2048,76 +2047,76 @@ respin_cmap (png_structp   pp,
   before = gimp_image_get_colormap (image_ID, &colors);
   buffer = gimp_drawable_get_buffer (drawable_ID);
 
-  
-   * Make sure there is something in the colormap.
-   
+
+   //Make sure there is something in the colormap.
+
   if (colors == 0)
     {
       before = g_newa (guchar, 3);
       memset (before, 0, sizeof (guchar) * 3);
 
       colors = 1;
-    }*/
+    }
 
-  /* Try to find an entry which isn't actually used in the
-     image, for a transparency index. 
+   //Try to find an entry which isn't actually used in the
+   //image, for a transparency index.
 
   if (ia_has_transparent_pixels (buffer))
     {
       gint transparent = find_unused_ia_color (buffer, &colors);
 
-      if (transparent != -1)*/        /* we have a winner for a transparent
-                                     * index - do like gif2png and swap
-                                     * index 0 and index transparent 
+      if (transparent != -1)        // we have a winner for a transparent
+                                    // index - do like gif2png and swap
+                                    // index 0 and index transparent
         {
           static png_color palette[256];
-          gint      i;*/
+          gint      i;
 
-          /* Set tRNS chunk values for writing later. 
+          // Set tRNS chunk values for writing later.
           pngg.has_trns = TRUE;
           pngg.trans = trans;
-          pngg.num_trans = 1;*/
+          pngg.num_trans = 1;
 
-          /* Transform all pixels with a value = transparent to
-           * 0 and vice versa to compensate for re-ordering in palette
-           * due to png_set_tRNS() 
+          // Transform all pixels with a value = transparent to
+          // 0 and vice versa to compensate for re-ordering in palette
+          // due to png_set_tRNS()
 
           remap[0] = transparent;
           for (i = 1; i <= transparent; i++)
-            remap[i] = i - 1;*/
+            remap[i] = i - 1;
 
-          /* Copy from index 0 to index transparent - 1 to index 1 to
-           * transparent of after, then from transparent+1 to colors-1
-           * unchanged, and finally from index transparent to index 0. 
+          // Copy from index 0 to index transparent - 1 to index 1 to
+          // transparent of after, then from transparent+1 to colors-1
+          // unchanged, and finally from index transparent to index 0.
 
           for (i = 0; i < colors; i++)
             {
               palette[i].red = before[3 * remap[i]];
               palette[i].green = before[3 * remap[i] + 1];
               palette[i].blue = before[3 * remap[i] + 2];
-            }*/
+            }
 
-          /* Set PLTE chunk values for writing later. 
+          // Set PLTE chunk values for writing later.
           pngg.has_plte = TRUE;
           pngg.palette = palette;
           pngg.num_palette = colors;
         }
       else
-        {*/
-          /* Inform the user that we couldn't losslessly save the
-           * transparency & just use the full palette 
+        {
+          // Inform the user that we couldn't losslessly save the
+          // transparency & just use the full palette
           g_message (_("Couldn't losslessly save transparency, "
-                       "saving opacity instead."));*/
+                       "saving opacity instead."));
 
-          /* Set PLTE chunk values for writing later. 
+          // Set PLTE chunk values for writing later.
           pngg.has_plte = TRUE;
           pngg.palette = (png_colorp) before;
           pngg.num_palette = colors;
         }
     }
   else
-    {*/
-      /* Set PLTE chunk values for writing later. 
+    {
+      // Set PLTE chunk values for writing later.
       pngg.has_plte = TRUE;
       pngg.palette = (png_colorp) before;
       pngg.num_palette = colors;

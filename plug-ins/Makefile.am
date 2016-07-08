@@ -27,6 +27,7 @@ endif
 
 SUBDIRS = \
 	$(script_fu)		\
+	$(pygimp)		\
 	$(file_darktable)	\
 	$(file_exr)		\
 	file-fits		\
