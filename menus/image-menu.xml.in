@@ -359,7 +359,6 @@
       <menu action="image-mode-menu" name="Mode">
         <menuitem action="image-convert-rgb" />
         <menuitem action="image-convert-grayscale" />
-<!--        <menuitem action="image-convert-indexed" />-->
 	<separator />
       </menu>
       <menu action="image-precision-menu" name="Precision">
@@ -485,7 +484,7 @@
           <menuitem action="layers-alpha-add" />
           <menuitem action="layers-alpha-remove" />
           <menuitem action="filters-color-to-alpha" />
-<!--          <menuitem action="filters-semi-flatten" />-->
+          <menuitem action="filters-semi-flatten" />
           <menuitem action="filters-threshold-alpha" />
         </placeholder>
         <separator />
@@ -557,7 +556,7 @@
       <menuitem action="tools-hue-saturation" />
       <menuitem action="filters-saturation" />
       <menuitem action="tools-colorize" />
-<!--      <menuitem action="tools-brightness-contrast" />-->
+      <menuitem action="tools-brightness-contrast" />
       <menuitem action="tools-threshold" />
       <menuitem action="tools-levels" />
       <menuitem action="tools-curves" />
@@ -565,14 +564,14 @@
       <separator />
       <placeholder name="Invert">
         <menuitem action="drawable-invert" />
-<!--        <menuitem action="drawable-value-invert" />-->
+        <menuitem action="drawable-value-invert" />
       </placeholder>
       <separator />
       <menu action="colors-auto-menu" name="Auto">
         <menuitem action="drawable-equalize" />
         <menuitem action="drawable-levels-stretch" />
 	<menuitem action="filters-stretch-contrast" />
-<!--	<menuitem action="filters-stretch-contrast-hsv" />-->
+	<menuitem action="filters-stretch-contrast-hsv" />
 	<menuitem action="filters-color-enhance" />
       </menu>
       <menu action="colors-components-menu" name="Components">
@@ -580,18 +579,18 @@
 	<menuitem action="filters-mono-mixer" />
       </menu>
       <menu action="colors-desaturate-menu" name="Desaturate">
-<!--	<menuitem action="filters-c2g" />-->
+	<menuitem action="filters-c2g" />
 	<menuitem action="filters-desaturate" />
 	<menuitem action="filters-mono-mixer" />
-<!--	<menuitem action="filters-sepia" />-->
+	<menuitem action="filters-sepia" />
         <separator />
-      </menu>
+<!--      </menu>
       <menu action="colors-map-menu" name="Map">
         <placeholder name="Colormap" />
-        <separator />
+        <separator />-->
 	<menuitem action="filters-alien-map" />
-<!--	<menuitem action="filters-color-exchange" />-->
-<!--	<menuitem action="filters-color-rotate" />-->
+	<menuitem action="filters-color-exchange" />
+	<menuitem action="filters-color-rotate" />
       </menu>
       <menu action="colors-info-menu" name="Info">
         <menuitem action="dialogs-histogram" />
@@ -653,7 +652,7 @@
         <menuitem action="tools-color-balance" />
         <menuitem action="tools-hue-saturation" />
         <menuitem action="tools-colorize" />
-<!--        <menuitem action="tools-brightness-contrast" />-->
+        <menuitem action="tools-brightness-contrast" />
         <menuitem action="tools-threshold" />
         <menuitem action="tools-levels" />
         <menuitem action="tools-curves" />
@@ -699,7 +698,7 @@
       <menu action="filters-distorts-menu" name="Distorts">
       	<menuitem action="filters-apply-lens" />
       	<menuitem action="filters-emboss" />
-<!--      	<menuitem action="filters-engrave" />-->
+      	<menuitem action="filters-engrave" />
         <menuitem action="filters-lens-distortion" />
         <menuitem action="filters-kaleidoscope" />
         <menuitem action="filters-mosaic" />
@@ -712,7 +711,7 @@
         <menuitem action="filters-whirl-pinch" />
         <menuitem action="filters-wind" />
       </menu>
-<!--      <menu action="filters-light-shadow-menu" name="Light and Shadow">
+      <menu action="filters-light-shadow-menu" name="Light and Shadow">
         <placeholder name="Light">
 	  <menuitem action="filters-supernova" />
 	  <menuitem action="filters-lens-flare" />
@@ -724,7 +723,7 @@
 	</placeholder>
         <separator />
         <placeholder name="Glass" />
-      </menu>-->
+      </menu>
       <menu action="filters-noise-menu" name="Noise">
         <menuitem action="filters-noise-cie-lch" />
         <menuitem action="filters-noise-hsv" />
@@ -742,44 +741,44 @@
       </menu>
       <menu action="filters-generic-menu" name="Generic">
         <menuitem action="filters-convolution-matrix" />
-<!--        <menuitem action="filters-distance-map" />-->
-<!--        <menuitem action="filters-gegl-graph" />-->
+        <menuitem action="filters-distance-map" />
+        <menuitem action="filters-gegl-graph" />
         <menuitem action="drawable-dilate" />
         <menuitem action="drawable-erode" />
       </menu>
-<!--      <menu action="filters-combine-menu" name="Combine" />
+      <menu action="filters-combine-menu" name="Combine" />
       <menu action="filters-artistic-menu" name="Artistic">
-	<menuitem action="filters-apply-canvas" />-->
+	<menuitem action="filters-apply-canvas" />
 <!--	<menuitem action="filters-cartoon" />-->
-<!--	<menuitem action="filters-cubism" />-->
-<!--	<menuitem action="filters-tile-glass" />-->
+	<menuitem action="filters-cubism" />
+	<menuitem action="filters-tile-glass" />
 <!--	<menuitem action="filters-oilify" />-->
-<!--	<menuitem action="filters-photocopy" />-->
-<!--	<menuitem action="filters-softglow" />
+	<menuitem action="filters-photocopy" />
+	<menuitem action="filters-softglow" />
       </menu>
-      <menu action="filters-decor-menu" name="Decor" />-->
+      <menu action="filters-decor-menu" name="Decor" />
       <menu action="filters-map-menu" name="Map">
         <menuitem action="filters-bump-map" />
         <menuitem action="filters-displace" />
-<!--        <menuitem action="filters-fractal-trace" />-->
+        <menuitem action="filters-fractal-trace" />
         <menuitem action="filters-illusion" />
         <menuitem action="filters-panorama-projection" />
         <menuitem action="filters-tile-paper" />
         <menuitem action="filters-tile-seamless" />
       </menu>
-      <menu action="filters-pattern-menu" name="Pattern">
-<!--        <menu action="filters-render-clouds-menu" name="Clouds" />
+      <menu action="filters-render-menu" name="Render">
+        <menu action="filters-render-clouds-menu" name="Clouds" />
         <menu action="filters-render-fractals-menu" name="Fractals" />
         <menu action="filters-render-nature-menu" name="Nature" />
-        <menu action="filters-render-noise-menu" name="Noise">-->
+        <menu action="filters-render-noise-menu" name="Noise">
 	  <menuitem action="filters-noise-cell" />
 	  <menuitem action="filters-noise-perlin" />
 	  <menuitem action="filters-plasma" />
 	  <menuitem action="filters-noise-simplex" />
 	  <menuitem action="filters-noise-solid" />
-<!--	</menu>
+	</menu>
         <menu action="filters-render-pattern-menu" name="Pattern">
-	  <menuitem action="filters-checkerboard" />-->
+	  <menuitem action="filters-checkerboard" />
 	  <menuitem action="filters-diffraction-patterns" />
 	  <menuitem action="filters-grid" />
 	  <menuitem action="filters-maze" />
@@ -787,7 +786,7 @@
 	</menu>
         <separator />
       </menu>
-<!--      <menu action="filters-web-menu" name="Web">
+      <menu action="filters-web-menu" name="Web">
         <menuitem action="filters-semi-flatten" />
       </menu>
       <menu action="filters-animation-menu" name="Animation" >
@@ -800,7 +799,7 @@
       <placeholder name="Languages" />
       <placeholder name="Extensions" />
       <separator />
-    </menu>-->
+    </menu>
 
     <placeholder name="Menus" />
 
