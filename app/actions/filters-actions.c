@@ -202,10 +202,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:diffraction-patterns",
     NULL /* FIXME GIMP_HELP_FILTER_DIFFRACTION_PATTERNS */ },
 
-//  { "filters-displace", GIMP_STOCK_GEGL,
-//    NC_("filters-action", "Displace..."), NULL, NULL,
-//    "gegl:displace",
-//    NULL /* FIXME GIMP_HELP_FILTER_DISPLACE */ },
+  { "filters-displace", GIMP_STOCK_GEGL,
+    NC_("filters-action", "Displace..."), NULL, NULL,
+    "gegl:displace",
+    NULL /* FIXME GIMP_HELP_FILTER_DISPLACE */ },
 
 //  { "filters-distance-map", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "Distance Map..."), NULL, NULL,
@@ -277,10 +277,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:high-pass",
     NULL /* FIXME GIMP_HELP_FILTER_HIGH_PASS */ },
 
-//  { "filters-illusion", GIMP_STOCK_GEGL,
-//    NC_("filters-action", "_Illusion..."), NULL, NULL,
-//    "gegl:illusion",
-//    NULL /* FIXME GIMP_HELP_FILTER_ILLUSION */ },
+  { "filters-illusion", GIMP_STOCK_GEGL,
+    NC_("filters-action", "_Illusion..."), NULL, NULL,
+    "gegl:illusion",
+    NULL /* FIXME GIMP_HELP_FILTER_ILLUSION */ },
 
   { "filters-kaleidoscope", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Kaleidoscope..."), NULL, NULL,
@@ -487,10 +487,10 @@ static const GimpStringActionEntry filters_actions[] =
 //    "gegl:tile-glass",
 //    NULL /* FIXME GIMP_HELP_FILTER_TILE_GLASS */ },
 
-//  { "filters-tile-paper", GIMP_STOCK_GEGL,
-//    NC_("filters-action", "_Paper Tile..."), NULL, NULL,
-//    "gegl:tile-paper",
-//    NULL /* FIXME GIMP_HELP_FILTER_TILE_GLASS */ },
+  { "filters-tile-paper", GIMP_STOCK_GEGL,
+    NC_("filters-action", "_Paper Tile..."), NULL, NULL,
+    "gegl:tile-paper",
+    NULL /* FIXME GIMP_HELP_FILTER_TILE_GLASS */ },
 
   { "filters-tile-seamless", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Tile Seamless..."), NULL, NULL,
@@ -675,7 +675,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-desaturate",              writable && !gray);
   SET_SENSITIVE ("filters-difference-of-gaussians", writable);
   SET_SENSITIVE ("filters-diffraction-patterns",    writable);
-/*  SET_SENSITIVE ("filters-displace",                writable);*/
+  SET_SENSITIVE ("filters-displace",                writable);
 /*  SET_SENSITIVE ("filters-distance-map",            writable);*/
 /*  SET_SENSITIVE ("filters-dropshadow",              writable && alpha);*/
   SET_SENSITIVE ("filters-edge",                    writable);
@@ -690,7 +690,7 @@ filters_actions_update (GimpActionGroup *group,
 /*  SET_SENSITIVE ("filters-gegl-graph",              writable);*/
   SET_SENSITIVE ("filters-grid",                    writable);
   SET_SENSITIVE ("filters-high-pass",               writable);
-/*  SET_SENSITIVE ("filters-illusion",                writable);*/
+  SET_SENSITIVE ("filters-illusion",                writable);
   SET_SENSITIVE ("filters-kaleidoscope",            writable);
   SET_SENSITIVE ("filters-lens-distortion",         writable);
 /*  SET_SENSITIVE ("filters-lens-flare",              writable);*/
