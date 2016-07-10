@@ -113,6 +113,7 @@ gimp_mirror_class_init (GimpMirrorClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
   GimpSymmetryClass *symmetry_class = GIMP_SYMMETRY_CLASS (klass);
+  GParamSpec        *pspec;
 
   object_class->constructed         = gimp_mirror_constructed;
   object_class->finalize            = gimp_mirror_finalize;
@@ -164,6 +165,10 @@ gimp_mirror_class_init (GimpMirrorClass *klass)
                            GIMP_PARAM_STATIC_STRINGS |
                            GIMP_SYMMETRY_PARAM_GUI);
 
+  pspec = g_object_class_find_property (object_class, "horizontal-position");
+  gegl_param_spec_set_property_key (pspec, "unit", "pixel-coordinate");
+  gegl_param_spec_set_property_key (pspec, "axis", "y");
+
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_VERTICAL_POSITION,
                            "vertical-position",
                            _("Vertical axis position"),
@@ -171,6 +176,10 @@ gimp_mirror_class_init (GimpMirrorClass *klass)
                            0.0, G_MAXDOUBLE, 0.0,
                            GIMP_PARAM_STATIC_STRINGS |
                            GIMP_SYMMETRY_PARAM_GUI);
+
+  pspec = g_object_class_find_property (object_class, "vertical-position");
+  gegl_param_spec_set_property_key (pspec, "unit", "pixel-coordinate");
+  gegl_param_spec_set_property_key (pspec, "axis", "x");
 }
 
 static void
@@ -181,21 +190,11 @@ gimp_mirror_init (GimpMirror *mirror)
 static void
 gimp_mirror_constructed (GObject *object)
 {
-  GimpSymmetry *sym;
-  gdouble      *x_max = g_new (gdouble, 1);
-  gdouble      *y_max = g_new (gdouble, 1);
+  GimpSymmetry *sym = GIMP_SYMMETRY (object);
 
-  sym = GIMP_SYMMETRY (object);
-
-  *x_max = gimp_image_get_width (sym->image);
-  *y_max = gimp_image_get_height (sym->image);
-
-  g_object_set_data_full (object, "horizontal-position:max", y_max, g_free);
-  g_object_set_data_full (object, "vertical-position:max", x_max, g_free);
-
-  g_signal_connect (sym->image, "size-changed-detailed",
-                    G_CALLBACK (gimp_mirror_image_size_changed_cb),
-                    sym);
+  g_signal_connect_object (sym->image, "size-changed-detailed",
+                           G_CALLBACK (gimp_mirror_image_size_changed_cb),
+                           sym, 0);
 }
 
 static void
@@ -241,22 +240,27 @@ gimp_mirror_set_property (GObject      *object,
       gimp_mirror_set_horizontal_symmetry (mirror,
                                            g_value_get_boolean (value));
       break;
+
     case PROP_VERTICAL_SYMMETRY:
       gimp_mirror_set_vertical_symmetry (mirror,
                                          g_value_get_boolean (value));
       break;
+
     case PROP_POINT_SYMMETRY:
       gimp_mirror_set_point_symmetry (mirror,
                                       g_value_get_boolean (value));
       break;
+
     case PROP_DISABLE_TRANSFORMATION:
       mirror->disable_transformation = g_value_get_boolean (value);
       break;
+
     case PROP_HORIZONTAL_POSITION:
       if (g_value_get_double (value) > 0.0 &&
           g_value_get_double (value) < (gdouble) gimp_image_get_height (image))
         {
           mirror->horizontal_position = g_value_get_double (value);
+
           if (mirror->horizontal_guide)
             {
               g_signal_handlers_block_by_func (mirror->horizontal_guide,
@@ -271,11 +275,13 @@ gimp_mirror_set_property (GObject      *object,
             }
         }
       break;
+
     case PROP_VERTICAL_POSITION:
       if (g_value_get_double (value) > 0.0 &&
           g_value_get_double (value) < (gdouble) gimp_image_get_width (image))
         {
           mirror->vertical_position = g_value_get_double (value);
+
           if (mirror->vertical_guide)
             {
               g_signal_handlers_block_by_func (mirror->vertical_guide,
@@ -290,6 +296,7 @@ gimp_mirror_set_property (GObject      *object,
             }
         }
       break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -370,9 +377,10 @@ gimp_mirror_update_strokes (GimpSymmetry *sym,
   g_signal_emit_by_name (sym, "strokes-updated", sym->image);
 }
 
-static void gimp_mirror_prepare_operations (GimpMirror *mirror,
-                                            gint        paint_width,
-                                            gint        paint_height)
+static void
+gimp_mirror_prepare_operations (GimpMirror *mirror,
+                                gint        paint_width,
+                                gint        paint_height)
 {
   if (paint_width == mirror->last_paint_width &&
       paint_height == mirror->last_paint_height)
@@ -531,6 +539,7 @@ gimp_mirror_remove_guide (GimpMirror          *mirror,
   g_signal_handlers_disconnect_by_func (G_OBJECT (guide),
                                         gimp_mirror_guide_position_cb,
                                         mirror);
+
   gimp_image_remove_guide (image, guide, FALSE);
   g_object_unref (guide);
 
@@ -573,6 +582,7 @@ gimp_mirror_guide_removed_cb (GObject    *object,
           g_signal_handlers_disconnect_by_func (G_OBJECT (mirror->vertical_guide),
                                                 gimp_mirror_guide_position_cb,
                                                 mirror);
+
           gimp_image_remove_guide (symmetry->image,
                                    mirror->vertical_guide,
                                    FALSE);
@@ -599,6 +609,7 @@ gimp_mirror_guide_removed_cb (GObject    *object,
           g_signal_handlers_disconnect_by_func (G_OBJECT (mirror->horizontal_guide),
                                                 gimp_mirror_guide_position_cb,
                                                 mirror);
+
           gimp_image_remove_guide (symmetry->image,
                                    mirror->horizontal_guide,
                                    FALSE);
@@ -615,7 +626,7 @@ gimp_mirror_guide_removed_cb (GObject    *object,
   else
     {
       gimp_mirror_reset (mirror);
-      g_signal_emit_by_name (mirror, "update-ui",
+      g_signal_emit_by_name (mirror, "gui-param-changed",
                              GIMP_SYMMETRY (mirror)->image);
     }
 }
@@ -651,6 +662,7 @@ gimp_mirror_active_changed (GimpSymmetry *sym)
       if ((mirror->horizontal_mirror || mirror->point_symmetry) &&
           ! mirror->horizontal_guide)
         gimp_mirror_add_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
+
       if ((mirror->vertical_mirror || mirror->point_symmetry) &&
           ! mirror->vertical_guide)
         gimp_mirror_add_guide (mirror, GIMP_ORIENTATION_VERTICAL);
@@ -659,6 +671,7 @@ gimp_mirror_active_changed (GimpSymmetry *sym)
     {
       if (mirror->horizontal_guide)
         gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
+
       if (mirror->vertical_guide)
         gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_VERTICAL);
     }
@@ -679,7 +692,9 @@ gimp_mirror_set_horizontal_symmetry (GimpMirror *mirror,
         gimp_mirror_add_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
     }
   else if (! mirror->point_symmetry)
-    gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
+    {
+      gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
+    }
 
   gimp_mirror_reset (mirror);
 }
@@ -699,7 +714,9 @@ gimp_mirror_set_vertical_symmetry (GimpMirror *mirror,
         gimp_mirror_add_guide (mirror, GIMP_ORIENTATION_VERTICAL);
     }
   else if (! mirror->point_symmetry)
-    gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_VERTICAL);
+    {
+      gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_VERTICAL);
+    }
 
   gimp_mirror_reset (mirror);
 }
@@ -728,6 +745,7 @@ gimp_mirror_set_point_symmetry (GimpMirror *mirror,
       /* Remove the horizontal guide unless needed by horizontal mirror */
       if (! mirror->horizontal_mirror)
         gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_HORIZONTAL);
+
       /* Remove the vertical guide unless needed by vertical mirror */
       if (! mirror->vertical_mirror)
         gimp_mirror_remove_guide (mirror, GIMP_ORIENTATION_VERTICAL);
@@ -747,15 +765,6 @@ gimp_mirror_image_size_changed_cb (GimpImage    *image,
   if (previous_width != gimp_image_get_width (image) ||
       previous_height != gimp_image_get_height (image))
     {
-      gdouble *x_max = g_new (gdouble, 1);
-      gdouble *y_max = g_new (gdouble, 1);
-
-      *x_max = gimp_image_get_width (image);
-      *y_max = gimp_image_get_height (image);
-
-      g_object_set_data_full (G_OBJECT (sym), "vertical-position:max", x_max, g_free);
-      g_object_set_data_full (G_OBJECT (sym), "horizontal-position:max", y_max, g_free);
-
-      g_signal_emit_by_name (sym, "update-ui", sym->image);
+      g_signal_emit_by_name (sym, "gui-param-changed", sym->image);
     }
 }

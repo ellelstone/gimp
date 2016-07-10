@@ -67,6 +67,7 @@ static gboolean    gimp_prop_string_to_boolean       (GBinding      *binding,
 GtkWidget *
 gimp_prop_widget_new (GObject              *config,
                       const gchar          *property_name,
+                      GeglRectangle        *area,
                       GimpContext          *context,
                       GimpCreatePickerFunc  create_picker_func,
                       gpointer              picker_creator,
@@ -79,7 +80,7 @@ gimp_prop_widget_new (GObject              *config,
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (config),
                                         property_name);
 
-  return gimp_prop_widget_new_from_pspec (config, pspec, context,
+  return gimp_prop_widget_new_from_pspec (config, pspec, area, context,
                                           create_picker_func, picker_creator,
                                           label);
 }
@@ -87,6 +88,7 @@ gimp_prop_widget_new (GObject              *config,
 GtkWidget *
 gimp_prop_widget_new_from_pspec (GObject               *config,
                                  GParamSpec            *pspec,
+                                 GeglRectangle         *area,
                                  GimpContext           *context,
                                  GimpCreatePickerFunc   create_picker_func,
                                  gpointer               picker_creator,
@@ -160,36 +162,11 @@ gimp_prop_widget_new_from_pspec (GObject               *config,
       else
         {
           gdouble value;
-          gdouble *config_value;
-          gchar   *config_key;
 
           /* Get the min and max for the given property. */
           _gimp_prop_widgets_get_numeric_values (config, pspec,
                                                  &value, &lower, &upper,
                                                  G_STRFUNC);
-
-          /* A given config object may have locale min/max. */
-          config_key = g_strconcat (pspec->name, ":min", NULL);
-          config_value = g_object_get_data (G_OBJECT (config),
-                                            config_key);
-          if (config_value &&
-              *config_value > lower &&
-              *config_value < upper)
-            {
-              lower = *config_value;
-            }
-          g_free (config_key);
-
-          config_key = g_strconcat (pspec->name, ":max", NULL);
-          config_value = g_object_get_data (G_OBJECT (config),
-                                            config_key);
-          if (config_value &&
-              *config_value > lower &&
-              *config_value < upper)
-            {
-              upper = *config_value;
-            }
-          g_free (config_key);
 
           if ((upper - lower <= 1.0) &&
               (G_IS_PARAM_SPEC_FLOAT (pspec) ||
@@ -253,6 +230,31 @@ gimp_prop_widget_new_from_pspec (GObject               *config,
           gtk_widget_show (button);
 
           widget = hbox;
+        }
+      else if (area)
+        {
+          if (HAS_KEY (pspec, "unit", "pixel-coordinate") ||
+              HAS_KEY (pspec, "unit", "pixel-distance"))
+            {
+              if (HAS_KEY (pspec, "axis", "x"))
+                {
+                  g_printerr ("XXX setting width %d on %s\n",
+                              area->width, pspec->name);
+
+                  gimp_spin_scale_set_scale_limits (GIMP_SPIN_SCALE (widget),
+                                                    area->x,
+                                                    area->x + area->width);
+                }
+              else if (HAS_KEY (pspec, "axis","y"))
+                {
+                  g_printerr ("XXX setting height %d on %s\n",
+                              area->height, pspec->name);
+
+                  gimp_spin_scale_set_scale_limits (GIMP_SPIN_SCALE (widget),
+                                                    area->y,
+                                                    area->y + area->height);
+                }
+            }
         }
     }
   else if (G_IS_PARAM_SPEC_STRING (pspec))
@@ -361,6 +363,7 @@ gimp_prop_widget_new_from_pspec (GObject               *config,
 typedef GtkWidget * (* GimpPropGuiNewFunc) (GObject              *config,
                                             GParamSpec          **param_specs,
                                             guint                 n_param_specs,
+                                            GeglRectangle        *area,
                                             GimpContext          *context,
                                             GimpCreatePickerFunc  create_picker_func,
                                             gpointer              picker_creator);
@@ -390,6 +393,7 @@ GtkWidget *
 gimp_prop_gui_new (GObject              *config,
                    GType                 owner_type,
                    GParamFlags           flags,
+                   GeglRectangle        *area,
                    GimpContext          *context,
                    GimpCreatePickerFunc  create_picker_func,
                    gpointer              picker_creator)
@@ -440,6 +444,7 @@ gimp_prop_gui_new (GObject              *config,
 
               gui = gui_new_funcs[i].gui_new_func (config,
                                                    param_specs, n_param_specs,
+                                                   area,
                                                    context,
                                                    create_picker_func,
                                                    picker_creator);
