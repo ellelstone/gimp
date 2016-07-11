@@ -584,10 +584,10 @@
 	<menuitem action="filters-mono-mixer" />
 	<menuitem action="filters-sepia" />
         <separator />
-<!--      </menu>
+      </menu>
       <menu action="colors-map-menu" name="Map">
         <placeholder name="Colormap" />
-        <separator />-->
+        <separator />
 	<menuitem action="filters-alien-map" />
 	<menuitem action="filters-color-exchange" />
 	<menuitem action="filters-color-rotate" />
