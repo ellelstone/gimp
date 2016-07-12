@@ -477,15 +477,15 @@ sanity_check_gegl_ops (void)
     "gegl:buffer-source",
     "gegl:c2g",
     "gegl:cache",
-/*    "gegl:cartoon",*/
+/*    "gegl:cartoon", uses YCbCr*/
     "gegl:cell-noise",
     "gegl:checkerboard",
     "gegl:color",
     "gegl:color-enhance",
     "gegl:color-exchange",
     "gegl:color-reduction",
-    "gegl:color-rotate",
-/*    "gegl:color-temperature",*/
+/*    "gegl:color-rotate", uses HSV*/
+/*    "gegl:color-temperature", uses hard-coded sRGB-based table*/
     "gegl:color-to-alpha",
     "gegl:convolution-matrix",
     "gegl:copy-buffer",
@@ -526,7 +526,7 @@ sanity_check_gegl_ops (void)
     "gegl:motion-blur-linear",
     "gegl:motion-blur-zoom",
     "gegl:noise-cie-lch",
-    "gegl:noise-hsv",
+/*    "gegl:noise-hsv", uses HSV*/
     "gegl:noise-hurl",
     "gegl:noise-pick",
     "gegl:noise-rgb",
@@ -534,7 +534,7 @@ sanity_check_gegl_ops (void)
     "gegl:noise-solid",
     "gegl:noise-spread",
     "gegl:npd",
-/*    "gegl:oilify",*/
+/*    "gegl:oilify", uses YCbCr*/
     "gegl:opacity",
     "gegl:over",
     "gegl:panorama-projection",
@@ -554,8 +554,8 @@ sanity_check_gegl_ops (void)
     "gegl:sinus",
     "gegl:softglow",
     "gegl:stretch-contrast",
-    "gegl:stretch-contrast-hsv",
-    "gegl:supernova",
+/*    "gegl:stretch-contrast-hsv", uses HSV*/
+/*    "gegl:supernova", uses HSL*/
     "gegl:threshold",
     "gegl:tile",
     "gegl:tile-paper",
@@ -564,7 +564,7 @@ sanity_check_gegl_ops (void)
     "gegl:transform",
     "gegl:translate",
     "gegl:unsharp-mask",
-    "gegl:value-invert",
+/*    "gegl:value-invert", uses HSV*/
     "gegl:value-propagate",
     "gegl:video-degradation",
     "gegl:vignette",

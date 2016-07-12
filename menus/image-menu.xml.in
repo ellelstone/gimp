@@ -564,14 +564,14 @@
       <separator />
       <placeholder name="Invert">
         <menuitem action="drawable-invert" />
-        <menuitem action="drawable-value-invert" />
+<!--        <menuitem action="drawable-value-invert" />-->
       </placeholder>
       <separator />
       <menu action="colors-auto-menu" name="Auto">
         <menuitem action="drawable-equalize" />
         <menuitem action="drawable-levels-stretch" />
 	<menuitem action="filters-stretch-contrast" />
-	<menuitem action="filters-stretch-contrast-hsv" />
+<!--	<menuitem action="filters-stretch-contrast-hsv" />-->
 	<menuitem action="filters-color-enhance" />
       </menu>
       <menu action="colors-components-menu" name="Components">
@@ -590,7 +590,7 @@
         <separator />
 	<menuitem action="filters-alien-map" />
 	<menuitem action="filters-color-exchange" />
-	<menuitem action="filters-color-rotate" />
+<!--	<menuitem action="filters-color-rotate" />-->
       </menu>
       <menu action="colors-info-menu" name="Info">
         <menuitem action="dialogs-histogram" />
@@ -713,7 +713,7 @@
       </menu>
       <menu action="filters-light-shadow-menu" name="Light and Shadow">
         <placeholder name="Light">
-	  <menuitem action="filters-supernova" />
+<!--	  <menuitem action="filters-supernova" />-->
 	  <menuitem action="filters-lens-flare" />
 	</placeholder>
         <separator />
@@ -726,7 +726,7 @@
       </menu>
       <menu action="filters-noise-menu" name="Noise">
         <menuitem action="filters-noise-cie-lch" />
-        <menuitem action="filters-noise-hsv" />
+<!--        <menuitem action="filters-noise-hsv" />-->
         <menuitem action="filters-noise-hurl" />
         <menuitem action="filters-noise-pick" />
         <menuitem action="filters-noise-rgb" />

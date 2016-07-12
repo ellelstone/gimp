@@ -157,10 +157,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:color-reduction",
     NULL /* FIXME GIMP_HELP_FILTER_COLOR_REDUCTION */ },
 
-  { "filters-color-rotate", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_Rotate Colors..."), NULL, NULL,
-    "gegl:color-rotate",
-    NULL /* FIXME GIMP_HELP_FILTER_COLOR_ROTATE */ },
+//  { "filters-color-rotate", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Rotate Colors..."), NULL, NULL,
+//    "gegl:color-rotate",
+//    NULL /* FIXME GIMP_HELP_FILTER_COLOR_ROTATE */ },
 
 //  { "filters-color-temperature", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "Color T_emperature..."), NULL, NULL,
@@ -337,10 +337,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:noise-cie-lch",
     NULL /* FIXME GIMP_HELP_FILTER_NOISE_CIE_LCH */ },
 
-  { "filters-noise-hsv", GIMP_STOCK_GEGL,
-    NC_("filters-action", "HSV Noise..."), NULL, NULL,
-    "gegl:noise-hsv",
-    NULL /* FIXME GIMP_HELP_FILTER_NOISE_HSV */ },
+//  { "filters-noise-hsv", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "HSV Noise..."), NULL, NULL,
+//    "gegl:noise-hsv",
+//    NULL /* FIXME GIMP_HELP_FILTER_NOISE_HSV */ },
 
   { "filters-noise-hurl", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Hurl..."), NULL, NULL,
@@ -467,15 +467,15 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:stretch-contrast",
     NULL /* FIXME GIMP_HELP_FILTER_STRETCH_CONTRAST */ },
 
-  { "filters-stretch-contrast-hsv", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_Stretch Contrast HSV..."), NULL, NULL,
-    "gegl:stretch-contrast-hsv",
-    NULL /* FIXME GIMP_HELP_FILTER_STRETCH_CONTRAST_HSV */ },
+//  { "filters-stretch-contrast-hsv", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Stretch Contrast HSV..."), NULL, NULL,
+//    "gegl:stretch-contrast-hsv",
+//    NULL /* FIXME GIMP_HELP_FILTER_STRETCH_CONTRAST_HSV */ },
 
-  { "filters-supernova", GIMP_STOCK_GEGL,
-    NC_("filters-action", "Super_nova..."), NULL, NULL,
-    "gegl:supernova",
-    NULL /* FIXME GIMP_HELP_FILTER_SUPERNOVA */ },
+//  { "filters-supernova", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "Super_nova..."), NULL, NULL,
+//    "gegl:supernova",
+//    NULL /* FIXME GIMP_HELP_FILTER_SUPERNOVA */ },
 
   { "filters-threshold-alpha", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Threshold Alpha..."), NULL, NULL,
@@ -666,7 +666,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-color-enhance",           writable && !gray);
   SET_SENSITIVE ("filters-color-exchange",          writable);
   SET_SENSITIVE ("filters-color-reduction",         writable);
-  SET_SENSITIVE ("filters-color-rotate",            writable);
+/*  SET_SENSITIVE ("filters-color-rotate",            writable);*/
 /*  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);*/
   SET_SENSITIVE ("filters-color-to-alpha",          writable && !gray && alpha);
   SET_SENSITIVE ("filters-convolution-matrix",      writable);
@@ -702,7 +702,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-motion-blur-zoom",        writable);
   SET_SENSITIVE ("filters-noise-cell",              writable);
   SET_SENSITIVE ("filters-noise-cie-lch",           writable);
-  SET_SENSITIVE ("filters-noise-hsv",               writable && !gray);
+/*  SET_SENSITIVE ("filters-noise-hsv",               writable && !gray);*/
   SET_SENSITIVE ("filters-noise-hurl",              writable);
   SET_SENSITIVE ("filters-noise-perlin",            writable);
   SET_SENSITIVE ("filters-noise-pick",              writable);
@@ -728,8 +728,8 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-sinus",                   writable);
   SET_SENSITIVE ("filters-softglow",                writable);
   SET_SENSITIVE ("filters-stretch-contrast",        writable);
-  SET_SENSITIVE ("filters-stretch-contrast-hsv",    writable);
-  SET_SENSITIVE ("filters-supernova",               writable);
+/*  SET_SENSITIVE ("filters-stretch-contrast-hsv",    writable);*/
+/*  SET_SENSITIVE ("filters-supernova",               writable);*/
   SET_SENSITIVE ("filters-threshold-alpha",         writable && alpha);
   SET_SENSITIVE ("filters-tile-glass",              writable);
   SET_SENSITIVE ("filters-tile-paper",              writable);
