@@ -169,8 +169,8 @@ gimp_gegl_config_class_init (GimpGeglConfigClass *klass)
                             "use-opencl",
                             "Use OpenCL",
                             USE_OPENCL_BLURB,
-                            TRUE,
-                            GIMP_PARAM_STATIC_STRINGS);
+                            FALSE, //TRUE,
+                            GIMP_PARAM_STATIC_STRINGS);/**/
 
   /*  only for backward compatibility:  */
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_STINGY_MEMORY_USE,
@@ -225,7 +225,7 @@ gimp_gegl_config_set_property (GObject      *object,
       gegl_config->tile_cache_size = g_value_get_uint64 (value);
       break;
     case PROP_USE_OPENCL:
-      gegl_config->use_opencl = g_value_get_boolean (value);
+      gegl_config->use_opencl = FALSE; //g_value_get_boolean (value);
       break;
 
     case PROP_STINGY_MEMORY_USE:
@@ -261,7 +261,7 @@ gimp_gegl_config_get_property (GObject    *object,
       g_value_set_uint64 (value, gegl_config->tile_cache_size);
       break;
     case PROP_USE_OPENCL:
-      g_value_set_boolean (value, gegl_config->use_opencl);
+      g_value_set_boolean (value, FALSE /*gegl_config->use_opencl*/);
       break;
 
     case PROP_STINGY_MEMORY_USE:

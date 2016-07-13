@@ -58,7 +58,7 @@ gimp_gegl_init (Gimp *gimp)
 #if 0
                 "threads",         config->num_processors,
 #endif
-                "use-opencl",      config->use_opencl,
+                "use-opencl",      FALSE, //config->use_opencl,
                 NULL);
 
   g_signal_connect (config, "notify::tile-cache-size",
@@ -67,9 +67,12 @@ gimp_gegl_init (Gimp *gimp)
   g_signal_connect (config, "notify::num-processors",
                     G_CALLBACK (gimp_gegl_notify_num_processors),
                     NULL);
-  g_signal_connect (config, "notify::use-opencl",
-                    G_CALLBACK (gimp_gegl_notify_use_opencl),
-                    NULL);
+/*  g_signal_connect (config, "notify::use-opencl",
+                    FALSE, //G_CALLBACK (gimp_gegl_notify_use_opencl),
+                    NULL); 
+                    * if this isn't commented out there is a glib warning
+                    * g_signal_connect_data: assertion 'c_handler != NULL' failed
+                    * */
 
   gimp_babl_init ();
 
@@ -98,6 +101,6 @@ static void
 gimp_gegl_notify_use_opencl (GimpGeglConfig *config)
 {
   g_object_set (gegl_config (),
-                "use-opencl", config->use_opencl,
+                "use-opencl", FALSE, //config->use_opencl,
                 NULL);
 }

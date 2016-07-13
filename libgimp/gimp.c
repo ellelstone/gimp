@@ -2027,7 +2027,7 @@ gimp_config (GPConfig *config)
   gimp_cpu_accel_set_use (config->use_cpu_accel);
 
   g_object_set (gegl_config (),
-                "use-opencl",          config->use_opencl,
+                "use-opencl",          FALSE, //config->use_opencl,
                 "application-license", "GPL3",
                 NULL);
 

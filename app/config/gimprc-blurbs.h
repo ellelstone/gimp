@@ -471,7 +471,7 @@ _("Sets the size of the previews in the Undo History.")
 _("When enabled, pressing F1 will open the help browser.")
 
 #define USE_OPENCL_BLURB \
-_("When enabled, uses OpenCL for some operations.")
+_("When enabled, uses OpenCL for some operations.")/**/
 
 #define USER_MANUAL_ONLINE_BLURB \
 "When enabled, the online user manual will be used by the help system. " \

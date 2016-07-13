@@ -1283,12 +1283,12 @@ prefs_dialog_new (Gimp       *gimp,
 #endif /* ENABLE_MP */
 
   /*  Hardware Acceleration  */
-  vbox2 = prefs_frame_new (_("Hardware Acceleration"), GTK_CONTAINER (vbox),
+/*  vbox2 = prefs_frame_new (_("Hardware Acceleration"), GTK_CONTAINER (vbox),
                            FALSE);
 
   prefs_check_button_add (object, "use-opencl",
                           _("Use OpenCL"),
-                          GTK_BOX (vbox2));
+                          GTK_BOX (vbox2));*/
 
   /*  Image Thumbnails  */
   vbox2 = prefs_frame_new (_("Image Thumbnails"), GTK_CONTAINER (vbox), FALSE);
