@@ -33,8 +33,8 @@
 
 #include "tools-types.h"
 
-#include "operations/gimphuesaturationconfig.h"
-#include "operations/gimpoperationhuesaturation.h"
+#include "operations/gimplchhuechromaconfig.h"
+#include "operations/gimpoperationlchhuechroma.h"
 
 #include "core/gimpdrawable.h"
 #include "core/gimperror.h"
@@ -47,7 +47,7 @@
 #include "display/gimpdisplay.h"
 
 #include "gimpfilteroptions.h"
-#include "gimphuesaturationtool.h"
+#include "gimplchhuechromatool.h"
 
 #include "gimp-intl.h"
 

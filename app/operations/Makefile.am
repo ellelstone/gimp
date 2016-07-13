@@ -33,8 +33,8 @@ libappoperations_generic_a_sources = \
 	gimpcolorizeconfig.h			\
 	gimpcurvesconfig.c			\
 	gimpcurvesconfig.h			\
-	gimphuesaturationconfig.c		\
-	gimphuesaturationconfig.h		\
+	gimplchhuechromaconfig.c		\
+	gimplchhuechromaconfig.h		\
 	gimplevelsconfig.c			\
 	gimplevelsconfig.h			\
 	\
@@ -85,8 +85,8 @@ libappoperations_generic_a_sources = \
 	gimpoperationcurves.h			\
 	gimpoperationdesaturate.c		\
 	gimpoperationdesaturate.h		\
-	gimpoperationhuesaturation.c		\
-	gimpoperationhuesaturation.h		\
+	gimpoperationlchhuechroma.c		\
+	gimpoperationlchhuechroma.h		\
 	gimpoperationlevels.c			\
 	gimpoperationlevels.h			\
 	gimpoperationposterize.c		\

@@ -53,7 +53,7 @@
 #include "gimpoperationcolorize.h"
 #include "gimpoperationcurves.h"
 #include "gimpoperationdesaturate.h"
-#include "gimpoperationhuesaturation.h"
+#include "gimpoperationlchhuechroma.h"
 #include "gimpoperationlevels.h"
 #include "gimpoperationposterize.h"
 #include "gimpoperationthreshold.h"
@@ -62,7 +62,7 @@
 #include "gimpcolorbalanceconfig.h"
 #include "gimpcolorizeconfig.h"
 #include "gimpcurvesconfig.h"
-#include "gimphuesaturationconfig.h"
+#include "gimplchhuechromaconfig.h"
 #include "gimplevelsconfig.h"
 
 #include "gimpoperationpointlayermode.h"

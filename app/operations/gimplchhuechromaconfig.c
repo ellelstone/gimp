@@ -34,7 +34,7 @@
 
 #include "operations-types.h"
 
-#include "gimphuesaturationconfig.h"
+#include "gimplchhuechromaconfig.h"
 
 #include "gimp-intl.h"
 

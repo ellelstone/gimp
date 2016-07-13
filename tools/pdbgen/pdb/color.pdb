@@ -648,7 +648,7 @@ sub hue_chroma {
     );
 
     %invoke = (
-	headers => [ qw("operations/gimphuesaturationconfig.h") ],
+	headers => [ qw("operations/gimplchhuechromaconfig.h") ],
 	code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,

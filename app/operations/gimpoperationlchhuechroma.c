@@ -35,8 +35,8 @@
 
 #include "operations-types.h"
 
-#include "gimphuesaturationconfig.h"
-#include "gimpoperationhuesaturation.h"
+#include "gimplchhuechromaconfig.h"
+#include "gimpoperationlchhuechroma.h"
 
 
 static gboolean gimp_operation_hue_chroma_process (GeglOperation       *operation,
