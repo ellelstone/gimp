@@ -70,7 +70,6 @@ typedef struct
   const gchar    *icon;
   const float     range_min;      /* val min of the component */
   const float     range_max;      /* val max of the component */
-//  const gboolean  is_perceptual;  /* Take the componenent from an Y' or Y buffer */
 } COMPONENT_DSC;
 
 /* Description of a composition */
@@ -149,27 +148,10 @@ static void      type_combo_callback    (GimpIntComboBox *combo,
  * All the following values have to be kept in sync with those of decompose.c
  */
 
-#define CPN_RGBA_R { "R", N_("_Red:"),   GIMP_STOCK_CHANNEL_RED, 0.0, 1.0, FALSE}
-#define CPN_RGBA_G { "G", N_("_Green:"), GIMP_STOCK_CHANNEL_GREEN, 0.0, 1.0, FALSE}
-#define CPN_RGBA_B { "B", N_("_Blue:"),  GIMP_STOCK_CHANNEL_BLUE, 0.0, 1.0, FALSE}
-#define CPN_RGBA_A { "A", N_("_Alpha:"), GIMP_STOCK_CHANNEL_ALPHA, 0.0, 1.0, TRUE}
-
-#define CPN_HSV_H  { "hue",        N_("_Hue:"),        NULL, 0.0, 1.0, TRUE}
-#define CPN_HSV_S  { "saturation", N_("_Saturation:"), NULL, 0.0, 1.0, TRUE}
-#define CPN_HSV_V  { "value",      N_("_Value:"),      NULL, 0.0, 1.0, TRUE}
-
-#define CPN_HSL_H  { "hue",        N_("_Hue:"),        NULL, 0.0, 1.0, TRUE}
-#define CPN_HSL_S  { "saturation", N_("_Saturation:"), NULL, 0.0, 1.0, TRUE}
-#define CPN_HSL_L  { "lightness",  N_("_Lightness:"),  NULL, 0.0, 1.0, TRUE}
-
-#define CPN_CMYK_C { "cyan",    N_("_Cyan:"),    NULL, 0.0, 1.0, TRUE}
-#define CPN_CMYK_M { "magenta", N_("_Magenta:"), NULL, 0.0, 1.0, TRUE}
-#define CPN_CMYK_Y { "yellow",  N_("_Yellow:"),  NULL, 0.0, 1.0, TRUE}
-#define CPN_CMYK_K { "key",     N_("_Black:"),   NULL, 0.0, 1.0, TRUE}
-
-#define CPN_CMY_C  { "cyan",    N_("_Cyan:"),    NULL, 0.0, 1.0, TRUE}
-#define CPN_CMY_M  { "magenta", N_("_Magenta:"), NULL, 0.0, 1.0, TRUE}
-#define CPN_CMY_Y  { "yellow",  N_("_Yellow:"),  NULL, 0.0, 1.0, TRUE}
+#define CPN_RGBA_R { "R", N_("_Red:"),   GIMP_STOCK_CHANNEL_RED, 0.0, 1.0 }
+#define CPN_RGBA_G { "G", N_("_Green:"), GIMP_STOCK_CHANNEL_GREEN, 0.0, 1.0 }
+#define CPN_RGBA_B { "B", N_("_Blue:"),  GIMP_STOCK_CHANNEL_BLUE, 0.0, 1.0, }
+#define CPN_RGBA_A { "A", N_("_Alpha:"), GIMP_STOCK_CHANNEL_ALPHA, 0.0, 1.0 }
 
 #define CPN_LAB_L  { "CIE L", N_("_L:"), NULL, 0.0, 100.0, TRUE}
 #define CPN_LAB_A  { "CIE a", N_("_A:"), NULL, -127.5, 127.5, TRUE}
@@ -196,35 +178,6 @@ static COMPOSE_DSC compose_dsc[] =
       CPN_RGBA_B,
       CPN_RGBA_A },
     "rgba-compose" },
-
-  { "HSV",
-    N_("HSV"), 3,
-    { CPN_HSV_H,
-      CPN_HSV_S,
-      CPN_HSV_V },
-    "hsv-compose" },
-
-  { "HSL",
-    N_("HSL"), 3,
-    { CPN_HSL_H,
-      CPN_HSL_S,
-      CPN_HSL_L },
-    "hsl-compose" },
-
-  { "CMY",
-    N_("CMY"), 3,
-    { CPN_CMY_C,
-      CPN_CMY_M,
-      CPN_CMY_Y },
-    "cmy-compose" },
-
-  { "CMYK",
-    N_("CMYK"), 4,
-    { CPN_CMYK_C,
-      CPN_CMYK_M,
-      CPN_CMYK_Y,
-      CPN_CMYK_K },
-    "cmyk-compose" },
 
   { "CIE Lab",
     N_("LAB"), 3,
@@ -826,8 +779,6 @@ compose (const gchar  *compose_type,
       height = gimp_drawable_height (inputs[first_ID].comp.ID);
 
       precision = gimp_image_get_precision (first_image);
-      //profile = gimp_image_get_color_profile (first_image);
-      //gimp_color_profile_get_colorants (profile);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
@@ -863,9 +814,6 @@ compose (const gchar  *compose_type,
       height = gimp_image_height (inputs[first_ID].comp.ID);
 
       precision = gimp_image_get_precision (inputs[first_ID].comp.ID);
-
-      //profile = gimp_image_get_color_profile (inputs[first_ID].comp.ID);
-      //gimp_color_profile_get_colorants (profile);
 
       for (j = first_ID + 1; j < num_images; j++)
         {
@@ -917,7 +865,6 @@ compose (const gchar  *compose_type,
       image_ID_dst = gimp_item_get_image (layer_ID_dst);
       buffer_dst = gimp_drawable_get_shadow_buffer (layer_ID_dst);
       profile = gimp_image_get_color_profile (image_ID_dst);
-      gimp_color_profile_get_colorants (profile);
     }
   else
     {

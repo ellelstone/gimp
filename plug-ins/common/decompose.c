@@ -53,7 +53,6 @@ typedef struct
 
   const gdouble   range_min;           /* min and max                       */
   const gdouble   range_max;
-//  const gboolean  perceptual_channel;  /* "correct" the channel in Y' space */
 
 } Component;
 
@@ -135,35 +134,18 @@ static gchar   * generate_filename           (guint32              image_ID,
                                               guint                channel);
 
 
-#define CPN_RGBA_R      { "R",          N_("red"),           0.0, 1.0, FALSE }
-#define CPN_RGBA_G      { "G",          N_("green"),         0.0, 1.0, FALSE }
-#define CPN_RGBA_B      { "B",          N_("blue"),          0.0, 1.0, FALSE }
-#define CPN_RGBA_A      { "A",          N_("alpha"),         0.0, 1.0, TRUE  }
+#define CPN_RGBA_R      { "R",          N_("red"),           0.0, 1.0 }
+#define CPN_RGBA_G      { "G",          N_("green"),         0.0, 1.0 }
+#define CPN_RGBA_B      { "B",          N_("blue"),          0.0, 1.0 }
+#define CPN_RGBA_A      { "A",          N_("alpha"),         0.0, 1.0 }
 
-#define CPN_HSV_H       { "hue",        N_("hue"),           0.0, 1.0, TRUE }
-#define CPN_HSV_S       { "saturation", N_("saturation"),    0.0, 1.0, TRUE }
-#define CPN_HSV_V       { "value",      N_("value"),         0.0, 1.0, TRUE }
+#define CPN_LAB_L       { "CIE L",      N_("L"),             0.0, 100.0 }
+#define CPN_LAB_A       { "CIE a",      N_("A"),          -127.5, 127.5 }
+#define CPN_LAB_B       { "CIE b",      N_("B"),          -127.5, 127.5 }
 
-#define CPN_HSL_H       { "hue",        N_("hue"),           0.0, 1.0, TRUE }
-#define CPN_HSL_S       { "saturation", N_("saturation"),    0.0, 1.0, TRUE }
-#define CPN_HSL_L       { "lightness",  N_("lightness"),     0.0, 1.0, TRUE }
-
-#define CPN_CMYK_C      { "cyan",       N_("cyan-k"),        0.0, 1.0, TRUE }
-#define CPN_CMYK_M      { "magenta",    N_("magenta-k"),     0.0, 1.0, TRUE }
-#define CPN_CMYK_Y      { "yellow",     N_("yellow-k"),      0.0, 1.0, TRUE }
-#define CPN_CMYK_K      { "key",        N_("black"),         0.0, 1.0, TRUE }
-
-#define CPN_CMY_C       { "cyan",       N_("cyan"),          0.0, 1.0, TRUE }
-#define CPN_CMY_M       { "magenta",    N_("magenta"),       0.0, 1.0, TRUE }
-#define CPN_CMY_Y       { "yellow",     N_("yellow"),        0.0, 1.0, TRUE }
-
-#define CPN_LAB_L       { "CIE L",      N_("L"),             0.0, 100.0, TRUE }
-#define CPN_LAB_A       { "CIE a",      N_("A"),          -127.5, 127.5, TRUE }
-#define CPN_LAB_B       { "CIE b",      N_("B"),          -127.5, 127.5, TRUE }
-
-#define CPN_LCH_L       { "CIE L",      N_("L"),             0.0, 100.0, TRUE }
-#define CPN_LCH_C       { "CIE C(ab)",  N_("C"),             0.0, 200.0, TRUE }
-#define CPN_LCH_H       { "CIE H(ab)",  N_("H"),             0.0, 360.0, TRUE }
+#define CPN_LCH_L       { "CIE L",      N_("L"),             0.0, 100.0 }
+#define CPN_LCH_C       { "CIE C(ab)",  N_("C"),             0.0, 200.0 }
+#define CPN_LCH_H       { "CIE H(ab)",  N_("H"),             0.0, 360.0 }
 
 
 static const Extract extract[] =
@@ -175,26 +157,6 @@ static const Extract extract[] =
   { N_("Green"), "RGB",  FALSE, 1, FALSE, { CPN_RGBA_G } },
   { N_("Blue"),  "RGB",  FALSE, 1, FALSE, { CPN_RGBA_B } },
   { N_("Alpha"), "RGBA", TRUE , 1, FALSE, { CPN_RGBA_A } },
-
-  { N_("HSV"),        "HSV",  TRUE,  3, FALSE, { CPN_HSV_H, CPN_HSV_S, CPN_HSV_V } },
-  { N_("Hue"),        "HSV",  FALSE, 1, FALSE, { CPN_HSV_H } },
-  { N_("Saturation"), "HSV",  FALSE, 1, FALSE, { CPN_HSV_S } },
-  { N_("Value"),      "HSV",  FALSE, 1, FALSE, { CPN_HSV_V } },
-
-  { N_("HSL"),              "HSL", TRUE,  3, FALSE, { CPN_HSL_H, CPN_HSL_S, CPN_HSL_L } },
-  { N_("Hue (HSL)"),        "HSL", FALSE, 1, FALSE, { CPN_HSL_H } },
-  { N_("Saturation (HSL)"), "HSL", FALSE, 1, FALSE, { CPN_HSL_S } },
-  { N_("Lightness"),        "HSL", FALSE, 1, FALSE, { CPN_HSL_L } },
-
-  { N_("CMY"),     "CMY", TRUE,  3, FALSE, { CPN_CMY_C, CPN_CMY_M, CPN_CMY_Y } },
-  { N_("Cyan"),    "CMY", FALSE, 1, FALSE, { CPN_CMY_C } },
-  { N_("Magenta"), "CMY", FALSE, 1, FALSE, { CPN_CMY_M } },
-  { N_("Yellow"),  "CMY", FALSE, 1, FALSE, { CPN_CMY_Y } },
-
-  { N_("CMYK"),      "CMYK", TRUE,  4, FALSE, { CPN_CMYK_C, CPN_CMYK_M, CPN_CMYK_Y, CPN_CMYK_K } },
-  { N_("Cyan_K"),    "CMYK", FALSE, 1, FALSE, { CPN_CMYK_C } },
-  { N_("Magenta_K"), "CMYK", FALSE, 1, FALSE, { CPN_CMYK_M } },
-  { N_("Yellow_K"),  "CMYK", FALSE, 1, FALSE, { CPN_CMYK_Y } },
 
   { N_("LAB"), "CIE Lab",     TRUE, 3, FALSE, { CPN_LAB_L, CPN_LAB_A, CPN_LAB_B } },
 
@@ -242,7 +204,6 @@ query (void)
   GString *type_desc;
   gint     i;
 
- //printf("decompose.c query\n");
   type_desc = g_string_new ("What to decompose: ");
   g_string_append_c (type_desc, '"');
   g_string_append (type_desc, extract[0].type);
@@ -315,7 +276,7 @@ run (const gchar      *name,
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
- //printf("decompose.c run\n");
+
   run_mode = param[0].data.d_int32;
   image_ID = param[1].data.d_image;
   layer    = param[2].data.d_drawable;
@@ -446,8 +407,6 @@ decompose (gint32       image_ID,
   gboolean       decomp_has_alpha = FALSE;
   GimpColorProfile *profile;
 
-//printf("02. decompose.c decompose\n");
-
   extract_idx = -1;   /* Search extract type */
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
     {
@@ -466,7 +425,6 @@ decompose (gint32       image_ID,
   src_buffer = gimp_drawable_get_buffer (drawable_ID);
   precision  = gimp_image_get_precision (image_ID);
   profile = gimp_image_get_color_profile (image_ID);
-  gimp_color_profile_get_colorants (profile);
 
   for (j = 0; j < num_layers; j++)
     {
@@ -569,7 +527,7 @@ create_new_image (const gchar       *filename,
 
   *layer_ID = create_new_layer (image_ID, 0,
                                 layername, width, height, type);
- //printf("04. decompose.c create_new_image\n");
+
   return image_ID;
 }
 
@@ -584,7 +542,7 @@ create_new_layer (gint32             image_ID,
 {
   gint32        layer_ID;
   GimpImageType gdtype = GIMP_RGB_IMAGE;
- //printf("05/07/09. decompose.c create_new_layer\n");
+
   switch (type)
     {
     case GIMP_RGB:
@@ -620,7 +578,7 @@ transfer_registration_color (GeglBuffer  *src,
   gint                dst_bpp;
   gint                i;
   gdouble             white;
- //printf("decompose.c transfer_registration_color\n");
+
   gimp_context_get_foreground (&color);
   white = 1.0;
 
@@ -678,9 +636,7 @@ cpn_affine_transform_clamp (GeglBuffer *buffer,
   GeglBufferIterator *gi;
   gdouble             scale  = 1.0 / (max - min);
   gdouble             offset = - min;
- //printf("12/14/16. decompose.c cpn_affine_transform_clamp\n");
-  /* We want to scale values linearly, regardless of the format of the buffer */
-  //double *new_colorant_data = babl_get_user_data (colorant_babl);
+
   gegl_buffer_set_format (buffer, babl_format ("Y double"));
 
   gi = gegl_buffer_iterator_new (buffer, NULL, 0, NULL,
@@ -716,7 +672,7 @@ copy_n_components (GeglBuffer  *src,
                    Extract      ext)
 {
   gint i;
- //printf("10. decompose.c copy_n_components\n");
+
   for (i = 0; i < ext.num_images; i++)
     {
       gimp_progress_update ((gdouble) i / (gdouble) ext.num_images);
@@ -736,21 +692,13 @@ copy_one_component (GeglBuffer      *src,
   const Babl          *dst_format;
   GeglBuffer          *temp;
   const GeglRectangle *extent;
- //printf("11/13/15. decompose.c copy_one_component\n");
+
   /* We are working in linear double precison*/
   component_format = babl_format_new (babl_model (model),
                                       babl_type ("double"),
                                       babl_component (component.babl_name),
                                       NULL);
 
-  /* We need to enforce linearity here
-   * If the output is "Y'", the ouput of temp is already ok
-   * If the output is "Y" , it will enforce gamma-decoding.
-   * A bit tricky and suboptimal...
-   */
-//  if (component.perceptual_channel)
-//    dst_format = babl_format ("Y' double");
-//  else
     dst_format = babl_format ("Y double");
 
   extent = gegl_buffer_get_extent (src);
@@ -792,7 +740,7 @@ decompose_dialog (void)
   gint       j;
   gint       extract_idx;
   gboolean   run;
- //printf("01. decompose.c decompose_dialog\n");
+
   extract_idx = 0;
   for (j = 0; j < G_N_ELEMENTS (extract); j++)
     {
@@ -925,7 +873,7 @@ generate_filename (guint32 image_ID,
   gchar   *fname;
   gchar   *filename;
   gchar   *extension;
- //printf("03/06/08. decompose.c generate_filename\n");
+
   fname = gimp_image_get_filename (image_ID);
 
   if (fname)
