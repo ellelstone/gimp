@@ -1,7 +1,7 @@
 /* GIMP - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphuesaturationconfig.h
+ * gimphuechromaconfig.h
  * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,45 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HUE_SATURATION_CONFIG_H__
-#define __GIMP_HUE_SATURATION_CONFIG_H__
+#ifndef __GIMP_HUE_CHROMA_CONFIG_H__
+#define __GIMP_HUE_CHROMA_CONFIG_H__
 
 
 #include "core/gimpsettings.h"
 
 
-#define GIMP_TYPE_HUE_SATURATION_CONFIG            (gimp_hue_saturation_config_get_type ())
-#define GIMP_HUE_SATURATION_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfig))
-#define GIMP_HUE_SATURATION_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfigClass))
-#define GIMP_IS_HUE_SATURATION_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_SATURATION_CONFIG))
-#define GIMP_IS_HUE_SATURATION_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_HUE_SATURATION_CONFIG))
-#define GIMP_HUE_SATURATION_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_HUE_SATURATION_CONFIG, GimpHueSaturationConfigClass))
+#define GIMP_TYPE_HUE_CHROMA_CONFIG            (gimp_hue_chroma_config_get_type ())
+#define GIMP_HUE_CHROMA_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_CHROMA_CONFIG, GimpHueChromaConfig))
+#define GIMP_HUE_CHROMA_CONFIG_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GIMP_TYPE_HUE_CHROMA_CONFIG, GimpHueChromaConfigClass))
+#define GIMP_IS_HUE_CHROMA_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_CHROMA_CONFIG))
+#define GIMP_IS_HUE_CHROMA_CONFIG_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GIMP_TYPE_HUE_CHROMA_CONFIG))
+#define GIMP_HUE_CHROMA_CONFIG_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GIMP_TYPE_HUE_CHROMA_CONFIG, GimpHueChromaConfigClass))
 
 
-typedef struct _GimpHueSaturationConfigClass GimpHueSaturationConfigClass;
+typedef struct _GimpHueChromaConfigClass GimpHueChromaConfigClass;
 
-struct _GimpHueSaturationConfig
+struct _GimpHueChromaConfig
 {
   GimpSettings  parent_instance;
 
   GimpHueRange  range;
 
   gdouble       hue[7];
-  gdouble       saturation[7];
+  gdouble       chroma[7];
   gdouble       lightness[7];
 
   gdouble       overlap;
 };
 
-struct _GimpHueSaturationConfigClass
+struct _GimpHueChromaConfigClass
 {
   GimpSettingsClass  parent_class;
 };
 
 
-GType   gimp_hue_saturation_config_get_type    (void) G_GNUC_CONST;
+GType   gimp_hue_chroma_config_get_type    (void) G_GNUC_CONST;
 
-void    gimp_hue_saturation_config_reset_range (GimpHueSaturationConfig *config);
+void    gimp_hue_chroma_config_reset_range (GimpHueChromaConfig *config);
 
 
-#endif /* __GIMP_HUE_SATURATION_CONFIG_H__ */
+#endif /* __GIMP_HUE_CHROMA_CONFIG_H__ */

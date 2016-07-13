@@ -1,7 +1,7 @@
 /* GIMP - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimphuesaturationconfig.c
+ * gimphuechromaconfig.c
  * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -44,56 +44,56 @@
    PROP_0,
    PROP_RANGE,
    PROP_LIGHTNESS,
-   PROP_SATURATION,
+   PROP_CHROMA,
    PROP_HUE,
    PROP_OVERLAP
  };
 
 
-static void     gimp_hue_saturation_config_iface_init   (GimpConfigInterface *iface);
+static void     gimp_hue_chroma_config_iface_init   (GimpConfigInterface *iface);
 
-static void     gimp_hue_saturation_config_get_property (GObject          *object,
+static void     gimp_hue_chroma_config_get_property (GObject          *object,
                                                          guint             property_id,
                                                          GValue           *value,
                                                          GParamSpec       *pspec);
-static void     gimp_hue_saturation_config_set_property (GObject          *object,
+static void     gimp_hue_chroma_config_set_property (GObject          *object,
                                                          guint             property_id,
                                                          const GValue     *value,
                                                          GParamSpec       *pspec);
 
-static gboolean gimp_hue_saturation_config_serialize    (GimpConfig       *config,
+static gboolean gimp_hue_chroma_config_serialize    (GimpConfig       *config,
                                                          GimpConfigWriter *writer,
                                                          gpointer          data);
-static gboolean gimp_hue_saturation_config_deserialize  (GimpConfig       *config,
+static gboolean gimp_hue_chroma_config_deserialize  (GimpConfig       *config,
                                                          GScanner         *scanner,
                                                          gint              nest_level,
                                                          gpointer          data);
-static gboolean gimp_hue_saturation_config_equal        (GimpConfig       *a,
+static gboolean gimp_hue_chroma_config_equal        (GimpConfig       *a,
                                                          GimpConfig       *b);
-static void     gimp_hue_saturation_config_reset        (GimpConfig       *config);
-static gboolean gimp_hue_saturation_config_copy         (GimpConfig       *src,
+static void     gimp_hue_chroma_config_reset        (GimpConfig       *config);
+static gboolean gimp_hue_chroma_config_copy         (GimpConfig       *src,
                                                          GimpConfig       *dest,
                                                          GParamFlags       flags);
 
 
-G_DEFINE_TYPE_WITH_CODE (GimpHueSaturationConfig, gimp_hue_saturation_config,
+G_DEFINE_TYPE_WITH_CODE (GimpHueChromaConfig, gimp_hue_chroma_config,
                          GIMP_TYPE_SETTINGS,
                          G_IMPLEMENT_INTERFACE (GIMP_TYPE_CONFIG,
-                                                gimp_hue_saturation_config_iface_init))
+                                                gimp_hue_chroma_config_iface_init))
 
-#define parent_class gimp_hue_saturation_config_parent_class
+#define parent_class gimp_hue_chroma_config_parent_class
 
 
 static void
-gimp_hue_saturation_config_class_init (GimpHueSaturationConfigClass *klass)
+gimp_hue_chroma_config_class_init (GimpHueChromaConfigClass *klass)
 {
   GObjectClass      *object_class   = G_OBJECT_CLASS (klass);
   GimpViewableClass *viewable_class = GIMP_VIEWABLE_CLASS (klass);
 
-  object_class->set_property        = gimp_hue_saturation_config_set_property;
-  object_class->get_property        = gimp_hue_saturation_config_get_property;
+  object_class->set_property        = gimp_hue_chroma_config_set_property;
+  object_class->get_property        = gimp_hue_chroma_config_get_property;
 
-  viewable_class->default_icon_name = "gimp-tool-hue-saturation";
+  viewable_class->default_icon_name = "gimp-tool-hue-chroma";
 
   GIMP_CONFIG_PROP_ENUM (object_class, PROP_RANGE,
                          "range",
@@ -108,10 +108,10 @@ gimp_hue_saturation_config_class_init (GimpHueSaturationConfigClass *klass)
                            _("Hue"),
                            -180.0, 180.0, 0.0, 0);
 
-  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_SATURATION,
-                           "saturation",
-                           _("Saturation"),
-                           _("Saturation"),
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_CHROMA,
+                           "chroma",
+                           _("Chroma"),
+                           _("Chroma"),
                            -100.0, 100.0, 0.0, 0);
 
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_LIGHTNESS,
@@ -128,28 +128,28 @@ gimp_hue_saturation_config_class_init (GimpHueSaturationConfigClass *klass)
 }
 
 static void
-gimp_hue_saturation_config_iface_init (GimpConfigInterface *iface)
+gimp_hue_chroma_config_iface_init (GimpConfigInterface *iface)
 {
-  iface->serialize   = gimp_hue_saturation_config_serialize;
-  iface->deserialize = gimp_hue_saturation_config_deserialize;
-  iface->equal       = gimp_hue_saturation_config_equal;
-  iface->reset       = gimp_hue_saturation_config_reset;
-  iface->copy        = gimp_hue_saturation_config_copy;
+  iface->serialize   = gimp_hue_chroma_config_serialize;
+  iface->deserialize = gimp_hue_chroma_config_deserialize;
+  iface->equal       = gimp_hue_chroma_config_equal;
+  iface->reset       = gimp_hue_chroma_config_reset;
+  iface->copy        = gimp_hue_chroma_config_copy;
 }
 
 static void
-gimp_hue_saturation_config_init (GimpHueSaturationConfig *self)
+gimp_hue_chroma_config_init (GimpHueChromaConfig *self)
 {
   gimp_config_reset (GIMP_CONFIG (self));
 }
 
 static void
-gimp_hue_saturation_config_get_property (GObject    *object,
+gimp_hue_chroma_config_get_property (GObject    *object,
                                          guint       property_id,
                                          GValue     *value,
                                          GParamSpec *pspec)
 {
-  GimpHueSaturationConfig *self = GIMP_HUE_SATURATION_CONFIG (object);
+  GimpHueChromaConfig *self = GIMP_HUE_CHROMA_CONFIG (object);
 
   switch (property_id)
     {
@@ -161,8 +161,8 @@ gimp_hue_saturation_config_get_property (GObject    *object,
       g_value_set_double (value, self->hue[self->range]);
       break;
 
-    case PROP_SATURATION:
-      g_value_set_double (value, self->saturation[self->range]);
+    case PROP_CHROMA:
+      g_value_set_double (value, self->chroma[self->range]);
       break;
 
     case PROP_LIGHTNESS:
@@ -180,19 +180,19 @@ gimp_hue_saturation_config_get_property (GObject    *object,
 }
 
 static void
-gimp_hue_saturation_config_set_property (GObject      *object,
+gimp_hue_chroma_config_set_property (GObject      *object,
                                          guint         property_id,
                                          const GValue *value,
                                          GParamSpec   *pspec)
 {
-  GimpHueSaturationConfig *self = GIMP_HUE_SATURATION_CONFIG (object);
+  GimpHueChromaConfig *self = GIMP_HUE_CHROMA_CONFIG (object);
 
   switch (property_id)
     {
     case PROP_RANGE:
       self->range = g_value_get_enum (value);
       g_object_notify (object, "hue");
-      g_object_notify (object, "saturation");
+      g_object_notify (object, "chroma");
       g_object_notify (object, "lightness");
       break;
 
@@ -200,8 +200,8 @@ gimp_hue_saturation_config_set_property (GObject      *object,
       self->hue[self->range] = g_value_get_double (value);
       break;
 
-    case PROP_SATURATION:
-      self->saturation[self->range] = g_value_get_double (value);
+    case PROP_CHROMA:
+      self->chroma[self->range] = g_value_get_double (value);
       break;
 
     case PROP_LIGHTNESS:
@@ -219,11 +219,11 @@ gimp_hue_saturation_config_set_property (GObject      *object,
 }
 
 static gboolean
-gimp_hue_saturation_config_serialize (GimpConfig       *config,
+gimp_hue_chroma_config_serialize (GimpConfig       *config,
                                       GimpConfigWriter *writer,
                                       gpointer          data)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
+  GimpHueChromaConfig *hs_config = GIMP_HUE_CHROMA_CONFIG (config);
   GimpHueRange             range;
   GimpHueRange             old_range;
   gboolean                 success = TRUE;
@@ -241,7 +241,7 @@ gimp_hue_saturation_config_serialize (GimpConfig       *config,
                                                          writer) &&
                  gimp_config_serialize_property_by_name (config, "hue",
                                                          writer) &&
-                 gimp_config_serialize_property_by_name (config, "saturation",
+                 gimp_config_serialize_property_by_name (config, "chroma",
                                                          writer) &&
                  gimp_config_serialize_property_by_name (config, "lightness",
                                                          writer));
@@ -260,12 +260,12 @@ gimp_hue_saturation_config_serialize (GimpConfig       *config,
 }
 
 static gboolean
-gimp_hue_saturation_config_deserialize (GimpConfig *config,
+gimp_hue_chroma_config_deserialize (GimpConfig *config,
                                         GScanner   *scanner,
                                         gint        nest_level,
                                         gpointer    data)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
+  GimpHueChromaConfig *hs_config = GIMP_HUE_CHROMA_CONFIG (config);
   GimpHueRange             old_range;
   gboolean                 success = TRUE;
 
@@ -279,17 +279,17 @@ gimp_hue_saturation_config_deserialize (GimpConfig *config,
 }
 
 static gboolean
-gimp_hue_saturation_config_equal (GimpConfig *a,
+gimp_hue_chroma_config_equal (GimpConfig *a,
                                   GimpConfig *b)
 {
-  GimpHueSaturationConfig *config_a = GIMP_HUE_SATURATION_CONFIG (a);
-  GimpHueSaturationConfig *config_b = GIMP_HUE_SATURATION_CONFIG (b);
+  GimpHueChromaConfig *config_a = GIMP_HUE_CHROMA_CONFIG (a);
+  GimpHueChromaConfig *config_b = GIMP_HUE_CHROMA_CONFIG (b);
   GimpHueRange             range;
 
   for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
     {
-      if (config_a->hue[range]        != config_b->hue[range]        ||
-          config_a->saturation[range] != config_b->saturation[range] ||
+      if (config_a->hue[range]        != config_b->hue[range]    ||
+          config_a->chroma[range]     != config_b->chroma[range] ||
           config_a->lightness[range]  != config_b->lightness[range])
         return FALSE;
     }
@@ -303,15 +303,15 @@ gimp_hue_saturation_config_equal (GimpConfig *a,
 }
 
 static void
-gimp_hue_saturation_config_reset (GimpConfig *config)
+gimp_hue_chroma_config_reset (GimpConfig *config)
 {
-  GimpHueSaturationConfig *hs_config = GIMP_HUE_SATURATION_CONFIG (config);
+  GimpHueChromaConfig *hs_config = GIMP_HUE_CHROMA_CONFIG (config);
   GimpHueRange             range;
 
   for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
     {
       hs_config->range = range;
-      gimp_hue_saturation_config_reset_range (hs_config);
+      gimp_hue_chroma_config_reset_range (hs_config);
     }
 
   gimp_config_reset_property (G_OBJECT (config), "range");
@@ -319,23 +319,23 @@ gimp_hue_saturation_config_reset (GimpConfig *config)
 }
 
 static gboolean
-gimp_hue_saturation_config_copy (GimpConfig   *src,
+gimp_hue_chroma_config_copy (GimpConfig   *src,
                                  GimpConfig   *dest,
                                  GParamFlags   flags)
 {
-  GimpHueSaturationConfig *src_config  = GIMP_HUE_SATURATION_CONFIG (src);
-  GimpHueSaturationConfig *dest_config = GIMP_HUE_SATURATION_CONFIG (dest);
+  GimpHueChromaConfig *src_config  = GIMP_HUE_CHROMA_CONFIG (src);
+  GimpHueChromaConfig *dest_config = GIMP_HUE_CHROMA_CONFIG (dest);
   GimpHueRange             range;
 
   for (range = GIMP_ALL_HUES; range <= GIMP_MAGENTA_HUES; range++)
     {
       dest_config->hue[range]        = src_config->hue[range];
-      dest_config->saturation[range] = src_config->saturation[range];
+      dest_config->chroma[range]     = src_config->chroma[range];
       dest_config->lightness[range]  = src_config->lightness[range];
     }
 
   g_object_notify (G_OBJECT (dest), "hue");
-  g_object_notify (G_OBJECT (dest), "saturation");
+  g_object_notify (G_OBJECT (dest), "chroma");
   g_object_notify (G_OBJECT (dest), "lightness");
 
   dest_config->range   = src_config->range;
@@ -351,14 +351,14 @@ gimp_hue_saturation_config_copy (GimpConfig   *src,
 /*  public functions  */
 
 void
-gimp_hue_saturation_config_reset_range (GimpHueSaturationConfig *config)
+gimp_hue_chroma_config_reset_range (GimpHueChromaConfig *config)
 {
-  g_return_if_fail (GIMP_IS_HUE_SATURATION_CONFIG (config));
+  g_return_if_fail (GIMP_IS_HUE_CHROMA_CONFIG (config));
 
   g_object_freeze_notify (G_OBJECT (config));
 
   gimp_config_reset_property (G_OBJECT (config), "hue");
-  gimp_config_reset_property (G_OBJECT (config), "saturation");
+  gimp_config_reset_property (G_OBJECT (config), "chroma");
   gimp_config_reset_property (G_OBJECT (config), "lightness");
 
   g_object_thaw_notify (G_OBJECT (config));

@@ -603,9 +603,9 @@ EXPORTS
 	gimp_xml_parser_free
 	gimp_xml_parser_new
 	gimp_xml_parser_parse_file
-	hue_saturation
-	hue_saturation_calculate_transfers
-	hue_saturation_init
+	hue_chroma
+	hue_chroma_calculate_transfers
+	hue_chroma_init
 	levels_init
 	levels_lut_func
 	pixel_region_init
@@ -940,9 +940,9 @@ gimp_display_options_no_image_get_type
 gimp_histogram_duplicate
 gimp_histogram_ref
 gimp_histogram_unref
-gimp_hue_saturation_config_get_type
-gimp_hue_saturation_config_reset_range
-gimp_hue_saturation_config_to_cruft
+gimp_hue_chroma_config_get_type
+gimp_hue_chroma_config_reset_range
+gimp_hue_chroma_config_to_cruft
 gimp_image_get_projection
 gimp_image_map_config_compare
 gimp_image_map_config_get_type
@@ -962,7 +962,7 @@ gimp_list_set_sort_func
 gimp_marshal_BOOLEAN__STRING
 gimp_marshal_VOID__DOUBLE
 gimp_marshal_VOID__DOUBLE_DOUBLE_DOUBLE_DOUBLE
-gimp_operation_hue_saturation_map
+gimp_operation_hue_chroma_map
 gimp_operation_levels_map_input
 gimp_perspective_clone_set_transform
 gimp_posterize_config_get_type

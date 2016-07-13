@@ -631,8 +631,8 @@ CODE
     );
 }
 
-sub hue_saturation {
-    &std_pdb_deprecated ('gimp-drawable-hue-saturation');
+sub hue_chroma {
+    &std_pdb_deprecated ('gimp-drawable-hue-chroma');
 
     @inargs = (
 	{ name => 'drawable', type => 'drawable',
@@ -643,8 +643,8 @@ sub hue_saturation {
 	  desc => 'Hue offset in degrees' },
 	{ name => 'lightness', type => '-100 <= float <= 100',
 	  desc => 'Lightness modification' },
-	{ name => 'saturation', type => '-100 <= float <= 100',
-	  desc => 'Saturation modification' }
+	{ name => 'chroma', type => '-100 <= float <= 100',
+	  desc => 'Chroma modification' }
     );
 
     %invoke = (
@@ -655,19 +655,19 @@ sub hue_saturation {
                                  GIMP_PDB_ITEM_CONTENT, error) &&
       gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_HUE_SATURATION_CONFIG,
+      GObject *config = g_object_new (GIMP_TYPE_HUE_CHROMA_CONFIG,
                                       "range", hue_range,
                                       NULL);
 
        g_object_set (config,
                      "hue",        hue_offset / 180.0,
-                     "saturation", saturation / 100.0,
+                     "chroma", chroma / 100.0,
                      "lightness",  lightness  / 100.0,
                      NULL);
 
       gimp_drawable_apply_operation_by_name (drawable, progress,
                                              _("Hue-Chroma"),
-                                             "gimp:hue-saturation",
+                                             "gimp:hue-chroma",
                                              config);
       g_object_unref (config);
     }
@@ -745,7 +745,7 @@ CODE
             color_balance
             colorize
             histogram
-            hue_saturation
+            hue_chroma
             threshold);
 
 %exports = (app => [@procs], lib => [@procs]);

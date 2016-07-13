@@ -232,7 +232,7 @@ static const GimpDialogFactoryEntry entries[] =
   FOREIGN ("gimp-desaturate-tool-dialog",          TRUE,  FALSE),
   FOREIGN ("gimp-foreground-select-tool-dialog",   TRUE,  FALSE),
   FOREIGN ("gimp-gegl-tool-dialog",                TRUE,  FALSE),
-  FOREIGN ("gimp-hue-saturation-tool-dialog",      TRUE,  FALSE),
+  FOREIGN ("gimp-hue-chroma-tool-dialog",          TRUE,  FALSE),
   FOREIGN ("gimp-levels-tool-dialog",              TRUE,  TRUE),
   FOREIGN ("gimp-measure-tool-dialog",             TRUE,  FALSE),
   FOREIGN ("gimp-operation-tool-dialog",           TRUE,  FALSE),

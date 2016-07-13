@@ -125,7 +125,7 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_COLORIZE);
   g_type_class_ref (GIMP_TYPE_OPERATION_CURVES);
   g_type_class_ref (GIMP_TYPE_OPERATION_DESATURATE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HUE_SATURATION);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HUE_CHROMA);
   g_type_class_ref (GIMP_TYPE_OPERATION_LEVELS);
   g_type_class_ref (GIMP_TYPE_OPERATION_POSTERIZE);
   g_type_class_ref (GIMP_TYPE_OPERATION_THRESHOLD);
@@ -171,8 +171,8 @@ gimp_operations_init (void)
                              GIMP_TYPE_COLORIZE_CONFIG);
   gimp_gegl_config_register ("gimp:curves",
                              GIMP_TYPE_CURVES_CONFIG);
-  gimp_gegl_config_register ("gimp:hue-saturation",
-                             GIMP_TYPE_HUE_SATURATION_CONFIG);
+  gimp_gegl_config_register ("gimp:hue-chroma",
+                             GIMP_TYPE_HUE_CHROMA_CONFIG);
   gimp_gegl_config_register ("gimp:levels",
                              GIMP_TYPE_LEVELS_CONFIG);
 }

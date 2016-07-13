@@ -178,7 +178,7 @@ gimp_tools_init (Gimp *gimp)
     /*  color tools  */
 
     gimp_color_balance_tool_register,
-    gimp_hue_saturation_tool_register,
+    gimp_hue_chroma_tool_register,
     gimp_colorize_tool_register,
     gimp_brightness_contrast_tool_register,
     gimp_threshold_tool_register,

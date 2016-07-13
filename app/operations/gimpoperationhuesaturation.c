@@ -1,7 +1,7 @@
 /* GIMP - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationhuesaturation.c
+ * gimpoperationhuechroma.c
  * Copyright (C) 2007 Michael Natterer <mitch@gimp.org>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,7 +39,7 @@
 #include "gimpoperationhuesaturation.h"
 
 
-static gboolean gimp_operation_hue_saturation_process (GeglOperation       *operation,
+static gboolean gimp_operation_hue_chroma_process (GeglOperation       *operation,
                                                        void                *in_buf,
                                                        void                *out_buf,
                                                        glong                samples,
@@ -47,14 +47,14 @@ static gboolean gimp_operation_hue_saturation_process (GeglOperation       *oper
                                                        gint                 level);
 
 
-G_DEFINE_TYPE (GimpOperationHueSaturation, gimp_operation_hue_saturation,
+G_DEFINE_TYPE (GimpOperationHueChroma, gimp_operation_hue_chroma,
                GIMP_TYPE_OPERATION_POINT_FILTER)
 
-#define parent_class gimp_operation_hue_saturation_parent_class
+#define parent_class gimp_operation_hue_chroma_parent_class
 
 
 static void
-gimp_operation_hue_saturation_class_init (GimpOperationHueSaturationClass *klass)
+gimp_operation_hue_chroma_class_init (GimpOperationHueChromaClass *klass)
 {
   GObjectClass                  *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass            *operation_class = GEGL_OPERATION_CLASS (klass);
@@ -64,30 +64,30 @@ gimp_operation_hue_saturation_class_init (GimpOperationHueSaturationClass *klass
   object_class->get_property   = gimp_operation_point_filter_get_property;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:hue-saturation",
+                                 "name",        "gimp:hue-chroma",
                                  "categories",  "color",
                                  "description", "GIMP Hue-Saturation operation",
                                  NULL);
 
-  point_class->process = gimp_operation_hue_saturation_process;
+  point_class->process = gimp_operation_hue_chroma_process;
 
   g_object_class_install_property (object_class,
                                    GIMP_OPERATION_POINT_FILTER_PROP_CONFIG,
                                    g_param_spec_object ("config",
                                                         "Config",
                                                         "The config object",
-                                                        GIMP_TYPE_HUE_SATURATION_CONFIG,
+                                                        GIMP_TYPE_HUE_CHROMA_CONFIG,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
-gimp_operation_hue_saturation_init (GimpOperationHueSaturation *self)
+gimp_operation_hue_chroma_init (GimpOperationHueChroma *self)
 {
 }
 
 static inline gdouble
-map_lightness (GimpHueSaturationConfig *config,
+map_lightness (GimpHueChromaConfig *config,
                GimpHueRange             range,
                gdouble                  value)
 {
@@ -97,17 +97,17 @@ map_lightness (GimpHueSaturationConfig *config,
 }
 
 static inline gdouble
-map_saturation (GimpHueSaturationConfig *config,
-                GimpHueRange             range,
-                gdouble                  value)
+map_chroma (GimpHueChromaConfig *config,
+            GimpHueRange         range,
+            gdouble              value)
 {
-  value += config->saturation[GIMP_ALL_HUES];
+  value += config->chroma[GIMP_ALL_HUES];
 
   return CLAMP (value, 0.0, 200.0);
 }
 
 static inline gdouble
-map_hue (GimpHueSaturationConfig *config,
+map_hue (GimpHueChromaConfig *config,
          GimpHueRange             range,
          gdouble                  value)
 {
@@ -117,7 +117,7 @@ map_hue (GimpHueSaturationConfig *config,
 }
 
 static gboolean
-gimp_operation_hue_saturation_process (GeglOperation       *operation,
+gimp_operation_hue_chroma_process (GeglOperation       *operation,
                                        void                *in_buf,
                                        void                *out_buf,
                                        glong                samples,
@@ -125,7 +125,7 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
                                        gint                 level)
 {
   GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpHueSaturationConfig  *config = GIMP_HUE_SATURATION_CONFIG (point->config);
+  GimpHueChromaConfig  *config = GIMP_HUE_CHROMA_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
 
@@ -145,7 +145,7 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
       babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
 
           lch.l = map_lightness  (config, 0, lch.l);
-          lch.c = map_saturation (config, 0, lch.c);
+          lch.c = map_chroma (config, 0, lch.c);
           lch.h = map_hue        (config, 0, lch.h);
 
 
@@ -167,21 +167,21 @@ gimp_operation_hue_saturation_process (GeglOperation       *operation,
 /*  public functions  */
 
 void
-gimp_operation_hue_saturation_map (GimpHueSaturationConfig *config,
-                                   const GimpRGB           *color,
-                                   GimpHueRange             range,
-                                   GimpRGB                 *result)
+gimp_operation_hue_chroma_map (GimpHueChromaConfig *config,
+                               const GimpRGB           *color,
+                               GimpHueRange             range,
+                               GimpRGB                 *result)
 {
   GimpLch lch;
 
-  g_return_if_fail (GIMP_IS_HUE_SATURATION_CONFIG (config));
+  g_return_if_fail (GIMP_IS_HUE_CHROMA_CONFIG (config));
   g_return_if_fail (color != NULL);
   g_return_if_fail (result != NULL);
 
   babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), color, &lch, 1);
 
   lch.l = map_lightness  (config, range, lch.l);
-  lch.c = map_saturation (config, range, lch.c);
+  lch.c = map_chroma (config, range, lch.c);
   lch.h = map_hue        (config, range, lch.h);
 
   babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, result, 1);

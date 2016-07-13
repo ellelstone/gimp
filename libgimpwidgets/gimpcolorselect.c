@@ -67,15 +67,15 @@
 typedef enum
 {
   COLOR_SELECT_HUE = 0,
-  COLOR_SELECT_SATURATION,
-  COLOR_SELECT_VALUE,
+  COLOR_SELECT_CHROMA,
+  COLOR_SELECT_LIGHTNESS,
   COLOR_SELECT_RED,
   COLOR_SELECT_GREEN,
   COLOR_SELECT_BLUE,
   COLOR_SELECT_ALPHA,
-  COLOR_SELECT_HUE_SATURATION,
-  COLOR_SELECT_HUE_VALUE,
-  COLOR_SELECT_SATURATION_VALUE,
+  COLOR_SELECT_HUE_CHROMA,
+  COLOR_SELECT_HUE_LIGHTNESS,
+  COLOR_SELECT_CHROMA_LIGHTNESS,
   COLOR_SELECT_RED_GREEN,
   COLOR_SELECT_RED_BLUE,
   COLOR_SELECT_GREEN_BLUE
@@ -255,7 +255,7 @@ gimp_color_select_init (GimpColorSelect *select)
   GtkWidget *frame;
 
   select->z_color_fill  = COLOR_SELECT_HUE;
-  select->xy_color_fill = COLOR_SELECT_SATURATION_VALUE;
+  select->xy_color_fill = COLOR_SELECT_CHROMA_LIGHTNESS;
   select->drag_mode     = DRAG_NONE;
 
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
@@ -403,17 +403,17 @@ gimp_color_select_set_channel (GimpColorSelector        *selector,
     {
     case COLOR_SELECT_HUE:
       select->z_color_fill  = COLOR_SELECT_HUE;
-      select->xy_color_fill = COLOR_SELECT_SATURATION_VALUE;
+      select->xy_color_fill = COLOR_SELECT_CHROMA_LIGHTNESS;
       break;
 
-    case COLOR_SELECT_SATURATION:
-      select->z_color_fill  = COLOR_SELECT_SATURATION;
-      select->xy_color_fill = COLOR_SELECT_HUE_VALUE;
+    case COLOR_SELECT_CHROMA:
+      select->z_color_fill  = COLOR_SELECT_CHROMA;
+      select->xy_color_fill = COLOR_SELECT_HUE_LIGHTNESS;
       break;
 
-    case COLOR_SELECT_VALUE:
-      select->z_color_fill  = COLOR_SELECT_VALUE;
-      select->xy_color_fill = COLOR_SELECT_HUE_SATURATION;
+    case COLOR_SELECT_LIGHTNESS:
+      select->z_color_fill  = COLOR_SELECT_LIGHTNESS;
+      select->xy_color_fill = COLOR_SELECT_HUE_CHROMA;
       break;
 
     case COLOR_SELECT_RED:
@@ -531,12 +531,12 @@ gimp_color_select_update_values (GimpColorSelect *select)
       selector->lch.l = select->pos[1] * 100;
       selector->lch.h = select->pos[2] * 360;
       break;
-    case COLOR_SELECT_SATURATION:
+    case COLOR_SELECT_CHROMA:
       selector->lch.h = select->pos[0] * 360;
       selector->lch.l = select->pos[1] * 100;
       selector->lch.c = select->pos[2] * 200;
       break;
-    case COLOR_SELECT_VALUE:
+    case COLOR_SELECT_LIGHTNESS:
       selector->lch.h = select->pos[0] * 360;
       selector->lch.c = select->pos[1] * 200;
       selector->lch.l = select->pos[2] * 100;
@@ -555,8 +555,8 @@ gimp_color_select_update_values (GimpColorSelect *select)
       break;
 
     case COLOR_SELECT_HUE:
-    case COLOR_SELECT_SATURATION:
-    case COLOR_SELECT_VALUE:
+    case COLOR_SELECT_CHROMA:
+    case COLOR_SELECT_LIGHTNESS:
       babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &selector->lch, &selector->rgb, 1);
       break;
 
@@ -593,12 +593,12 @@ gimp_color_select_update_pos (GimpColorSelect *select)
       select->pos[1] = CLAMP (selector->lch.l / 100, 0.0, 1.0);
       select->pos[2] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
       break;
-    case COLOR_SELECT_SATURATION:
+    case COLOR_SELECT_CHROMA:
       select->pos[0] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
       select->pos[1] = CLAMP (selector->lch.l / 100, 0.0, 1.0);
       select->pos[2] = CLAMP (selector->lch.c / 200, 0.0, 1.0);
       break;
-    case COLOR_SELECT_VALUE:
+    case COLOR_SELECT_LIGHTNESS:
       select->pos[0] = CLAMP (selector->lch.h / 360, 0.0, 1.0);
       select->pos[1] = CLAMP (selector->lch.c / 200, 0.0, 1.0);
       select->pos[2] = CLAMP (selector->lch.l / 100, 0.0, 1.0);

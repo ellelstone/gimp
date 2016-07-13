@@ -295,7 +295,7 @@
 #define GIMP_HELP_TOOL_GEGL                       "gimp-tool-gegl"
 #define GIMP_HELP_TOOL_HANDLE_TRANSFORM           "gimp-tool-handle-transform"
 #define GIMP_HELP_TOOL_HEAL                       "gimp-tool-heal"
-#define GIMP_HELP_TOOL_HUE_SATURATION             "gimp-tool-hue-saturation"
+#define GIMP_HELP_TOOL_HUE_CHROMA                 "gimp-tool-hue-chroma"
 #define GIMP_HELP_TOOL_INK                        "gimp-tool-ink"
 #define GIMP_HELP_TOOL_ISCISSORS                  "gimp-tool-iscissors"
 #define GIMP_HELP_TOOL_LEVELS                     "gimp-tool-levels"

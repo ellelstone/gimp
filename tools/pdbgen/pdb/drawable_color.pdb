@@ -487,13 +487,13 @@ CODE
     );
 }
 
-sub drawable_hue_saturation {
+sub drawable_hue_chroma {
     $blurb = <<'BLURB';
-Modify hue, lightness, and saturation in the specified drawable.
+Modify LCH Hue, Lightness, and Chroma in the specified drawable.
 BLURB
 
     $help = <<'HELP';
-This procedure allows the hue, lightness, and saturation in the specified
+This procedure allows the LCH Hue, Lightness, and Chroma in the specified
 drawable to be modified. The 'hue-range' parameter provides the capability to
 limit range of affected hues. The 'overlap' parameter provides blending into
 neighboring hue channels when rendering.
@@ -511,8 +511,8 @@ HELP
           desc => 'Hue offset in degrees' },
         { name => 'lightness', type => '-100 <= float <= 100',
           desc => 'Lightness modification' },
-        { name => 'saturation', type => '-100 <= float <= 100',
-          desc => 'Saturation modification' },
+        { name => 'chroma', type => '-100 <= float <= 100',
+          desc => 'Chroma modification' },
         { name => 'overlap', type => '0 <= float <= 100',
           desc => 'Overlap other hue channels' }
     );
@@ -525,20 +525,20 @@ HELP
                                  GIMP_PDB_ITEM_CONTENT, error) &&
       gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
     {
-      GObject *config = g_object_new (GIMP_TYPE_HUE_SATURATION_CONFIG,
+      GObject *config = g_object_new (GIMP_TYPE_HUE_CHROMA_CONFIG,
                                       "range", hue_range,
                                       NULL);
 
        g_object_set (config,
-                     "hue",        hue_offset / 180.0,
-                     "saturation", saturation / 100.0,
-                     "lightness",  lightness  / 100.0,
-                     "overlap",    overlap / 100.0,
+                     "hue",       hue_offset / 180.0,
+                     "chroma",    chroma / 100.0,
+                     "lightness", lightness  / 100.0,
+                     "overlap",   overlap / 100.0,
                      NULL);
 
       gimp_drawable_apply_operation_by_name (drawable, progress,
                                              C_("undo-type", "Hue-Chroma"),
-                                             "gimp:hue-saturation",
+                                             "gimp:hue-chroma",
                                              config);
       g_object_unref (config);
     }
@@ -802,7 +802,7 @@ CODE
             drawable_desaturate
             drawable_equalize
             drawable_histogram
-            drawable_hue_saturation
+            drawable_hue_chroma
             drawable_invert
             drawable_levels drawable_levels_stretch
             drawable_posterize

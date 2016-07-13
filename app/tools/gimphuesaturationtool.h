@@ -15,25 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __GIMP_HUE_SATURATION_TOOL_H__
-#define __GIMP_HUE_SATURATION_TOOL_H__
+#ifndef __GIMP_HUE_CHROMA_TOOL_H__
+#define __GIMP_HUE_CHROMA_TOOL_H__
 
 
 #include "gimpfiltertool.h"
 
 
-#define GIMP_TYPE_HUE_SATURATION_TOOL            (gimp_hue_saturation_tool_get_type ())
-#define GIMP_HUE_SATURATION_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationTool))
-#define GIMP_HUE_SATURATION_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationToolClass))
-#define GIMP_IS_HUE_SATURATION_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_SATURATION_TOOL))
-#define GIMP_IS_HUE_SATURATION_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HUE_SATURATION_TOOL))
-#define GIMP_HUE_SATURATION_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HUE_SATURATION_TOOL, GimpHueSaturationToolClass))
+#define GIMP_TYPE_HUE_CHROMA_TOOL            (gimp_hue_chroma_tool_get_type ())
+#define GIMP_HUE_CHROMA_TOOL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GIMP_TYPE_HUE_CHROMA_TOOL, GimpHueChromaTool))
+#define GIMP_HUE_CHROMA_TOOL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), GIMP_TYPE_HUE_CHROMA_TOOL, GimpHueChromaToolClass))
+#define GIMP_IS_HUE_CHROMA_TOOL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GIMP_TYPE_HUE_CHROMA_TOOL))
+#define GIMP_IS_HUE_CHROMA_TOOL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GIMP_TYPE_HUE_CHROMA_TOOL))
+#define GIMP_HUE_CHROMA_TOOL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GIMP_TYPE_HUE_CHROMA_TOOL, GimpHueChromaToolClass))
 
 
-typedef struct _GimpHueSaturationTool      GimpHueSaturationTool;
-typedef struct _GimpHueSaturationToolClass GimpHueSaturationToolClass;
+typedef struct _GimpHueChromaTool      GimpHueChromaTool;
+typedef struct _GimpHueChromaToolClass GimpHueChromaToolClass;
 
-struct _GimpHueSaturationTool
+struct _GimpHueChromaTool
 {
   GimpFilterTool  parent_instance;
 
@@ -42,16 +42,16 @@ struct _GimpHueSaturationTool
   GtkWidget      *hue_range_color_area[6];
 };
 
-struct _GimpHueSaturationToolClass
+struct _GimpHueChromaToolClass
 {
   GimpFilterToolClass  parent_class;
 };
 
 
-void    gimp_hue_saturation_tool_register (GimpToolRegisterCallback  callback,
+void    gimp_hue_chroma_tool_register (GimpToolRegisterCallback  callback,
                                            gpointer                  data);
 
-GType   gimp_hue_saturation_tool_get_type (void) G_GNUC_CONST;
+GType   gimp_hue_chroma_tool_get_type (void) G_GNUC_CONST;
 
 
-#endif  /*  __GIMP_HUE_SATURATION_TOOL_H__  */
+#endif  /*  __GIMP_HUE_CHROMA_TOOL_H__  */

@@ -226,7 +226,7 @@ EXPORTS
 	gimp_drawable_has_alpha
 	gimp_drawable_height
 	gimp_drawable_histogram
-	gimp_drawable_hue_saturation
+	gimp_drawable_hue_chroma
 	gimp_drawable_invert
 	gimp_drawable_is_channel
 	gimp_drawable_is_gray
@@ -388,7 +388,7 @@ EXPORTS
 	gimp_help
 	gimp_histogram
 	gimp_histogram_channel_get_type
-	gimp_hue_saturation
+	gimp_hue_chroma
 	gimp_image_add_channel
 	gimp_image_add_hguide
 	gimp_image_add_layer
