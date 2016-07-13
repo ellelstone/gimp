@@ -41,7 +41,7 @@
 #include "operations/gimpcolorbalanceconfig.h"
 #include "operations/gimpcolorizeconfig.h"
 #include "operations/gimpcurvesconfig.h"
-#include "operations/gimphuesaturationconfig.h"
+#include "operations/gimplchhuechromaconfig.h"
 #include "operations/gimplevelsconfig.h"
 #include "plug-in/gimpplugin.h"
 #include "plug-in/gimppluginmanager.h"
