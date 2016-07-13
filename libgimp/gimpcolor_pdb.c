@@ -558,35 +558,35 @@ gimp_histogram (gint32                drawable_ID,
 }
 
 /**
- * gimp_hue_saturation:
+ * gimp_hue_chroma:
  * @drawable_ID: The drawable.
  * @hue_range: Range of affected hues.
  * @hue_offset: Hue offset in degrees.
  * @lightness: Lightness modification.
- * @saturation: Saturation modification.
+ * @chroma: Chroma modification.
  *
- * Deprecated: Use gimp_drawable_hue_saturation() instead.
+ * Deprecated: Use gimp_drawable_hue_chroma() instead.
  *
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_hue_saturation (gint32       drawable_ID,
-                     GimpHueRange hue_range,
-                     gdouble      hue_offset,
-                     gdouble      lightness,
-                     gdouble      saturation)
+gimp_hue_chroma (gint32       drawable_ID,
+                 GimpHueRange hue_range,
+                 gdouble      hue_offset,
+                 gdouble      lightness,
+                 gdouble      chroma)
 {
   GimpParam *return_vals;
   gint nreturn_vals;
   gboolean success = TRUE;
 
-  return_vals = gimp_run_procedure ("gimp-hue-saturation",
+  return_vals = gimp_run_procedure ("gimp-hue-chroma",
                                     &nreturn_vals,
                                     GIMP_PDB_DRAWABLE, drawable_ID,
                                     GIMP_PDB_INT32, hue_range,
                                     GIMP_PDB_FLOAT, hue_offset,
                                     GIMP_PDB_FLOAT, lightness,
-                                    GIMP_PDB_FLOAT, saturation,
+                                    GIMP_PDB_FLOAT, chroma,
                                     GIMP_PDB_END);
 
   success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
