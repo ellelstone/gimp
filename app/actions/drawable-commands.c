@@ -25,7 +25,7 @@
 #include "actions-types.h"
 
 #include "core/gimp.h"
-#include "core/gimpdrawable-equalize.h"
+//#include "core/gimpdrawable-equalize.h"
 #include "core/gimpdrawable-levels.h"
 #include "core/gimpdrawable-operation.h"
 #include "core/gimpimage.h"
@@ -45,7 +45,7 @@
 
 /*  public functions  */
 
-void
+/*void
 drawable_equalize_cmd_callback (GtkAction *action,
                                 gpointer   data)
 {
@@ -55,7 +55,7 @@ drawable_equalize_cmd_callback (GtkAction *action,
 
   gimp_drawable_equalize (drawable, TRUE);
   gimp_image_flush (image);
-}
+}*/
 
 void
 drawable_invert_cmd_callback (GtkAction *action,
@@ -74,7 +74,7 @@ drawable_invert_cmd_callback (GtkAction *action,
   gimp_image_flush (image);
 }
 
-void
+/*void
 drawable_value_invert_cmd_callback (GtkAction *action,
                                     gpointer   data)
 {
@@ -88,9 +88,9 @@ drawable_value_invert_cmd_callback (GtkAction *action,
                                          _("Invert"), "gegl:value-invert",
                                          NULL);
   gimp_image_flush (image);
-}
+}*/
 
-void
+/*void
 drawable_levels_stretch_cmd_callback (GtkAction *action,
                                       gpointer   data)
 {
@@ -112,7 +112,7 @@ drawable_levels_stretch_cmd_callback (GtkAction *action,
 
   gimp_drawable_levels_stretch (drawable, GIMP_PROGRESS (display));
   gimp_image_flush (image);
-}
+}*/
 
 void
 drawable_dilate_cmd_callback (GtkAction *action,

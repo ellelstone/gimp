@@ -41,11 +41,11 @@
 
 static const GimpActionEntry drawable_actions[] =
 {
-  { "drawable-equalize", NULL,
+/*  { "drawable-equalize", NULL,
     NC_("drawable-action", "_Equalize"), NULL,
     NC_("drawable-action", "Automatic contrast enhancement"),
     G_CALLBACK (drawable_equalize_cmd_callback),
-    GIMP_HELP_LAYER_EQUALIZE },
+    GIMP_HELP_LAYER_EQUALIZE },*/
 
   { "drawable-invert", GIMP_STOCK_INVERT,
     NC_("drawable-action", "In_vert"), NULL,
@@ -53,17 +53,17 @@ static const GimpActionEntry drawable_actions[] =
     G_CALLBACK (drawable_invert_cmd_callback),
     GIMP_HELP_LAYER_INVERT },
 
-  { "drawable-value-invert", GIMP_STOCK_GEGL,
+/*  { "drawable-value-invert", GIMP_STOCK_GEGL,
     NC_("drawable-action", "_Value Invert"), NULL,
     NC_("drawable-action", "Invert the brightness of each pixel"),
     G_CALLBACK (drawable_value_invert_cmd_callback),
-    GIMP_HELP_LAYER_INVERT },
+    GIMP_HELP_LAYER_INVERT },*/
 
-  { "drawable-levels-stretch", NULL,
+/*  { "drawable-levels-stretch", NULL,
     NC_("drawable-action", "_White Balance"), NULL,
     NC_("drawable-action", "Automatic white balance correction"),
     G_CALLBACK (drawable_levels_stretch_cmd_callback),
-    GIMP_HELP_LAYER_WHITE_BALANCE },
+    GIMP_HELP_LAYER_WHITE_BALANCE },*/
 
   { "drawable-dilate", GIMP_STOCK_GEGL,
     NC_("drawable-action", "_Dilate"), NULL,
@@ -239,10 +239,10 @@ drawable_actions_update (GimpActionGroup *group,
 #define SET_ACTIVE(action,condition) \
         gimp_action_group_set_action_active (group, action, (condition) != 0)
 
-  SET_SENSITIVE ("drawable-equalize",       writable && !children);
+//  SET_SENSITIVE ("drawable-equalize",       writable && !children);
   SET_SENSITIVE ("drawable-invert",         writable && !children);
-  SET_SENSITIVE ("drawable-value-invert",   writable && !children);
-  SET_SENSITIVE ("drawable-levels-stretch", writable && !children && is_rgb);
+//  SET_SENSITIVE ("drawable-value-invert",   writable && !children);
+//  SET_SENSITIVE ("drawable-levels-stretch", writable && !children && is_rgb);
   SET_SENSITIVE ("drawable-dilate",         writable && !children);
   SET_SENSITIVE ("drawable-erode",          writable && !children);
   SET_SENSITIVE ("drawable-offset",         writable && !children);
