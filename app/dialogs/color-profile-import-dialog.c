@@ -20,7 +20,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
 #include "config.h"
 
 #include <gegl.h>
@@ -46,9 +46,9 @@
 #include "gimp-intl.h"
 
 
-/*  public functions  */
+  public functions  */
 
-GimpColorProfilePolicy
+/*GimpColorProfilePolicy
 color_profile_import_dialog_run (GimpImage                 *image,
                                  GimpContext               *context,
                                  GtkWidget                 *parent,
@@ -56,7 +56,7 @@ color_profile_import_dialog_run (GimpImage                 *image,
                                  GimpColorRenderingIntent  *intent,
                                  gboolean                  *bpc,
                                  gboolean                  *dont_ask)
-{
+{printf("color_profile_import_dialog_run\n");
   GtkWidget              *dialog;
   GtkWidget              *main_vbox;
   GtkWidget              *vbox;
@@ -199,8 +199,8 @@ color_profile_import_dialog_run (GimpImage                 *image,
       policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
       break;
     }
-
-  if (intent)
+*/
+/*  if (intent)
     gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (intent_combo),
                                    (gint *) intent);
 
@@ -213,4 +213,4 @@ color_profile_import_dialog_run (GimpImage                 *image,
   gtk_widget_destroy (dialog);
 
   return policy;
-}
+}*/

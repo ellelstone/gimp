@@ -17,7 +17,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
 #ifndef __COLOR_PROFILE_IMPORT_DIALOG_H__
 #define __COLOR_PROFILE_IMPORT_DIALOG_H__
 
@@ -32,4 +32,4 @@ GimpColorProfilePolicy
                                      gboolean                  *dont_ask);
 
 
-#endif  /*  __COLOR_PROFILE_IMPORT_DIALOG_H__  */
+#endif    __COLOR_PROFILE_IMPORT_DIALOG_H__  */

@@ -1452,7 +1452,7 @@ prefs_dialog_new (Gimp       *gimp,
     vbox2 = prefs_frame_new (_("Preferred Profiles"), GTK_CONTAINER (vbox),
                              FALSE);
 
-    table = prefs_table_new (3, GTK_CONTAINER (vbox2));
+    table = prefs_table_new (/*3*/ 1, GTK_CONTAINER (vbox2));
     row = 0;
 
     prefs_profile_combo_box_add (color_config,
@@ -1476,7 +1476,7 @@ prefs_dialog_new (Gimp       *gimp,
                                  _("_CMYK profile:"),
                                  GTK_TABLE (table), row++, size_group);
 
-    /*  Policies  */
+    /*  Policies  
     vbox2 = prefs_frame_new (_("Policies"), GTK_CONTAINER (vbox),
                              FALSE);
 
@@ -1489,7 +1489,7 @@ prefs_dialog_new (Gimp       *gimp,
 
     g_object_unref (size_group);
 
-    g_object_unref (store);
+    g_object_unref (store);*/
   }
 
 

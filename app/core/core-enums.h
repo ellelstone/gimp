@@ -517,8 +517,8 @@ GType gimp_color_profile_policy_get_type (void) G_GNUC_CONST;
 typedef enum  /*< pdb-skip >*/
 {
 /*  GIMP_COLOR_PROFILE_POLICY_ASK,    < desc="Ask what to do"           >*/
-  GIMP_COLOR_PROFILE_POLICY_KEEP,   /*< desc="Keep embedded profile"    >*/
-  GIMP_COLOR_PROFILE_POLICY_CONVERT /*< desc="Convert to preferred RGB color profile" >*/
+  GIMP_COLOR_PROFILE_POLICY_KEEP/*,   < desc="Keep embedded profile"    >*/
+/*  GIMP_COLOR_PROFILE_POLICY_CONVERT < desc="Convert to preferred RGB color profile" >*/
 } GimpColorProfilePolicy;
 
 

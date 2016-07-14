@@ -433,18 +433,19 @@ gimp_image_import_color_profile (GimpImage    *image,
   g_return_if_fail (GIMP_IS_CONTEXT (context));
   g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
 
-  if (gimp_image_get_is_color_managed (image) &&
+/*  if (gimp_image_get_is_color_managed (image) &&
       gimp_image_get_color_profile (image))
     {
       GimpColorProfilePolicy     policy;
-      GimpColorProfile          *dest_profile = NULL;
-      GimpColorRenderingIntent   intent;
-      gboolean                   bpc;
+//      GimpColorProfile          *dest_profile = NULL;
+//      GimpColorRenderingIntent   intent;
+//      gboolean                   bpc;
 
-      policy = image->gimp->config->color_profile_policy;
-      intent = GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC;
-      bpc    = TRUE;
-/*elle: this dialog calls on the built-in profile
+//      policy = image->gimp->config->color_profile_policy;
+//      intent = GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC;
+//      bpc    = TRUE;
+      policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
+//elle: this dialog calls on the built-in profile
       if (policy == GIMP_COLOR_PROFILE_POLICY_ASK)
         {
           if (interactive)
@@ -467,7 +468,7 @@ gimp_image_import_color_profile (GimpImage    *image,
             {
               policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
             }
-        }*/
+        }
 
       if (policy == GIMP_COLOR_PROFILE_POLICY_CONVERT)
         {
@@ -483,7 +484,7 @@ gimp_image_import_color_profile (GimpImage    *image,
 
           g_object_unref (dest_profile);
         }
-    }
+    }*/
 }
 
 GimpColorTransform *

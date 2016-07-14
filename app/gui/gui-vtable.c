@@ -150,14 +150,14 @@ static GMountOperation
                     * gui_get_mount_operation    (Gimp                *gimp,
                                                   GimpProgress        *progress);
 
-static GimpColorProfilePolicy
+/*static GimpColorProfilePolicy
                       gui_query_profile_policy   (Gimp                *gimp,
                                                   GimpImage           *image,
                                                   GimpContext         *context,
                                                   GimpColorProfile   **dest_profile,
                                                   GimpColorRenderingIntent *intent,
                                                   gboolean            *bpc,
-                                                  gboolean            *dont_ask);
+                                                  gboolean            *dont_ask);*/
 
 
 /*  public functions  */
@@ -195,7 +195,7 @@ gui_vtable_init (Gimp *gimp)
   gimp->gui.recent_list_add_file   = gui_recent_list_add_file;
   gimp->gui.recent_list_load       = gui_recent_list_load;
   gimp->gui.get_mount_operation    = gui_get_mount_operation;
-  gimp->gui.query_profile_policy   = gui_query_profile_policy;
+//  gimp->gui.query_profile_policy   = gui_query_profile_policy;
 }
 
 
@@ -772,7 +772,7 @@ gui_get_mount_operation (Gimp         *gimp,
   return gtk_mount_operation_new (GTK_WINDOW (toplevel));
 }
 
-static GimpColorProfilePolicy
+/*static GimpColorProfilePolicy
 gui_query_profile_policy (Gimp                      *gimp,
                           GimpImage                 *image,
                           GimpContext               *context,
@@ -780,9 +780,9 @@ gui_query_profile_policy (Gimp                      *gimp,
                           GimpColorRenderingIntent  *intent,
                           gboolean                  *bpc,
                           gboolean                  *dont_ask)
-{
+{printf("gui_query_profile_policy\n");
   return color_profile_import_dialog_run (image, context, NULL,
                                           dest_profile,
                                           intent, bpc,
                                           dont_ask);
-}
+}*/
