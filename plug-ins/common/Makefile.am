@@ -59,7 +59,6 @@ libexec_PROGRAMS = \
 	metadata \
 	plugin-browser \
 	procedure-browser \
-	smooth-palette \
 	unit-editor
 
 EXTRA_PROGRAMS = \
@@ -357,23 +356,6 @@ procedure_browser_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(procedure_browser_RC)
-
-smooth_palette_SOURCES = \
-	smooth-palette.c
-
-smooth_palette_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(smooth_palette_RC)
 
 unit_editor_SOURCES = \
 	unit-editor.c
