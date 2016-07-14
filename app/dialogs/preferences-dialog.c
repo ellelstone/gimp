@@ -1455,7 +1455,7 @@ prefs_dialog_new (Gimp       *gimp,
     table = prefs_table_new (/*3*/ 1, GTK_CONTAINER (vbox2));
     row = 0;
 
-    prefs_profile_combo_box_add (color_config,
+/*    prefs_profile_combo_box_add (color_config,
                                  "rgb-profile",
                                  store,
                                  _("Select Preferred RGB Color Profile"),
@@ -1467,7 +1467,7 @@ prefs_dialog_new (Gimp       *gimp,
                                  store,
                                  _("Select Preferred Grayscale Color Profile"),
                                  _("_Grayscale profile:"),
-                                 GTK_TABLE (table), row++, size_group);
+                                 GTK_TABLE (table), row++, size_group);*/
 
     prefs_profile_combo_box_add (color_config,
                                  "cmyk-profile",
