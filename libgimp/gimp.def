@@ -66,8 +66,8 @@ EXPORTS
 	gimp_check_type
 	gimp_clone
 	gimp_clone_default
-	gimp_color_balance
-	gimp_colorize
+;	gimp_color_balance
+;	gimp_colorize
 	gimp_context_get_antialias
 	gimp_context_get_background
 	gimp_context_get_brush
@@ -194,8 +194,8 @@ EXPORTS
 	gimp_drawable_attach_new_parasite
 	gimp_drawable_bpp
 	gimp_drawable_brightness_contrast
-	gimp_drawable_color_balance
-	gimp_drawable_colorize_hsl
+;	gimp_drawable_color_balance
+;	gimp_drawable_colorize_hsl
 	gimp_drawable_curves_explicit
 	gimp_drawable_curves_spline
 	gimp_drawable_delete

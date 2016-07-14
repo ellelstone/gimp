@@ -552,10 +552,10 @@
     </menu>
 
     <menu action="colors-menu" name="Colors">
-      <menuitem action="tools-color-balance" />
+<!--      <menuitem action="tools-color-balance" />-->
       <menuitem action="tools-hue-chroma" />
       <menuitem action="filters-saturation" />
-      <menuitem action="tools-colorize" />
+<!--      <menuitem action="tools-colorize" />-->
       <menuitem action="tools-brightness-contrast" />
       <menuitem action="tools-threshold" />
       <menuitem action="tools-levels" />
@@ -649,9 +649,9 @@
 	-->
       </menu>
       <menu action="tools-color-menu" name="Color Tools">
-        <menuitem action="tools-color-balance" />
+<!--        <menuitem action="tools-color-balance" />-->
         <menuitem action="tools-hue-chroma" />
-        <menuitem action="tools-colorize" />
+<!--        <menuitem action="tools-colorize" />-->
         <menuitem action="tools-brightness-contrast" />
         <menuitem action="tools-threshold" />
         <menuitem action="tools-levels" />

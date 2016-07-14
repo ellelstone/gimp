@@ -16,12 +16,12 @@ EXPORTS
 	blob_ellipse
 	blob_square
 	brightness_contrast_lut_setup
-	color_balance
-	color_balance_create_lookup_tables
-	color_balance_init
-	colorize
-	colorize_calculate
-	colorize_init
+;	color_balance
+;	color_balance_create_lookup_tables
+;	color_balance_init
+;	colorize
+;	colorize_calculate
+;	colorize_init
 	convolve_region
 	curves_init
 	curves_lut_func
@@ -919,11 +919,11 @@ gimp_brightness_contrast_config_get_type
 gimp_brightness_contrast_config_set_node
 gimp_brightness_contrast_config_to_levels_config
 gimp_buffer_get_tiles
-gimp_color_balance_config_get_type
-gimp_color_balance_config_reset_range
-gimp_color_balance_config_to_cruft
-gimp_colorize_config_get_type
-gimp_colorize_config_to_cruft
+;gimp_color_balance_config_get_type
+;gimp_color_balance_config_reset_range
+;gimp_color_balance_config_to_cruft
+;gimp_colorize_config_get_type
+;gimp_colorize_config_to_cruft
 gimp_container_get_first_child
 gimp_context_display_changed
 gimp_curve_get_curve_type

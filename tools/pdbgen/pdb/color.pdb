@@ -419,111 +419,6 @@ CODE
     );
 }
 
-sub color_balance {
-    $blurb = 'Modify the color balance of the specified drawable.';
-
-    $help = <<'HELP';
-Modify the color balance of the specified drawable. There are three axis which
-can be modified: cyan-red, magenta-green, and yellow-blue. Negative values
-increase the amount of the former, positive values increase the amount of the
-latter. Color balance can be controlled with the 'transfer_mode' setting, which
-allows shadows, mid-tones, and highlights in an image to be affected
-differently. The 'preserve-lum' parameter, if TRUE, ensures that the
-luminosity of each pixel remains fixed.
-HELP
-
-    &std_pdb_misc;
-    $date = '1997';
-
-    @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'transfer_mode', type => 'enum GimpTransferMode',
-	  desc => 'Transfer mode' },
-	{ name => 'preserve_lum', type => 'boolean',
-	  desc => 'Preserve luminosity values at each pixel' },
-	{ name => 'cyan_red', type => '-100 <= float <= 100',
-	  desc => 'Cyan-Red color balance' },
-	{ name => 'magenta_green', type => '-100 <= float <= 100',
-	  desc => 'Magenta-Green color balance' },
-	{ name => 'yellow_blue', type => '-100 <= float <= 100',
-	  desc => 'Yellow-Blue color balance' }
-    );
-
-    %invoke = (
-	headers => [ qw("operations/gimpcolorbalanceconfig.h") ],
-	code => <<'CODE'
-{
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error)  &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-    {
-      GObject *config = g_object_new (GIMP_TYPE_COLOR_BALANCE_CONFIG,
-                                      "range",               transfer_mode,
-                                      "preserve-luminosity", preserve_lum,
-                                      NULL);
-
-      g_object_set (config,
-                    "cyan-red",      cyan_red      / 100.0,
-                    "magenta-green", magenta_green / 100.0,
-                    "yellow-blue",   yellow_blue   / 100.0,
-                    NULL);
-
-      gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             C_("undo-type", "Color Balance"),
-                                             "gimp:color-balance",
-                                             config);
-      g_object_unref (config);
-    }
-  else
-    success = FALSE;
-}
-CODE
-    );
-}
-
-sub colorize {
-    &std_pdb_deprecated ('gimp-drawable-colorize-hsl');
-
-    @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'hue', type => '0 <= float <= 360',
-	  desc => 'Hue in degrees' },
-	{ name => 'saturation', type => '0 <= float <= 100',
-	  desc => 'Saturation in percent' },
-	{ name => 'lightness', type => '-100 <= float <= 100',
-	  desc => 'Lightness in percent' }
-    );
-
-    %invoke = (
-	headers => [ qw("operations/gimpcolorizeconfig.h") ],
-	code => <<'CODE'
-{
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error) &&
-      ! gimp_drawable_is_gray (drawable))
-    {
-      GObject *config = g_object_new (GIMP_TYPE_COLORIZE_CONFIG,
-                                      "hue",        hue        / 360.0,
-                                      "saturation", saturation / 100.0,
-                                      "lightness",  lightness  / 100.0,
-                                      NULL);
-
-      gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             C_("undo-type", "Colorize"),
-                                             "gimp:colorize",
-                                             config);
-      g_object_unref (config);
-    }
-  else
-    success = FALSE;
-}
-CODE
-    );
-}
-
 sub histogram {
     $blurb = <<'BLURB';
 Returns information on the intensity histogram for the specified drawable.
@@ -742,8 +637,6 @@ CODE
             equalize
             invert
             curves_spline curves_explicit
-            color_balance
-            colorize
             histogram
             hue_chroma
             threshold);

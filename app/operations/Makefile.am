@@ -1,4 +1,5 @@
 ## Process this file with automake to produce Makefile.in
+
 SUBDIRS = tests
 
 AM_CPPFLAGS = \
@@ -27,10 +28,6 @@ libappoperations_generic_a_sources = \
 	gimpbrightnesscontrastconfig.h		\
 	gimpcageconfig.c			\
 	gimpcageconfig.h			\
-	gimpcolorbalanceconfig.c		\
-	gimpcolorbalanceconfig.h		\
-	gimpcolorizeconfig.c			\
-	gimpcolorizeconfig.h			\
 	gimpcurvesconfig.c			\
 	gimpcurvesconfig.h			\
 	gimplchhuechromaconfig.c		\
@@ -77,10 +74,6 @@ libappoperations_generic_a_sources = \
 	gimpoperationpointfilter.h		\
 	gimpoperationbrightnesscontrast.c	\
 	gimpoperationbrightnesscontrast.h	\
-	gimpoperationcolorbalance.c		\
-	gimpoperationcolorbalance.h		\
-	gimpoperationcolorize.c			\
-	gimpoperationcolorize.h			\
 	gimpoperationcurves.c			\
 	gimpoperationcurves.h			\
 	gimpoperationdesaturate.c		\

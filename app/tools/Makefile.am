@@ -1,5 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
+
 AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"Gimp-Tools\"	\
 	-I$(top_builddir)		\
@@ -52,10 +53,6 @@ libapptools_a_sources = \
 	gimpcoloroptions.h		\
 	gimpcolortool.c			\
 	gimpcolortool.h			\
-	gimpcolorbalancetool.c		\
-	gimpcolorbalancetool.h		\
-	gimpcolorizetool.c		\
-	gimpcolorizetool.h		\
 	gimpcolorpickeroptions.c	\
 	gimpcolorpickeroptions.h	\
 	gimpcolorpickertool.c		\

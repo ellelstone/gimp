@@ -49,8 +49,8 @@
 #include "gimpoperationthresholdalpha.h"
 
 #include "gimpoperationbrightnesscontrast.h"
-#include "gimpoperationcolorbalance.h"
-#include "gimpoperationcolorize.h"
+//#include "gimpoperationcolorbalance.h"
+//#include "gimpoperationcolorize.h"
 #include "gimpoperationcurves.h"
 #include "gimpoperationdesaturate.h"
 #include "gimpoperationlchhuechroma.h"
@@ -59,8 +59,8 @@
 #include "gimpoperationthreshold.h"
 
 #include "gimpbrightnesscontrastconfig.h"
-#include "gimpcolorbalanceconfig.h"
-#include "gimpcolorizeconfig.h"
+//#include "gimpcolorbalanceconfig.h"
+//#include "gimpcolorizeconfig.h"
 #include "gimpcurvesconfig.h"
 #include "gimplchhuechromaconfig.h"
 #include "gimplevelsconfig.h"
@@ -121,8 +121,8 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_THRESHOLD_ALPHA);
 
   g_type_class_ref (GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST);
-  g_type_class_ref (GIMP_TYPE_OPERATION_COLOR_BALANCE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_COLORIZE);
+//  g_type_class_ref (GIMP_TYPE_OPERATION_COLOR_BALANCE);
+//  g_type_class_ref (GIMP_TYPE_OPERATION_COLORIZE);
   g_type_class_ref (GIMP_TYPE_OPERATION_CURVES);
   g_type_class_ref (GIMP_TYPE_OPERATION_DESATURATE);
   g_type_class_ref (GIMP_TYPE_OPERATION_HUE_CHROMA);
@@ -165,10 +165,10 @@ gimp_operations_init (void)
 
   gimp_gegl_config_register ("gimp:brightness-contrast",
                              GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
-  gimp_gegl_config_register ("gimp:color-balance",
-                             GIMP_TYPE_COLOR_BALANCE_CONFIG);
-  gimp_gegl_config_register ("gimp:colorize",
-                             GIMP_TYPE_COLORIZE_CONFIG);
+/*  gimp_gegl_config_register ("gimp:color-balance",
+                             GIMP_TYPE_COLOR_BALANCE_CONFIG);*/
+/*  gimp_gegl_config_register ("gimp:colorize",
+                             GIMP_TYPE_COLORIZE_CONFIG);*/
   gimp_gegl_config_register ("gimp:curves",
                              GIMP_TYPE_CURVES_CONFIG);
   gimp_gegl_config_register ("gimp:hue-chroma",
