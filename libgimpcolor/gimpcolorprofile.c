@@ -948,15 +948,34 @@ gimp_color_profile_new_rgb_built_in_internal (void)
       /* R { 0.6400, 0.3300, 1.0 }, */
       /* G { 0.3000, 0.6000, 1.0 }, */
       /* B { 0.1500, 0.0600, 1.0 }  */
-      /* R  { 0.639998686, 0.330010138, 1.0 },*/
-      /* G  { 0.300003784, 0.600003357, 1.0 },*/
-      /* B  { 0.150002046, 0.059997204, 1.0 }*/
-{1.0, 0.0, 1.0},
-{0.0, 1.0, 1.0},
-{0.0, 0.0, 1.0}
+      /* R */ { 0.639998686, 0.330010138, 1.0 },
+      /* G */ { 0.300003784, 0.600003357, 1.0 },
+      /* B */ { 0.150002046, 0.059997204, 1.0 }
     };
+  cmsFloat64Number srgb_parameters[5] =
+    { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
 
   cmsToneCurve *curve[3];
+
+  /* sRGB curve */
+  curve[0] = curve[1] = curve[2] = cmsBuildParametricToneCurve (NULL, 4,
+                                                                srgb_parameters);
+
+  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
+
+  cmsFreeToneCurve (curve[0]);
+
+  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
+                              "GIMPLCH built-in sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
+                              "GIMPLCH");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
+                              "sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
+                              "Public Domain");
+
+
+/*  cmsToneCurve *curve[3];
 
   curve[0] = curve[1] = curve[2] = cmsBuildGamma (NULL, 1.0);
 
@@ -971,7 +990,7 @@ gimp_color_profile_new_rgb_built_in_internal (void)
   gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
                               "linear sRGB)");
   gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");
+                              "Public Domain");*/
 
   return profile;
 }
