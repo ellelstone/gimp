@@ -1,10 +1,10 @@
 ## Process this file with automake to produce Makefile.in
+# elle: file-openraster.py removed because of HSV blend modes
 
 pluginexecdir = $(gimpplugindir)/plug-ins
 
 scripts = \
 	colorxhtml.py		\
-	file-openraster.py	\
 	foggify.py		\
 	gradients-save-as-css.py\
 	histogram-export.py     \
