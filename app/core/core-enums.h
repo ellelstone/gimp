@@ -165,10 +165,10 @@ typedef enum
   GIMP_SUBTRACT_MODE,        /*< desc="Subtract"             >*/
   GIMP_DARKEN_ONLY_MODE,     /*< desc="Darken only"          >*/
   GIMP_LIGHTEN_ONLY_MODE,    /*< desc="Lighten only"         >*/
-  GIMP_HUE_MODE,             /*< desc="Hue (HSV)"            >*/
-  GIMP_SATURATION_MODE,      /*< desc="Saturation (HSV)"     >*/
-  GIMP_COLOR_MODE,           /*< desc="Color (HSV)"          >*/
-  GIMP_VALUE_MODE,           /*< desc="Value (HSV)"          >*/
+/*  GIMP_HUE_MODE,             < desc="Hue (HSV)"            >*/
+/*  GIMP_SATURATION_MODE,      < desc="Saturation (HSV)"     >*/
+/*  GIMP_COLOR_MODE,           < desc="Color (HSV)"          >*/
+/*  GIMP_VALUE_MODE,           < desc="Value (HSV)"          >*/
   GIMP_DIVIDE_MODE,          /*< desc="Divide"               >*/
   GIMP_DODGE_MODE,           /*< desc="Dodge"                >*/
   GIMP_BURN_MODE,            /*< desc="Burn"                 >*/

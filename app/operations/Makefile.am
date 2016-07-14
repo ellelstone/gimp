@@ -118,14 +118,6 @@ libappoperations_generic_a_sources = \
 	gimpoperationdarkenonlymode.h   	\
 	gimpoperationlightenonlymode.c  	\
 	gimpoperationlightenonlymode.h  	\
-	gimpoperationhuemode.c          	\
-	gimpoperationhuemode.h          	\
-	gimpoperationsaturationmode.c   	\
-	gimpoperationsaturationmode.h   	\
-	gimpoperationcolormode.c        	\
-	gimpoperationcolormode.h        	\
-	gimpoperationvaluemode.c        	\
-	gimpoperationvaluemode.h        	\
 	gimpoperationdividemode.c       	\
 	gimpoperationdividemode.h       	\
 	gimpoperationdodgemode.c        	\
