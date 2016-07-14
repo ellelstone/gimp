@@ -475,7 +475,7 @@ sanity_check_gegl_ops (void)
     "gegl:alien-map",
     "gegl:buffer-sink",
     "gegl:buffer-source",
-    "gegl:c2g",
+/*    "gegl:c2g",*/
     "gegl:cache",
 /*    "gegl:cartoon", uses YCbCr*/
     "gegl:cell-noise",

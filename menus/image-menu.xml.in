@@ -579,7 +579,7 @@
 	<menuitem action="filters-mono-mixer" />
       </menu>
       <menu action="colors-desaturate-menu" name="Desaturate">
-	<menuitem action="filters-c2g" />
+<!--	<menuitem action="filters-c2g" />-->
 	<menuitem action="filters-desaturate" />
 	<menuitem action="filters-mono-mixer" />
 	<menuitem action="filters-sepia" />

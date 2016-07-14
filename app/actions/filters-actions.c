@@ -122,10 +122,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:bump-map",
     NULL /* FIXME GIMP_HELP_FILTER_BUMP_MAP */ },
 
-  { "filters-c2g", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_Color to Gray..."), NULL, NULL,
-    "gegl:c2g",
-    NULL /* FIXME GIMP_HELP_FILTER_C2G */ },
+//  { "filters-c2g", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Color to Gray..."), NULL, NULL,
+//    "gegl:c2g",
+//    NULL /* FIXME GIMP_HELP_FILTER_C2G */ },
 
 //  { "filters-cartoon", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "Ca_rtoon..."), NULL, NULL,
@@ -659,7 +659,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-apply-canvas",            writable);
   SET_SENSITIVE ("filters-apply-lens",              writable);
   SET_SENSITIVE ("filters-bump-map",                writable);
-  SET_SENSITIVE ("filters-c2g",                     writable && !gray);
+/*  SET_SENSITIVE ("filters-c2g",                     writable && !gray);*/
 /*  SET_SENSITIVE ("filters-cartoon",                 writable);*/
   SET_SENSITIVE ("filters-channel-mixer",           writable);
   SET_SENSITIVE ("filters-checkerboard",            writable);
