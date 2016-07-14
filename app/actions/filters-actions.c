@@ -442,10 +442,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gimp:semi-flatten",
     NULL /* FIXME GIMP_HELP_FILTER_SEMI_FLATTEN */ },
 
-  { "filters-sepia", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_Sepia..."), NULL, NULL,
-    "gegl:sepia",
-    NULL /* FIXME GIMP_HELP_FILTER_SEPIA */ },
+//  { "filters-sepia", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Sepia..."), NULL, NULL,
+//    "gegl:sepia",
+//    NULL /* FIXME GIMP_HELP_FILTER_SEPIA */ },
 
   { "filters-shift", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Shift..."), NULL, NULL,
@@ -722,8 +722,8 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-red-eye-removal",         writable && !gray);
   SET_SENSITIVE ("filters-ripple",                  writable);
   SET_SENSITIVE ("filters-saturation",              writable && !gray);
-  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);
-  SET_SENSITIVE ("filters-sepia",                   writable && !gray);
+/*  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);
+  SET_SENSITIVE ("filters-sepia",                   writable && !gray);*/
   SET_SENSITIVE ("filters-shift",                   writable);
   SET_SENSITIVE ("filters-sinus",                   writable);
   SET_SENSITIVE ("filters-softglow",                writable);

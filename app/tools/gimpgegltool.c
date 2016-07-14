@@ -179,7 +179,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:red-eye-removal",
     "gegl:ripple",
     "gegl:saturation",
-    "gegl:sepia",
+/*    "gegl:sepia",*/
     "gegl:shift",
     "gegl:simplex-noise",
     "gegl:sinus",
