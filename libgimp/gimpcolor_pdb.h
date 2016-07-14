@@ -70,17 +70,6 @@ gboolean gimp_curves_explicit     (gint32                drawable_ID,
                                    GimpHistogramChannel  channel,
                                    gint                  num_bytes,
                                    const guint8         *curve);
-gboolean gimp_color_balance       (gint32                drawable_ID,
-                                   GimpTransferMode      transfer_mode,
-                                   gboolean              preserve_lum,
-                                   gdouble               cyan_red,
-                                   gdouble               magenta_green,
-                                   gdouble               yellow_blue);
-GIMP_DEPRECATED_FOR(gimp_drawable_colorize_hsl)
-gboolean gimp_colorize            (gint32                drawable_ID,
-                                   gdouble               hue,
-                                   gdouble               saturation,
-                                   gdouble               lightness);
 gboolean gimp_histogram           (gint32                drawable_ID,
                                    GimpHistogramChannel  channel,
                                    gint                  start_range,

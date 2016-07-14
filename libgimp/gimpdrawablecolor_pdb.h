@@ -35,16 +35,6 @@ G_BEGIN_DECLS
 gboolean gimp_drawable_brightness_contrast (gint32                drawable_ID,
                                             gdouble               brightness,
                                             gdouble               contrast);
-gboolean gimp_drawable_color_balance       (gint32                drawable_ID,
-                                            GimpTransferMode      transfer_mode,
-                                            gboolean              preserve_lum,
-                                            gdouble               cyan_red,
-                                            gdouble               magenta_green,
-                                            gdouble               yellow_blue);
-gboolean gimp_drawable_colorize_hsl        (gint32                drawable_ID,
-                                            gdouble               hue,
-                                            gdouble               saturation,
-                                            gdouble               lightness);
 gboolean gimp_drawable_curves_explicit     (gint32                drawable_ID,
                                             GimpHistogramChannel  channel,
                                             gint                  num_values,
