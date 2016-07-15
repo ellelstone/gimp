@@ -936,8 +936,9 @@ gimp_color_profile_new_rgb_built_in_internal (void)
   cmsHPROFILE profile;
 
   /* white point is D65 from the sRGB specs */
+  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
   //D50 ICC spec white point
-  cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0}; //{ 0.3127, 0.3290, 1.0 };
+  //cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0};
 
   /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
    * from the sRGB specs, modified to properly account for hexadecimal
