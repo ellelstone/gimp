@@ -702,7 +702,7 @@ gchar **
 gimp_babl_print_pixel (const Babl *format,
                        gpointer    pixel)
 {
-  GimpPrecision   precision;
+//  GimpPrecision   precision;
   gint            n_components;
   guchar          tmp_pixel[32];
   gchar         **strings;
@@ -710,7 +710,7 @@ gimp_babl_print_pixel (const Babl *format,
   g_return_val_if_fail (format != NULL, NULL);
   g_return_val_if_fail (pixel != NULL, NULL);
 
-  precision = gimp_babl_format_get_precision (format);
+//  precision = gimp_babl_format_get_precision (format);
 
   n_components = babl_format_get_n_components (format);
 
