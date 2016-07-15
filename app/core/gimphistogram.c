@@ -254,49 +254,25 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
       const Babl *model = babl_format_get_model (format);
 
       if (model == babl_model ("Y"))
-        {
-          if (priv->gamma_correct)
-            format = babl_format ("Y float");
-          else
-            format = babl_format ("Y float");
-        }
-      else if (model == babl_model ("Y"))
-        {
-          format = babl_format ("Y float");
-        }
+      {
+        format = babl_format ("Y float");
+      }
+
       else if (model == babl_model ("YA"))
-        {
-          if (priv->gamma_correct)
-            format = babl_format ("YA float");
-          else
-            format = babl_format ("YA float");
-        }
-      else if (model == babl_model ("YA"))
-        {
-          format = babl_format ("YA float");
-        }
+      {
+        format = babl_format ("YA float");
+      }
+
       else if (model == babl_model ("RGB"))
-        {
-          if (priv->gamma_correct)
-            format = babl_format ("RGB float");
-          else
-            format = babl_format ("RGB float");
-        }
-      else if (model == babl_model ("RGB"))
-        {
-          format = babl_format ("RGB float");
-        }
+      {
+        format = babl_format ("RGB float");
+      }
+
       else if (model == babl_model ("RGBA"))
-        {
-          if (priv->gamma_correct)
-            format = babl_format ("RGBA float");
-          else
-            format = babl_format ("RGBA float");
-        }
-      else if (model == babl_model ("RGBA"))
-        {
-          format = babl_format ("RGBA float");
-        }
+      {
+        format = babl_format ("RGBA float");
+      }
+
       else
         {
           g_return_if_reached ();
