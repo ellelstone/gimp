@@ -37,7 +37,7 @@
 
 static void  gimp_gegl_notify_tile_cache_size (GimpGeglConfig *config);
 static void  gimp_gegl_notify_num_processors  (GimpGeglConfig *config);
-static void  gimp_gegl_notify_use_opencl      (GimpGeglConfig *config);
+//static void  gimp_gegl_notify_use_opencl      (GimpGeglConfig *config);
 
 
 void
@@ -97,10 +97,10 @@ gimp_gegl_notify_num_processors (GimpGeglConfig *config)
 #endif
 }
 
-static void
+/*static void
 gimp_gegl_notify_use_opencl (GimpGeglConfig *config)
 {
   g_object_set (gegl_config (),
                 "use-opencl", FALSE, //config->use_opencl,
                 NULL);
-}
+}*/
