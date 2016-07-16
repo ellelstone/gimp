@@ -53,8 +53,8 @@
       <placeholder name="Send" />
       <separator />
       <placeholder name="Info">
-	<menuitem action="file-copy-location" />
-	<menuitem action="file-show-in-file-manager" />
+  <menuitem action="file-copy-location" />
+  <menuitem action="file-show-in-file-manager" />
       </placeholder>
       <separator />
       <menuitem action="view-close" />
@@ -173,7 +173,6 @@
         <menuitem action="context-font-select-next" />
       </menu>
     </menu>
-
 -->
 
     <menu action="edit-menu" name="Edit">
@@ -222,7 +221,7 @@
       </placeholder>
       <separator />
       <placeholder name="Preferences">
-        <menuitem action="dialogs-preferences" />      
+        <menuitem action="dialogs-preferences" />
         <menuitem action="dialogs-input-devices" />
         <menuitem action="dialogs-keyboard-shortcuts" />
         <menuitem action="dialogs-module-dialog"/>
@@ -280,8 +279,8 @@
       <menu action="view-rotate-menu" name="Rotate">
         <menuitem action="view-rotate-reset" />
         <separator />
-	<menuitem action="view-flip-horizontally" />
-	<menuitem action="view-flip-vertically" />
+  <menuitem action="view-flip-horizontally" />
+  <menuitem action="view-flip-vertically" />
         <separator />
         <menuitem action="view-rotate-15" />
         <menuitem action="view-rotate-345" />
@@ -305,20 +304,20 @@
         <menuitem action="view-color-management-enable" />
         <menuitem action="view-color-management-softproof" />
         <separator />
-	<menu action="view-display-intent-menu" name="Display Rendering Intent">
+  <menu action="view-display-intent-menu" name="Display Rendering Intent">
           <menuitem action="view-display-intent-perceptual" />
           <menuitem action="view-display-intent-relative-colorimetric" />
           <menuitem action="view-display-intent-saturation" />
           <menuitem action="view-display-intent-absolute-colorimetric" />
-	</menu>
+  </menu>
         <menuitem action="view-display-black-point-compensation" />
         <separator />
-	<menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
+  <menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
           <menuitem action="view-softproof-intent-perceptual" />
           <menuitem action="view-softproof-intent-relative-colorimetric" />
           <menuitem action="view-softproof-intent-saturation" />
           <menuitem action="view-softproof-intent-absolute-colorimetric" />
-	</menu>
+  </menu>
         <menuitem action="view-softproof-black-point-compensation" />
         <menuitem action="view-softproof-gamut-check" />
         <separator />
@@ -359,7 +358,7 @@
       <menu action="image-mode-menu" name="Mode">
         <menuitem action="image-convert-rgb" />
         <menuitem action="image-convert-grayscale" />
-	<separator />
+  <separator />
       </menu>
       <menu action="image-precision-menu" name="Precision">
         <menuitem action="image-convert-u8" />
@@ -369,9 +368,6 @@
         <menuitem action="image-convert-float" />
         <menuitem action="image-convert-double" />
         <separator />
-<!--        <menuitem action="image-convert-gamma" />
-        <menuitem action="image-convert-linear" />
-        <separator />-->
       </menu>
       <menu action="image-color-management-menu" name="Color Management">
         <menuitem action="image-color-profile-assign" />
@@ -426,7 +422,7 @@
       <placeholder name="New">
         <menuitem action="layers-new" />
         <menuitem action="layers-new-from-visible" />
-	<menuitem action="layers-new-group" />
+  <menuitem action="layers-new-group" />
         <menuitem action="layers-duplicate" />
       </placeholder>
       <placeholder name="Structure">
@@ -511,9 +507,7 @@
         <separator />
         <menuitem action="drawable-offset" />
       </menu>
-
 <!-- Layer Properties
-
       <menu action="layers-properties-menu" name="Properties">
         <menuitem action="layers-edit-attributes" />
         <menu action="layers-opacity-menu" name="Opacity">
@@ -533,9 +527,7 @@
         <menuitem action="drawable-lock-content" />
         <menuitem action="layers-lock-alpha" />
       </menu>
-
 -->
-
       <separator />
       <placeholder name="Resize">
         <menuitem action="layers-resize" />
@@ -552,16 +544,12 @@
     </menu>
 
     <menu action="colors-menu" name="Colors">
-<!--      <menuitem action="tools-color-balance" />-->
-<!--      <menuitem action="tools-colorize" />
-        <menuitem action="tools-brightness-contrast" />-->
         <menuitem action="tools-threshold" />
         <menuitem action="filters-posterize" />
         <menuitem action="tools-levels" />
         <menuitem action="tools-curves" />
         <menuitem action="tools-hue-chroma" />
       <separator />
-<!--      <placeholder name="Invert">-->
         <menuitem action="filters-stretch-contrast" />
         <menuitem action="drawable-invert" />
         <menuitem action="filters-desaturate" />
@@ -573,87 +561,69 @@
         <menuitem action="filters-channel-mixer" />
         <menuitem action="filters-mono-mixer" />
         <menuitem action="filters-exposure" />
-<!--        <menuitem action="filters-alien-map" />-->
-<!--        <menuitem action="filters-color-exchange" />-->
       <separator />
         <menuitem action="tools-gegl" />
-<!--        <menuitem action="drawable-value-invert" />-->
-<!--      </placeholder>-->
       <separator />
-<!--      <menu action="colors-auto-menu" name="Auto">
-        <menuitem action="drawable-equalize" />-->
-<!--        <menuitem action="drawable-levels-stretch" />-->
-<!--	<menuitem action="filters-stretch-contrast" />-->
-<!--	<menuitem action="filters-stretch-contrast-hsv" />
-	<menuitem action="filters-color-enhance" />
-      </menu>
-      <menu action="colors-components-menu" name="Components">-->
-<!--	<menuitem action="filters-channel-mixer" />
-	<menuitem action="filters-mono-mixer" />
-      </menu>
-      <menu action="colors-desaturate-menu" name="Desaturate">-->
-<!--	<menuitem action="filters-c2g" />
-	<menuitem action="filters-desaturate" />
-	<menuitem action="filters-mono-mixer" />-->
-<!--	<menuitem action="filters-sepia" />
-        <separator />
-      </menu>-->
-<!--      <menu action="colors-map-menu" name="Map">
-        <placeholder name="Colormap" />
-        <separator />-->
-<!--	<menuitem action="filters-alien-map" />
-	<menuitem action="filters-color-exchange" />
-	<menuitem action="filters-color-rotate" />
-      </menu>-->
-<!--      <menu action="colors-info-menu" name="Info">
-        <menuitem action="dialogs-histogram" />
-      </menu>
-      <separator />-->
-<!--      <menuitem action="filters-color-to-alpha" />
-      <menuitem action="filters-color-reduction" />
-      <menuitem action="filters-color-temperature" />
-      <menuitem action="filters-exposure" />-->
-      <placeholder name="Modify" />
+<!--  <menuitem action="filters-c2g" /> removed but should be put somewhere-->
+<!--  <menuitem action="tools-color-balance" /> uses HSL-->
+<!--  <menuitem action="tools-colorize" /> uses HSL-->
+<!--  <menuitem action="tools-brightness-contrast" /> use Levels or GEGL Workshop op-->
+<!--  <menuitem action="drawable-equalize" /> removed -->
+<!--  <menuitem action="drawable-levels-stretch" /> removed-->
+<!--  <menuitem action="filters-stretch-contrast-hsv" /> uses HSV-->
+<!--  <menuitem action="filters-sepia" /> removed-->
+<!--  <menuitem action="filters-alien-map" /> moved to Filters-->
+<!--  <menuitem action="filters-color-exchange" /> this operation doesn't work very well-->
+<!--  <menuitem action="filters-alien-map" /> moved to Filters-->
+<!--  <menuitem action="filters-color-rotate" /> uses HSV-->
+<!--  <menuitem action="filters-color-to-alpha" /> moved to Filters-->
+<!--  <menuitem action="filters-color-reduction" /> moved to Filters-->
+<!--  <menuitem action="filters-color-temperature" /> removed: sRGB only-->
     </menu>
-
-
 
     <menu action="filters-menu" name="Filters">
       <menuitem action="filters-repeat" />
       <menuitem action="filters-reshow" />
       <menu action="filters-recent-menu" name="Recently Used">
         <placeholder name="Filters" />
-      </menu>
+    </menu>
       <menuitem action="plug-in-reset-all" />
       <separator />
-      <menu action="filters-blur-menu" name="Blur">
-      <menuitem action="filters-box-blur" />
-      <menuitem action="filters-median-blur" />
-      	<menuitem action="filters-gaussian-blur" />
-      	<menuitem action="filters-pixelize" />
-      	<menuitem action="filters-gaussian-blur-selective" />
-	<placeholder name="Motion">
-	  <menuitem action="filters-motion-blur-circular" />
-	  <menuitem action="filters-motion-blur-linear" />
-	  <menuitem action="filters-motion-blur-zoom" />
-	</placeholder>
-      </menu>
-      <menu action="filters-enhance-menu" name="Enhance">
+
+    <menu action="filters-blur-menu" name="Blur">
+        <menuitem action="filters-box-blur" />
+        <menuitem action="filters-median-blur" />
+        <menuitem action="filters-gaussian-blur" />
+        <menuitem action="filters-gaussian-blur-selective" />
+        <menuitem action="filters-pixelize" />
+      <separator />
+     <placeholder name="Motion">
+       <menuitem action="filters-motion-blur-circular" />
+       <menuitem action="filters-motion-blur-linear" />
+       <menuitem action="filters-motion-blur-zoom" />
+     </placeholder>
+    </menu>
+
+    <menu action="filters-enhance-menu" name="Enhance">
+        <menuitem action="filters-high-pass" />
+        <menuitem action="filters-unsharp-mask" />
+        <menuitem action="filters-noise-reduction" />
+        <separator />
         <menuitem action="filters-antialias" />
         <menuitem action="filters-deinterlace" />
-        <menuitem action="filters-high-pass" />
-        <menuitem action="filters-noise-reduction" />
+        <separator />
         <menuitem action="filters-red-eye-removal" />
-        <menuitem action="filters-unsharp-mask" />
+        <separator />
       </menu>
+
       <menu action="filters-distorts-menu" name="Distorts">
-      	<menuitem action="filters-apply-lens" />
-      	<menuitem action="filters-emboss" />
-      	<menuitem action="filters-engrave" />
+        <menuitem action="filters-apply-lens" />
+        <menuitem action="filters-emboss" />
+        <menuitem action="filters-engrave" />
         <menuitem action="filters-lens-distortion" />
         <menuitem action="filters-kaleidoscope" />
         <menuitem action="filters-mosaic" />
-      	<menuitem action="filters-polar-coordinates" />
+        <menuitem action="filters-polar-coordinates" />
         <menuitem action="filters-ripple" />
         <menuitem action="filters-shift" />
         <menuitem action="filters-value-propagate" />
@@ -661,59 +631,64 @@
         <menuitem action="filters-waves" />
         <menuitem action="filters-whirl-pinch" />
         <menuitem action="filters-wind" />
-      </menu>
-      <menu action="filters-light-shadow-menu" name="Light and Shadow">
-        <placeholder name="Light">
-<!--	  <menuitem action="filters-supernova" />-->
-	  <menuitem action="filters-lens-flare" />
-	</placeholder>
         <separator />
-        <placeholder name="Shadow">
-	  <menuitem action="filters-dropshadow" />
-	  <menuitem action="filters-vignette" />
-	</placeholder>
-        <separator />
-        <placeholder name="Glass" />
       </menu>
+
       <menu action="filters-noise-menu" name="Noise">
         <menuitem action="filters-noise-cie-lch" />
-<!--        <menuitem action="filters-noise-hsv" />-->
+        <menuitem action="filters-noise-rgb" />
+<!--    <menuitem action="filters-noise-hsv" /> uses HSV-->
+        <separator />
         <menuitem action="filters-noise-hurl" />
         <menuitem action="filters-noise-pick" />
-        <menuitem action="filters-noise-rgb" />
         <menuitem action="filters-noise-slur" />
         <menuitem action="filters-noise-spread" />
+        <separator />
       </menu>
+
       <menu action="filters-edge-detect-menu" name="Edge-Detect">
         <menuitem action="filters-edge" />
+        <separator />
         <menuitem action="filters-difference-of-gaussians" />
         <menuitem action="filters-edge-laplace" />
         <menuitem action="filters-edge-sobel" />
+        <separator />
       </menu>
+
       <menu action="filters-generic-menu" name="Generic">
         <menuitem action="drawable-dilate" />
         <menuitem action="drawable-erode" />
         <menuitem action="filters-color-to-alpha" />
         <menuitem action="filters-color-reduction" />
+        <menuitem action="filters-color-to-alpha" />
+        <menuitem action="filters-semi-flatten" />
         <separator />
         <menuitem action="filters-convolution-matrix" />
         <menuitem action="filters-distance-map" />
         <menuitem action="filters-gegl-graph" />
         <separator />
-        <menuitem action="filters-semi-flatten" />
       </menu>
+
       <menu action="filters-combine-menu" name="Combine" />
+
       <menu action="filters-artistic-menu" name="Artistic">
-	<menuitem action="filters-apply-canvas" />
-<!--	<menuitem action="filters-cartoon" />-->
-	<menuitem action="filters-cubism" />
-	<menuitem action="filters-tile-glass" />
-<!--	<menuitem action="filters-oilify" />-->
-	<menuitem action="filters-photocopy" />
-	<menuitem action="filters-softglow" />
-  <menuitem action="filters-alien-map" />
+        <menuitem action="filters-alien-map" />
+        <menuitem action="filters-apply-canvas" />
+        <menuitem action="filters-cubism" />
+        <menuitem action="filters-dropshadow" />
+        <menuitem action="filters-lens-flare" />
+        <menuitem action="filters-photocopy" />
+        <menuitem action="filters-softglow" />
+        <menuitem action="filters-tile-glass" />
+        <menuitem action="filters-vignette" />
+<!--    <menuitem action="filters-cartoon" /> removed-->
+<!--    <menuitem action="filters-oilify" /> removed-->
+<!--    <menuitem action="filters-supernova" /> uses HSV-->
+        <separator />
       </menu>
+
       <menu action="filters-decor-menu" name="Decor" />
+
       <menu action="filters-map-menu" name="Map">
         <menuitem action="filters-bump-map" />
         <menuitem action="filters-displace" />
@@ -722,28 +697,24 @@
         <menuitem action="filters-panorama-projection" />
         <menuitem action="filters-tile-paper" />
         <menuitem action="filters-tile-seamless" />
-      </menu>
-      <menu action="filters-render-menu" name="Patterns">
-<!--        <menu action="filters-render-clouds-menu" name="Clouds" />
-        <menu action="filters-render-fractals-menu" name="Fractals" />
-        <menu action="filters-render-nature-menu" name="Nature" />
-        <menu action="filters-render-noise-menu" name="Noise">-->
-	  <menuitem action="filters-noise-cell" />
-	  <menuitem action="filters-noise-perlin" />
-	  <menuitem action="filters-plasma" />
-	  <menuitem action="filters-noise-simplex" />
-	  <menuitem action="filters-noise-solid" />
-    <separator />
-	  <menuitem action="filters-checkerboard" />
-	  <menuitem action="filters-diffraction-patterns" />
-	  <menuitem action="filters-grid" />
-	  <menuitem action="filters-maze" />
-	  <menuitem action="filters-sinus" />
-<!--	</menu>
-        <menu action="filters-render-pattern-menu" name="Pattern">
-	</menu>-->
         <separator />
       </menu>
+
+    <menu action="filters-render-menu" name="Patterns">
+    <menuitem action="filters-noise-cell" />
+    <menuitem action="filters-noise-perlin" />
+    <menuitem action="filters-plasma" />
+    <menuitem action="filters-noise-simplex" />
+    <menuitem action="filters-noise-solid" />
+    <separator />
+    <menuitem action="filters-checkerboard" />
+    <menuitem action="filters-diffraction-patterns" />
+    <menuitem action="filters-grid" />
+    <menuitem action="filters-maze" />
+    <menuitem action="filters-sinus" />
+    <separator />
+</menu>
+
       <menu action="filters-web-menu" name="Web">
       </menu>
       <menu action="filters-animation-menu" name="Animation" >
@@ -757,7 +728,6 @@
       <placeholder name="Extensions" />
       <separator />
     </menu>
-
 
 
     <menu action="tools-menu" name="Tools">
@@ -795,15 +765,15 @@
         <menuitem action="tools-shear" />
         <menuitem action="tools-perspective" />
         <menuitem action="tools-unified-transform" />
-	<!-- Enable when the tool leaves the playground
+  <!-- Enable when the tool leaves the playground
              <menuitem action="tools-handle-transform" />
-	-->
+  -->
         <menuitem action="tools-flip" />
         <menuitem action="tools-cage" />
         <menuitem action="tools-warp" />
-	<!-- Enable when the tool leaves the playground
+  <!-- Enable when the tool leaves the playground
              <menuitem action="tools-n-point-deformation" />
-	-->
+  -->
       </menu>
 <!--      <menu action="tools-color-menu" name="Color Tools">-->
 <!--        <menuitem action="tools-color-balance" />-->
