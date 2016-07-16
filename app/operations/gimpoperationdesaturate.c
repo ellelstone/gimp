@@ -142,17 +142,8 @@ gimp_operation_desaturate_set_property (GObject      *object,
 static void
 gimp_operation_desaturate_prepare (GeglOperation *operation)
 {
-  GimpOperationDesaturate *desaturate = GIMP_OPERATION_DESATURATE (operation);
   const Babl              *format;
-
-  if (desaturate->mode == GIMP_DESATURATE_LUMINANCE)
-    {
-      format = babl_format ("RGBA float");
-    }
-  else
-    {
-      format = babl_format ("RGBA float");
-    }
+  format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);
@@ -202,7 +193,7 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
         }
       break;
 
-    case GIMP_DESATURATE_LUMA:
+//    case GIMP_DESATURATE_LUMA:
     case GIMP_DESATURATE_LUMINANCE:
       while (samples--)
         {

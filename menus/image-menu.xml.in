@@ -564,6 +564,7 @@
       <separator />
       <placeholder name="Invert">
         <menuitem action="drawable-invert" />
+        <menuitem action="filters-desaturate" />
 <!--        <menuitem action="drawable-value-invert" />-->
       </placeholder>
       <separator />
