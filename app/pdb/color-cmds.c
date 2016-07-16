@@ -276,7 +276,7 @@ desaturate_invoker (GimpProcedure         *procedure,
           GeglNode *node =
             gegl_node_new_child (NULL,
                                  "operation", "gimp:desaturate",
-                                 "mode",      GIMP_DESATURATE_LIGHTNESS,
+                                 "mode",      GIMP_DESATURATE_LUMINANCE,
                                  NULL);
 
           gimp_drawable_apply_operation (drawable, progress,
