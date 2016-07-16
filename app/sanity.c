@@ -474,6 +474,7 @@ sanity_check_gegl_ops (void)
   {
     "gegl:alien-map",
     "gegl:buffer-sink",
+    "gegl:box-blur",
     "gegl:buffer-source",
 /*    "gegl:c2g",*/
     "gegl:cache",
@@ -487,6 +488,7 @@ sanity_check_gegl_ops (void)
 /*    "gegl:color-rotate", uses HSV*/
 /*    "gegl:color-temperature", uses hard-coded sRGB-based table*/
     "gegl:color-to-alpha",
+    "gegl:component-extract",
     "gegl:convolution-matrix",
     "gegl:copy-buffer",
     "gegl:crop",
@@ -520,6 +522,7 @@ sanity_check_gegl_ops (void)
     "gegl:matting-global",
 /*  "gegl:matting-levin",*/ /* XXX: do we want to require this? */
     "gegl:maze",
+    "gegl:median-blur",
     "gegl:mirrors",
     "gegl:mono-mixer",
     "gegl:motion-blur-circular",
@@ -543,6 +546,7 @@ sanity_check_gegl_ops (void)
     "gegl:pixelize",
     "gegl:polar-coordinates",
     "gegl:red-eye-removal",
+    "gegl:rgb-clip",
     "gegl:ripple",
     "gegl:saturation",
     "gegl:scale-ratio",

@@ -117,6 +117,11 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:apply-lens",
     NULL /* FIXME GIMP_HELP_FILTER_APPLY_LENS */ },
 
+  { "filters-box-blur", GIMP_STOCK_GEGL,
+    NC_("filters-action", "Box _Blur..."), NULL, NULL,
+    "gegl:box-blur",
+    NULL /* FIXME GIMP_HELP_FILTER_BOX_BLUR */ },
+
   { "filters-bump-map", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Bump Map..."), NULL, NULL,
     "gegl:bump-map",
@@ -156,6 +161,11 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "Color _Reduction..."), NULL, NULL,
     "gegl:color-reduction",
     NULL /* FIXME GIMP_HELP_FILTER_COLOR_REDUCTION */ },
+
+  { "filters-component-extract", GIMP_STOCK_GEGL,
+    NC_("filters-action", "Component _Extract..."), NULL, NULL,
+    "gegl:component-extract",
+    NULL /* FIXME GIMP_HELP_FILTER_COMPONENT_EXTRACT */ },
 
 //  { "filters-color-rotate", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "_Rotate Colors..."), NULL, NULL,
@@ -302,6 +312,11 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:maze",
     NULL /* FIXME GIMP_HELP_FILTER_MAZE */ },
 
+  { "filters-median-blur", GIMP_STOCK_GEGL,
+    NC_("filters-action", "_Median Blur..."), NULL, NULL,
+    "gegl:median-blur",
+    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */ },
+
   { "filters-mono-mixer", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Mono Mixer..."), NULL, NULL,
     "gegl:mono-mixer",
@@ -426,6 +441,11 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "_Red Eye Removal..."), NULL, NULL,
     "gegl:red-eye-removal",
     NULL /* FIXME GIMP_HELP_FILTER_RED_EYE_REMOVAL */ },
+
+  { "filters-rgb-clip", GIMP_STOCK_GEGL,
+    NC_("filters-action", "_RGB Clip"), NULL, NULL,
+    "gegl:rgb-clip",
+    NULL /* FIXME GIMP_HELP_RGB_CLIP */ },
 
   { "filters-ripple", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Ripple..."), NULL, NULL,
@@ -658,6 +678,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-antialias",               writable);
   SET_SENSITIVE ("filters-apply-canvas",            writable);
   SET_SENSITIVE ("filters-apply-lens",              writable);
+  SET_SENSITIVE ("filters-box-blur",                writable);
   SET_SENSITIVE ("filters-bump-map",                writable);
 /*  SET_SENSITIVE ("filters-c2g",                     writable && !gray);*/
 /*  SET_SENSITIVE ("filters-cartoon",                 writable);*/
@@ -669,6 +690,7 @@ filters_actions_update (GimpActionGroup *group,
 /*  SET_SENSITIVE ("filters-color-rotate",            writable);*/
 /*  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);*/
   SET_SENSITIVE ("filters-color-to-alpha",          writable && !gray && alpha);
+  SET_SENSITIVE ("filters-component-extract",       writable);
   SET_SENSITIVE ("filters-convolution-matrix",      writable);
   SET_SENSITIVE ("filters-cubism",                  writable);
   SET_SENSITIVE ("filters-deinterlace",             writable);
@@ -695,6 +717,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-lens-distortion",         writable);
   SET_SENSITIVE ("filters-lens-flare",              writable);
   SET_SENSITIVE ("filters-maze",                    writable);
+  SET_SENSITIVE ("filters-median-blur",             writable);
   SET_SENSITIVE ("filters-mono-mixer",              writable && !gray);
   SET_SENSITIVE ("filters-mosaic",                  writable);
   SET_SENSITIVE ("filters-motion-blur-circular",    writable);
@@ -720,6 +743,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-polar-coordinates",       writable);
   SET_SENSITIVE ("filters-posterize",               writable);
   SET_SENSITIVE ("filters-red-eye-removal",         writable && !gray);
+  SET_SENSITIVE ("filters-rgb-clip",                writable);
   SET_SENSITIVE ("filters-ripple",                  writable);
   SET_SENSITIVE ("filters-saturation",              writable && !gray);
 /*  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);

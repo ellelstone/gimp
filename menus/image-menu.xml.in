@@ -553,122 +553,70 @@
 
     <menu action="colors-menu" name="Colors">
 <!--      <menuitem action="tools-color-balance" />-->
-      <menuitem action="tools-hue-chroma" />
-      <menuitem action="filters-saturation" />
-<!--      <menuitem action="tools-colorize" />-->
-      <menuitem action="tools-brightness-contrast" />
-      <menuitem action="tools-threshold" />
-      <menuitem action="tools-levels" />
-      <menuitem action="tools-curves" />
-      <menuitem action="filters-posterize" />
+<!--      <menuitem action="tools-colorize" />
+        <menuitem action="tools-brightness-contrast" />-->
+        <menuitem action="tools-threshold" />
+        <menuitem action="filters-posterize" />
+        <menuitem action="tools-levels" />
+        <menuitem action="tools-curves" />
+        <menuitem action="tools-hue-chroma" />
       <separator />
-      <placeholder name="Invert">
+<!--      <placeholder name="Invert">-->
+        <menuitem action="filters-stretch-contrast" />
         <menuitem action="drawable-invert" />
         <menuitem action="filters-desaturate" />
-<!--        <menuitem action="drawable-value-invert" />-->
-      </placeholder>
+        <menuitem action="filters-component-extract" />
+        <menuitem action="filters-rgb-clip" />
+        <separator />
+        <menuitem action="filters-saturation" />
+        <menuitem action="filters-color-enhance" />
+        <menuitem action="filters-channel-mixer" />
+        <menuitem action="filters-mono-mixer" />
+        <menuitem action="filters-exposure" />
+<!--        <menuitem action="filters-alien-map" />-->
+<!--        <menuitem action="filters-color-exchange" />-->
       <separator />
-      <menu action="colors-auto-menu" name="Auto">
-<!--        <menuitem action="drawable-equalize" />-->
+        <menuitem action="tools-gegl" />
+<!--        <menuitem action="drawable-value-invert" />-->
+<!--      </placeholder>-->
+      <separator />
+<!--      <menu action="colors-auto-menu" name="Auto">
+        <menuitem action="drawable-equalize" />-->
 <!--        <menuitem action="drawable-levels-stretch" />-->
-	<menuitem action="filters-stretch-contrast" />
-<!--	<menuitem action="filters-stretch-contrast-hsv" />-->
+<!--	<menuitem action="filters-stretch-contrast" />-->
+<!--	<menuitem action="filters-stretch-contrast-hsv" />
 	<menuitem action="filters-color-enhance" />
       </menu>
-      <menu action="colors-components-menu" name="Components">
-	<menuitem action="filters-channel-mixer" />
+      <menu action="colors-components-menu" name="Components">-->
+<!--	<menuitem action="filters-channel-mixer" />
 	<menuitem action="filters-mono-mixer" />
       </menu>
-      <menu action="colors-desaturate-menu" name="Desaturate">
-<!--	<menuitem action="filters-c2g" />-->
+      <menu action="colors-desaturate-menu" name="Desaturate">-->
+<!--	<menuitem action="filters-c2g" />
 	<menuitem action="filters-desaturate" />
-	<menuitem action="filters-mono-mixer" />
-<!--	<menuitem action="filters-sepia" />-->
+	<menuitem action="filters-mono-mixer" />-->
+<!--	<menuitem action="filters-sepia" />
         <separator />
-      </menu>
-      <menu action="colors-map-menu" name="Map">
+      </menu>-->
+<!--      <menu action="colors-map-menu" name="Map">
         <placeholder name="Colormap" />
-        <separator />
-	<menuitem action="filters-alien-map" />
+        <separator />-->
+<!--	<menuitem action="filters-alien-map" />
 	<menuitem action="filters-color-exchange" />
-<!--	<menuitem action="filters-color-rotate" />-->
-      </menu>
-      <menu action="colors-info-menu" name="Info">
+	<menuitem action="filters-color-rotate" />
+      </menu>-->
+<!--      <menu action="colors-info-menu" name="Info">
         <menuitem action="dialogs-histogram" />
       </menu>
-      <separator />
-      <menuitem action="filters-color-to-alpha" />
+      <separator />-->
+<!--      <menuitem action="filters-color-to-alpha" />
       <menuitem action="filters-color-reduction" />
-<!--      <menuitem action="filters-color-temperature" />-->
-      <menuitem action="filters-exposure" />
+      <menuitem action="filters-color-temperature" />
+      <menuitem action="filters-exposure" />-->
       <placeholder name="Modify" />
     </menu>
 
-    <menu action="tools-menu" name="Tools">
-      <menu action="tools-select-menu" name="Selection Tools">
-        <menuitem action="tools-rect-select" />
-        <menuitem action="tools-ellipse-select" />
-        <menuitem action="tools-free-select" />
-        <menuitem action="tools-foreground-select" />
-        <menuitem action="tools-fuzzy-select" />
-        <menuitem action="tools-by-color-select" />
-        <menuitem action="tools-iscissors" />
-      </menu>
-      <menu action="tools-paint-menu" name="Paint Tools">
-        <menuitem action="tools-bucket-fill" />
-        <menuitem action="tools-blend" />
-        <menuitem action="tools-pencil" />
-        <menuitem action="tools-paintbrush" />
-        <menuitem action="tools-eraser" />
-        <menuitem action="tools-airbrush" />
-        <menuitem action="tools-ink" />
-        <menuitem action="tools-mypaint-brush" />
-        <menuitem action="tools-clone" />
-        <menuitem action="tools-heal" />
-        <menuitem action="tools-perspective-clone" />
-        <menuitem action="tools-convolve" />
-        <menuitem action="tools-smudge" />
-        <menuitem action="tools-dodge-burn" />
-      </menu>
-      <menu action="tools-transform-menu" name="Transform Tools">
-        <menuitem action="tools-align" />
-        <menuitem action="tools-move" />
-        <menuitem action="tools-crop" />
-        <menuitem action="tools-rotate" />
-        <menuitem action="tools-scale" />
-        <menuitem action="tools-shear" />
-        <menuitem action="tools-perspective" />
-        <menuitem action="tools-unified-transform" />
-	<!-- Enable when the tool leaves the playground
-             <menuitem action="tools-handle-transform" />
-	-->
-        <menuitem action="tools-flip" />
-        <menuitem action="tools-cage" />
-        <menuitem action="tools-warp" />
-	<!-- Enable when the tool leaves the playground
-             <menuitem action="tools-n-point-deformation" />
-	-->
-      </menu>
-      <menu action="tools-color-menu" name="Color Tools">
-<!--        <menuitem action="tools-color-balance" />-->
-        <menuitem action="tools-hue-chroma" />
-<!--        <menuitem action="tools-colorize" />-->
-        <menuitem action="tools-brightness-contrast" />
-        <menuitem action="tools-threshold" />
-        <menuitem action="tools-levels" />
-        <menuitem action="tools-curves" />
-      </menu>
-      <menuitem action="tools-vector" />
-      <menuitem action="tools-color-picker" />
-      <menuitem action="tools-zoom" />
-      <menuitem action="tools-measure" />
-      <menuitem action="tools-text" />
-      <menuitem action="tools-gegl" />
-      <separator />
-      <menuitem action="dialogs-toolbox" />
-      <menuitem action="context-colors-default" />
-      <menuitem action="context-colors-swap" />
-    </menu>
+
 
     <menu action="filters-menu" name="Filters">
       <menuitem action="filters-repeat" />
@@ -679,6 +627,8 @@
       <menuitem action="plug-in-reset-all" />
       <separator />
       <menu action="filters-blur-menu" name="Blur">
+      <menuitem action="filters-box-blur" />
+      <menuitem action="filters-median-blur" />
       	<menuitem action="filters-gaussian-blur" />
       	<menuitem action="filters-pixelize" />
       	<menuitem action="filters-gaussian-blur-selective" />
@@ -735,17 +685,22 @@
         <menuitem action="filters-noise-spread" />
       </menu>
       <menu action="filters-edge-detect-menu" name="Edge-Detect">
-        <menuitem action="filters-difference-of-gaussians" />
         <menuitem action="filters-edge" />
+        <menuitem action="filters-difference-of-gaussians" />
         <menuitem action="filters-edge-laplace" />
         <menuitem action="filters-edge-sobel" />
       </menu>
       <menu action="filters-generic-menu" name="Generic">
+        <menuitem action="drawable-dilate" />
+        <menuitem action="drawable-erode" />
+        <menuitem action="filters-color-to-alpha" />
+        <menuitem action="filters-color-reduction" />
+        <separator />
         <menuitem action="filters-convolution-matrix" />
         <menuitem action="filters-distance-map" />
         <menuitem action="filters-gegl-graph" />
-        <menuitem action="drawable-dilate" />
-        <menuitem action="drawable-erode" />
+        <separator />
+        <menuitem action="filters-semi-flatten" />
       </menu>
       <menu action="filters-combine-menu" name="Combine" />
       <menu action="filters-artistic-menu" name="Artistic">
@@ -756,6 +711,7 @@
 <!--	<menuitem action="filters-oilify" />-->
 	<menuitem action="filters-photocopy" />
 	<menuitem action="filters-softglow" />
+  <menuitem action="filters-alien-map" />
       </menu>
       <menu action="filters-decor-menu" name="Decor" />
       <menu action="filters-map-menu" name="Map">
@@ -767,28 +723,28 @@
         <menuitem action="filters-tile-paper" />
         <menuitem action="filters-tile-seamless" />
       </menu>
-      <menu action="filters-render-menu" name="Render">
-        <menu action="filters-render-clouds-menu" name="Clouds" />
+      <menu action="filters-render-menu" name="Patterns">
+<!--        <menu action="filters-render-clouds-menu" name="Clouds" />
         <menu action="filters-render-fractals-menu" name="Fractals" />
         <menu action="filters-render-nature-menu" name="Nature" />
-        <menu action="filters-render-noise-menu" name="Noise">
+        <menu action="filters-render-noise-menu" name="Noise">-->
 	  <menuitem action="filters-noise-cell" />
 	  <menuitem action="filters-noise-perlin" />
 	  <menuitem action="filters-plasma" />
 	  <menuitem action="filters-noise-simplex" />
 	  <menuitem action="filters-noise-solid" />
-	</menu>
-        <menu action="filters-render-pattern-menu" name="Pattern">
+    <separator />
 	  <menuitem action="filters-checkerboard" />
 	  <menuitem action="filters-diffraction-patterns" />
 	  <menuitem action="filters-grid" />
 	  <menuitem action="filters-maze" />
 	  <menuitem action="filters-sinus" />
-	</menu>
+<!--	</menu>
+        <menu action="filters-render-pattern-menu" name="Pattern">
+	</menu>-->
         <separator />
       </menu>
       <menu action="filters-web-menu" name="Web">
-        <menuitem action="filters-semi-flatten" />
       </menu>
       <menu action="filters-animation-menu" name="Animation" >
         <placeholder name="Animators" />
@@ -800,6 +756,74 @@
       <placeholder name="Languages" />
       <placeholder name="Extensions" />
       <separator />
+    </menu>
+
+
+
+    <menu action="tools-menu" name="Tools">
+      <menu action="tools-select-menu" name="Selection Tools">
+        <menuitem action="tools-rect-select" />
+        <menuitem action="tools-ellipse-select" />
+        <menuitem action="tools-free-select" />
+        <menuitem action="tools-foreground-select" />
+        <menuitem action="tools-fuzzy-select" />
+        <menuitem action="tools-by-color-select" />
+        <menuitem action="tools-iscissors" />
+      </menu>
+      <menu action="tools-paint-menu" name="Paint Tools">
+        <menuitem action="tools-bucket-fill" />
+        <menuitem action="tools-blend" />
+        <menuitem action="tools-pencil" />
+        <menuitem action="tools-paintbrush" />
+        <menuitem action="tools-eraser" />
+        <menuitem action="tools-airbrush" />
+        <menuitem action="tools-ink" />
+        <menuitem action="tools-mypaint-brush" />
+        <menuitem action="tools-clone" />
+        <menuitem action="tools-heal" />
+        <menuitem action="tools-perspective-clone" />
+        <menuitem action="tools-convolve" />
+        <menuitem action="tools-smudge" />
+        <menuitem action="tools-dodge-burn" />
+      </menu>
+      <menu action="tools-transform-menu" name="Transform Tools">
+        <menuitem action="tools-align" />
+        <menuitem action="tools-move" />
+        <menuitem action="tools-crop" />
+        <menuitem action="tools-rotate" />
+        <menuitem action="tools-scale" />
+        <menuitem action="tools-shear" />
+        <menuitem action="tools-perspective" />
+        <menuitem action="tools-unified-transform" />
+	<!-- Enable when the tool leaves the playground
+             <menuitem action="tools-handle-transform" />
+	-->
+        <menuitem action="tools-flip" />
+        <menuitem action="tools-cage" />
+        <menuitem action="tools-warp" />
+	<!-- Enable when the tool leaves the playground
+             <menuitem action="tools-n-point-deformation" />
+	-->
+      </menu>
+<!--      <menu action="tools-color-menu" name="Color Tools">-->
+<!--        <menuitem action="tools-color-balance" />-->
+<!--        <menuitem action="tools-hue-chroma" />-->
+<!--        <menuitem action="tools-colorize" />-->
+<!--        <menuitem action="tools-brightness-contrast" />
+        <menuitem action="tools-threshold" />
+        <menuitem action="tools-levels" />
+        <menuitem action="tools-curves" />
+      </menu>-->
+      <menuitem action="tools-vector" />
+      <menuitem action="tools-color-picker" />
+      <menuitem action="tools-zoom" />
+      <menuitem action="tools-measure" />
+      <menuitem action="tools-text" />
+<!--      <menuitem action="tools-gegl" />-->
+      <separator />
+      <menuitem action="dialogs-toolbox" />
+      <menuitem action="context-colors-default" />
+      <menuitem action="context-colors-swap" />
     </menu>
 
     <placeholder name="Menus" />
