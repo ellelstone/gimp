@@ -708,7 +708,7 @@
         <separator />
       </menu>
 
-    <menu action="filters-render-menu" name="Patterns">
+    <menu action="filters-patterns-menu" name="Patterns">
     <menuitem action="filters-noise-cell" />
     <menuitem action="filters-noise-perlin" />
     <menuitem action="filters-plasma" />
