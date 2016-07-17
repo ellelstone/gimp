@@ -663,6 +663,8 @@
         <menuitem action="filters-mosaic" />
         <menuitem action="filters-cubism" />
         <separator />
+        <menuitem action="filters-c2g" />
+        <separator />
         <menuitem action="filters-photocopy" /><!-- -->
         <menuitem action="filters-engrave" /><!-- -->
         <menuitem action="filters-video-degradation" /><!-- -->
