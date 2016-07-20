@@ -417,8 +417,8 @@ gimp_fill_options_create_buffer (GimpFillOptions     *options,
         gimp_context_get_foreground (GIMP_CONTEXT (options), &color);
         gimp_palettes_add_color_history (GIMP_CONTEXT (options)->gimp, &color);
 
-        gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
-                                           &color, &color);
+        gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
+                                          &color, &color);
 
         gegl_color = gimp_gegl_color_new (&color);
         gegl_buffer_set_color (buffer, NULL, gegl_color);

@@ -402,19 +402,19 @@ gimp_image_import_color_profile (GimpImage    *image,
 }
 
 void
-gimp_image_color_profile_pixel_to_srgb (GimpImage  *image,
-                                        const Babl *pixel_format,
-                                        gpointer    pixel,
-                                        GimpRGB    *color)
+gimp_image_color_profile_pixel_to_rgb (GimpImage  *image,
+                                       const Babl *pixel_format,
+                                       gpointer    pixel,
+                                       GimpRGB    *color)
 {
   gimp_rgba_set_pixel (color, pixel_format, pixel);
 }
 
 void
-gimp_image_color_profile_srgb_to_pixel (GimpImage     *image,
-                                        const GimpRGB *color,
-                                        const Babl    *pixel_format,
-                                        gpointer       pixel)
+gimp_image_color_profile_rgb_to_pixel (GimpImage     *image,
+                                       const GimpRGB *color,
+                                       const Babl    *pixel_format,
+                                       gpointer       pixel)
 {
   gimp_rgba_get_pixel (color, pixel_format, pixel);
 }

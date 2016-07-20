@@ -587,8 +587,8 @@ gimp_drawable_resize (GimpItem    *item,
       if (! gimp_drawable_has_alpha (drawable) && ! GIMP_IS_CHANNEL (drawable))
         {
           gimp_context_get_background (context, &bg);
-          gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
-                                             &bg, &bg);
+          gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
+                                            &bg, &bg);
         }
       else
         {

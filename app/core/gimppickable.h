@@ -48,11 +48,11 @@ struct _GimpPickableInterface
   gdouble         (* get_opacity_at)        (GimpPickable  *pickable,
                                              gint           x,
                                              gint           y);
-  void            (* pixel_to_srgb)         (GimpPickable  *pickable,
+  void            (* pixel_to_rgb)          (GimpPickable  *pickable,
                                              const Babl    *format,
                                              gpointer       pixel,
                                              GimpRGB       *color);
-  void            (* srgb_to_pixel)         (GimpPickable  *pickable,
+  void            (* rgb_to_pixel)          (GimpPickable  *pickable,
                                              const GimpRGB *color,
                                              const Babl    *format,
                                              gpointer       pixel);
@@ -78,15 +78,15 @@ gboolean        gimp_pickable_get_color_at          (GimpPickable  *pickable,
 gdouble         gimp_pickable_get_opacity_at        (GimpPickable  *pickable,
                                                      gint           x,
                                                      gint           y);
-void            gimp_pickable_pixel_to_srgb         (GimpPickable  *pickable,
+void            gimp_pickable_pixel_to_rgb         (GimpPickable  *pickable,
                                                      const Babl    *format,
                                                      gpointer       pixel,
                                                      GimpRGB       *color);
-void            gimp_pickable_srgb_to_pixel         (GimpPickable  *pickable,
+void            gimp_pickable_rgb_to_pixel         (GimpPickable  *pickable,
                                                      const GimpRGB *color,
                                                      const Babl    *format,
                                                      gpointer       pixel);
-void            gimp_pickable_srgb_to_image_color   (GimpPickable  *pickable,
+void            gimp_pickable_rgb_to_image_color   (GimpPickable  *pickable,
                                                      const GimpRGB *color,
                                                      GimpRGB       *image_color);
 

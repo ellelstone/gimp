@@ -155,7 +155,7 @@ gimp_eraser_motion (GimpPaintCore    *paint_core,
     return;
 
   gimp_context_get_background (context, &background);
-  gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+  gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                      &background, &background);
   color = gimp_gegl_color_new (&background);
 

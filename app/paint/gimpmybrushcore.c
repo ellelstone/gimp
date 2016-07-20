@@ -316,7 +316,7 @@ gimp_mybrush_core_motion (GimpPaintCore    *paint_core,
       GimpHSV             hsv;
 
       gimp_context_get_foreground (context, &fg);
-      gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+      gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                          &fg, &fg);
       gimp_rgb_to_hsv (&fg, &hsv);
 
