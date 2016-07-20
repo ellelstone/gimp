@@ -401,30 +401,6 @@ gimp_image_import_color_profile (GimpImage    *image,
   g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
 }
 
-GimpColorTransform *
-gimp_image_get_color_transform_to_srgb_u8 (GimpImage *image)
-{//used in app/core/gimpdrawable-preview.c and app/core/gimpimage-preview.c
-  return NULL;
-}
-
-GimpColorTransform *
-gimp_image_get_color_transform_from_srgb_u8 (GimpImage *image)
-{//used in app/text/gimptextlayer.c
-  return NULL;
-}
-
-GimpColorTransform *
-gimp_image_get_color_transform_to_srgb_double (GimpImage *image)
-{//only used in this file
-  return NULL;
-}
-
-GimpColorTransform *
-gimp_image_get_color_transform_from_srgb_double (GimpImage *image)
-{//only used in this file
-  return NULL;
-}
-
 void
 gimp_image_color_profile_pixel_to_srgb (GimpImage  *image,
                                         const Babl *pixel_format,
@@ -455,30 +431,6 @@ _gimp_image_free_color_profile (GimpImage *image)
     {
       g_object_unref (private->color_profile);
       private->color_profile = NULL;
-    }
-
-  if (private->transform_to_srgb_u8)
-    {
-      g_object_unref (private->transform_to_srgb_u8);
-      private->transform_to_srgb_u8 = NULL;
-    }
-
-  if (private->transform_from_srgb_u8)
-    {
-      g_object_unref (private->transform_from_srgb_u8);
-      private->transform_from_srgb_u8 = NULL;
-    }
-
-  if (private->transform_to_srgb_double)
-    {
-      g_object_unref (private->transform_to_srgb_double);
-      private->transform_to_srgb_double = NULL;
-    }
-
-  if (private->transform_from_srgb_double)
-    {
-      g_object_unref (private->transform_from_srgb_double);
-      private->transform_from_srgb_double = NULL;
     }
 }
 

@@ -150,41 +150,6 @@ gimp_image_get_new_pixbuf (GimpViewable *viewable,
   pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
                            width, height);
 
-  transform = gimp_image_get_color_transform_to_srgb_u8 (image);
-
-  if (transform)
-    {
-      GimpTempBuf *temp_buf;
-      GeglBuffer  *src_buf;
-      GeglBuffer  *dest_buf;
-
-      temp_buf = gimp_temp_buf_new (width, height,
-                                    gimp_pickable_get_format (GIMP_PICKABLE (image)));
-
-      gegl_buffer_get (gimp_pickable_get_buffer (GIMP_PICKABLE (image)),
-                       GEGL_RECTANGLE (0, 0, width, height),
-                       MIN (scale_x, scale_y),
-                       gimp_temp_buf_get_format (temp_buf),
-                       gimp_temp_buf_get_data (temp_buf),
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
-
-      src_buf  = gimp_temp_buf_create_buffer (temp_buf);
-      dest_buf = gimp_pixbuf_create_buffer (pixbuf);
-
-      gimp_temp_buf_unref (temp_buf);
-
-      gimp_color_transform_process_buffer (transform,
-                                           src_buf,
-                                           GEGL_RECTANGLE (0, 0,
-                                                           width, height),
-                                           dest_buf,
-                                           GEGL_RECTANGLE (0, 0, 0, 0));
-
-      g_object_unref (src_buf);
-      g_object_unref (dest_buf);
-    }
-  else
-    {
       gegl_buffer_get (gimp_pickable_get_buffer (GIMP_PICKABLE (image)),
                        GEGL_RECTANGLE (0, 0, width, height),
                        MIN (scale_x, scale_y),
@@ -192,7 +157,6 @@ gimp_image_get_new_pixbuf (GimpViewable *viewable,
                        gdk_pixbuf_get_pixels (pixbuf),
                        gdk_pixbuf_get_rowstride (pixbuf),
                        GEGL_ABYSS_CLAMP);
-    }
 
   return pixbuf;
 }
