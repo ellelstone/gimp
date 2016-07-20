@@ -687,8 +687,6 @@ gimp_image_init (GimpImage *image)
 //  private->n_colors            = 0;
 //  private->palette             = NULL;
 
-  private->is_color_managed    = TRUE;
-
   private->metadata            = NULL;
 
   private->dirty               = 1;
@@ -1393,8 +1391,7 @@ gimp_image_color_managed_get_color_profile (GimpColorManaged *managed)
   GimpImage        *image   = GIMP_IMAGE (managed);
   GimpColorProfile *profile = NULL;
 
-  if (gimp_image_get_is_color_managed (image))
-    profile = gimp_image_get_color_profile (image);
+  profile = gimp_image_get_color_profile (image);
 
   if (! profile)
     profile = gimp_image_get_builtin_color_profile (image);//needs built-in RGB profile

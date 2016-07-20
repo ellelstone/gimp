@@ -315,7 +315,7 @@ image_actions_update (GimpActionGroup *group,
   gboolean   lp            = FALSE;
   gboolean   sel           = FALSE;
   gboolean   groups        = FALSE;
-  gboolean   color_managed = FALSE;
+//  gboolean   color_managed = FALSE;
   gboolean   profile       = FALSE;
 
   if (image)
@@ -357,7 +357,6 @@ image_actions_update (GimpActionGroup *group,
 
       groups = ! gimp_item_stack_is_flat (GIMP_ITEM_STACK (layers));
 
-      color_managed = gimp_image_get_is_color_managed (image);
       profile       = (gimp_image_get_color_profile (image) != NULL);
     }
 
@@ -400,7 +399,7 @@ image_actions_update (GimpActionGroup *group,
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);
-  SET_SENSITIVE ("image-color-profile-discard", image && profile);
+/**/  SET_SENSITIVE ("image-color-profile-discard", image && profile);
   SET_SENSITIVE ("image-color-profile-save",    image);
 
   SET_SENSITIVE ("image-flip-horizontal", image);

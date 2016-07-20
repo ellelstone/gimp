@@ -226,12 +226,6 @@ gimp_layer_new_convert_buffer (GimpLayer         *layer,
   GeglBuffer       *dest_buffer = gimp_drawable_get_buffer (drawable);
   GimpColorProfile *dest_profile;
 
-  if (! gimp_image_get_is_color_managed (image))
-    {
-      gegl_buffer_copy (src_buffer, NULL, GEGL_ABYSS_NONE, dest_buffer, NULL);
-      return;
-    }
-
   if (! src_profile)
     {
       const Babl *src_format = gegl_buffer_get_format (src_buffer);

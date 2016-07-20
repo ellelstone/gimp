@@ -50,7 +50,6 @@ struct _GimpImagePrivate
   GimpImageBaseType  base_type;             /*  base gimp_image type         */
   GimpPrecision      precision;             /*  image's precision            */
 
-  gboolean           is_color_managed;      /*  is this image color managed  */
   GimpColorProfile  *color_profile;         /*  image's color profile        */
 
   /*  Cached color transforms: from layer to sRGB u8 and double, and back    */

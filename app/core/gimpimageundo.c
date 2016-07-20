@@ -181,10 +181,6 @@ gimp_image_undo_constructed (GObject *object)
       g_assert (GIMP_IS_GRID (image_undo->grid));
       break;
 
-    case GIMP_UNDO_IMAGE_COLOR_MANAGED:
-      image_undo->is_color_managed = gimp_image_get_is_color_managed (image);
-      break;
-
     case GIMP_UNDO_IMAGE_METADATA:
       image_undo->metadata =
         gimp_metadata_duplicate (gimp_image_get_metadata (image));
@@ -433,17 +429,6 @@ gimp_image_undo_pop (GimpUndo            *undo,
 
         g_object_unref (image_undo->grid);
         image_undo->grid = grid;
-      }
-      break;
-
-    case GIMP_UNDO_IMAGE_COLOR_MANAGED:
-      {
-        gboolean is_color_managed;
-
-        is_color_managed = gimp_image_get_is_color_managed (image);
-        gimp_image_set_is_color_managed (image, image_undo->is_color_managed,
-                                         FALSE);
-        image_undo->is_color_managed = is_color_managed;
       }
       break;
 

@@ -65,38 +65,6 @@ static void   gimp_image_convert_profile_layers   (GimpImage                *ima
 /*  public functions  */
 
 gboolean
-gimp_image_get_is_color_managed (GimpImage *image)
-{
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
-
-  return GIMP_IMAGE_GET_PRIVATE (image)->is_color_managed;
-}
-
-void
-gimp_image_set_is_color_managed (GimpImage *image,
-                                 gboolean   is_color_managed,
-                                 gboolean   push_undo)
-{
-  GimpImagePrivate *private;
-
-  g_return_if_fail (GIMP_IS_IMAGE (image));
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  is_color_managed = is_color_managed ? TRUE : FALSE;
-
-  if (is_color_managed != private->is_color_managed)
-    {
-      if (push_undo)
-        gimp_image_undo_push_image_color_managed (image, NULL);
-
-      private->is_color_managed = is_color_managed;
-
-      gimp_color_managed_profile_changed (GIMP_COLOR_MANAGED (image));
-    }
-}
-
-gboolean
 gimp_image_validate_icc_parasite (GimpImage           *image,
                                   const GimpParasite  *icc_parasite,
                                   gboolean            *is_builtin,
@@ -410,7 +378,6 @@ gimp_image_convert_color_profile (GimpImage                *image,
 
     }
 
-  gimp_image_set_is_color_managed (image, TRUE, TRUE);
   gimp_image_set_color_profile (image, dest_profile, NULL);
   /*  omg...  */
   gimp_image_parasite_detach (image, "icc-profile-name");
@@ -432,118 +399,29 @@ gimp_image_import_color_profile (GimpImage    *image,
   g_return_if_fail (GIMP_IS_IMAGE (image));
   g_return_if_fail (GIMP_IS_CONTEXT (context));
   g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
-
-/*  if (gimp_image_get_is_color_managed (image) &&
-      gimp_image_get_color_profile (image))
-    {
-      GimpColorProfilePolicy     policy;
-//      GimpColorProfile          *dest_profile = NULL;
-//      GimpColorRenderingIntent   intent;
-//      gboolean                   bpc;
-
-//      policy = image->gimp->config->color_profile_policy;
-//      intent = GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC;
-//      bpc    = TRUE;
-      policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
-//elle: this dialog calls on the built-in profile
-      if (policy == GIMP_COLOR_PROFILE_POLICY_ASK)
-        {
-          if (interactive)
-            {
-              gboolean dont_ask = FALSE;
-
-              policy = gimp_query_profile_policy (image->gimp, image, context,
-                                                  &dest_profile,
-                                                  &intent, &bpc,
-                                                  &dont_ask);
-
-              if (dont_ask)
-                {
-                  g_object_set (G_OBJECT (image->gimp->config),
-                                "color-profile-policy", policy,
-                                NULL);
-                }
-            }
-          else
-            {
-              policy = GIMP_COLOR_PROFILE_POLICY_KEEP;
-            }
-        }
-
-      if (policy == GIMP_COLOR_PROFILE_POLICY_CONVERT)
-        {
-          if (! dest_profile)
-            {
-              dest_profile = gimp_image_get_builtin_color_profile (image);
-              g_object_ref (dest_profile);
-            }
-
-          gimp_image_convert_color_profile (image, dest_profile,
-                                            intent, bpc,
-                                            progress, NULL);
-
-          g_object_unref (dest_profile);
-        }
-    }*/
 }
 
 GimpColorTransform *
 gimp_image_get_color_transform_to_srgb_u8 (GimpImage *image)
 {//used in app/core/gimpdrawable-preview.c and app/core/gimpimage-preview.c
-/*  GimpImagePrivate *private;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed)
-    return private->transform_to_srgb_u8;*/
-
   return NULL;
 }
 
 GimpColorTransform *
 gimp_image_get_color_transform_from_srgb_u8 (GimpImage *image)
 {//used in app/text/gimptextlayer.c
-/*  GimpImagePrivate *private;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed)
-    return private->transform_from_srgb_u8;*/
-
   return NULL;
 }
 
 GimpColorTransform *
 gimp_image_get_color_transform_to_srgb_double (GimpImage *image)
 {//only used in this file
-/*  GimpImagePrivate *private;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed)
-    return private->transform_to_srgb_double;*/
-
   return NULL;
 }
 
 GimpColorTransform *
 gimp_image_get_color_transform_from_srgb_double (GimpImage *image)
 {//only used in this file
-/*  GimpImagePrivate *private;
-
-  g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
-
-  private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed)
-    return private->transform_from_srgb_double;*/
-
   return NULL;
 }
 
@@ -552,23 +430,8 @@ gimp_image_color_profile_pixel_to_srgb (GimpImage  *image,
                                         const Babl *pixel_format,
                                         gpointer    pixel,
                                         GimpRGB    *color)
-{gimp_rgba_set_pixel (color, pixel_format, pixel);
-/*  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed &&
-      private->transform_to_srgb_double)
-    {
-      gimp_color_transform_process_pixels (private->transform_to_srgb_double,
-                                           pixel_format,
-                                           pixel,
-                                           babl_format ("RGBA double"),
-                                           color,
-                                           1);
-    }
-  else
-    {
-      gimp_rgba_set_pixel (color, pixel_format, pixel);
-    }*/
+{
+  gimp_rgba_set_pixel (color, pixel_format, pixel);
 }
 
 void
@@ -576,26 +439,8 @@ gimp_image_color_profile_srgb_to_pixel (GimpImage     *image,
                                         const GimpRGB *color,
                                         const Babl    *pixel_format,
                                         gpointer       pixel)
-{gimp_rgba_get_pixel (color, pixel_format, pixel);
-/*  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
-
-  if (private->is_color_managed &&
-      private->transform_from_srgb_double)
-    {
-      // for the alpha channel
-      gimp_rgba_get_pixel (color, pixel_format, pixel);
-
-      gimp_color_transform_process_pixels (private->transform_from_srgb_double,
-                                           babl_format ("RGBA double"),
-                                           color,
-                                           pixel_format,
-                                           pixel,
-                                           1);
-    }
-  else
-    {
-      gimp_rgba_get_pixel (color, pixel_format, pixel);
-    }*/
+{
+  gimp_rgba_get_pixel (color, pixel_format, pixel);
 }
 
 

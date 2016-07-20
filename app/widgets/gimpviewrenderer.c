@@ -1111,11 +1111,11 @@ gimp_view_renderer_get_color_transform (GimpViewRenderer *renderer,
   else
     {
       //static
-      GimpColorProfile *srgb_profile = NULL;
-//printf("app/widgets/gimpviewrender.c gimp_view_renderer_get_color_transform is about to set profile = srgb_profile (built-in)\n");
-      //if (G_UNLIKELY (! srgb_profile))
-        srgb_profile = gimp_color_profile_new_rgb_from_colorants ();//gimp_color_profile_new_rgb_built_in ();
-      profile = srgb_profile;
+      GimpColorProfile *rgb_profile = NULL;
+printf("app/widgets/gimpviewrender.c gimp_view_renderer_get_color_transform is about to set profile = srgb_profile (built-in)\n");
+        rgb_profile = gimp_color_profile_new_rgb_from_colorants ();
+//elle: this function used to use the built-in profile
+        profile = rgb_profile;//elle: what triggers the "else"? non-image items?
     }
 
   renderer->priv->profile_transform =
