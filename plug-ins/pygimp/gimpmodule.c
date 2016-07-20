@@ -1802,7 +1802,6 @@ static struct PyMethodDef gimp_methods[] = {
     {"register_save_handler",   (PyCFunction)pygimp_register_save_handler,      METH_VARARGS},
     {"domain_register",         (PyCFunction)pygimp_domain_register,    METH_VARARGS},
     {"menu_register",           (PyCFunction)pygimp_menu_register,      METH_VARARGS},
-    {"gamma",   (PyCFunction)pygimp_gamma,      METH_NOARGS},
     {"gtkrc",   (PyCFunction)pygimp_gtkrc,      METH_NOARGS},
     {"personal_rc_file",        (PyCFunction)pygimp_personal_rc_file, METH_VARARGS | METH_KEYWORDS},
     {"context_push", (PyCFunction)pygimp_context_push, METH_NOARGS},

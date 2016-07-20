@@ -29,7 +29,6 @@ gimp_tile_width
 gimp_tile_height
 gimp_shm_ID
 gimp_shm_addr
-gimp_gamma
 gimp_install_cmap
 gimp_min_colors
 gimp_show_tool_tips
