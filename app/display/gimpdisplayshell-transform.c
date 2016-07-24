@@ -17,6 +17,8 @@
 
 #include "config.h"
 
+#include <math.h>
+
 #include <gegl.h>
 #include <gtk/gtk.h>
 
@@ -380,7 +382,7 @@ gimp_display_shell_unrotate_xy (GimpDisplayShell *shell,
       gdouble fx = x;
       gdouble fy = y;
 
-      cairo_matrix_transform_point (shell->rotate_untransform, &fy, &fy);
+      cairo_matrix_transform_point (shell->rotate_untransform, &fx, &fy);
 
       *nx = CLAMP (fx, G_MININT, G_MAXINT);
       *ny = CLAMP (fy, G_MININT, G_MAXINT);
@@ -689,7 +691,7 @@ gimp_display_shell_untransform_xy (GimpDisplayShell *shell,
       gdouble fx = x;
       gdouble fy = y;
 
-      cairo_matrix_transform_point (shell->rotate_untransform, &fy, &fy);
+      cairo_matrix_transform_point (shell->rotate_untransform, &fx, &fy);
 
       x = fx;
       y = fy;
@@ -870,18 +872,20 @@ gimp_display_shell_untransform_viewport (GimpDisplayShell *shell,
                                          gint             *height)
 {
   GimpImage *image;
-  gint       x1, y1, x2, y2;
+  gdouble    x1, y1, x2, y2;
 
   g_return_if_fail (GIMP_IS_DISPLAY_SHELL (shell));
 
-  gimp_display_shell_untransform_xy (shell,
-                                     0, 0,
-                                     &x1, &y1,
-                                     FALSE);
-  gimp_display_shell_untransform_xy (shell,
-                                     shell->disp_width, shell->disp_height,
-                                     &x2, &y2,
-                                     FALSE);
+  gimp_display_shell_untransform_bounds (shell,
+                                         0, 0,
+                                         shell->disp_width, shell->disp_height,
+                                         &x1, &y1,
+                                         &x2, &y2);
+
+  x1 = floor (x1);
+  y1 = floor (y1);
+  x2 = ceil (x2);
+  y2 = ceil (y2);
 
   image = gimp_display_get_image (shell->display);
 
