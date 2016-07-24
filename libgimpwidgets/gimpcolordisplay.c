@@ -51,8 +51,7 @@ enum
 {
   PROP_0,
   PROP_ENABLED,
-  PROP_COLOR_CONFIG,
-  PROP_COLOR_MANAGED
+  PROP_COLOR_CONFIG
 };
 
 enum
@@ -117,12 +116,6 @@ gimp_color_display_class_init (GimpColorDisplayClass *klass)
                                    g_param_spec_object ("color-config",
                                                         NULL, NULL,
                                                         GIMP_TYPE_COLOR_CONFIG,
-                                                        GIMP_PARAM_READWRITE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
-  g_object_class_install_property (object_class, PROP_COLOR_MANAGED,
-                                   g_param_spec_object ("color-managed",
-                                                        NULL, NULL,
-                                                        GIMP_TYPE_COLOR_MANAGED,
                                                         GIMP_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
   display_signals[CHANGED] =
@@ -209,11 +202,6 @@ gimp_color_display_set_property (GObject      *object,
                                            g_value_get_object (value));
       break;
 
-    case PROP_COLOR_MANAGED:
-      gimp_color_display_set_color_managed (display,
-                                            g_value_get_object (value));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -237,11 +225,6 @@ gimp_color_display_get_property (GObject    *object,
     case PROP_COLOR_CONFIG:
       g_value_set_object (value,
                           GIMP_COLOR_DISPLAY_GET_PRIVATE (display)->config);
-      break;
-
-    case PROP_COLOR_MANAGED:
-      g_value_set_object (value,
-                          GIMP_COLOR_DISPLAY_GET_PRIVATE (display)->managed);
       break;
 
     default:
