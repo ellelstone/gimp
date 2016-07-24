@@ -49,10 +49,10 @@
 
 
 #define COLOR_MANAGEMENT_MODE_BLURB \
-  _("How images are displayed on screen.")
+  _("How images are displayed on screen. The 'No color management' option sends the image RGB values directly to the screen but does not disable other color-management-related functionality.")
 
 #define DISPLAY_PROFILE_BLURB \
-  _("The color profile of your (primary) monitor.")
+  _("The color profile of your (primary) monitor. The 'None chosen' option uses GIMP's built-in sRGB profile as your monitor profile.")
 
 #define DISPLAY_PROFILE_FROM_GDK_BLURB \
   _("When enabled, GIMP will try to use the display color profile from " \
@@ -87,8 +87,8 @@
     "not to).")
 
 #define DISPLAY_OPTIMIZE_BLURB \
-  _("When disabled, image display might be of better quality " \
-    "at the cost of speed.")
+  _("When 'Precision/Color Fidelity' is chosen, image display might be of " \
+    "better quality, but possibly at the cost of speed.")
 
 #define SIMULATION_RENDERING_INTENT_BLURB \
   _("How colors are converted from your image's color space to the "  \
@@ -100,8 +100,8 @@
     "and choose what looks best. ")
 
 #define SIMULATION_OPTIMIZE_BLURB \
-  _("When disabled, soft-proofing might be of better quality " \
-    "at the cost of speed.")
+  _("When 'Precision/Color Fidelity' is chosen, soft-proofing might be " \
+    "of better quality, but possibly at the cost of speed.")
 
 #define SIMULATION_GAMUT_CHECK_BLURB \
   _("When enabled, the soft-proofing will mark colors " \
