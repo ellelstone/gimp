@@ -140,8 +140,8 @@ gimp_gegl_add_buffer_source (GeglNode   *parent,
 
 void
 gimp_gegl_mode_node_set_mode (GeglNode             *node,
-                              GimpLayerModeEffects  mode,
-                              gboolean              linear)
+                              GimpLayerModeEffects  mode/*,
+                              gboolean              linear*/)
 {
   const gchar *operation = "gimp:normal-mode";
   gdouble      opacity;
@@ -195,7 +195,7 @@ gimp_gegl_mode_node_set_mode (GeglNode             *node,
    */
   gegl_node_set (node,
                  "operation", operation,
-                 "linear",    linear,
+//                 "linear",    linear,
                  "opacity",   opacity,
                  NULL);
 }

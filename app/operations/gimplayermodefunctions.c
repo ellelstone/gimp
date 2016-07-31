@@ -60,8 +60,8 @@
 
 
 GimpLayerModeFunction
-get_layer_mode_function (GimpLayerModeEffects paint_mode,
-                         gboolean             linear_mode)
+get_layer_mode_function (GimpLayerModeEffects paint_mode/*,
+                         gboolean             linear_mode*/)
 {
   GimpLayerModeFunction func = gimp_operation_normal_mode_process_pixels;
 

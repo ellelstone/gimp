@@ -290,8 +290,8 @@ do_layer_blend (GeglBuffer  *src_buffer,
                 gint         x_offset,
                 gint         y_offset,
                 gint         mask_x_offset,
-                gint         mask_y_offset,
-                gboolean     linear_mode,
+                gint         mask_y_offset,/*
+                gboolean     linear_mode,*/
                 GimpLayerModeEffects paint_mode)
 {
   GeglRectangle       roi;
@@ -303,11 +303,11 @@ do_layer_blend (GeglBuffer  *src_buffer,
   const guint         paint_stride = gimp_temp_buf_get_width (paint_buf);
   gfloat             *paint_data   = (gfloat *) gimp_temp_buf_get_data (paint_buf);
 
-  GimpLayerModeFunction apply_func = get_layer_mode_function (paint_mode, linear_mode);
+  GimpLayerModeFunction apply_func = get_layer_mode_function (paint_mode/*, linear_mode*/);
 
-  if (linear_mode)
-    iterator_format = babl_format ("RGBA float");
-  else
+//  if (linear_mode)
+//    iterator_format = babl_format ("RGBA float");
+//  else
     iterator_format = babl_format ("RGBA float");
 
   roi.x = x_offset;
@@ -379,15 +379,15 @@ mask_components_onto (GeglBuffer        *src_buffer,
                       GeglBuffer        *aux_buffer,
                       GeglBuffer        *dst_buffer,
                       GeglRectangle     *roi,
-                      GimpComponentMask  mask,
-                      gboolean           linear_mode)
+                      GimpComponentMask  mask/*,
+                      gboolean           linear_mode*/)
 {
   GeglBufferIterator *iter;
   const Babl         *iterator_format;
 
-  if (linear_mode)
-    iterator_format = babl_format ("RGBA float");
-  else
+//  if (linear_mode)
+//    iterator_format = babl_format ("RGBA float");
+//  else
     iterator_format = babl_format ("RGBA float");
 
   iter = gegl_buffer_iterator_new (dst_buffer, roi, 0,

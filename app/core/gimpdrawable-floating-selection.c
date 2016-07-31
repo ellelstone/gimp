@@ -163,7 +163,7 @@ _gimp_drawable_add_floating_sel_filter (GimpDrawable *drawable)
   GimpLayer           *fs      = gimp_drawable_get_floating_sel (drawable);
   GeglNode            *node;
   GeglNode            *fs_source;
-  gboolean             linear;
+//  gboolean             linear;
 
   if (! private->source_node)
     return;
@@ -175,7 +175,7 @@ _gimp_drawable_add_floating_sel_filter (GimpDrawable *drawable)
   node = gimp_filter_get_node (private->fs_filter);
 
   fs_source = gimp_drawable_get_source_node (GIMP_DRAWABLE (fs));
-  linear    = FALSE;
+//  linear    = FALSE;
 
   /* rip the fs' source node out of its graph */
   if (fs->layer_offset_node)
@@ -187,7 +187,7 @@ _gimp_drawable_add_floating_sel_filter (GimpDrawable *drawable)
 
   gegl_node_add_child (node, fs_source);
 
-  private->fs_applicator = gimp_applicator_new (node, linear,
+  private->fs_applicator = gimp_applicator_new (node,/* linear,*/
                                                 FALSE, FALSE);
 
   private->fs_crop_node =

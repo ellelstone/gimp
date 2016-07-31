@@ -615,8 +615,8 @@ gimp_image_merge_layers (GimpImage     *image,
       layer_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
 
       applicator =
-        gimp_applicator_new (NULL,
-                             FALSE,
+        gimp_applicator_new (NULL,/*
+                             FALSE,*/
                              FALSE, FALSE);
 
       if (gimp_layer_get_mask (layer) &&
