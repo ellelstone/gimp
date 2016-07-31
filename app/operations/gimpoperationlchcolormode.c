@@ -85,9 +85,9 @@ gimp_operation_lch_color_mode_process (GeglOperation       *operation,
 {
   GimpOperationPointLayerMode *gimp_op = GIMP_OPERATION_POINT_LAYER_MODE (operation);
   gfloat                       opacity = gimp_op->opacity;
-  gboolean                     linear  = gimp_op->linear;
+//  gboolean                     linear  = gimp_op->linear;
 
-  return (linear ? gimp_operation_lch_color_mode_process_pixels_linear :
+  return (//linear ? gimp_operation_lch_color_mode_process_pixels_linear :
                    gimp_operation_lch_color_mode_process_pixels)
     (in_buf, aux_buf, aux2_buf, out_buf, opacity, samples, roi, level);
 }
@@ -160,7 +160,7 @@ color_post_process (const gfloat *in,
     }
 }
 
-gboolean
+/*gboolean
 gimp_operation_lch_color_mode_process_pixels_linear (gfloat              *in,
                                                      gfloat              *layer,
                                                      gfloat              *mask,
@@ -180,7 +180,7 @@ gimp_operation_lch_color_mode_process_pixels_linear (gfloat              *in,
     g_free (in2);
 
   return TRUE;
-}
+}*/
 
 gboolean
 gimp_operation_lch_color_mode_process_pixels (gfloat              *in,

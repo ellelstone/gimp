@@ -149,9 +149,9 @@ gimp_operation_point_layer_mode_prepare (GeglOperation *operation)
   GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (operation);
   const Babl                  *format;
 
-  if (self->linear)
-    format = babl_format ("RGBA float");
-  else
+//  if (self->linear)
+//    format = babl_format ("RGBA float");
+//  else
     format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input",  format);
