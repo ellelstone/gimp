@@ -111,7 +111,6 @@ gimp_operation_divide_mode_process_pixels (gfloat              *in,
               gfloat comp = (4294967296.0 / 4294967295.0 * in[b]) / (1.0 / 4294967295.0 + layer[b]);
 
               out[b] = comp * ratio + in[b] * (1.0 - ratio);
-              out[b] = CLAMP (out[b], 0.0, 1.0);
             }
         }
       else
