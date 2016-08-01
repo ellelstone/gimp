@@ -83,8 +83,6 @@ static void       gimp_color_display_get_property (GObject      *object,
 
 static void  gimp_color_display_set_color_config  (GimpColorDisplay *display,
                                                    GimpColorConfig  *config);
-static void  gimp_color_display_set_color_managed (GimpColorDisplay *display,
-                                                   GimpColorManaged *managed);
 
 
 G_DEFINE_TYPE_WITH_CODE (GimpColorDisplay, gimp_color_display, G_TYPE_OBJECT,
@@ -246,24 +244,6 @@ gimp_color_display_set_color_config (GimpColorDisplay *display,
       private->config = g_object_ref (config);
 
       g_signal_connect_swapped (private->config, "notify",
-                                G_CALLBACK (gimp_color_display_changed),
-                                display);
-    }
-}
-
-static void
-gimp_color_display_set_color_managed (GimpColorDisplay *display,
-                                      GimpColorManaged *managed)
-{
-  GimpColorDisplayPrivate *private = GIMP_COLOR_DISPLAY_GET_PRIVATE (display);
-
-  g_return_if_fail (private->managed == NULL);
-
-  if (managed)
-    {
-      private->managed = g_object_ref (managed);
-
-      g_signal_connect_swapped (private->managed, "profile-changed",
                                 G_CALLBACK (gimp_color_display_changed),
                                 display);
     }
