@@ -263,10 +263,10 @@ choose_format (GeglBuffer          *buffer,
       format = babl_format ("RGBA float");
       break;
 
+    case GIMP_SELECT_CRITERION_L:
+    case GIMP_SELECT_CRITERION_C:
     case GIMP_SELECT_CRITERION_H:
-    case GIMP_SELECT_CRITERION_S:
-    case GIMP_SELECT_CRITERION_V:
-      format = babl_format ("HSVA float");
+      format = babl_format ("CIE LCH(ab) float");
       break;
 
     default:
@@ -347,11 +347,11 @@ pixel_difference (const gfloat        *col1,
           }
           break;
 
-        case GIMP_SELECT_CRITERION_S:
+        case GIMP_SELECT_CRITERION_C:
           max = fabs (col1[1] - col2[1]);
           break;
 
-        case GIMP_SELECT_CRITERION_V:
+        case GIMP_SELECT_CRITERION_L:
           max = fabs (col1[2] - col2[2]);
           break;
         }
