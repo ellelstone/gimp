@@ -310,6 +310,12 @@ load_image (const gchar  *filename,
           gimp_image_set_color_profile (image, profile);
           g_object_unref (profile);
         }
+      else 
+      {
+        profile = gimp_color_profile_new_rgb_built_in_linear ();
+        gimp_image_set_color_profile (image, profile);
+        g_object_unref (profile);
+      }
     }
 
   /* try to read the file comment */

@@ -234,10 +234,8 @@ struct _EXRLoader
                                           chromaticities.blue.y,
                                           whiteLuminance } };
 
-/*    // get the primaries + wp from GIMP's internal linear sRGB profile
-    linear_srgb_profile = gimp_color_profile_new_rgb_built_in ();
-    //elle: this just makes the built-in profile, which
-    //as of June 2016 is the regular sRGB profile, so it's not linear.
+    // get the primaries + wp from GIMP's internal linear sRGB profile
+    linear_srgb_profile = gimp_color_profile_new_rgb_built_in_linear ();
     linear_srgb_lcms = gimp_color_profile_get_lcms_profile (linear_srgb_profile);
 
     gimp_r_XYZ = (cmsCIEXYZ *) cmsReadTag (linear_srgb_lcms, cmsSigRedColorantTag);
@@ -261,7 +259,7 @@ struct _EXRLoader
       return linear_srgb_profile;
 
     // nope, it's something else. Clean up and build a new profile
-    g_object_unref (linear_srgb_profile);*/
+    g_object_unref (linear_srgb_profile);/**/
 
     // TODO: maybe factor this out into libgimpcolor/gimpcolorprofile.h ?
     double Parameters[2] = { 1.0, 0.0 };
@@ -275,11 +273,11 @@ struct _EXRLoader
 
 //     cmsSetProfileVersion (lcms_profile, 2.1);
     cmsMLU *mlu0 = cmsMLUalloc (NULL, 1);
-    cmsMLUsetASCII (mlu0, "en", "US", "(GIMP internal)");
+    cmsMLUsetASCII (mlu0, "en", "US", "(GIMP-CCE ICC profile from EXR chromaticities)");
     cmsMLU *mlu1 = cmsMLUalloc(NULL, 1);
-    cmsMLUsetASCII (mlu1, "en", "US", "color profile from EXR chromaticities");
+    cmsMLUsetASCII (mlu1, "en", "US", "ICC profile from EXR chromaticities");
     cmsMLU *mlu2 = cmsMLUalloc(NULL, 1);
-    cmsMLUsetASCII (mlu2, "en", "US", "color profile from EXR chromaticities");
+    cmsMLUsetASCII (mlu2, "en", "US", "ICC profile from EXR chromaticities");
     cmsWriteTag (lcms_profile, cmsSigDeviceMfgDescTag, mlu0);
     cmsWriteTag (lcms_profile, cmsSigDeviceModelDescTag, mlu1);
     cmsWriteTag (lcms_profile, cmsSigProfileDescriptionTag, mlu2);
