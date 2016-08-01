@@ -967,31 +967,13 @@ gimp_color_profile_new_rgb_built_in_internal (void)
   cmsFreeToneCurve (curve[0]);
 
   gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMPLCH built-in sRGB");
+                              "GIMP-CCE built-in regular sRGB");
   gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMPLCH");
+                              "GIMP-CCE");
   gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
                               "sRGB");
   gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
                               "Public Domain");
-
-
-/*  cmsToneCurve *curve[3];
-
-  curve[0] = curve[1] = curve[2] = cmsBuildGamma (NULL, 1.0);
-
-  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
-
-  cmsFreeToneCurve (curve[0]);
-
-  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMPLCH built-in linear sRGB profile");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMPLCH");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
-                              "linear sRGB)");
-  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");*/
 
   return profile;
 }
@@ -1015,7 +997,7 @@ gimp_color_profile_new_rgb_built_in_internal (void)
  * ArgyllCMS sRGB.icm profile. The resulting sRGB profile's colorants
  * exactly matches the ArgyllCMS sRGB.icm profile colorants.
  *
- * Return value: the linear gamma sRGB #GimpColorProfile.
+ * Return value: the built-in regular sRGB profile #GimpColorProfile.
  *
  * Since: 2.10
  **/
@@ -1040,6 +1022,120 @@ gimp_color_profile_new_rgb_built_in (void)
 
   return gimp_color_profile_new_from_icc_profile (data, length, NULL);
 }
+
+
+////////////////////////////////// begin linear sRGB ///////////////////
+
+static cmsHPROFILE *
+gimp_color_profile_new_rgb_built_in_linear_internal (void)
+{
+  cmsHPROFILE profile;
+
+  /* white point is D65 from the sRGB specs */
+  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
+  //D50 ICC spec white point
+  //cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0};
+
+  /* primaries are ITU‐R BT.709‐5 (xYY), which are also the primaries
+   * from the sRGB specs, modified to properly account for hexadecimal
+   * quantization during the profile making process.
+   */
+  cmsCIExyYTRIPLE primaries =
+    {
+      /* R { 0.6400, 0.3300, 1.0 }, */
+      /* G { 0.3000, 0.6000, 1.0 }, */
+      /* B { 0.1500, 0.0600, 1.0 }  */
+      /* R */ { 0.639998686, 0.330010138, 1.0 },
+      /* G */ { 0.300003784, 0.600003357, 1.0 },
+      /* B */ { 0.150002046, 0.059997204, 1.0 }
+    };
+
+  cmsToneCurve *curve[3];
+
+  /* sRGB curve 
+  curve[0] = curve[1] = curve[2] = cmsBuildParametricToneCurve (NULL, 4,
+                                                                srgb_parameters);
+
+  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
+
+  cmsFreeToneCurve (curve[0]);
+
+  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
+                              "GIMPLCH built-in sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
+                              "GIMPLCH");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
+                              "sRGB");
+  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
+                              "Public Domain");*/
+
+
+/*  cmsToneCurve *curve[3];*/
+
+  curve[0] = curve[1] = curve[2] = cmsBuildGamma (NULL, 1.0);
+
+  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
+
+  cmsFreeToneCurve (curve[0]);
+
+  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
+                              "GIMP-CCE built-in linear gamma sRGB profile");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
+                              "GIMP-CCE");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
+                              "linear gamma sRGB)");
+  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
+                              "Public Domain");
+
+  return profile;
+}
+
+/**
+ * gimp_color_profile_new_rgb_built_in_linear:
+ *
+ * The actual primaries in the sRGB specification are
+ * red xy:   {0.6400, 0.3300, 1.0}
+ * green xy: {0.3000, 0.6000, 1.0}
+ * blue xy:  {0.1500, 0.0600, 1.0}
+ *
+ * The sRGB primaries given below are "pre-quantized" to compensate
+ * for hexadecimal quantization during the profile-making process.
+ * Unless the profile-making code compensates for this quantization,
+ * the resulting profile's red, green, and blue colorants will deviate
+ * slightly from the correct XYZ values.
+ *
+ * LCMS2 doesn't compensate for hexadecimal quantization. The
+ * "pre-quantized" primaries below were back-calculated from the
+ * ArgyllCMS sRGB.icm profile. The resulting sRGB profile's colorants
+ * exactly matches the ArgyllCMS sRGB.icm profile colorants.
+ *
+ * Return value: the built-in linear gamma sRGB profile #GimpColorProfile.
+ *
+ * Since: 2.10
+ **/
+GimpColorProfile *
+gimp_color_profile_new_rgb_built_in_linear (void)
+{
+  static GimpColorProfile *profile = NULL;
+
+  const guint8 *data;
+  gsize         length;
+
+  if (G_UNLIKELY (profile == NULL))
+    {
+      cmsHPROFILE lcms_profile = gimp_color_profile_new_rgb_built_in_linear_internal ();
+
+      profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
+
+      cmsCloseProfile (lcms_profile);
+    }
+
+  data = gimp_color_profile_get_icc_profile (profile, &length);
+
+  return gimp_color_profile_new_from_icc_profile (data, length, NULL);
+}
+
+/////////////////////////////////// end linear sRGB ////////////////////
 
 static cmsHPROFILE *
 gimp_color_profile_new_rgb_adobe_internal (void)
