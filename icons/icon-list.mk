@@ -233,7 +233,7 @@ scalable_images = \
 	scalable/gimp-tool-fuzzy-select.svg		\
 	scalable/gimp-tool-handle-transform.svg		\
 	scalable/gimp-tool-heal.svg			\
-	scalable/gimp-tool-hue-saturation.svg		\
+	scalable/gimp-tool-hue-chroma.svg		\
 	scalable/gimp-tool-ink.svg			\
 	scalable/gimp-tool-iscissors.svg		\
 	scalable/gimp-tool-levels.svg			\
@@ -395,7 +395,7 @@ vector24_images = \
 	24/gimp-tool-fuzzy-select.svg			\
 	24/gimp-tool-handle-transform.svg		\
 	24/gimp-tool-heal.svg				\
-	24/gimp-tool-hue-saturation.svg			\
+	24/gimp-tool-hue-chroma.svg			\
 	24/gimp-tool-ink.svg				\
 	24/gimp-tool-iscissors.svg			\
 	24/gimp-tool-levels.svg				\
@@ -629,7 +629,7 @@ icons16_images = \
 	16/gimp-tool-fuzzy-select.png			\
 	16/gimp-tool-handle-transform.png		\
 	16/gimp-tool-heal.png				\
-	16/gimp-tool-hue-saturation.png			\
+	16/gimp-tool-hue-chroma.png			\
 	16/gimp-tool-ink.png				\
 	16/gimp-tool-iscissors.png			\
 	16/gimp-tool-levels.png				\
@@ -816,7 +816,7 @@ icons24_images = \
 	24/gimp-tool-fuzzy-select.png		\
 	24/gimp-tool-handle-transform.png	\
 	24/gimp-tool-heal.png			\
-	24/gimp-tool-hue-saturation.png		\
+	24/gimp-tool-hue-chroma.png		\
 	24/gimp-tool-ink.png			\
 	24/gimp-tool-iscissors.png		\
 	24/gimp-tool-levels.png			\

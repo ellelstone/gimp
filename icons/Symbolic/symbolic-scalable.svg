@@ -19053,8 +19053,8 @@
     </g>
     <g
        style="display:inline"
-       id="gimp-tool-hue-saturation"
-       inkscape:label="gimp-tool-hue-saturation"
+       id="gimp-tool-hue-chroma"
+       inkscape:label="gimp-tool-hue-chroma"
        transform="translate(-316.02989,19.089394)">
       <rect
          rx="0"
@@ -23117,7 +23117,7 @@
     </g>
     <g
        transform="translate(-34.911659,-737.95697)"
-       id="gimp-tool-hue-saturation-24">
+       id="gimp-tool-hue-chroma-24">
       <rect
          rx="0"
          y="1028.3622"

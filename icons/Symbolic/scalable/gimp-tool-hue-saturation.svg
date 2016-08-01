@@ -15,7 +15,7 @@
    width="16"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="gimp-tool-hue-saturation.svg">
+   sodipodi:docname="gimp-tool-hue-chroma.svg">
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -248,7 +248,7 @@
      id="tools">
     <g
        transform="translate(-129.10499,-3.4604573)"
-       id="gimp-tool-hue-saturation"
+       id="gimp-tool-hue-chroma"
        style="display:inline">
       <rect
          style="fill:none;fill-opacity:1;stroke:none"

@@ -192,7 +192,7 @@ icons16_DATA = \
 	16/gimp-tool-fuzzy-select.png			\
 	16/gimp-tool-handle-transform.png		\
 	16/gimp-tool-heal.png				\
-	16/gimp-tool-hue-saturation.png			\
+	16/gimp-tool-hue-chroma.png			\
 	16/gimp-tool-ink.png				\
 	16/gimp-tool-iscissors.png			\
 	16/gimp-tool-levels.png				\
@@ -310,7 +310,7 @@ tools22_DATA = \
 	22/gimp-tool-fuzzy-select.png		\
 	22/gimp-tool-handle-transform.png	\
 	22/gimp-tool-heal.png			\
-	22/gimp-tool-hue-saturation.png		\
+	22/gimp-tool-hue-chroma.png		\
 	22/gimp-tool-ink.png			\
 	22/gimp-tool-iscissors.png		\
 	22/gimp-tool-levels.png			\

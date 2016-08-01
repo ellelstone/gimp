@@ -22829,7 +22829,7 @@
       </g>
     </g>
     <g
-       id="gimp-tool-hue-saturation"
+       id="gimp-tool-hue-chroma"
        transform="translate(-76.223932,-749.30418)">
       <rect
          id="rect1872"
@@ -22883,7 +22883,7 @@
          sodipodi:type="star" />
     </g>
     <g
-       id="gimp-tool-hue-saturation-24"
+       id="gimp-tool-hue-chroma-24"
        transform="matrix(1.5,0,0,1.5,103.32848,-1275.4853)">
       <rect
          id="rect1872-4"
