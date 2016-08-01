@@ -35,7 +35,6 @@
 enum
 {
   PROP_0,
-//  PROP_LINEAR,
   PROP_OPACITY
 };
 
@@ -75,13 +74,6 @@ gimp_operation_point_layer_mode_class_init (GimpOperationPointLayerModeClass *kl
   operation_class->prepare   = gimp_operation_point_layer_mode_prepare;
   operation_class->process   = gimp_operation_point_layer_mode_process;
 
-/*  g_object_class_install_property (object_class, PROP_LINEAR,
-                                   g_param_spec_boolean ("linear",
-                                                         NULL, NULL,
-                                                         FALSE,
-                                                         GIMP_PARAM_READWRITE |
-                                                         G_PARAM_CONSTRUCT));*/
-
   g_object_class_install_property (object_class, PROP_OPACITY,
                                    g_param_spec_double ("opacity",
                                                         NULL, NULL,
@@ -105,9 +97,6 @@ gimp_operation_point_layer_mode_set_property (GObject      *object,
 
   switch (property_id)
     {
-/*    case PROP_LINEAR:
-      self->linear = g_value_get_boolean (value);
-      break;*/
 
     case PROP_OPACITY:
       self->opacity = g_value_get_double (value);
@@ -129,9 +118,6 @@ gimp_operation_point_layer_mode_get_property (GObject    *object,
 
   switch (property_id)
     {
-/*    case PROP_LINEAR:
-      g_value_set_boolean (value, self->linear);
-      break;*/
 
     case PROP_OPACITY:
       g_value_set_double (value, self->opacity);
@@ -149,10 +135,7 @@ gimp_operation_point_layer_mode_prepare (GeglOperation *operation)
   GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (operation);
   const Babl                  *format;
 
-//  if (self->linear)
-//    format = babl_format ("RGBA float");
-//  else
-    format = babl_format ("RGBA float");
+  format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);

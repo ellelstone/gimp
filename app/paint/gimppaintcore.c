@@ -442,11 +442,9 @@ gimp_paint_core_start (GimpPaintCore     *core,
       core->mask_buffer = NULL;
     }
 
-//  core->linear_mode = FALSE;
-
   if (paint_options->use_applicator)
     {
-      core->applicator = gimp_applicator_new (NULL, /*core->linear_mode,*/
+      core->applicator = gimp_applicator_new (NULL,
                                               FALSE, FALSE);
 
       if (core->mask_buffer)
@@ -476,10 +474,7 @@ gimp_paint_core_start (GimpPaintCore     *core,
         {
           const Babl *format;
 
-//          if (core->linear_mode)
-//            format = babl_format ("RGBA float");
-//          else
-            format = babl_format ("RGBA float");
+          format = babl_format ("RGBA float");
 
           core->comp_buffer =
             gegl_buffer_new (GEGL_RECTANGLE (0, 0,
@@ -971,8 +966,7 @@ gimp_paint_core_paste (GimpPaintCore            *core,
                       core->paint_buffer_x,
                       core->paint_buffer_y,
                       core->mask_x_offset,
-                      core->mask_y_offset,/*
-                      core->linear_mode,*/
+                      core->mask_y_offset,
                       paint_mode);
 
       if (core->comp_buffer)
@@ -984,8 +978,8 @@ gimp_paint_core_paste (GimpPaintCore            *core,
                                                core->paint_buffer_y,
                                                width,
                                                height),
-                                gimp_drawable_get_active_mask (drawable)/*,
-                                core->linear_mode*/);
+                                gimp_drawable_get_active_mask (drawable)
+                               );
         }
     }
 

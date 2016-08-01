@@ -59,7 +59,6 @@ struct _GimpPaintCore
   GeglBuffer  *saved_proj_buffer; /*  proj tiles which have been modified */
   GeglBuffer  *canvas_buffer;     /*  the buffer to paint the mask to     */
   GeglBuffer  *comp_buffer;       /*  scratch buffer used when masking components */
-/*  gboolean     linear_mode;         if painting to a linear surface     */
 
   GeglBuffer  *paint_buffer;      /*  the buffer to paint pixels to       */
   gint         paint_buffer_x;

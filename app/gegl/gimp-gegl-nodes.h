@@ -33,8 +33,7 @@ GeglNode * gimp_gegl_add_buffer_source         (GeglNode             *parent,
                                                 gint                  offset_y);
 
 void       gimp_gegl_mode_node_set_mode        (GeglNode             *node,
-                                                GimpLayerModeEffects  mode/*,
-                                                gboolean              linear*/);
+                                                GimpLayerModeEffects  mode);
 void       gimp_gegl_mode_node_set_opacity     (GeglNode             *node,
                                                 gdouble               opacity);
 void       gimp_gegl_node_set_matrix           (GeglNode             *node,

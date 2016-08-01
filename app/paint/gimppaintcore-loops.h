@@ -43,13 +43,11 @@ void do_layer_blend                     (GeglBuffer  *src_buffer,
                                          gint         x_offset,
                                          gint         y_offset,
                                          gint         mask_x_offset,
-                                         gint         mask_y_offset,/*
-                                         gboolean     linear_mode,*/
+                                         gint         mask_y_offset,
                                          GimpLayerModeEffects paint_mode);
 
 void mask_components_onto               (GeglBuffer        *src_buffer,
                                          GeglBuffer        *aux_buffer,
                                          GeglBuffer        *dst_buffer,
                                          GeglRectangle     *roi,
-                                         GimpComponentMask  mask/*,
-                                         gboolean           linear_mode*/);
+                                         GimpComponentMask  mask);

@@ -60,8 +60,7 @@
 
 
 GimpLayerModeFunction
-get_layer_mode_function (GimpLayerModeEffects paint_mode/*,
-                         gboolean             linear_mode*/)
+get_layer_mode_function (GimpLayerModeEffects paint_mode)
 {
   GimpLayerModeFunction func = gimp_operation_normal_mode_process_pixels;
 
@@ -91,21 +90,11 @@ get_layer_mode_function (GimpLayerModeEffects paint_mode/*,
       case GIMP_GRAIN_MERGE_MODE:   func = gimp_operation_grain_merge_mode_process_pixels; break;
       case GIMP_COLOR_ERASE_MODE:   func = gimp_operation_color_erase_mode_process_pixels; break;
       case GIMP_NEW_OVERLAY_MODE:   func = gimp_operation_overlay_mode_process_pixels; break;
-      case GIMP_LCH_HUE_MODE:       func = //linear_mode ?
-//                                            //gimp_operation_lch_hue_mode_process_pixels_linear :
-                                            gimp_operation_lch_hue_mode_process_pixels; break;
-      case GIMP_LCH_CHROMA_MODE:    func = //linear_mode ?
-//                                            gimp_operation_lch_chroma_mode_process_pixels_linear :
-                                            gimp_operation_lch_chroma_mode_process_pixels; break;
-      case GIMP_LCH_COLOR_MODE:     func = //linear_mode ?
-//                                            gimp_operation_lch_color_mode_process_pixels_linear :
-                                            gimp_operation_lch_color_mode_process_pixels; break;
-      case GIMP_LCH_LIGHTNESS_MODE: func = //linear_mode ?
-//                                            gimp_operation_lch_lightness_mode_process_pixels_linear :
-                                            gimp_operation_lch_lightness_mode_process_pixels; break;
-      case GIMP_LUMINANCE_MODE:     func = //linear_mode ?
-//                                            gimp_operation_luminance_mode_process_pixels_linear :
-                                            gimp_operation_luminance_mode_process_pixels; break;
+      case GIMP_LCH_HUE_MODE:       func = gimp_operation_lch_hue_mode_process_pixels; break;
+      case GIMP_LCH_CHROMA_MODE:    func = gimp_operation_lch_chroma_mode_process_pixels; break;
+      case GIMP_LCH_COLOR_MODE:     func = gimp_operation_lch_color_mode_process_pixels; break;
+      case GIMP_LCH_LIGHTNESS_MODE: func = gimp_operation_lch_lightness_mode_process_pixels; break;
+      case GIMP_LUMINANCE_MODE:     func = gimp_operation_luminance_mode_process_pixels; break;
       case GIMP_ERASE_MODE:         func = gimp_operation_erase_mode_process_pixels; break;
       case GIMP_REPLACE_MODE:       func = gimp_operation_replace_mode_process_pixels; break;
       case GIMP_ANTI_ERASE_MODE:    func = gimp_operation_anti_erase_mode_process_pixels; break;

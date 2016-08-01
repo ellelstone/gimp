@@ -85,10 +85,8 @@ gimp_operation_lch_hue_mode_process (GeglOperation       *operation,
 {
   GimpOperationPointLayerMode *gimp_op = GIMP_OPERATION_POINT_LAYER_MODE (operation);
   gfloat                       opacity = gimp_op->opacity;
-//  gboolean                     linear  = gimp_op->linear;
 
-  return (//linear ? gimp_operation_lch_hue_mode_process_pixels_linear :
-                   gimp_operation_lch_hue_mode_process_pixels)
+  return (gimp_operation_lch_hue_mode_process_pixels)
     (in_buf, aux_buf, aux2_buf, out_buf, opacity, samples, roi, level);
 }
 
@@ -170,28 +168,6 @@ hue_post_process (const gfloat *in,
       out   += 4;
     }
 }
-
-/*gboolean
-gimp_operation_lch_hue_mode_process_pixels_linear (gfloat              *in,
-                                                   gfloat              *layer,
-                                                   gfloat              *mask,
-                                                   gfloat              *out,
-                                                   gfloat               opacity,
-                                                   glong                samples,
-                                                   const GeglRectangle *roi,
-                                                   gint                 level)
-{
-  const gsize bytes_per_sample = 4 * sizeof * in;
-  gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;
-
-  hue_pre_process (babl_format ("RGBA float"), in2, layer, out, samples);
-  hue_post_process (in2, layer, mask, out, opacity, samples);
-
-  if (in != in2)
-    g_free (in2);
-
-  return TRUE;
-}*/
 
 gboolean
 gimp_operation_lch_hue_mode_process_pixels (gfloat              *in,

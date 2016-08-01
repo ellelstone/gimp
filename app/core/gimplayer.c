@@ -511,14 +511,12 @@ gimp_layer_update_mode_node (GimpLayer *layer)
 {
   GeglNode             *mode_node;
   GimpLayerModeEffects  visible_mode;
-//  gboolean              linear = FALSE;
 
   mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
 
   if (layer->mask && layer->show_mask)
     {
       visible_mode = GIMP_NORMAL_MODE;
-      /*linear       = TRUE;*/
     }
   else
     {
@@ -531,11 +529,9 @@ gimp_layer_update_mode_node (GimpLayer *layer)
         {
           visible_mode = layer->mode;
         }
-
-//      linear = FALSE;
     }
 
-  gimp_gegl_mode_node_set_mode (mode_node, visible_mode/*, linear*/);
+  gimp_gegl_mode_node_set_mode (mode_node, visible_mode);
   gimp_gegl_mode_node_set_opacity (mode_node, layer->opacity);
 }
 
@@ -1197,20 +1193,10 @@ gimp_layer_set_buffer (GimpDrawable *drawable,
                        gint          offset_x,
                        gint          offset_y)
 {
-//  gboolean old_linear = FALSE;
-
   GIMP_DRAWABLE_CLASS (parent_class)->set_buffer (drawable,
                                                   push_undo, undo_desc,
                                                   buffer,
                                                   offset_x, offset_y);
-
-/*  if (gimp_filter_peek_node (GIMP_FILTER (drawable)))
-    {
-//      gboolean new_linear = FALSE;
-
-      if (old_linear != new_linear)
-        gimp_layer_update_mode_node (GIMP_LAYER (drawable));
-    }*/
 }
 
 static GimpColorProfile *

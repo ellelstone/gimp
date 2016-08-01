@@ -52,15 +52,6 @@ struct _GimpOperationLuminanceModeClass
 
 GType   gimp_operation_luminance_mode_get_type (void) G_GNUC_CONST;
 
-/*gboolean gimp_operation_luminance_mode_process_pixels_linear     (gfloat              *in,
-                                                                  gfloat              *layer,
-                                                                  gfloat              *mask,
-                                                                  gfloat              *out,
-                                                                  gfloat               opacity,
-                                                                  glong                samples,
-                                                                  const GeglRectangle *roi,
-                                                                  gint                 level);*/
-
 gboolean gimp_operation_luminance_mode_process_pixels     (gfloat              *in,
                                                            gfloat              *layer,
                                                            gfloat              *mask,
