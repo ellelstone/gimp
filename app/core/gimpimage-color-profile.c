@@ -249,15 +249,15 @@ gimp_image_validate_color_profile (GimpImage        *image,
 GimpColorProfile *
 gimp_image_get_color_profile (GimpImage *image)
 {
+  GimpColorProfile *profile;
+
   g_return_val_if_fail (GIMP_IS_IMAGE (image), NULL);
 
-  GimpColorProfile *profile;
   profile = GIMP_IMAGE_GET_PRIVATE (image)->color_profile;
-  if (! profile) profile = gimp_image_get_builtin_color_profile (image);
+//  if (! profile) profile = gimp_image_get_builtin_color_profile (image);
   gimp_color_profile_get_colorants (profile);
 
   return GIMP_IMAGE_GET_PRIVATE (image)->color_profile;
-
 }
 
 gboolean
@@ -445,8 +445,9 @@ _gimp_image_update_color_profile (GimpImage          *image,
                                   const GimpParasite *icc_parasite)
 {
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
-//printf("app/core/gimpimage-color-profile.c: _gimp_image_update_color_profile\n");
+
   _gimp_image_free_color_profile (image);
+
   if (icc_parasite)
     {
       private->color_profile =
