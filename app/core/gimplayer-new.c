@@ -222,7 +222,6 @@ gimp_layer_new_convert_buffer (GimpLayer         *layer,
                                GError           **error)
 {
   GimpDrawable     *drawable    = GIMP_DRAWABLE (layer);
-  GimpImage        *image       = gimp_item_get_image (GIMP_ITEM (layer));
   GeglBuffer       *dest_buffer = gimp_drawable_get_buffer (drawable);
   GimpColorProfile *dest_profile;
 
