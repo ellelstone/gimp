@@ -49,6 +49,7 @@ libexec_PROGRAMS = \
 	file-compressor \
 	file-dicom \
 	file-gbr \
+	file-gegl \
 	file-gih \
 	file-glob \
 	$(FILE_JP2_LOAD) \
@@ -170,6 +171,24 @@ file_gbr_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_gbr_RC)
+
+file_gegl_SOURCES = \
+	file-gegl.c
+
+file_gegl_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(file_gegl_RC)
 
 file_gih_SOURCES = \
 	file-gih.c
