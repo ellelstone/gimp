@@ -130,8 +130,6 @@ gimp_heal_start (GimpPaintCore     *paint_core,
                  const GimpCoords  *coords,
                  GError           **error)
 {
-  GimpSourceCore *source_core = GIMP_SOURCE_CORE (paint_core);
-
   if (! GIMP_PAINT_CORE_CLASS (parent_class)->start (paint_core, drawable,
                                                      paint_options, coords,
                                                      error))
