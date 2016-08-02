@@ -132,8 +132,7 @@ gimp_operation_point_layer_mode_get_property (GObject    *object,
 static void
 gimp_operation_point_layer_mode_prepare (GeglOperation *operation)
 {
-  GimpOperationPointLayerMode *self = GIMP_OPERATION_POINT_LAYER_MODE (operation);
-  const Babl                  *format;
+  const Babl *format;
 
   format = babl_format ("RGBA float");
 
