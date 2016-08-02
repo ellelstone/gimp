@@ -224,16 +224,12 @@ gimp_pickable_pixel_to_rgb (GimpPickable *pickable,
                             gpointer      pixel,
                             GimpRGB      *color)
 {
-  GimpPickableInterface *pickable_iface;
-
   g_return_if_fail (GIMP_IS_PICKABLE (pickable));
   g_return_if_fail (pixel != NULL);
   g_return_if_fail (color != NULL);
 
   if (! format)
     format = gimp_pickable_get_format (pickable);
-
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
 
   gimp_rgba_set_pixel (color, format, pixel);
 
@@ -245,16 +241,12 @@ gimp_pickable_rgb_to_pixel (GimpPickable  *pickable,
                             const Babl    *format,
                             gpointer       pixel)
 {
-  GimpPickableInterface *pickable_iface;
-
   g_return_if_fail (GIMP_IS_PICKABLE (pickable));
   g_return_if_fail (color != NULL);
   g_return_if_fail (pixel != NULL);
 
   if (! format)
     format = gimp_pickable_get_format (pickable);
-
-  pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
 
   gimp_rgba_get_pixel (color, format, pixel);
 }
