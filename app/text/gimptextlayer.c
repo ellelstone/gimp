@@ -730,7 +730,6 @@ gimp_text_layer_render_layout (GimpTextLayer  *layer,
   GimpItem           *item     = GIMP_ITEM (layer);
   GimpImage          *image    = gimp_item_get_image (item);
   GeglBuffer         *buffer;
-  GimpColorTransform *transform;
   cairo_t            *cr;
   cairo_surface_t    *surface;
   gint                width;

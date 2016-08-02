@@ -142,7 +142,6 @@ gimp_image_get_new_pixbuf (GimpViewable *viewable,
   GdkPixbuf          *pixbuf;
   gdouble             scale_x;
   gdouble             scale_y;
-  GimpColorTransform *transform;
 
   scale_x = (gdouble) width  / (gdouble) gimp_image_get_width  (image);
   scale_y = (gdouble) height / (gdouble) gimp_image_get_height (image);

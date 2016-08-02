@@ -183,7 +183,6 @@ gimp_drawable_get_sub_pixbuf (GimpDrawable *drawable,
   gdouble             scale;
   gint                scaled_x;
   gint                scaled_y;
-  GimpColorTransform *transform;
 
   g_return_val_if_fail (GIMP_IS_DRAWABLE (drawable), NULL);
   g_return_val_if_fail (src_x >= 0, NULL);
