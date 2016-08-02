@@ -192,7 +192,6 @@ drawable_actions_update (GimpActionGroup *group,
 {
   GimpImage    *image;
   GimpDrawable *drawable     = NULL;
-  gboolean      is_rgb       = FALSE;
   gboolean      visible      = FALSE;
   gboolean      linked       = FALSE;
   gboolean      locked       = FALSE;
@@ -212,8 +211,6 @@ drawable_actions_update (GimpActionGroup *group,
       if (drawable)
         {
           GimpItem *item;
-
-          is_rgb = gimp_drawable_is_rgb (drawable);
 
           if (GIMP_IS_LAYER_MASK (drawable))
             item = GIMP_ITEM (gimp_layer_mask_get_layer (GIMP_LAYER_MASK (drawable)));
