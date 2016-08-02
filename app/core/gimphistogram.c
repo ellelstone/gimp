@@ -235,10 +235,9 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   GimpHistogramPrivate *priv;
   GeglBufferIterator   *iter;
   const Babl           *format;
+  const Babl           *model;
   gint                  n_components;
   gint                  n_bins;
-
-  const Babl *model = babl_format_get_model (format);
 
   g_return_if_fail (GIMP_IS_HISTOGRAM (histogram));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
@@ -247,38 +246,16 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   priv = histogram->priv;
 
   format = gegl_buffer_get_format (buffer);
+  model  = babl_format_get_model (format);
 
-  if (babl_format_get_type (format, 0) == babl_type ("u8"))
-    n_bins = 256;
-  else
-    n_bins = 1024;
+  if (babl_format_get_type (format, 0) == babl_type ("u8")) n_bins = 256;
+  else n_bins = 1024;
 
-
-      if (model == babl_model ("Y"))
-      {
-        format = babl_format ("Y float");
-      }
-
-      else if (model == babl_model ("YA"))
-      {
-        format = babl_format ("YA float");
-      }
-
-      else if (model == babl_model ("RGB"))
-      {
-        format = babl_format ("RGB float");
-      }
-
-      else if (model == babl_model ("RGBA"))
-      {
-        format = babl_format ("RGBA float");
-      }
-
-      else
-        {
-          g_return_if_reached ();
-        }
-
+  if (model == babl_model ("Y")) format = babl_format ("Y float");
+  else if (model == babl_model ("YA")) format = babl_format ("YA float");
+  else if (model == babl_model ("RGB")) format = babl_format ("RGB float");
+  else if (model == babl_model ("RGBA")) format = babl_format ("RGBA float");
+  else g_return_if_reached ();
 
   n_components = babl_format_get_n_components (format);
 
