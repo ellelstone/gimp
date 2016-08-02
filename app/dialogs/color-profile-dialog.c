@@ -327,9 +327,6 @@ color_profile_combo_box_new (ProfileDialog *dialog)
   GtkWidget         *combo;
   GtkWidget         *chooser;
   gchar             *history;
-  GimpImageBaseType  base_type;
-//  GimpPrecision      precision;
-//  GError            *error = NULL;
 
   history = gimp_personal_rc_file ("profilerc");
   store = gimp_color_profile_store_new (history);
@@ -339,34 +336,13 @@ color_profile_combo_box_new (ProfileDialog *dialog)
     {
     case COLOR_PROFILE_DIALOG_ASSIGN_PROFILE:
     case COLOR_PROFILE_DIALOG_CONVERT_TO_PROFILE:
-      base_type = gimp_image_get_base_type (dialog->image);
-      break;
-
     case COLOR_PROFILE_DIALOG_CONVERT_TO_RGB:
-      base_type = GIMP_RGB;
-      break;
-
     case COLOR_PROFILE_DIALOG_CONVERT_TO_GRAY:
-      base_type = GIMP_GRAY;
       break;
 
     default:
       g_return_val_if_reached (NULL);
     }
-
-//  precision = gimp_image_get_precision (dialog->image);
-
-/*  if (! gimp_color_profile_store_add_defaults (GIMP_COLOR_PROFILE_STORE (store),
-                                               dialog->config,
-                                               base_type,
-                                               precision,
-                                               &error))
-    {
-      gimp_message (dialog->image->gimp, G_OBJECT (dialog->dialog),
-                    GIMP_MESSAGE_ERROR,
-                    "%s", error->message);
-      g_clear_error (&error);
-    } elle: commit 831cd43df4cfbbf0d82329c40b10ff4942995d4b makes above always return true*/
 
   chooser =
     gimp_color_profile_chooser_dialog_new (_("Select Destination Profile"),
