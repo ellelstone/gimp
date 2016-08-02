@@ -167,7 +167,7 @@ gimp_plug_in_manager_call_run (GimpPlugInManager   *manager,
   if (plug_in)
     {
       GimpCoreConfig    *core_config    = manager->gimp->config;
-      GimpGeglConfig    *gegl_config    = GIMP_GEGL_CONFIG (core_config);
+//      GimpGeglConfig    *gegl_config    = GIMP_GEGL_CONFIG (core_config);//checks for opencl
       GimpDisplayConfig *display_config = GIMP_DISPLAY_CONFIG (core_config);
       GimpGuiConfig     *gui_config     = GIMP_GUI_CONFIG (core_config);
       GPConfig           config;
