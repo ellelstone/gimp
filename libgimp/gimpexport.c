@@ -290,15 +290,6 @@ static ExportAction export_action_convert_grayscale =
   0
 };
 
-static ExportAction export_action_convert_rgb_or_grayscale =
-{
-  export_convert_rgb,
-  export_convert_grayscale,
-  N_("%s plug-in can only handle RGB or grayscale images"),
-  { N_("Convert to RGB"), N_("Convert to Grayscale")},
-  0
-};
-
 static ExportAction export_action_add_alpha =
 {
   export_add_alpha,
