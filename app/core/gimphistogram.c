@@ -238,6 +238,8 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   gint                  n_components;
   gint                  n_bins;
 
+  const Babl *model = babl_format_get_model (format);
+
   g_return_if_fail (GIMP_IS_HISTOGRAM (histogram));
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   g_return_if_fail (buffer_rect != NULL);
@@ -251,7 +253,6 @@ gimp_histogram_calculate (GimpHistogram       *histogram,
   else
     n_bins = 1024;
 
-      const Babl *model = babl_format_get_model (format);
 
       if (model == babl_model ("Y"))
       {
