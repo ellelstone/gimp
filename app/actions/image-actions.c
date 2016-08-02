@@ -269,10 +269,6 @@ image_actions_setup (GimpActionGroup *group)
                                  image_actions,
                                  G_N_ELEMENTS (image_actions));
 
-/*  gimp_action_group_add_toggle_actions (group, "image-action",
-                                        image_toggle_actions,
-                                        G_N_ELEMENTS (image_toggle_actions));*/
-
   gimp_action_group_add_radio_actions (group, "image-convert-action",
                                        image_convert_base_type_actions,
                                        G_N_ELEMENTS (image_convert_base_type_actions),
@@ -310,31 +306,23 @@ image_actions_update (GimpActionGroup *group,
                       gpointer         data)
 {
   GimpImage *image         = action_data_get_image (data);
-  gboolean   is_u8_gamma   = FALSE;
   gboolean   aux           = FALSE;
   gboolean   lp            = FALSE;
   gboolean   sel           = FALSE;
-  gboolean   groups        = FALSE;
-//  gboolean   color_managed = FALSE;
   gboolean   profile       = FALSE;
 
   if (image)
     {
-      GimpContainer     *layers;
       const gchar       *action = NULL;
       GimpImageBaseType  base_type;
-      GimpPrecision      precision;
 
       base_type = gimp_image_get_base_type (image);
-      precision = gimp_image_get_precision (image);
 
       switch (base_type)
         {
         case GIMP_RGB:     action = "image-convert-rgb";       break;
         case GIMP_GRAY:    action = "image-convert-grayscale"; break;
         }
-
-      gimp_action_group_set_action_active (group, action, TRUE);
 
       switch (gimp_image_get_component_type (image))
         {
@@ -348,14 +336,9 @@ image_actions_update (GimpActionGroup *group,
 
       gimp_action_group_set_action_active (group, action, TRUE);
 
-      is_u8_gamma = (precision == GIMP_PRECISION_U8_GAMMA);
       aux         = (gimp_image_get_active_channel (image) != NULL);
       lp          = ! gimp_image_is_empty (image);
       sel         = ! gimp_channel_is_empty (gimp_image_get_mask (image));
-
-      layers = gimp_image_get_layers (image);
-
-      groups = ! gimp_item_stack_is_flat (GIMP_ITEM_STACK (layers));
 
       profile       = (gimp_image_get_color_profile (image) != NULL);
     }
@@ -393,9 +376,6 @@ image_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("image-convert-half",   image);
   SET_SENSITIVE ("image-convert-float",  image );
   SET_SENSITIVE ("image-convert-double", image);
-
-/*  SET_SENSITIVE ("image-color-management-enabled", image);
-  SET_ACTIVE    ("image-color-management-enabled", image && color_managed);*/
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);
