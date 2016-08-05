@@ -530,7 +530,7 @@ gimp_display_shell_canvas_draw_drop_zone (GimpDisplayShell *shell,
 
     version = GIMP_GIT_VERSION;
     short_hash = g_strdup (version + strlen (version) - 7);
-    msg = g_strdup_printf (_("<big>Unstable Development Version</big>\n\n"
+    msg = g_strdup_printf (_("<big>Unstable Development Version (GIMP-CCE)</big>\n\n"
                              "<small>commit <tt>%s</tt></small>\n\n"
                              "<small>Please test bugs against "
                              "latest git master branch\n"

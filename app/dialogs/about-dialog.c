@@ -608,7 +608,7 @@ about_dialog_add_unstable_message (GtkWidget *vbox)
 
   version = GIMP_GIT_VERSION;
   short_hash = g_strdup (version + strlen (version) - 7);
-  text = g_strdup_printf (_("This is an unstable development release\n"
+  text = g_strdup_printf (_("This is an unstable development release (GIMP-CCE)\n"
                             "commit %s"), short_hash);
   label = gtk_label_new (text);
   g_free (text);
