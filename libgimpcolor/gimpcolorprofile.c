@@ -1052,26 +1052,6 @@ gimp_color_profile_new_rgb_built_in_linear_internal (void)
 
   cmsToneCurve *curve[3];
 
-  /* sRGB curve 
-  curve[0] = curve[1] = curve[2] = cmsBuildParametricToneCurve (NULL, 4,
-                                                                srgb_parameters);
-
-  profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
-
-  cmsFreeToneCurve (curve[0]);
-
-  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMPLCH built-in sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMPLCH");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
-                              "sRGB");
-  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");*/
-
-
-/*  cmsToneCurve *curve[3];*/
-
   curve[0] = curve[1] = curve[2] = cmsBuildGamma (NULL, 1.0);
 
   profile = cmsCreateRGBProfile (&whitepoint, &primaries, curve);
@@ -1231,9 +1211,9 @@ gimp_color_profile_new_gray_built_in_internal (void)
   cmsFreeToneCurve (curve);
 
   gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMPLCH built-in D50 Linear Grayscale");
+                              "GIMP-CCE built-in D50 Linear Grayscale");
   gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMPLCH");
+                              "GIMP-CCE");
   gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
                               "D50 Linear Grayscale");
   gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
