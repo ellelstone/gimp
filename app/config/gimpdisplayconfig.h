@@ -24,8 +24,8 @@
 #include "config/gimpcoreconfig.h"
 
 
-#define GIMP_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT  "%D*%f-%p.%i (%t, %o, %L) %wx%h"
-#define GIMP_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT "%n (%m)"
+#define GIMP_CONFIG_DEFAULT_IMAGE_TITLE_FORMAT  "GIMP-CCE: %D*%f-%p.%i (%t, %o, %L) %wx%h"
+#define GIMP_CONFIG_DEFAULT_IMAGE_STATUS_FORMAT "%o, %m %f"
 
 
 #define GIMP_TYPE_DISPLAY_CONFIG            (gimp_display_config_get_type ())
