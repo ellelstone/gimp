@@ -12,7 +12,7 @@
     (brush-size 100.000000)
     (brush-aspect-ratio 0.100000)
     (use-jitter yes)
-    (jitter-amount 5.000000)
+    (jitter-amount 2.500000)
     (dynamics-expanded yes)
     (fade-length 140.000000)
     (fade-unit percent))

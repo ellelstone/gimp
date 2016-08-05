@@ -10,7 +10,7 @@
     (gradient "Default")
     (palette "Default")
     (brush-size 500.000000)
-    (jitter-amount 9.170000)
+    (jitter-amount 2.500000)
     (dynamics-expanded yes)
     (fade-repeat triangular))
 (use-fg-bg no)

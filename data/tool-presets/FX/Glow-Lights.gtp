@@ -12,7 +12,7 @@
     (gradient "FG to Transparent")
     (brush-size 400.000000)
     (application-mode incremental)
-    (jitter-amount 3.506494)
+    (jitter-amount 2.500000)
     (fade-length 138.000000)
     (fade-unit percent))
 (use-fg-bg no)
