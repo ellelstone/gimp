@@ -146,7 +146,8 @@
       </packing>
     </child>
     <child>
-      <object class="GtkExpander" id="expander1">
+      <object class="GtkFrame" id="expander1"><!-- This used to be a 
+gtk_expander box, probably the id should be changed. -->
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <child>
@@ -233,13 +234,13 @@
             </child>
           </object>
         </child>
-        <child type="label">
+<!--        <child type="label">
           <object class="GtkLabel" id="adv_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="label" translatable="yes">Advanced</property>
           </object>
-        </child>
+        </child>-->
       </object>
       <packing>
         <property name="expand">True</property>

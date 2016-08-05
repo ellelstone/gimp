@@ -735,7 +735,6 @@ save_dialog (void)
   GtkWidget     *table;
   GtkWidget     *table2;
   GtkWidget     *tabledefaults;
-  GtkWidget     *expander;
   GtkWidget     *frame;
   GtkWidget     *toggle;
   GtkWidget     *spinbutton;
@@ -745,7 +744,6 @@ save_dialog (void)
   GtkTextBuffer *text_buffer;
   GtkWidget     *scrolled_window;
   GtkWidget     *button;
-  gchar         *text;
   gint           row;
 
   dialog = gimp_export_dialog_new (_("JPEG"), PLUG_IN_BINARY, SAVE_PROC);
@@ -811,19 +809,7 @@ save_dialog (void)
                     G_CALLBACK (make_preview),
                     NULL);
 
-  text = g_strdup_printf ("<b>%s</b>", _("_Advanced Options"));
-  expander = gtk_expander_new_with_mnemonic (text);
-  gtk_expander_set_use_markup (GTK_EXPANDER (expander), TRUE);
-  g_free (text);
-
-  gtk_box_pack_start (GTK_BOX (vbox), expander, TRUE, TRUE, 0);
-  gtk_widget_show (expander);
-
-  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 12);
-  gtk_container_add (GTK_CONTAINER (expander), vbox);
-  gtk_widget_show (vbox);
-
-  frame = gimp_frame_new ("<expander>");
+  frame = gimp_frame_new ("");
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
   gtk_widget_show (frame);
 
