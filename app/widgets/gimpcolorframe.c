@@ -618,8 +618,8 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
           values = g_new0 (gchar *, 5);
 
-          values[2] = g_strdup_printf ("%d %%",       ROUND (lch.l /* * 100.0 */));
-          values[1] = g_strdup_printf ("%d %%",       ROUND (lch.c /* * 100.0 */));
+          values[2] = g_strdup_printf ("%d  ",       ROUND (lch.l /* * 100.0 */));
+          values[1] = g_strdup_printf ("%d  ",       ROUND (lch.c /* * 100.0 */));
           values[0] = g_strdup_printf ("%d \302\260", ROUND (lch.h /* * 360.0 */));
           values[3] = g_strdup_printf ("%d %%",       ROUND (lch.a /* * 100.0 */));
         }
