@@ -14,7 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/*
+ * elle: This code is accessed through "View/Display Filters" and isn't
+ * used during normal soft proofing. Given the presence of the built-in
+ * sRGB profile in the code, I'm disabling building this module.
+ */
 #include "config.h"
 
 #include <gegl.h>
@@ -346,8 +350,8 @@ cdisplay_proof_changed (GimpColorDisplay *display)
   if (! proof->profile)
     return;
 
-  rgb_profile = gimp_color_profile_new_rgb_built_in ();//elle: why is sRGB called here?
-//elle: Should this be the built-in RGB profile? Or the active image profile?
+  rgb_profile = gimp_color_profile_new_rgb_built_in ();
+//elle: Should this be the built-in sRGB profile? Or the active image profile?
 printf("display-filter-proof.c cdisplay_proof_changed: rgb_profile = gimp_color_profile_new_rgb_built_in ();\n");
   file = g_file_new_for_path (proof->profile);
   proof_profile = gimp_color_profile_new_from_file (file, NULL);
@@ -366,8 +370,8 @@ printf("display-filter-proof.c cdisplay_proof_changed: rgb_profile = gimp_color_
                                            rgb_profile,
                                            babl_format ("RGBA float"),
                                            proof_profile,
-                                           proof->intent,//elle: should this be proof->display?
                                            proof->intent,
+                                           proof->intent,//elle: should this be something like display->intent?
                                            flags);
 
       g_object_unref (proof_profile);

@@ -33,7 +33,6 @@ endif
 
 lib_LTLIBRARIES = \
 	libdisplay-filter-lcms.la		\
-	libdisplay-filter-proof.la		\
 	$(controller_midi_module)		\
 	$(controller_linux_input_module)	\
 	$(controller_dx_dinput_module)
@@ -48,10 +47,6 @@ controller_libadd = $(modules_libadd)
 libdisplay_filter_lcms_la_SOURCES = display-filter-lcms.c
 libdisplay_filter_lcms_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libdisplay_filter_lcms_la_LIBADD = $(display_filter_libadd)
-
-libdisplay_filter_proof_la_SOURCES = display-filter-proof.c
-libdisplay_filter_proof_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libdisplay_filter_proof_la_LIBADD = $(display_filter_libadd)
 
 libcontroller_linux_input_la_SOURCES = \
 	gimpinputdevicestore-gudev.c	\
