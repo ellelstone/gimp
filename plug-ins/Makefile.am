@@ -32,6 +32,7 @@ SUBDIRS = \
 	$(file_exr)		\
 	file-fits		\
 	file-jpeg		\
+	file-psd		\
 	file-tiff		\
 	help			\
 	$(help_browser)		\

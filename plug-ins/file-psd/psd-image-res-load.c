@@ -206,10 +206,10 @@ static gint     load_resource_1045     (const PSDimageres     *res_a,
                                         FILE                  *f,
                                         GError               **error);
 
-static gint     load_resource_1046     (const PSDimageres     *res_a,
+/*static gint     load_resource_1046     (const PSDimageres     *res_a,
                                         gint32                 image_id,
                                         FILE                  *f,
-                                        GError               **error);
+                                        GError               **error);*/
 
 static gint     load_resource_1053     (const PSDimageres     *res_a,
                                         gint32                 image_id,
@@ -369,9 +369,9 @@ load_image_resource (PSDimageres  *res_a,
             load_resource_1045 (res_a, image_id, img_a, f, error);
             break;
 
-          case PSD_IDX_COL_TAB_CNT:
+/*          case PSD_IDX_COL_TAB_CNT:
             load_resource_1046 (res_a, image_id, f, error);
-            break;
+            break;*/
 
           case PSD_ALPHA_ID:
             load_resource_1053 (res_a, image_id, img_a, f, error);
@@ -1175,13 +1175,13 @@ load_resource_1045 (const PSDimageres  *res_a,
   return 0;
 }
 
-static gint
+/*static gint
 load_resource_1046 (const PSDimageres  *res_a,
                     gint32              image_id,
                     FILE               *f,
                     GError            **error)
 {
-  /* Load indexed color table count */
+  //Load indexed color table count
   guchar       *cmap;
   gint32        cmap_count = 0;
   gint16        index_count = 0;
@@ -1196,7 +1196,7 @@ load_resource_1046 (const PSDimageres  *res_a,
   index_count = GINT16_FROM_BE (index_count);
 
   IFDBG(3) g_debug ("Indexed color table count: %d", index_count);
-  /* FIXME - check that we have indexed image */
+  //FIXME - check that we have indexed image
   if (index_count && index_count < 256)
     {
       cmap = gimp_image_get_colormap (image_id, &cmap_count);
@@ -1205,7 +1205,7 @@ load_resource_1046 (const PSDimageres  *res_a,
       g_free (cmap);
     }
   return 0;
-}
+}*/
 
 static gint
 load_resource_1053 (const PSDimageres  *res_a,

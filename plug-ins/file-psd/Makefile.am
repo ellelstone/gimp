@@ -31,8 +31,6 @@ file_psd_SOURCES = \
 	psd-util.h		\
 	psd-load.c		\
 	psd-load.h		\
-	psd-save.c		\
-	psd-save.h		\
 	psd-thumb-load.c	\
 	psd-thumb-load.h	\
 	psd-image-res-load.c	\

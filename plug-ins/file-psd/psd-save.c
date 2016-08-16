@@ -131,13 +131,13 @@ static PSD_Image_Data PSDImageData;
 static void        psd_lmode_layer      (gint32               idLayer,
 					 gchar               *psdMode);
 
-static void        reshuffle_cmap_write (guchar              *mapGimp);
+/*static void        reshuffle_cmap_write (guchar              *mapGimp);*/
 
 static void        save_header          (FILE                *fd,
 					 gint32               image_id);
 
-static void        save_color_mode_data (FILE                *fd,
-					 gint32               image_id);
+/*static void        save_color_mode_data (FILE                *fd,
+					 gint32               image_id);*/
 
 static void        save_resources       (FILE                *fd,
 					 gint32               image_id);
@@ -205,7 +205,7 @@ psd_lmode_layer (gint32  idLayer,
     case GIMP_LIGHTEN_ONLY_MODE:
       strcpy (psdMode, "lite");
       break;
-    case GIMP_HUE_MODE:
+/*    case GIMP_HUE_MODE:
       strcpy (psdMode, "hue ");
       break;
     case GIMP_SATURATION_MODE:
@@ -213,7 +213,7 @@ psd_lmode_layer (gint32  idLayer,
       break;
     case GIMP_COLOR_MODE:
       strcpy (psdMode, "colr");
-      break;
+      break;*/
     case GIMP_ADDITION_MODE:
       strcpy (psdMode, "lddg");
       break;
@@ -229,9 +229,9 @@ psd_lmode_layer (gint32  idLayer,
     case GIMP_DIFFERENCE_MODE:
       strcpy (psdMode, "diff");
       break;
-    case GIMP_VALUE_MODE:                  /* ? */
+/*    case GIMP_VALUE_MODE:                   ? 
       strcpy (psdMode, "lum ");
-      break;
+      break;*/
     case GIMP_HARDLIGHT_MODE:
       strcpy (psdMode, "hLit");
       break;
@@ -497,8 +497,8 @@ gimpBaseTypeToPsdMode (GimpImageBaseType gimpBaseType)
       return 3;                                         /* RGB */
     case GIMP_GRAY:
       return 1;                                         /* Grayscale */
-    case GIMP_INDEXED:
-      return 2;                                         /* Indexed */
+/*    case GIMP_INDEXED:
+      return 2;                                          Indexed */
     default:
       g_message (_("Error: Can't convert GIMP base imagetype to PSD mode"));
       IFDBG printf ("PSD Export: gimpBaseType value is %d, "
@@ -525,14 +525,14 @@ nChansLayer (gint gimpBaseType,
       return 3 + incAlpha + incMask;     /* R,G,B & Alpha & Mask (if any) */
     case GIMP_GRAY:
       return 1 + incAlpha + incMask;     /* G & Alpha & Mask (if any) */
-    case GIMP_INDEXED:
-      return 1 + incAlpha + incMask;     /* I & Alpha & Mask (if any) */
+/*    case GIMP_INDEXED:
+      return 1 + incAlpha + incMask;      I & Alpha & Mask (if any) */
     default:
       return 0;                          /* Return 0 channels by default */
     }
 }
 
-static void
+/*static void
 reshuffle_cmap_write (guchar *mapGimp)
 {
   guchar *mapPSD;
@@ -553,7 +553,7 @@ reshuffle_cmap_write (guchar *mapGimp)
     }
 
   g_free (mapPSD);
-}
+}*/
 
 static void
 save_header (FILE   *fd,
@@ -579,7 +579,7 @@ save_header (FILE   *fd,
   write_gint16 (fd, gimpBaseTypeToPsdMode (PSDImageData.baseType), "mode");
 }
 
-static void
+/*static void
 save_color_mode_data (FILE   *fd,
                       gint32  image_id)
 {
@@ -608,7 +608,7 @@ save_color_mode_data (FILE   *fd,
           IFDBG printf ("\t\tThe indexed image has %d!=256 colors\n", nColors);
           IFDBG printf ("\t\tPadding with zeros up to 256\n");
           write_gint32 (fd, 768, "color data length");
-            /* For this type, length is always 768 */
+            // For this type, length is always 768
 
           cmap_modified = g_malloc (768);
           for (i = 0; i < nColors * 3; i++)
@@ -618,15 +618,15 @@ save_color_mode_data (FILE   *fd,
             cmap_modified[i] = 0;
 
           reshuffle_cmap_write (cmap_modified);
-          xfwrite (fd, cmap_modified, 768, "colormap");  /* Write readjusted colormap */
+          xfwrite (fd, cmap_modified, 768, "colormap"); //Write readjusted colormap
 
           g_free (cmap_modified);
         }
-      else         /* nColors equals 256 */
+      else         //nColors equals 256
         {
-          write_gint32 (fd, 768, "color data length");   /* For this type, length is always 768 */
+          write_gint32 (fd, 768, "color data length");   //For this type, length is always 768
           reshuffle_cmap_write (cmap);
-          xfwrite (fd, cmap, 768, "colormap");  /* Write readjusted colormap */
+          xfwrite (fd, cmap, 768, "colormap");  //Write readjusted colormap
         }
       break;
 
@@ -634,7 +634,7 @@ save_color_mode_data (FILE   *fd,
       IFDBG printf ("\tImage type: Not INDEXED\n");
       write_gint32 (fd, 0, "color data length");
     }
-}
+}*/
 
 static void
 save_resources (FILE   *fd,
@@ -1155,8 +1155,8 @@ write_pixel_data (FILE   *fd,
 
    colors = bytes;
 
-   if (gimp_drawable_has_alpha  (drawableID) &&
-       ! gimp_drawable_is_indexed (drawableID))
+   if (gimp_drawable_has_alpha  (drawableID)/* &&
+       ! gimp_drawable_is_indexed (drawableID)*/)
      colors -= 1;
 
   LengthsTable = g_new (gint16, height);
@@ -1380,8 +1380,8 @@ create_merged_image (gint32 image_id)
 
   projection = gimp_layer_new_from_visible (image_id, image_id, "psd-save");
 
-  if (gimp_image_base_type (image_id) != GIMP_INDEXED)
-    {
+//  if (gimp_image_base_type (image_id) != GIMP_INDEXED)
+//    {
       GeglBuffer           *buffer             = gimp_drawable_get_buffer (projection);
       const Babl           *format             = get_pixel_format (projection);
       gboolean              transparency_found = FALSE;
@@ -1424,18 +1424,18 @@ create_merged_image (gint32 image_id)
 	    }
 
 	  data += n_components;
-	}
+//	}
 
       g_object_unref (buffer);
 
       if (! transparency_found)
         gimp_layer_flatten (projection);
     }
-  else
+/*  else
     {
       if (gimp_drawable_has_alpha (projection))
-        gimp_layer_flatten (projection);  /* PSDs don't support transparency information in indexed images*/
-    }
+        gimp_layer_flatten (projection);  //PSDs don't support transparency information in indexed images
+    }*/
 
   return projection;
 }
@@ -1530,19 +1530,19 @@ save_image (const gchar  *filename,
 
   get_image_data (fd, image_id);
   save_header (fd, image_id);
-  save_color_mode_data (fd, image_id);
+//  save_color_mode_data (fd, image_id);
   save_resources (fd, image_id);
 
-  /* PSD format does not support layers in indexed images */
+  /* PSD format does not support layers in indexed images 
 
   if (PSDImageData.baseType == GIMP_INDEXED)
     write_gint32 (fd, 0, "layers info section length");
-  else
+  else*/
     save_layer_and_mask (fd, image_id);
 
-  /* If this is an indexed image, write now channel and layer info */
+  /* If this is an indexed image, write now channel and layer info 
 
-  save_data (fd, image_id);
+  save_data (fd, image_id);*/
 
   /* Delete merged image now */
 
@@ -1575,11 +1575,6 @@ get_pixel_format (gint32 drawableID)
 
     case GIMP_RGBA_IMAGE:
       format = babl_format ("RGBA u8");
-      break;
-
-    case GIMP_INDEXED_IMAGE:
-    case GIMP_INDEXEDA_IMAGE:
-      format = gimp_drawable_get_format(drawableID);
       break;
 
     default:

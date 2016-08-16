@@ -614,9 +614,9 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
     return GIMP_DARKEN_ONLY_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lite", 4) == 0)           /* Lighten (ps3) */
       return GIMP_LIGHTEN_ONLY_MODE;
-  if (g_ascii_strncasecmp (psd_mode, "hue ", 4) == 0)           /* Hue (ps3) */
-    return GIMP_HUE_MODE;
-  if (g_ascii_strncasecmp (psd_mode, "sat ", 4) == 0)           /* Saturation (ps3) */
+/*  if (g_ascii_strncasecmp (psd_mode, "hue ", 4) == 0)            Hue (ps3) 
+    return GIMP_HUE_MODE;*/
+/*  if (g_ascii_strncasecmp (psd_mode, "sat ", 4) == 0)            Saturation (ps3) 
     {
       if (CONVERSION_WARNINGS)
         {
@@ -626,10 +626,10 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
                      mode_name);
         }
       return GIMP_SATURATION_MODE;
-    }
-  if (g_ascii_strncasecmp (psd_mode, "colr", 4) == 0)           /* Color (ps3) */
-    return GIMP_COLOR_MODE;
-  if (g_ascii_strncasecmp (psd_mode, "lum ", 4) == 0)           /* Luminosity (ps3) */
+    }*/
+/*  if (g_ascii_strncasecmp (psd_mode, "colr", 4) == 0)            Color (ps3) 
+    return GIMP_COLOR_MODE;*/
+/*  if (g_ascii_strncasecmp (psd_mode, "lum ", 4) == 0)            Luminosity (ps3) 
     {
       if (CONVERSION_WARNINGS)
         {
@@ -639,7 +639,7 @@ psd_to_gimp_blend_mode (const gchar *psd_mode)
                      mode_name);
         }
       return GIMP_VALUE_MODE;
-    }
+    }*/
   if (g_ascii_strncasecmp (psd_mode, "mul ", 4) == 0)           /* Multiply (ps3) */
     return GIMP_MULTIPLY_MODE;
   if (g_ascii_strncasecmp (psd_mode, "lddg", 4) == 0)           /* Linear Dodge (cs2) */
@@ -788,26 +788,26 @@ gimp_to_psd_blend_mode (GimpLayerModeEffects gimp_layer_mode)
       case GIMP_LIGHTEN_ONLY_MODE:
         psd_mode = g_strndup ("lite", 4);                       /* Lighten (ps3) */
         break;
-      case GIMP_HUE_MODE:
-        psd_mode = g_strndup ("hue ", 4);                       /* Hue (ps3) */
-        break;
-      case GIMP_SATURATION_MODE:
+/*      case GIMP_HUE_MODE:
+        psd_mode = g_strndup ("hue ", 4);                        Hue (ps3) 
+        break;*/
+/*      case GIMP_SATURATION_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Gimp uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      gimp_layer_mode_effects_name (gimp_layer_mode));
-        psd_mode = g_strndup ("sat ", 4);                       /* Saturation (ps3) */
-        break;
-      case GIMP_COLOR_MODE:
-        psd_mode = g_strndup ("colr", 4);                       /* Color (ps3) */
-        break;
-      case GIMP_VALUE_MODE:
+        psd_mode = g_strndup ("sat ", 4);                        Saturation (ps3) 
+        break;*/
+/*      case GIMP_COLOR_MODE:
+        psd_mode = g_strndup ("colr", 4);                        Color (ps3) 
+        break;*/
+/*      case GIMP_VALUE_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Gimp uses a different equation to photoshop for "
                      "blend mode: %s. Results will differ.",
                      gimp_layer_mode_effects_name (gimp_layer_mode));
-        psd_mode = g_strndup ("lum ", 4);                       /* Luminosity (ps3) */
-        break;
+        psd_mode = g_strndup ("lum ", 4);                        Luminosity (ps3) 
+        break;*/
       case GIMP_DIVIDE_MODE:
         if (CONVERSION_WARNINGS)
           g_message ("Unsupported blend mode: %s. Mode reverts to normal",
@@ -875,10 +875,10 @@ gimp_layer_mode_effects_name (GimpLayerModeEffects mode)
     "SUBTRACT",
     "DARKEN",
     "LIGHTEN",
-    "HUE",
-    "SATURATION",
-    "COLOR",
-    "VALUE",
+//    "HUE",
+//    "SATURATION",
+//    "COLOR",
+//    "VALUE",
     "DIVIDE",
     "DODGE",
     "BURN",

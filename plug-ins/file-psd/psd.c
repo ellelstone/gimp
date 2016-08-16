@@ -143,7 +143,7 @@ query (void)
                           "Monigotes",
                           "2000",
                           N_("Photoshop image"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_args), 0,
                           save_args, NULL);
@@ -259,7 +259,7 @@ run (const gchar      *name,
             }
         }
     }
-  else if (strcmp (name, SAVE_PROC) == 0)
+/*  else if (strcmp (name, SAVE_PROC) == 0)
     {
       gint32                 drawable_id;
       GimpMetadata          *metadata;
@@ -281,7 +281,6 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_id, "PSD",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
                                       GIMP_EXPORT_CAN_HANDLE_ALPHA   |
                                       GIMP_EXPORT_CAN_HANDLE_LAYERS  |
                                       GIMP_EXPORT_CAN_HANDLE_LAYER_MASKS);
@@ -336,7 +335,7 @@ run (const gchar      *name,
 
       if (metadata)
         g_object_unref (metadata);
-    }
+    }*/
 
   /* Unknown procedure */
   else

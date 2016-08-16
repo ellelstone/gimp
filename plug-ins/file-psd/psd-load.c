@@ -63,8 +63,8 @@ static gint             read_merged_image_block    (PSDimage     *img_a,
 static gint32           create_gimp_image          (PSDimage     *img_a,
                                                     const gchar  *filename);
 
-static gint             add_color_map              (gint32        image_id,
-                                                    PSDimage     *img_a);
+/*static gint             add_color_map              (gint32        image_id,
+                                                    PSDimage     *img_a);*/
 
 static gint             add_image_resources        (gint32        image_id,
                                                     PSDimage     *img_a,
@@ -86,7 +86,7 @@ static gint             add_merged_image           (gint32        image_id,
 /*  Local utility function prototypes  */
 static gchar          * get_psd_color_mode_name    (PSDColorMode  mode);
 
-static void             psd_to_gimp_color_map      (guchar       *map256);
+/*static void             psd_to_gimp_color_map      (guchar       *map256);*/
 
 static GimpImageType    get_gimp_image_type        (GimpImageBaseType image_base_type,
                                                     gboolean          alpha);
@@ -178,11 +178,11 @@ load_image (const gchar  *filename,
     goto load_error;
   gimp_progress_update (0.6);
 
-  /* ----- Add color map ----- */
+/*   ----- Add color map ----- 
   IFDBG(2) g_debug ("Add color map");
   if (add_color_map (image_id, &img_a) < 0)
     goto load_error;
-  gimp_progress_update (0.7);
+  gimp_progress_update (0.7);*/
 
   /* ----- Add image resources ----- */
   IFDBG(2) g_debug ("Add image resources");
@@ -319,7 +319,7 @@ read_header_block (PSDimage  *img_a,
 
   if (img_a->color_mode != PSD_BITMAP
       && img_a->color_mode != PSD_GRAYSCALE
-      && img_a->color_mode != PSD_INDEXED
+//      && img_a->color_mode != PSD_INDEXED
       && img_a->color_mode != PSD_RGB
       && img_a->color_mode != PSD_DUOTONE)
     {
@@ -379,7 +379,7 @@ read_color_mode_block (PSDimage  *img_a,
 
   if (block_len == 0)
     {
-      if (img_a->color_mode == PSD_INDEXED ||
+      if (/*img_a->color_mode == PSD_INDEXED ||*/
           img_a->color_mode == PSD_DUOTONE )
         {
           IFDBG(1) g_debug ("No color block for indexed or duotone image");
@@ -388,7 +388,7 @@ read_color_mode_block (PSDimage  *img_a,
           return -1;
         }
     }
-  else if (img_a->color_mode == PSD_INDEXED)
+/*  else if (img_a->color_mode == PSD_INDEXED)
     {
       if (block_len != 768)
         {
@@ -412,7 +412,7 @@ read_color_mode_block (PSDimage  *img_a,
               img_a->color_map_entries = 256;
             }
         }
-    }
+    }*/
   else if (img_a->color_mode == PSD_DUOTONE)
     {
       img_a->color_map_len = block_len;
@@ -976,10 +976,10 @@ create_gimp_image (PSDimage    *img_a,
       img_a->base_type = GIMP_GRAY;
       break;
 
-    case PSD_BITMAP:
+/*    case PSD_BITMAP:
     case PSD_INDEXED:
       img_a->base_type = GIMP_INDEXED;
-      break;
+      break;*/
 
     case PSD_RGB:
       img_a->base_type = GIMP_RGB;
@@ -1024,7 +1024,7 @@ create_gimp_image (PSDimage    *img_a,
   return image_id;
 }
 
-static gint
+/*static gint
 add_color_map (gint32    image_id,
                PSDimage *img_a)
 {
@@ -1039,7 +1039,7 @@ add_color_map (gint32    image_id,
         }
       else
         {
-           /* Add parasite for Duotone color data */
+           //Add parasite for Duotone color data
           IFDBG(2) g_debug ("Add Duotone color data parasite");
           parasite = gimp_parasite_new (PSD_PARASITE_DUOTONE_DATA, 0,
                                         img_a->color_map_len, img_a->color_map);
@@ -1050,7 +1050,7 @@ add_color_map (gint32    image_id,
     }
 
   return 0;
-}
+}*/
 
 static gint
 add_image_resources (gint32     image_id,
@@ -1647,8 +1647,8 @@ add_merged_image (gint32     image_id,
 
   if ((img_a->color_mode == PSD_BITMAP ||
        img_a->color_mode == PSD_GRAYSCALE ||
-       img_a->color_mode == PSD_DUOTONE ||
-       img_a->color_mode == PSD_INDEXED) &&
+       img_a->color_mode == PSD_DUOTONE/* ||
+       img_a->color_mode == PSD_INDEXED*/) &&
        total_channels > 1)
     {
       extra_channels = total_channels - 1;
@@ -1913,7 +1913,7 @@ get_psd_color_mode_name (PSDColorMode mode)
   {
     "BITMAP",
     "GRAYSCALE",
-    "INDEXED",
+//    "INDEXED",
     "RGB",
     "CMYK",
     "UNKNOWN (5)",
@@ -1934,7 +1934,7 @@ get_psd_color_mode_name (PSDColorMode mode)
   return err_name;
 }
 
-static void
+/*static void
 psd_to_gimp_color_map (guchar *map256)
 {
   guchar *tmpmap;
@@ -1951,7 +1951,7 @@ psd_to_gimp_color_map (guchar *map256)
 
   memcpy (map256, tmpmap, 3 * 256);
   g_free (tmpmap);
-}
+}*/
 
 static GimpImageType
 get_gimp_image_type (GimpImageBaseType image_base_type,
@@ -1965,9 +1965,9 @@ get_gimp_image_type (GimpImageBaseType image_base_type,
       image_type = (alpha) ? GIMP_GRAYA_IMAGE : GIMP_GRAY_IMAGE;
       break;
 
-    case GIMP_INDEXED:
+/*    case GIMP_INDEXED:
       image_type = (alpha) ? GIMP_INDEXEDA_IMAGE : GIMP_INDEXED_IMAGE;
-      break;
+      break;*/
 
     case GIMP_RGB:
       image_type = (alpha) ? GIMP_RGBA_IMAGE : GIMP_RGB_IMAGE;
