@@ -967,16 +967,19 @@ static void
 color_select_update_chroma (ColorSelectFill *csf)
 {
   guchar *p = csf->buffer;
-  gint    i, c;
+  GimpLch lch;
+  guchar rgb[3];
+  gint    i;
 
-  /* linear 0 -> max*/
-  c = (csf->height - 1 - csf->y) * 255 / csf->height ;
+  lch.c = (csf->height - 1 - csf->y) * 200.0 / csf->height ;
+  babl_process (babl_fish ("CIE LCH(ab) double", "RGB u8"), &lch, &rgb, 1);
 
   for (i = 0; i < csf->width; i++)
+  for (i = 0; i < csf->width; i++)
     {
-      *p++ = c;
-      *p++ = c;
-      *p++ = c;
+      *p++ = rgb[0];
+      *p++ = rgb[1];
+      *p++ = rgb[2];
     }
 }
 
