@@ -1509,9 +1509,9 @@ gimp_select_criterion_get_type (void)
     { GIMP_SELECT_CRITERION_R, "GIMP_SELECT_CRITERION_R", "r" },
     { GIMP_SELECT_CRITERION_G, "GIMP_SELECT_CRITERION_G", "g" },
     { GIMP_SELECT_CRITERION_B, "GIMP_SELECT_CRITERION_B", "b" },
-    { GIMP_SELECT_CRITERION_L, "GIMP_SELECT_CRITERION_L", "l" },
-    { GIMP_SELECT_CRITERION_C, "GIMP_SELECT_CRITERION_C", "c" },
     { GIMP_SELECT_CRITERION_H, "GIMP_SELECT_CRITERION_H", "h" },
+    { GIMP_SELECT_CRITERION_C, "GIMP_SELECT_CRITERION_C", "c" },
+    { GIMP_SELECT_CRITERION_L, "GIMP_SELECT_CRITERION_L", "l" },
     { GIMP_SELECT_CRITERION_A, "GIMP_SELECT_CRITERION_A", "a" },
     { 0, NULL, NULL }
   };
@@ -1522,9 +1522,9 @@ gimp_select_criterion_get_type (void)
     { GIMP_SELECT_CRITERION_R, NC_("select-criterion", "Red"), NULL },
     { GIMP_SELECT_CRITERION_G, NC_("select-criterion", "Green"), NULL },
     { GIMP_SELECT_CRITERION_B, NC_("select-criterion", "Blue"), NULL },
-    { GIMP_SELECT_CRITERION_L, NC_("select-criterion", "Don't use, doesn't work! L"), NULL },
-    { GIMP_SELECT_CRITERION_C, NC_("select-criterion", "Don't use, doesn't work! C"), NULL },
-    { GIMP_SELECT_CRITERION_H, NC_("select-criterion", "Don't use, doesn't work! H"), NULL },
+    { GIMP_SELECT_CRITERION_H, NC_("select-criterion", "LCH Hue"), NULL },
+    { GIMP_SELECT_CRITERION_C, NC_("select-criterion", "LCH Chroma"), NULL },
+    { GIMP_SELECT_CRITERION_L, NC_("select-criterion", "LCH Lightness"), NULL },
     { GIMP_SELECT_CRITERION_A, NC_("select-criterion", "Alpha"), NULL },
     { 0, NULL, NULL }
   };

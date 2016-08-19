@@ -337,22 +337,26 @@ pixel_difference (const gfloat        *col1,
         case GIMP_SELECT_CRITERION_H:
           {
             /* wrap around candidates for the actual distance */
-            gfloat dist1 = fabs (col1[0] - col2[0]);
-            gfloat dist2 = fabs (col1[0] - 1.0 - col2[0]);
-            gfloat dist3 = fabs (col1[0] - col2[0] + 1.0);
+            gfloat dist1 = fabs (col1[2] - col2[2]);
+            gfloat dist2 = fabs (col1[2] - 1.0 - col2[2]);
+            gfloat dist3 = fabs (col1[2] - col2[2] + 1.0);
 
             max = MIN (dist1, dist2);
             if (max > dist3)
               max = dist3;
+            max = max / 100.0;
+            //divisor based on trial and error
           }
           break;
 
         case GIMP_SELECT_CRITERION_C:
-          max = fabs (col1[1] - col2[1]);
+          max = (fabs (col1[1] - col2[1])) / 25.0;
+          //divisor based on trial and error
           break;
 
         case GIMP_SELECT_CRITERION_L:
-          max = fabs (col1[2] - col2[2]);
+          max = (fabs (col1[0] - col2[0])) / 50.0;
+          //divisor based on trial and error
           break;
         }
     }
