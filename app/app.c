@@ -341,8 +341,8 @@ app_initialize_colorants ()
   colorant_data[6] =  0.14305115;
   colorant_data[7] =  0.06060791;
   colorant_data[8] =  0.71392822;
-  /* Uncomment below to print values to screen:*/
-  printf("app_initialize_colorants to built-in linear gamma sRGB: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+  /* Uncomment below to print values to screen:
+  printf("Initializing colorants to sRGB: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);*/
 
   babl_set_user_data (colorant_babl, colorant_data);
 }
