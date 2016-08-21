@@ -68,7 +68,7 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                          "Color profile policy",
                          COLOR_PROFILE_POLICY_BLURB,
                          GIMP_TYPE_COLOR_PROFILE_POLICY,
-                         GIMP_COLOR_PROFILE_POLICY_ASK,
+                         GIMP_COLOR_PROFILE_POLICY_KEEP,
                          GIMP_PARAM_STATIC_STRINGS);
 }
 
