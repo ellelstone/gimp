@@ -131,7 +131,7 @@ gimp_color_scales_init (GimpColorScales *scales)
   static const gdouble slider_initial_vals[] =
     {   0,   0,   0,   0,   0,   0,   0 };
   static const gdouble slider_max_vals[] =
-    { 360, 200, 100, 65535, 65535, 65535, 100 };
+    { 360, 200, 100, 100000, 100000, 100000, 100 };
   static const gdouble slider_incs[] =
     {  30,  10,  10,  15,  15,  15,  10 };
 
@@ -310,9 +310,9 @@ gimp_color_scales_update_scales (GimpColorScales *scales,
   values[GIMP_COLOR_SELECTOR_LIGHTNESS]  = ROUND (selector->lch.l /* * 100.0 */);
   values[GIMP_COLOR_SELECTOR_CHROMA]     = ROUND (selector->lch.c /* * 100.0 */);
   values[GIMP_COLOR_SELECTOR_HUE]        = ROUND (selector->lch.h /* * 360.0 */);
-  values[GIMP_COLOR_SELECTOR_RED]        = ROUND ( CLAMP(selector->rgb.r,0.0,1.0) * 65535.0);
-  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND ( CLAMP(selector->rgb.g,0.0,1.0) * 65535.0);
-  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND ( CLAMP(selector->rgb.b,0.0,1.0) * 65535.0);
+  values[GIMP_COLOR_SELECTOR_RED]        = ROUND ( CLAMP(selector->rgb.r,0.0,1.0) * 100000.0);
+  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND ( CLAMP(selector->rgb.g,0.0,1.0) * 100000.0);
+  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND ( CLAMP(selector->rgb.b,0.0,1.0) * 100000.0);
   values[GIMP_COLOR_SELECTOR_ALPHA]      = ROUND (selector->rgb.a * 100.0);
 
   for (i = 0; i < 7; i++)
@@ -384,15 +384,15 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
       break;
 
     case GIMP_COLOR_SELECTOR_RED:
-      selector->rgb.r = CLAMP (value / 65535.0, 0.0, 1.0);
+      selector->rgb.r = CLAMP (value / 100000.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_GREEN:
-      selector->rgb.g = CLAMP (value / 65535.0, 0.0, 1.0);
+      selector->rgb.g = CLAMP (value / 100000.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_BLUE:
-      selector->rgb.b = CLAMP (value / 65535.0, 0.0, 1.0);
+      selector->rgb.b = CLAMP (value / 100000.0, 0.0, 1.0);
       break;
 
     case GIMP_COLOR_SELECTOR_ALPHA:
