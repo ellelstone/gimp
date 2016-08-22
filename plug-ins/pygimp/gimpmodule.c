@@ -791,8 +791,8 @@ pygimp_menu_register(PyObject *self, PyObject *args)
 
 static PyObject *
 pygimp_gamma(PyObject *self)
-{
-    return PyFloat_FromDouble(gimp_gamma());
+{   gdouble gamma = 2.2;
+    return PyFloat_FromDouble(gamma);
 }
 
 static PyObject *
