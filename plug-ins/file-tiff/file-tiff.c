@@ -535,8 +535,8 @@ run (const gchar      *name,
 static gboolean
 image_is_monochrome (gint32 image)
 {
-  guchar   *colors;
-  gint      num_colors;
+//  guchar   *colors;
+//  gint      num_colors;
   gboolean  monochrome = FALSE;
 
   g_return_val_if_fail (image != -1, FALSE);

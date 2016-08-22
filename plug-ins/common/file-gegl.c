@@ -293,6 +293,8 @@ load_image (const gchar  *filename,
   GeglBuffer        *src_buf  = NULL;
   GeglBuffer        *dest_buf = NULL;
   const Babl        *format;
+  const Babl        *model;
+  const Babl        *type;
 
   gimp_progress_init_printf (_("Opening '%s'"),
                              gimp_filename_to_utf8 (filename));
@@ -328,9 +330,8 @@ load_image (const gchar  *filename,
   width  = gegl_buffer_get_width (src_buf);
   height = gegl_buffer_get_height (src_buf);
   format = gegl_buffer_get_format (src_buf);
-
-      const Babl *model  = babl_format_get_model (format);
-      const Babl *type   = babl_format_get_type (format, 0);
+  model  = babl_format_get_model (format);
+  type   = babl_format_get_type (format, 0);
 
       if (model == babl_model ("Y") ||
           model == babl_model ("YA"))

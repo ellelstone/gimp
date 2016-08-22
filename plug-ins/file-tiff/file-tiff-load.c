@@ -100,7 +100,7 @@ static void               load_separate    (TIFF         *tif,
 static void               load_paths       (TIFF         *tif,
                                             gint          image);
 
-static void               fill_bit2byte    (void);
+//static void               fill_bit2byte    (void);
 static void               convert_bit2byte (const guchar *src,
                                             guchar       *dest,
                                             gint          width,
@@ -1549,7 +1549,7 @@ load_separate (TIFF        *tif,
 
 static guchar bit2byte[256 * 8];
 
-static void
+/*static void
 fill_bit2byte (void)
 {
   static gboolean filled = FALSE;
@@ -1567,7 +1567,7 @@ fill_bit2byte (void)
       *(dest++) = ((j & (1 << i)) != 0);
 
   filled = TRUE;
-}
+}*/
 
 static void
 convert_bit2byte (const guchar *src,

@@ -165,10 +165,10 @@ static void      save_dialog_response      (GtkWidget        *widget,
 static gboolean  offsets_dialog            (gint              offset_x,
                                             gint              offset_y);
 
-static gboolean  ia_has_transparent_pixels (GeglBuffer       *buffer);
+/*static gboolean  ia_has_transparent_pixels (GeglBuffer       *buffer);*/
 
-static gint      find_unused_ia_color      (GeglBuffer       *buffer,
-                                            gint             *colors);
+/*static gint      find_unused_ia_color      (GeglBuffer       *buffer,
+                                            gint             *colors);*/
 
 static void      load_defaults             (void);
 static void      save_defaults             (void);
@@ -770,7 +770,7 @@ on_read_error (png_structp     png_ptr,
   longjmp (png_jmpbuf (png_ptr), 1);
 }
 
-static int
+/*static int
 get_bit_depth_for_palette (int num_palette)
 {
   if (num_palette <= 2)
@@ -781,7 +781,7 @@ get_bit_depth_for_palette (int num_palette)
     return 4;
   else
     return 8;
-}
+}*/
 
 static GimpColorProfile *
 load_color_profile (png_structp   pp,
@@ -1935,7 +1935,7 @@ save_image (const gchar  *filename,
   return TRUE;
 }
 
-static gboolean
+/*static gboolean
 ia_has_transparent_pixels (GeglBuffer *buffer)
 {
   GeglBufferIterator *iter;
@@ -1966,12 +1966,12 @@ ia_has_transparent_pixels (GeglBuffer *buffer)
     }
 
   return FALSE;
-}
+}*/
 
 /* Try to find a color in the palette which isn't actually
  * used in the image, so that we can use it as the transparency
  * index. Taken from gif.c */
-static gint
+/*static gint
 find_unused_ia_color (GeglBuffer *buffer,
                       gint       *colors)
 {
@@ -2007,7 +2007,7 @@ find_unused_ia_color (GeglBuffer *buffer,
         }
     }
 
-  /* If there is no transparency, ignore alpha. */
+  //If there is no transparency, ignore alpha.
   if (trans_used == FALSE)
     return -1;
 
@@ -2017,9 +2017,9 @@ find_unused_ia_color (GeglBuffer *buffer,
         return i;
     }
 
-  /* Couldn't find an unused color index within the number of
-     bits per pixel we wanted.  Will have to increment the number
-     of colors in the image and assign a transparent pixel there. */
+  //Couldn't find an unused color index within the number of
+  //bits per pixel we wanted.  Will have to increment the number
+  //of colors in the image and assign a transparent pixel there.
   if ((*colors) < 256)
     {
       (*colors)++;
@@ -2028,7 +2028,7 @@ find_unused_ia_color (GeglBuffer *buffer,
     }
 
   return -1;
-}
+}*/
 
 
 /*static int
