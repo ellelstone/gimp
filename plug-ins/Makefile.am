@@ -25,6 +25,10 @@ if OS_WIN32
 twain = twain
 endif
 
+if HAVE_WEBP
+file_webp = file-webp
+endif
+
 SUBDIRS = \
 	$(script_fu)		\
 	$(pygimp)		\

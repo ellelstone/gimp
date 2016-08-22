@@ -32,7 +32,7 @@
 
 #include "core-types.h"
 
-#include "config/gimpcoreconfig.h"
+#include "config/gimpdialogconfig.h"
 
 #include "gegl/gimp-babl.h"
 #include "gegl/gimp-gegl-loops.h"

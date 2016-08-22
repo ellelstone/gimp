@@ -90,6 +90,7 @@ void                 gimp_image_color_profile_rgb_to_pixel
 /*  internal API, to be called only from gimpimage.c  */
 
 void                 _gimp_image_free_color_profile    (GimpImage           *image);
+void                 _gimp_image_free_color_transforms (GimpImage           *image);
 void                 _gimp_image_update_color_profile  (GimpImage           *image,
                                                         const GimpParasite  *icc_parasite);
 
