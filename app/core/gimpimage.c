@@ -854,12 +854,10 @@ gimp_image_set_property (GObject      *object,
 
     case PROP_BASE_TYPE:
       private->base_type = g_value_get_enum (value);
-      _gimp_image_free_color_transforms (image);
       break;
 
     case PROP_PRECISION:
       private->precision = g_value_get_enum (value);
-      _gimp_image_free_color_transforms (image);
       break;
 
     case PROP_SYMMETRY:
