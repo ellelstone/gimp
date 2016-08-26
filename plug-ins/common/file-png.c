@@ -876,6 +876,7 @@ load_image (const gchar  *filename,
 #ifdef PNG_BENIGN_ERRORS_SUPPORTED
   /* Change some libpng errors to warnings (e.g. bug 721135) */
   png_set_benign_errors (pp, TRUE);
+  png_set_option(pp, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
 
   /*
@@ -1473,6 +1474,7 @@ save_image (const gchar  *filename,
 #ifdef PNG_BENIGN_ERRORS_SUPPORTED
   /* Change some libpng errors to warnings (e.g. bug 721135) */
   png_set_benign_errors (pp, TRUE);
+  png_set_option(pp, PNG_SKIP_sRGB_CHECK_PROFILE, PNG_OPTION_ON);
 #endif
 
   /*
