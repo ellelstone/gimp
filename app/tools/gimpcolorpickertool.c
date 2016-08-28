@@ -343,7 +343,7 @@ gimp_color_picker_tool_info_create (GimpColorPickerTool *picker_tool)
                                         NULL, NULL,
                                         gtk_widget_get_screen (GTK_WIDGET (shell)),
                                         gimp_widget_get_monitor (GTK_WIDGET (shell)),
-                                        TRUE,
+                                        FALSE,/*if true, the color picker overlays the image*/
 
                                         GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 
