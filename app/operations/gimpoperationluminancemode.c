@@ -162,16 +162,22 @@ luminance_post_process (const gfloat *in,
 
 gboolean
 gimp_operation_luminance_mode_process_pixels (gfloat              *in,
-                                                  gfloat              *layer,
-                                                  gfloat              *mask,
-                                                  gfloat              *out,
-                                                  gfloat               opacity,
-                                                  glong                samples,
-                                                  const GeglRectangle *roi,
-                                                  gint                 level)
+                                              gfloat              *layer,
+                                              gfloat              *mask,
+                                              gfloat              *out,
+                                              gfloat               opacity,
+                                              glong                samples,
+                                              const GeglRectangle *roi,
+                                              gint                 level)
 {
-  luminance_pre_process (babl_format ("RGBA float"), in, layer, out, samples);
-  luminance_post_process (in, layer, mask, out, opacity, samples);
+  const gsize bytes_per_sample = 4 * sizeof * in;
+  gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;
+
+  luminance_pre_process (babl_format ("RGBA float"), in2, layer, out, samples);
+  luminance_post_process (in2, layer, mask, out, opacity, samples);
+
+  if (in != in2)
+    g_free (in2);
 
   return TRUE;
 }
