@@ -297,9 +297,12 @@ gimp_template_editor_constructed (GObject *object)
 
   gtk_box_pack_start (GTK_BOX (editor), private->expander, TRUE, TRUE, 0);
   gtk_widget_show (private->expander);
-
   frame = gimp_frame_new ("<expander>");
   gtk_container_add (GTK_CONTAINER (private->expander), frame);
+
+  //elle: The so-called Advanced Options seem pretty basic, so shouldn't be hidden by default.
+  gtk_expander_set_expanded (GTK_EXPANDER (private->expander), TRUE);
+
   gtk_widget_show (frame);
 
   table = gtk_table_new (6, 2, FALSE);
