@@ -891,11 +891,22 @@ prefs_color_button_add (GObject      *config,
                         gint          table_row,
                         GtkSizeGroup *group)
 {
-  GtkWidget *button = gimp_prop_color_button_new (config, property_name,
-                                                  title,
-                                                  COLOR_BUTTON_WIDTH,
-                                                  COLOR_BUTTON_HEIGHT,
-                                                  GIMP_COLOR_AREA_FLAT);
+  GtkWidget  *button;
+  GParamSpec *pspec;
+  gboolean    has_alpha;
+
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (config),
+                                        property_name);
+
+  has_alpha = gimp_param_spec_rgb_has_alpha (pspec);
+
+  button = gimp_prop_color_button_new (config, property_name,
+                                       title,
+                                       COLOR_BUTTON_WIDTH,
+                                       COLOR_BUTTON_HEIGHT,
+                                       has_alpha ?
+                                       GIMP_COLOR_AREA_SMALL_CHECKS :
+                                       GIMP_COLOR_AREA_FLAT);
 
   if (button)
     prefs_widget_add_aligned (button, label, table, table_row, TRUE, group);
@@ -1102,9 +1113,9 @@ prefs_display_options_frame_add (Gimp         *gimp,
 
 static void
 prefs_behavior_options_frame_add (Gimp         *gimp,
-                                 GObject      *object,
-                                 const gchar  *label,
-                                 GtkContainer *parent)
+                                  GObject      *object,
+                                  const gchar  *label,
+                                  GtkContainer *parent)
 {
   GtkWidget *vbox;
   GtkWidget *hbox;
@@ -1325,6 +1336,8 @@ prefs_dialog_new (Gimp       *gimp,
                                   NULL,
                                   &top_iter);
 
+  gimp_prefs_box_set_page_scrollable (GIMP_PREFS_BOX (prefs_box), vbox, TRUE);
+
   {
     GObject      *color_config;
     GtkListStore *store;
@@ -1479,13 +1492,11 @@ prefs_dialog_new (Gimp       *gimp,
     /*  Policies  
     vbox2 = prefs_frame_new (_("Policies"), GTK_CONTAINER (vbox),
                              FALSE);
-
-    table = prefs_table_new (3, GTK_CONTAINER (vbox2));
-    row = 0;
+    table = prefs_table_new (1, GTK_CONTAINER (vbox2));
 
     button = prefs_enum_combo_box_add (object, "color-profile-policy", 0, 0,
                                        _("File Open behaviour:"),
-                                       GTK_TABLE (table), row++, size_group);
+                                       GTK_TABLE (table), 0, size_group);
 
     g_object_unref (size_group);
 
@@ -1610,6 +1621,8 @@ prefs_dialog_new (Gimp       *gimp,
                                   NULL,
                                   &top_iter);
 
+  gimp_prefs_box_set_page_scrollable (GIMP_PREFS_BOX (prefs_box), vbox, TRUE);
+
   table = prefs_table_new (1, GTK_CONTAINER (vbox));
 
   {
@@ -1637,16 +1650,13 @@ prefs_dialog_new (Gimp       *gimp,
   /*  Quick Mask Color */
   vbox2 = prefs_frame_new (_("Quick Mask"), GTK_CONTAINER (vbox), FALSE);
   table = prefs_table_new (1, GTK_CONTAINER (vbox2));
-  button = gimp_prop_color_button_new (object, "quick-mask-color",
-                                       _("Set the default Quick Mask color"),
-                                       COLOR_BUTTON_WIDTH,
-                                       COLOR_BUTTON_HEIGHT,
-                                       GIMP_COLOR_AREA_SMALL_CHECKS);
+
+  button = prefs_color_button_add (object, "quick-mask-color",
+                                   _("Quick Mask color:"),
+                                   _("Set the default Quick Mask color"),
+                                   GTK_TABLE (table), 0, NULL);
   gimp_color_panel_set_context (GIMP_COLOR_PANEL (button),
                                 gimp_get_user_context (gimp));
-  prefs_widget_add_aligned (button, _("Quick Mask color:"),
-                            GTK_TABLE (table), 0, TRUE, NULL);
-
 
 
   /**********************************/
@@ -2006,6 +2016,139 @@ prefs_dialog_new (Gimp       *gimp,
 
   gtk_box_pack_start (GTK_BOX (vbox2), tool_editor, TRUE, TRUE, 0);
   gtk_widget_show (tool_editor);
+
+
+  /*********************************/
+  /*  Interface / Dialog Defaults  */
+  /*********************************/
+  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+                                  /* FIXME need an icon */
+                                  "gimp-prefs-controllers",
+                                  _("Dialog Defaults"),
+                                  _("Dialog Defaults"),
+                                  GIMP_HELP_PREFS_DIALOG_DEFAULTS,
+                                  &top_iter,
+                                  &child_iter);
+
+  gimp_prefs_box_set_page_scrollable (GIMP_PREFS_BOX (prefs_box), vbox, TRUE);
+
+  size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+  /*  Color profile import dialog  */
+  vbox2 = prefs_frame_new (_("Color Profile Import dialog"), GTK_CONTAINER (vbox),
+                           FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  button = prefs_enum_combo_box_add (object, "color-profile-policy", 0, 0,
+                                     _("Color profile policy:"),
+                                     GTK_TABLE (table), 0, size_group);
+
+  /*  New Layer Dialog  */
+  vbox2 = prefs_frame_new (_("New Layer Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (2, GTK_CONTAINER (vbox2));
+
+  entry = gimp_prop_entry_new (object, "layer-new-name", -1);
+  prefs_widget_add_aligned (entry,
+                            _("Layer name:"),
+                            GTK_TABLE (table), 0, FALSE,
+                            size_group);
+
+  prefs_enum_combo_box_add (object, "layer-new-fill-type", 0, 0,
+                            _("Fill type:"),
+                            GTK_TABLE (table), 1, size_group);
+
+  /*  Add Layer Mask Dialog  */
+  vbox2 = prefs_frame_new (_("Add Layer Mask Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_enum_combo_box_add (object, "layer-add-mask-type", 0, 0,
+                            _("Layer mask type:"),
+                            GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "layer-add-mask-invert",
+                          _("Invert mask"),
+                          GTK_BOX (vbox2));
+
+  /*  New Channel Dialog  */
+  vbox2 = prefs_frame_new (_("New Channel Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (2, GTK_CONTAINER (vbox2));
+
+  entry = gimp_prop_entry_new (object, "channel-new-name", -1);
+  prefs_widget_add_aligned (entry,
+                            _("Channel name:"),
+                            GTK_TABLE (table), 0, FALSE,
+                            size_group);
+
+  button = prefs_color_button_add (object, "channel-new-color",
+                                   _("Color and opacity:"),
+                                   _("Default New Channel Color and Opacity"),
+                                   GTK_TABLE (table), 1, size_group);
+  gimp_color_panel_set_context (GIMP_COLOR_PANEL (button),
+                                gimp_get_user_context (gimp));
+
+  /*  New Path Dialog  */
+  vbox2 = prefs_frame_new (_("New Path Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  entry = gimp_prop_entry_new (object, "path-new-name", -1);
+  prefs_widget_add_aligned (entry,
+                            _("Path name:"),
+                            GTK_TABLE (table), 0, FALSE,
+                            size_group);
+
+  /*  Feather Selection Dialog  */
+  vbox2 = prefs_frame_new (_("Feather Selection Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_spin_button_add (object, "selection-feather-radius", 1.0, 10.0, 2,
+                         _("Feather radius:"),
+                         GTK_TABLE (table), 0, size_group);
+
+  /*  Grow Selection Dialog  */
+  vbox2 = prefs_frame_new (_("Grow Selection Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_spin_button_add (object, "selection-grow-radius", 1.0, 10.0, 0,
+                         _("Grow radius:"),
+                         GTK_TABLE (table), 0, size_group);
+
+  /*  Shrink Selection Dialog  */
+  vbox2 = prefs_frame_new (_("Shrink Selection Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_spin_button_add (object, "selection-shrink-radius", 1.0, 10.0, 0,
+                         _("Shrink radius:"),
+                         GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "selection-shrink-edge-lock",
+                          _("Selected areas continue outside the image"),
+                          GTK_BOX (vbox2));
+
+  /*  Border Selection Dialog  */
+  vbox2 = prefs_frame_new (_("Border Selection Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (2, GTK_CONTAINER (vbox2));
+
+  prefs_spin_button_add (object, "selection-border-radius", 1.0, 10.0, 0,
+                         _("Border radius:"),
+                         GTK_TABLE (table), 0, size_group);
+
+  prefs_enum_combo_box_add (object, "selection-border-style", 0, 0,
+                            _("Border style:"),
+                            GTK_TABLE (table), 1, size_group);
+
+  prefs_check_button_add (object, "selection-border-edge-lock",
+                          _("Selected areas continue outside the image"),
+                          GTK_BOX (vbox2));
+
+  g_object_unref (size_group);
 
 
   /*****************************/
