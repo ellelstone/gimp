@@ -2357,16 +2357,6 @@
   )
 )
 
-(define-method set_colormap
-  (of-object "GimpPreviewArea")
-  (c-name "gimp_preview_area_set_colormap")
-  (return-type "none")
-  (parameters
-    '("const-guchar*" "colormap")
-    '("gint" "num_colors")
-  )
-)
-
 (define-method set_max_size
   (of-object "GimpPreviewArea")
   (c-name "gimp_preview_area_set_max_size")
