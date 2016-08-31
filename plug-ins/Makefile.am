@@ -38,7 +38,6 @@ SUBDIRS = \
 	file-jpeg		\
 	file-psd		\
 	file-tiff		\
-	file-webp		\
 	help			\
 	$(help_browser)		\
 	$(print)		\
