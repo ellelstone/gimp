@@ -13,7 +13,8 @@ scripts = \
 	paste-as-pattern.scm		\
 	select-to-brush.scm		\
 	select-to-image.scm		\
-	select-to-pattern.scm
+	select-to-pattern.scm		\
+	sg-luminosity-masks.scm
 
 test_scripts = \
 	contactsheet.scm		\
