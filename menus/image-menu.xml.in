@@ -655,7 +655,7 @@
         <menuitem action="filters-semi-flatten" />
         <separator />
       </menu>
-
+<separator />
       <menu action="filters-effects-menu" name="Effects">
 <!--        <menuitem action="filters-apply-canvas" />-->
         <menuitem action="filters-softglow" />
@@ -700,15 +700,15 @@
         <separator />
       </menu>
 
-<!--      <menu action="filters-combine-menu" name="Combine" />-->
+<!--      <menu action="filters-combine-menu" name="Combine" />
 
-      <menu action="filters-map-menu" name="Map">
+      <menu action="filters-map-menu" name="Map">-->
 <!--         <menuitem action="filters-bump-map" />how do you get this to do anything? -->
 <!--         <menuitem action="filters-displace" />how do you get this to do anything? -->
 <!--         <menuitem action="filters-illusion" />useless, imho -->
 <!--         <menuitem action="filters-tile-paper" />useless, imho -->
-        <separator />
-      </menu>
+<!--       <separator />--> 
+<!--      </menu>-->
 
     <menu action="filters-patterns-menu" name="Patterns">
     <menuitem action="filters-noise-cell" />
@@ -726,20 +726,20 @@
 </menu>
 
 
-      <menu action="filters-decor-menu" name="Decor" />
+<!--      <menu action="filters-decor-menu" name="Decor" />
       
       <menu action="filters-web-menu" name="Web">
       </menu>
       <menu action="filters-animation-menu" name="Animation" >
         <placeholder name="Animators" />
         <separator />
-      </menu>
+      </menu>-->
       <separator />
       <placeholder name="Menus" />
-      <separator />
+<!--      <separator />-->
       <placeholder name="Languages" />
       <placeholder name="Extensions" />
-      <separator />
+<!--      <separator />-->
     </menu>
 
 
