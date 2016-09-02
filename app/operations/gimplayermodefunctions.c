@@ -77,10 +77,10 @@ get_layer_mode_function (GimpLayerModeEffects paint_mode)
       case GIMP_SUBTRACT_MODE:      func = gimp_operation_subtract_mode_process_pixels; break;
       case GIMP_DARKEN_ONLY_MODE:   func = gimp_operation_darken_only_mode_process_pixels; break;
       case GIMP_LIGHTEN_ONLY_MODE:  func = gimp_operation_lighten_only_mode_process_pixels; break;
-//      case GIMP_HUE_MODE:           func = gimp_operation_hue_mode_process_pixels; break;
-//      case GIMP_SATURATION_MODE:    func = gimp_operation_saturation_mode_process_pixels; break;
-//      case GIMP_COLOR_MODE:         func = gimp_operation_color_mode_process_pixels; break;
-//      case GIMP_VALUE_MODE:         func = gimp_operation_value_mode_process_pixels; break;
+      case GIMP_HUE_MODE:           func = gimp_operation_hue_mode_process_pixels; break;
+      case GIMP_SATURATION_MODE:    func = gimp_operation_saturation_mode_process_pixels; break;
+      case GIMP_COLOR_MODE:         func = gimp_operation_color_mode_process_pixels; break;
+      case GIMP_VALUE_MODE:         func = gimp_operation_value_mode_process_pixels; break;
       case GIMP_DIVIDE_MODE:        func = gimp_operation_divide_mode_process_pixels; break;
       case GIMP_DODGE_MODE:         func = gimp_operation_dodge_mode_process_pixels; break;
       case GIMP_BURN_MODE:          func = gimp_operation_burn_mode_process_pixels; break;

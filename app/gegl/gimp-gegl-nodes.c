@@ -160,10 +160,10 @@ gimp_gegl_mode_node_set_mode (GeglNode             *node,
     case GIMP_SUBTRACT_MODE:      operation = "gimp:subtract-mode"; break;
     case GIMP_DARKEN_ONLY_MODE:   operation = "gimp:darken-only-mode"; break;
     case GIMP_LIGHTEN_ONLY_MODE:  operation = "gimp:lighten-only-mode"; break;
-//    case GIMP_HUE_MODE:           operation = "gimp:hue-mode"; break;
-//    case GIMP_SATURATION_MODE:    operation = "gimp:saturation-mode"; break;
-//    case GIMP_COLOR_MODE:         operation = "gimp:color-mode"; break;
-//    case GIMP_VALUE_MODE:         operation = "gimp:value-mode"; break;
+    case GIMP_HUE_MODE:           operation = "gimp:hue-mode"; break;
+    case GIMP_SATURATION_MODE:    operation = "gimp:saturation-mode"; break;
+    case GIMP_COLOR_MODE:         operation = "gimp:color-mode"; break;
+    case GIMP_VALUE_MODE:         operation = "gimp:value-mode"; break;
     case GIMP_DIVIDE_MODE:        operation = "gimp:divide-mode"; break;
     case GIMP_DODGE_MODE:         operation = "gimp:dodge-mode"; break;
     case GIMP_BURN_MODE:          operation = "gimp:burn-mode"; break;

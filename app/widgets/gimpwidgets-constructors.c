@@ -105,6 +105,7 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
 
   store = gimp_enum_store_new_with_values (GIMP_TYPE_LAYER_MODE_EFFECTS,
                                            22,
+
                                            GIMP_NORMAL_MODE,
                                            GIMP_MULTIPLY_MODE,
                                            GIMP_DIVIDE_MODE,
@@ -130,8 +131,8 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
                                            GIMP_DIFFERENCE_MODE,
                                            GIMP_GRAIN_EXTRACT_MODE,
                                            GIMP_GRAIN_MERGE_MODE,
-                                           GIMP_DISSOLVE_MODE);/*,
-
+                                           GIMP_DISSOLVE_MODE);
+                                           /*,
                                            GIMP_HUE_MODE,
                                            GIMP_SATURATION_MODE,
                                            GIMP_COLOR_MODE,
@@ -151,9 +152,6 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
 
   gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
                                          GIMP_DISSOLVE_MODE, -1);
-
-/*  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_VALUE_MODE, -1);*/
 
   if (with_behind_mode)
     {
