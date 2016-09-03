@@ -681,7 +681,7 @@
 <!--         <menuitem action="filters-lens-flare" />out, imho-->
       </menu>
 <!-- -->
-      <menu action="filters-distorts-menu" name="Distorts">
+      <menu action="filters-distorts-menu" name="Distortions">
         <menuitem action="filters-apply-lens" /><!-- sort of like a wider-angle lens-->
         <menuitem action="filters-lens-distortion" /><!-- -->
         <menuitem action="filters-polar-coordinates" /><!-- -->
