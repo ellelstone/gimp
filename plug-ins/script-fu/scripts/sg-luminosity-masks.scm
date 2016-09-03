@@ -120,5 +120,5 @@
       SF-DRAWABLE "Drawable" 0
 )
 
-(script-fu-menu-register "script-fu-sg-luminosity-masks" "<Image>/Filters/Various additional")
+(script-fu-menu-register "script-fu-sg-luminosity-masks" "<Image>/Filters/Community extensions")
 
