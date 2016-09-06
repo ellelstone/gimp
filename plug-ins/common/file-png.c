@@ -793,7 +793,7 @@ load_color_profile (png_structp   pp,
 #if defined(PNG_iCCP_SUPPORTED)
   png_uint_32       proflen;
   png_charp         profname;
-  png_charp         prof;
+  png_bytep         prof;
   int               profcomp;
 
   if (png_get_iCCP (pp, info, &profname, &profcomp, &prof, &proflen))
@@ -1412,37 +1412,37 @@ save_image (const gchar  *filename,
             gint32        orig_image_ID,
             GError      **error)
 {
-  gint i, k,                    /* Looping vars */
-    bpp = 0,                    /* Bytes per pixel */
-    type,                       /* Type of drawable/layer */
-    num_passes,                 /* Number of interlace passes in file */
-    pass,                       /* Current pass in file */
-    tile_height,                /* Height of tile in GIMP */
-    width,                      /* image width */
-    height,                     /* image height */
-    begin,                      /* Beginning tile row */
-    end,                        /* Ending tile row */
-    num;                        /* Number of rows to load */
-  FILE *fp;                     /* File pointer */
-  GeglBuffer *buffer;           /* GEGL buffer for layer */
-  const Babl *file_format;      /* BABL format of file */
-  png_structp pp;               /* PNG read pointer */
-  png_infop info;               /* PNG info pointer */
-  gint offx, offy;              /* Drawable offsets from origin */
-  guchar **pixels,              /* Pixel rows */
-   *fixed,                      /* Fixed-up pixel data */
-   *pixel;                      /* Pixel data */
-  gdouble xres, yres;           /* GIMP resolution (dpi) */
-  png_color_16 background;      /* Background color */
-  png_time mod_time;            /* Modification time (ie NOW) */
-  time_t cutime;                /* Time since epoch */
-  struct tm *gmt;               /* GMT broken down */
-  int color_type;
-  int bit_depth;
+  gint              i, k;             /* Looping vars */
+  gint              bpp = 0;          /* Bytes per pixel */
+  gint              type;             /* Type of drawable/layer */
+  gint              num_passes;       /* Number of interlace passes in file */
+  gint              pass;             /* Current pass in file */
+  gint              tile_height;      /* Height of tile in GIMP */
+  gint              width;            /* image width */
+  gint              height;           /* image height */
+  gint              begin;            /* Beginning tile row */
+  gint              end;              /* Ending tile row */
+  gint              num;              /* Number of rows to load */
+  FILE             *fp;               /* File pointer */
+  GeglBuffer       *buffer;           /* GEGL buffer for layer */
+  const Babl       *file_format;      /* BABL format of file */
+  png_structp       pp;               /* PNG read pointer */
+  png_infop         info;             /* PNG info pointer */
+  gint              offx, offy;       /* Drawable offsets from origin */
+  guchar          **pixels;           /* Pixel rows */
+  guchar           *fixed;            /* Fixed-up pixel data */
+  guchar           *pixel;            /* Pixel data */
+  gdouble           xres, yres;       /* GIMP resolution (dpi) */
+  png_color_16      background;       /* Background color */
+  png_time          mod_time;         /* Modification time (ie NOW) */
+  time_t            cutime;           /* Time since epoch */
+  struct tm        *gmt;              /* GMT broken down */
+  gint              color_type;       /* PNG color type */
+  gint              bit_depth;        /* Bit depth */
 
-  guchar remap[256];            /* Re-mapping for the palette */
+  guchar            remap[256];       /* Re-mapping for the palette */
 
-  png_textp  text = NULL;
+  png_textp         text = NULL;
 
   if (gimp_image_get_precision (image_ID) == GIMP_PRECISION_U8_GAMMA)
     bit_depth = 8;
@@ -1453,8 +1453,8 @@ save_image (const gchar  *filename,
   if (!pp)
     {
       /* this could happen if the compile time and run-time libpng
-         versions do not match. */
-
+       * versions do not match.
+       */
       g_set_error (error, 0, 0,
                    _("Error creating PNG write struct while exporting '%s'."),
                    gimp_filename_to_utf8 (filename));
@@ -1500,9 +1500,9 @@ save_image (const gchar  *filename,
    */
 
   buffer = gimp_drawable_get_buffer (drawable_ID);
-  width = gegl_buffer_get_width (buffer);
+  width  = gegl_buffer_get_width (buffer);
   height = gegl_buffer_get_height (buffer);
-  type = gimp_drawable_type (drawable_ID);
+  type   = gimp_drawable_type (drawable_ID);
 
   /*
    * Initialise remap[]
@@ -1679,10 +1679,10 @@ save_image (const gchar  *filename,
                       (png_charp) icc_data,
                       icc_length);
 
-        g_free (profile_name);
+      g_free (profile_name);
 
-        g_object_unref (profile);
-      }
+      g_object_unref (profile);
+    }
   }
 #endif
 

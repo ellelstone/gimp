@@ -360,7 +360,10 @@ gimp_mybrush_core_create_brushes (GimpMybrushCore  *mybrush,
       mybrush->private->brushes = NULL;
     }
 
-  gimp_context_get_foreground (context, &fg);
+  if (options->eraser)
+    gimp_context_get_background (context, &fg);
+  else
+    gimp_context_get_foreground (context, &fg);
 
   gimp_rgb_to_hsv (&fg, &hsv);
 

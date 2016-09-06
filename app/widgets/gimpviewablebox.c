@@ -527,7 +527,7 @@ font_box_new (GimpContainer *container,
   return gimp_viewable_box_new (container, context, label, spacing,
                                 view_type, GIMP_VIEW_SIZE_SMALL, view_size,
                                 "gimp-font-list|gimp-font-grid",
-                                GIMP_STOCK_FONT,
+                                "gtk-select-font",
                                 _("Open the font selection dialog"),
                                 NULL);
 }
@@ -655,7 +655,7 @@ gimp_viewable_box_new (GimpContainer *container,
       gtk_box_pack_end (GTK_BOX (entry_hbox), edit_button, FALSE, FALSE, 0);
       gtk_widget_show (edit_button);
 
-      image = gtk_image_new_from_icon_name (GIMP_STOCK_EDIT,
+      image = gtk_image_new_from_icon_name (GTK_STOCK_EDIT,
                                             GTK_ICON_SIZE_BUTTON);
       gtk_misc_set_alignment (GTK_MISC (image), 0.5, 1.0);
       gtk_container_add (GTK_CONTAINER (edit_button), image);
