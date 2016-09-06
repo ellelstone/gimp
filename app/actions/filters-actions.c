@@ -70,7 +70,7 @@ static const GimpActionEntry filters_menu_actions[] =
   { "filters-light-shadow-menu",    NULL, NC_("filters-action",
                                               "_Light and Shadow") },
   { "filters-distorts-menu",        NULL, NC_("filters-action",
-                                              "_Distorts")         },
+                                              "_Distortions")         },
   { "filters-effects-menu",        NULL, NC_("filters-action",
                                               "_Effects")         },
   { "filters-decor-menu",           NULL, NC_("filters-action",
