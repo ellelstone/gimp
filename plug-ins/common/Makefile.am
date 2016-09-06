@@ -45,7 +45,6 @@ AM_CPPFLAGS = \
 
 libexec_PROGRAMS = \
 	align-layers \
-	crop-zealous \
 	file-compressor \
 	file-dicom \
 	file-gbr \
@@ -58,9 +57,6 @@ libexec_PROGRAMS = \
 	file-pat \
 	file-png \
 	file-psp \
-	metadata \
-	plugin-browser \
-	procedure-browser \
 	unit-editor
 
 EXTRA_PROGRAMS = \
@@ -97,22 +93,6 @@ align_layers_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(align_layers_RC)
-
-crop_zealous_SOURCES = \
-	crop-zealous.c
-
-crop_zealous_LDADD = \
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(CAIRO_LIBS)		\
-	$(GDK_PIXBUF_LIBS)	\
-	$(GEGL_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(crop_zealous_RC)
 
 file_compressor_CFLAGS = $(LZMA_CFLAGS)
 
@@ -341,60 +321,6 @@ file_psp_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_psp_RC)
-
-metadata_CFLAGS = $(GEXIV2_CFLAGS)
-
-metadata_SOURCES = \
-	metadata.c
-
-metadata_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEXIV2_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(metadata_RC)
-
-plugin_browser_SOURCES = \
-	plugin-browser.c
-
-plugin_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(plugin_browser_RC)
-
-procedure_browser_SOURCES = \
-	procedure-browser.c
-
-procedure_browser_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(procedure_browser_RC)
 
 unit_editor_SOURCES = \
 	unit-editor.c
