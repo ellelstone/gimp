@@ -1201,7 +1201,32 @@ gimp_color_profile_new_gray_built_in_internal (void)
 {
   cmsHPROFILE profile;
 
-  /* white point is D50 from the ICC profile illuminant specs */
+  /* white point is D65 from the sRGB specs */
+  cmsCIExyY whitepoint = { 0.3127, 0.3290, 1.0 };
+
+  cmsFloat64Number srgb_parameters[5] =
+    { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
+
+  cmsToneCurve *curve = cmsBuildParametricToneCurve (NULL, 4,
+                                                     srgb_parameters);
+
+  profile = cmsCreateGrayProfile (&whitepoint, curve);
+
+  cmsFreeToneCurve (curve);
+
+  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
+                              "GIMP-CCE built-in D65 Grayscale with sRGB TRC");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
+                              "GIMP-CCE");
+  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
+                              "D65 Grayscale with sRGB TRC");
+  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
+                              "Public Domain");
+
+  return profile;
+  /*cmsHPROFILE profile;
+
+   white point is D50 from the ICC profile illuminant specs
   cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0};
 
   cmsToneCurve *curve = cmsBuildGamma (NULL, 1.0);
@@ -1219,7 +1244,7 @@ gimp_color_profile_new_gray_built_in_internal (void)
   gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
                               "Public Domain");
 
-  return profile;
+  return profile; */
 }
 
 /**
