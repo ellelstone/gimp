@@ -512,6 +512,14 @@ save_image (GFile   *file,
       file_format = babl_format ("YA u8");
       break;
 
+    case GIMP_RGB_IMAGE:
+      file_format = babl_format ("RGB u8");
+      break;
+
+    case GIMP_RGBA_IMAGE:
+      file_format = babl_format ("RGBA u8");
+      break;
+
     default:
       g_message ("Unsupported image type: %d\n"
                  "GIMP Patterns must be GRAY or RGB",
