@@ -56,7 +56,6 @@ libexec_PROGRAMS = \
 	$(FILE_PDF_SAVE) \
 	file-pat \
 	file-png \
-	file-psp \
 	unit-editor
 
 EXTRA_PROGRAMS = \
@@ -302,25 +301,6 @@ file_png_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(file_png_RC)
-
-file_psp_SOURCES = \
-	file-psp.c
-
-file_psp_LDADD = \
-	$(libgimpui)		\
-	$(libgimpwidgets)	\
-	$(libgimpmodule)	\
-	$(libgimp)		\
-	$(libgimpmath)		\
-	$(libgimpconfig)	\
-	$(libgimpcolor)		\
-	$(libgimpbase)		\
-	$(GTK_LIBS)		\
-	$(GEGL_LIBS)		\
-	$(Z_LIBS)		\
-	$(RT_LIBS)		\
-	$(INTLLIBS)		\
-	$(file_psp_RC)
 
 unit_editor_SOURCES = \
 	unit-editor.c
