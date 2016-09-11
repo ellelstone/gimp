@@ -2095,14 +2095,14 @@ prefs_dialog_new (Gimp       *gimp,
 
   size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
-  /*  Color profile import dialog  */
+  /*  Color profile import dialog
   vbox2 = prefs_frame_new (_("Color Profile Import dialog"), GTK_CONTAINER (vbox),
                            FALSE);
   table = prefs_table_new (1, GTK_CONTAINER (vbox2));
 
   button = prefs_enum_combo_box_add (object, "color-profile-policy", 0, 0,
                                      _("Color profile policy:"),
-                                     GTK_TABLE (table), 0, size_group);
+                                     GTK_TABLE (table), 0, size_group);  */
 
   /*  New Layer Dialog  */
   vbox2 = prefs_frame_new (_("New Layer Dialog"),
