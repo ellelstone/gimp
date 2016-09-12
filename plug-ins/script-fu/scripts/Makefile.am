@@ -8,6 +8,10 @@ scripts = \
 	script-fu.init			\
 	script-fu-compat.init		\
 	plug-in-compat.init		\
+	guides-from-selection.scm	\
+	guides-new.scm			\
+	guides-new-percent.scm		\
+	guides-remove-all.scm		\
 	palette-export.scm		\
 	paste-as-brush.scm		\
 	paste-as-pattern.scm		\
