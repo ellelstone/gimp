@@ -57,6 +57,7 @@
 #include "display/gimpdisplay.h"
 #include "display/gimpdisplayshell.h"
 
+#include "dialogs/dialogs.h"
 #include "dialogs/color-profile-dialog.h"
 #include "dialogs/convert-precision-dialog.h"
 #include "dialogs/grid-dialog.h"
@@ -71,13 +72,6 @@
 #include "image-commands.h"
 
 #include "gimp-intl.h"
-
-
-#define IMAGE_CONVERT_PRECISION_DIALOG_KEY "image-convert-precision-dialog"
-#define IMAGE_CONVERT_TYPE_DIALOG_KEY      "image-convert-type-dialog"
-#define IMAGE_PROFILE_CONVERT_DIALOG_KEY   "image-profile-convert-dialog"
-#define IMAGE_PROFILE_ASSIGN_DIALOG_KEY    "image-profile-assign-dialog"
-#define IMAGE_PROFILE_SAVE_DIALOG_KEY      "image-profile-save-dialog"
 
 
 typedef struct
@@ -183,12 +177,6 @@ image_duplicate_cmd_callback (GtkAction *action,
   g_object_unref (new_image);
 }
 
-static void
-image_convert_type_dialog_unset (GimpImage *image)
-{
-  g_object_set_data (G_OBJECT (image), IMAGE_CONVERT_TYPE_DIALOG_KEY, NULL);
-}
-
 void
 image_convert_base_type_cmd_callback (GtkAction *action,
                                       GtkAction *current,
@@ -209,8 +197,9 @@ image_convert_base_type_cmd_callback (GtkAction *action,
   if (value == gimp_image_get_base_type (image))
     return;
 
-  dialog = g_object_get_data (G_OBJECT (image),
-                              IMAGE_CONVERT_TYPE_DIALOG_KEY);
+#define CONVERT_TYPE_DIALOG_KEY "gimp-convert-type-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (image), CONVERT_TYPE_DIALOG_KEY);
 
   if (dialog)
     {
@@ -249,13 +238,8 @@ image_convert_base_type_cmd_callback (GtkAction *action,
 
   if (dialog)
     {
-      g_object_set_data (G_OBJECT (image),
-                         IMAGE_CONVERT_TYPE_DIALOG_KEY, dialog);
-
-      g_signal_connect_object (dialog, "destroy",
-                               G_CALLBACK (image_convert_type_dialog_unset),
-                               image, G_CONNECT_SWAPPED);
-
+      dialogs_attach_dialog (G_OBJECT (image),
+                             CONVERT_TYPE_DIALOG_KEY, dialog);
       gtk_window_present (GTK_WINDOW (dialog));
     }
 
@@ -263,12 +247,6 @@ image_convert_base_type_cmd_callback (GtkAction *action,
    *  menu items get updated back to the current image type
    */
   gimp_image_flush (image);
-}
-
-static void
-image_convert_precision_dialog_unset (GimpImage *image)
-{
-  g_object_set_data (G_OBJECT (image), IMAGE_CONVERT_PRECISION_DIALOG_KEY, NULL);
 }
 
 void
@@ -290,8 +268,9 @@ image_convert_precision_cmd_callback (GtkAction *action,
   if (value == gimp_image_get_component_type (image))
     return;
 
-  dialog = g_object_get_data (G_OBJECT (image),
-                              IMAGE_CONVERT_PRECISION_DIALOG_KEY);
+#define CONVERT_PRECISION_DIALOG_KEY "gimp-convert-precision-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (image), CONVERT_PRECISION_DIALOG_KEY);
 
   if (! dialog)
     {
@@ -301,12 +280,8 @@ image_convert_precision_cmd_callback (GtkAction *action,
                                              value,
                                              GIMP_PROGRESS (display));
 
-      g_object_set_data (G_OBJECT (image),
-                         IMAGE_CONVERT_PRECISION_DIALOG_KEY, dialog);
-
-      g_signal_connect_object (dialog, "destroy",
-                               G_CALLBACK (image_convert_precision_dialog_unset),
-                               image, G_CONNECT_SWAPPED);
+      dialogs_attach_dialog (G_OBJECT (image),
+                             CONVERT_PRECISION_DIALOG_KEY, dialog);
     }
 
   gtk_window_present (GTK_WINDOW (dialog));
@@ -315,10 +290,47 @@ image_convert_precision_cmd_callback (GtkAction *action,
   gimp_image_flush (image);
 }
 
-static void
-image_profile_assign_dialog_unset (GimpImage *image)
+void
+image_convert_gamma_cmd_callback (GtkAction *action,
+                                  GtkAction *current,
+                                  gpointer   data)
 {
-  g_object_set_data (G_OBJECT (image), IMAGE_PROFILE_ASSIGN_DIALOG_KEY, NULL);
+  GimpImage     *image;
+  GimpDisplay   *display;
+  gboolean       value;
+  GimpPrecision  precision;
+  return_if_no_image (image, data);
+  return_if_no_display (display, data);
+
+  value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+  if (value == gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
+                                                                         FALSE)))
+    return;
+
+  precision = gimp_babl_precision (gimp_image_get_component_type (image),
+                                   value);
+
+  gimp_image_convert_precision (image, precision, 0, 0, 0,
+                                GIMP_PROGRESS (display));
+  gimp_image_flush (image);
+}
+
+void
+image_color_management_enabled_cmd_callback (GtkAction *action,
+                                             gpointer   data)
+{
+  GimpImage *image;
+  gboolean   enabled;
+  return_if_no_image (image, data);
+
+  enabled = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+  if (enabled != gimp_image_get_is_color_managed (image))
+    {
+      gimp_image_set_is_color_managed (image, enabled, TRUE);
+      gimp_image_flush (image);
+    }
 }
 
 void
@@ -333,8 +345,9 @@ image_color_profile_assign_cmd_callback (GtkAction *action,
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  dialog = g_object_get_data (G_OBJECT (image),
-                              IMAGE_PROFILE_ASSIGN_DIALOG_KEY);
+#define PROFILE_ASSIGN_DIALOG_KEY "gimp-profile-assign-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (image), PROFILE_ASSIGN_DIALOG_KEY);
 
   if (! dialog)
     {
@@ -344,21 +357,11 @@ image_color_profile_assign_cmd_callback (GtkAction *action,
                                          widget,
                                          GIMP_PROGRESS (display));
 
-      g_object_set_data (G_OBJECT (image),
-                         IMAGE_PROFILE_ASSIGN_DIALOG_KEY, dialog);
-
-      g_signal_connect_object (dialog, "destroy",
-                               G_CALLBACK (image_profile_assign_dialog_unset),
-                               image, G_CONNECT_SWAPPED);
+      dialogs_attach_dialog (G_OBJECT (image),
+                             PROFILE_ASSIGN_DIALOG_KEY, dialog);
     }
 
   gtk_window_present (GTK_WINDOW (dialog));
-}
-
-static void
-image_profile_convert_dialog_unset (GimpImage *image)
-{
-  g_object_set_data (G_OBJECT (image), IMAGE_PROFILE_CONVERT_DIALOG_KEY, NULL);
 }
 
 void
@@ -373,8 +376,9 @@ image_color_profile_convert_cmd_callback (GtkAction *action,
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  dialog = g_object_get_data (G_OBJECT (image),
-                              IMAGE_PROFILE_CONVERT_DIALOG_KEY);
+#define PROFILE_CONVERT_DIALOG_KEY "gimp-profile-convert-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (image), PROFILE_CONVERT_DIALOG_KEY);
 
   if (! dialog)
     {
@@ -384,12 +388,8 @@ image_color_profile_convert_cmd_callback (GtkAction *action,
                                          widget,
                                          GIMP_PROGRESS (display));
 
-      g_object_set_data (G_OBJECT (image),
-                         IMAGE_PROFILE_CONVERT_DIALOG_KEY, dialog);
-
-      g_signal_connect_object (dialog, "destroy",
-                               G_CALLBACK (image_profile_convert_dialog_unset),
-                               image, G_CONNECT_SWAPPED);
+      dialogs_attach_dialog (G_OBJECT (image),
+                             PROFILE_CONVERT_DIALOG_KEY, dialog);
     }
 
   gtk_window_present (GTK_WINDOW (dialog));
@@ -404,12 +404,6 @@ image_color_profile_discard_cmd_callback (GtkAction *action,
 
   gimp_image_set_color_profile (image, NULL, NULL);
   gimp_image_flush (image);
-}
-
-static void
-image_profile_save_dialog_unset (GimpImage *image)
-{
-  g_object_set_data (G_OBJECT (image), IMAGE_PROFILE_SAVE_DIALOG_KEY, NULL);
 }
 
 static void
@@ -458,8 +452,9 @@ image_color_profile_save_cmd_callback (GtkAction *action,
   return_if_no_display (display, data);
   return_if_no_widget (widget, data);
 
-  dialog = g_object_get_data (G_OBJECT (image),
-                              IMAGE_PROFILE_SAVE_DIALOG_KEY);
+#define PROFILE_SAVE_DIALOG_KEY "gimp-profile-save-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (image), PROFILE_SAVE_DIALOG_KEY);
 
   if (! dialog)
     {
@@ -484,12 +479,8 @@ image_color_profile_save_cmd_callback (GtkAction *action,
                         G_CALLBACK (image_profile_save_dialog_response),
                         image);
 
-      g_object_set_data (G_OBJECT (image),
-                         IMAGE_PROFILE_SAVE_DIALOG_KEY, dialog);
-
-      g_signal_connect_object (dialog, "destroy",
-                               G_CALLBACK (image_profile_save_dialog_unset),
-                               image, G_CONNECT_SWAPPED);
+      dialogs_attach_dialog (G_OBJECT (image),
+                             PROFILE_SAVE_DIALOG_KEY, dialog);
     }
 
   gtk_window_present (GTK_WINDOW (dialog));
@@ -596,21 +587,31 @@ image_print_size_cmd_callback (GtkAction *action,
 
   image = gimp_display_get_image (display);
 
-  dialog = print_size_dialog_new (image,
-                                  action_data_get_context (data),
-                                  _("Set Image Print Resolution"),
-                                  "gimp-image-print-size",
-                                  widget,
-                                  gimp_standard_help_func,
-                                  GIMP_HELP_IMAGE_PRINT_SIZE,
-                                  image_print_size_callback,
-                                  NULL);
+#define PRINT_SIZE_DIALOG_KEY "gimp-print-size-dialog"
 
-  g_signal_connect_object (display, "disconnect",
-                           G_CALLBACK (gtk_widget_destroy),
-                           dialog, G_CONNECT_SWAPPED);
+  dialog = dialogs_get_dialog (G_OBJECT (image), PRINT_SIZE_DIALOG_KEY);
 
-  gtk_widget_show (dialog);
+  if (! dialog)
+    {
+      dialog = print_size_dialog_new (image,
+                                      action_data_get_context (data),
+                                      _("Set Image Print Resolution"),
+                                      "gimp-image-print-size",
+                                      widget,
+                                      gimp_standard_help_func,
+                                      GIMP_HELP_IMAGE_PRINT_SIZE,
+                                      image_print_size_callback,
+                                      NULL);
+
+      g_signal_connect_object (display, "disconnect",
+                               G_CALLBACK (gtk_widget_destroy),
+                               dialog, G_CONNECT_SWAPPED);
+
+      dialogs_attach_dialog (G_OBJECT (image),
+                             PRINT_SIZE_DIALOG_KEY, dialog);
+    }
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 void
@@ -626,25 +627,35 @@ image_scale_cmd_callback (GtkAction *action,
 
   image = gimp_display_get_image (display);
 
-  if (image_scale_unit != GIMP_UNIT_PERCENT)
-    image_scale_unit = gimp_display_get_shell (display)->unit;
+#define SCALE_DIALOG_KEY "gimp-scale-dialog"
 
-  if (image_scale_interp == -1)
-    image_scale_interp = display->gimp->config->interpolation_type;
+  dialog = dialogs_get_dialog (G_OBJECT (image), SCALE_DIALOG_KEY);
 
-  dialog = image_scale_dialog_new (image,
-                                   action_data_get_context (data),
-                                   widget,
-                                   image_scale_unit,
-                                   image_scale_interp,
-                                   image_scale_callback,
-                                   display);
+  if (! dialog)
+    {
+      if (image_scale_unit != GIMP_UNIT_PERCENT)
+        image_scale_unit = gimp_display_get_shell (display)->unit;
 
-  g_signal_connect_object (display, "disconnect",
-                           G_CALLBACK (gtk_widget_destroy),
-                           dialog, G_CONNECT_SWAPPED);
+      if (image_scale_interp == -1)
+        image_scale_interp = display->gimp->config->interpolation_type;
 
-  gtk_widget_show (dialog);
+      dialog = image_scale_dialog_new (image,
+                                       action_data_get_context (data),
+                                       widget,
+                                       image_scale_unit,
+                                       image_scale_interp,
+                                       image_scale_callback,
+                                       display);
+
+      g_signal_connect_object (display, "disconnect",
+                               G_CALLBACK (gtk_widget_destroy),
+                               dialog, G_CONNECT_SWAPPED);
+
+      dialogs_attach_dialog (G_OBJECT (image),
+                             SCALE_DIALOG_KEY, dialog);
+    }
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 void

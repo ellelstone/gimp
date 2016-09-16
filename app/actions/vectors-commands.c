@@ -58,6 +58,7 @@
 #include "tools/gimpvectortool.h"
 #include "tools/tool_manager.h"
 
+#include "dialogs/dialogs.h"
 #include "dialogs/fill-dialog.h"
 #include "dialogs/stroke-dialog.h"
 #include "dialogs/vectors-export-dialog.h"
@@ -397,25 +398,36 @@ vectors_fill_cmd_callback (GtkAction *action,
       return;
     }
 
-  dialog = fill_dialog_new (GIMP_ITEM (vectors),
-                            action_data_get_context (data),
-                            _("Fill Path"),
-                            GIMP_STOCK_TOOL_BUCKET_FILL,
-                            GIMP_HELP_PATH_FILL,
-                            widget);
-  gtk_widget_show (dialog);
+
+#define FILL_DIALOG_KEY "gimp-vectors-fill-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (drawable), FILL_DIALOG_KEY);
+
+  if (! dialog)
+    {
+      dialog = fill_dialog_new (GIMP_ITEM (vectors),
+                                action_data_get_context (data),
+                                _("Fill Path"),
+                                GIMP_STOCK_TOOL_BUCKET_FILL,
+                                GIMP_HELP_PATH_FILL,
+                                widget);
+
+      dialogs_attach_dialog (G_OBJECT (drawable), FILL_DIALOG_KEY, dialog);
+    }
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 void
 vectors_fill_last_vals_cmd_callback (GtkAction *action,
                                      gpointer   data)
 {
-  GimpImage       *image;
-  GimpVectors     *vectors;
-  GimpDrawable    *drawable;
-  GtkWidget       *widget;
-  GimpFillOptions *options;
-  GError          *error = NULL;
+  GimpImage        *image;
+  GimpVectors      *vectors;
+  GimpDrawable     *drawable;
+  GtkWidget        *widget;
+  GimpDialogConfig *config;
+  GError           *error = NULL;
   return_if_no_vectors (image, vectors, data);
   return_if_no_widget (widget, data);
 
@@ -429,16 +441,10 @@ vectors_fill_last_vals_cmd_callback (GtkAction *action,
       return;
     }
 
-  options = g_object_get_data (G_OBJECT (image->gimp), "saved-fill-options");
-
-  if (options)
-    g_object_ref (options);
-  else
-    options = gimp_fill_options_new (image->gimp,
-                                     action_data_get_context (data), TRUE);
+  config = GIMP_DIALOG_CONFIG (image->gimp->config);
 
   if (! gimp_item_fill (GIMP_ITEM (vectors),
-                        drawable, options, TRUE, NULL, &error))
+                        drawable, config->fill_options, TRUE, NULL, &error))
     {
       gimp_message_literal (image->gimp, G_OBJECT (widget),
                             GIMP_MESSAGE_WARNING, error->message);
@@ -448,8 +454,6 @@ vectors_fill_last_vals_cmd_callback (GtkAction *action,
     {
       gimp_image_flush (image);
     }
-
-  g_object_unref (options);
 }
 
 void
@@ -474,26 +478,36 @@ vectors_stroke_cmd_callback (GtkAction *action,
       return;
     }
 
-  dialog = stroke_dialog_new (GIMP_ITEM (vectors),
-                              action_data_get_context (data),
-                              _("Stroke Path"),
-                              GIMP_STOCK_PATH_STROKE,
-                              GIMP_HELP_PATH_STROKE,
-                              widget);
-  gtk_widget_show (dialog);
+#define STROKE_DIALOG_KEY "gimp-vectors-stroke-dialog"
+
+  dialog = dialogs_get_dialog (G_OBJECT (drawable), STROKE_DIALOG_KEY);
+
+  if (! dialog)
+    {
+      dialog = stroke_dialog_new (GIMP_ITEM (vectors),
+                                  action_data_get_context (data),
+                                  _("Stroke Path"),
+                                  GIMP_STOCK_PATH_STROKE,
+                                  GIMP_HELP_PATH_STROKE,
+                                  widget);
+
+      dialogs_attach_dialog (G_OBJECT (drawable), STROKE_DIALOG_KEY, dialog);
+    }
+
+  gtk_window_present (GTK_WINDOW (dialog));
 }
 
 void
 vectors_stroke_last_vals_cmd_callback (GtkAction *action,
                                        gpointer   data)
 {
-  GimpImage         *image;
-  GimpVectors       *vectors;
-  GimpDrawable      *drawable;
-  GimpContext       *context;
-  GtkWidget         *widget;
-  GimpStrokeOptions *options;
-  GError            *error = NULL;
+  GimpImage        *image;
+  GimpVectors      *vectors;
+  GimpDrawable     *drawable;
+  GimpContext      *context;
+  GtkWidget        *widget;
+  GimpDialogConfig *config;
+  GError           *error = NULL;
   return_if_no_vectors (image, vectors, data);
   return_if_no_context (context, data);
   return_if_no_widget (widget, data);
@@ -508,15 +522,10 @@ vectors_stroke_last_vals_cmd_callback (GtkAction *action,
       return;
     }
 
-  options = g_object_get_data (G_OBJECT (image->gimp), "saved-stroke-options");
-
-  if (options)
-    g_object_ref (options);
-  else
-    options = gimp_stroke_options_new (image->gimp, context, TRUE);
+  config = GIMP_DIALOG_CONFIG (image->gimp->config);
 
   if (! gimp_item_stroke (GIMP_ITEM (vectors),
-                          drawable, context, options, NULL,
+                          drawable, context, config->stroke_options, NULL,
                           TRUE, NULL, &error))
     {
       gimp_message_literal (image->gimp, G_OBJECT (widget),
@@ -527,8 +536,6 @@ vectors_stroke_last_vals_cmd_callback (GtkAction *action,
     {
       gimp_image_flush (image);
     }
-
-  g_object_unref (options);
 }
 
 void

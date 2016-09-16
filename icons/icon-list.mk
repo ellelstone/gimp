@@ -3,14 +3,19 @@ scalable_images = \
 	scalable/document-new.svg					\
 	scalable/document-open.svg					\
 	scalable/document-open-recent.svg			\
+	scalable/document-print.svg					\
 	scalable/document-revert.svg				\
 	scalable/document-save.svg					\
 	scalable/document-save-as.svg				\
 	scalable/edit-clear.svg						\
+	scalable/edit-copy.svg						\
 	scalable/edit-cut.svg						\
+	scalable/edit-delete.svg					\
 	scalable/edit-paste.svg						\
 	scalable/edit-redo.svg						\
 	scalable/edit-undo.svg						\
+	scalable/folder.svg							\
+	scalable/folder-new.svg						\
 	scalable/format-indent-more.svg				\
 	scalable/go-bottom.svg						\
 	scalable/go-down.svg						\
@@ -56,7 +61,6 @@ scalable_images = \
 	scalable/gtk-yes.svg						\
 												\
 	scalable/gimp-anchor.svg			\
-	scalable/gimp-buffer.svg			\
 	scalable/gimp-cap-butt.svg			\
 	scalable/gimp-cap-round.svg			\
 	scalable/gimp-cap-square.svg			\
@@ -177,6 +181,7 @@ scalable_images = \
 	scalable/gimp-prefs-default-comment.svg		\
 	scalable/gimp-prefs-default-grid.svg		\
 	scalable/gimp-prefs-display.svg			\
+	scalable/gimp-prefs-folders.svg					\
 	scalable/gimp-prefs-folders-brushes.svg		\
 	scalable/gimp-prefs-folders-dynamics.svg	\
 	scalable/gimp-prefs-folders-environ.svg		\
@@ -190,7 +195,6 @@ scalable_images = \
 	scalable/gimp-prefs-folders-patterns.svg	\
 	scalable/gimp-prefs-folders-plug-ins.svg	\
 	scalable/gimp-prefs-folders-scripts.svg		\
-	scalable/gimp-prefs-folders.svg			\
 	scalable/gimp-prefs-folders-themes.svg		\
 	scalable/gimp-prefs-folders-tool-plug-ins.svg	\
 	scalable/gimp-prefs-folders-tool-presets.svg	\
@@ -211,7 +215,6 @@ scalable_images = \
 	scalable/gimp-prefs-toolbox.svg			\
 	scalable/gimp-prefs-tool-options.svg		\
 	scalable/gimp-prefs-window-management.svg	\
-	scalable/gimp-print-resolution.svg		\
 	scalable/gimp-question.svg			\
 	scalable/gimp-quick-mask-off.svg		\
 	scalable/gimp-quick-mask-on.svg			\
@@ -317,6 +320,7 @@ scalable_images = \
 
 vector24_images = \
 	24/dialog-information.svg					\
+	24/document-print.svg						\
 	24/media-floppy.svg 						\
 	24/media-optical.svg						\
 												\
@@ -405,7 +409,6 @@ vector24_images = \
 	24/gimp-prefs-toolbox.svg			\
 	24/gimp-prefs-tool-options.svg			\
 	24/gimp-prefs-window-management.svg		\
-	24/gimp-print-resolution.svg			\
 	24/gimp-question.svg				\
 	24/gimp-resize.svg				\
 	24/gimp-sample-point.svg			\
@@ -490,14 +493,19 @@ icons16_images = \
 	16/document-new.png							\
 	16/document-open.png						\
 	16/document-open-recent.png					\
+	16/document-print.png						\
 	16/document-revert.png						\
 	16/document-save.png						\
 	16/document-save-as.png						\
 	16/edit-clear.png							\
+	16/edit-copy.png							\
 	16/edit-cut.png								\
+	16/edit-delete.png							\
 	16/edit-paste.png							\
 	16/edit-redo.png							\
 	16/edit-undo.png							\
+	16/folder.png								\
+	16/folder-new.png							\
 	16/go-bottom.png							\
 	16/go-down.png								\
 	16/go-first.png								\
@@ -538,7 +546,6 @@ icons16_images = \
 	16/gtk-yes.png								\
 												\
 	16/gimp-anchor.png							\
-	16/gimp-buffer.png							\
 	16/gimp-cap-butt.png						\
 	16/gimp-cap-round.png						\
 	16/gimp-cap-square.png						\
@@ -655,7 +662,6 @@ icons16_images = \
 	16/gimp-prefs-theme.png						\
 	16/gimp-prefs-toolbox.png					\
 	16/gimp-prefs-window-management.png			\
-	16/gimp-print-resolution.png				\
 	16/gimp-question.png						\
 	16/gimp-reset.png							\
 	16/gimp-reshow-filter.png					\
@@ -756,6 +762,7 @@ icons20_images = \
 	20/gimp-visible.png
 
 icons22_images = \
+	22/folder.png								\
 	22/format-indent-more.png					\
 												\
 	22/gtk-justify-center.png					\
@@ -777,6 +784,7 @@ icons22_images = \
 	22/gimp-prefs-controllers.png		\
 	22/gimp-prefs-default-grid.png		\
 	22/gimp-prefs-display.png		\
+	22/gimp-prefs-folders.png					\
 	22/gimp-prefs-folders-brushes.png	\
 	22/gimp-prefs-folders-dynamics.png	\
 	22/gimp-prefs-folders-environ.png	\
@@ -794,7 +802,6 @@ icons22_images = \
 	22/gimp-prefs-folders-tool-plug-ins.png	\
 	22/gimp-prefs-folders-tool-presets.png	\
 	22/gimp-prefs-folders-tools.png		\
-	22/gimp-prefs-folders.png		\
 	22/gimp-prefs-help-system.png		\
 	22/gimp-prefs-icon-theme.png		\
 	22/gimp-prefs-image-title.png		\
@@ -816,6 +823,7 @@ icons22_images = \
 
 icons24_images = \
 	24/dialog-information.png					\
+	24/document-print.png						\
 	24/media-floppy.png							\
 	24/media-optical.png 						\
 												\
@@ -868,7 +876,6 @@ icons24_images = \
 	24/gimp-layers.png			\
 	24/gimp-move-to-screen.png		\
 	24/gimp-navigation.png			\
-	24/gimp-print-resolution.png		\
 	24/gimp-question.png			\
 	24/gimp-resize.png			\
 	24/gimp-sample-point.png		\
@@ -960,6 +967,8 @@ icons32_images = \
 	32/gimp-wilber.png
 
 icons48_images = \
+	48/folder.png								\
+												\
 	48/gimp-channel-alpha.png		\
 	48/gimp-channel-blue.png		\
 	48/gimp-channel-gray.png		\
@@ -976,6 +985,7 @@ icons48_images = \
 	48/gimp-prefs-default-comment.png	\
 	48/gimp-prefs-default-grid.png		\
 	48/gimp-prefs-display.png		\
+	48/gimp-prefs-folders.png					\
 	48/gimp-prefs-folders-brushes.png	\
 	48/gimp-prefs-folders-dynamics.png	\
 	48/gimp-prefs-folders-environ.png	\
@@ -993,7 +1003,6 @@ icons48_images = \
 	48/gimp-prefs-folders-tool-plug-ins.png	\
 	48/gimp-prefs-folders-tool-presets.png	\
 	48/gimp-prefs-folders-tools.png		\
-	48/gimp-prefs-folders.png		\
 	48/gimp-prefs-help-system.png		\
 	48/gimp-prefs-icon-theme.png		\
 	48/gimp-prefs-image-title.png		\
