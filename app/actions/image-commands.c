@@ -291,49 +291,6 @@ image_convert_precision_cmd_callback (GtkAction *action,
 }
 
 void
-image_convert_gamma_cmd_callback (GtkAction *action,
-                                  GtkAction *current,
-                                  gpointer   data)
-{
-  GimpImage     *image;
-  GimpDisplay   *display;
-  gboolean       value;
-  GimpPrecision  precision;
-  return_if_no_image (image, data);
-  return_if_no_display (display, data);
-
-  value = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
-
-  if (value == gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
-                                                                         FALSE)))
-    return;
-
-  precision = gimp_babl_precision (gimp_image_get_component_type (image),
-                                   value);
-
-  gimp_image_convert_precision (image, precision, 0, 0, 0,
-                                GIMP_PROGRESS (display));
-  gimp_image_flush (image);
-}
-
-void
-image_color_management_enabled_cmd_callback (GtkAction *action,
-                                             gpointer   data)
-{
-  GimpImage *image;
-  gboolean   enabled;
-  return_if_no_image (image, data);
-
-  enabled = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
-
-  if (enabled != gimp_image_get_is_color_managed (image))
-    {
-      gimp_image_set_is_color_managed (image, enabled, TRUE);
-      gimp_image_flush (image);
-    }
-}
-
-void
 image_color_profile_assign_cmd_callback (GtkAction *action,
                                          gpointer   data)
 {
