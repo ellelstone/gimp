@@ -1653,7 +1653,6 @@ save_image (const gchar  *filename,
 #if defined(PNG_iCCP_SUPPORTED)
   {
     GimpColorProfile *profile;
-
     profile = gimp_image_get_color_profile (orig_image_ID);
 
     if (profile)
@@ -1662,27 +1661,25 @@ save_image (const gchar  *filename,
         gchar        *profile_name = NULL;
         const guint8 *icc_data;
         gsize         icc_length;
-
         icc_data = gimp_color_profile_get_icc_profile (profile, &icc_length);
-
         parasite = gimp_image_get_parasite (orig_image_ID,
-                                            "icc-profile-name");
+                                          "icc-profile-name");
         if (parasite)
-          profile_name = g_convert (gimp_parasite_data (parasite),
-                                    gimp_parasite_data_size (parasite),
-                                    "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
+        profile_name = g_convert (gimp_parasite_data (parasite),
+                                  gimp_parasite_data_size (parasite),
+                                  "UTF-8", "ISO-8859-1", NULL, NULL, NULL);
 
         png_set_iCCP (pp,
-                      info,
-                      profile_name ? profile_name : "ICC profile",
-                      0,
-                      (png_charp) icc_data,
-                      icc_length);
+                    info,
+                    profile_name ? profile_name : "ICC profile",
+                    0,
+                    icc_data,
+                    icc_length);
 
-      g_free (profile_name);
+        g_free (profile_name);
 
-      g_object_unref (profile);
-    }
+        g_object_unref (profile);
+      }
   }
 #endif
 
