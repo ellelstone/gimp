@@ -1844,7 +1844,20 @@ gimp_display_shell_get_event_coords (GimpDisplayShell *shell,
   Gimp              *gimp = gimp_display_get_gimp (shell->display);
   GimpDeviceManager *manager;
   GimpDeviceInfo    *current_device;
+  gboolean           pop_extension_events = FALSE;
 
+  if (shell->inferior_ignore_mode)
+    {
+      gdouble x;
+
+      if (! gdk_event_get_axis (event, GDK_AXIS_X, &x))
+        {
+          pop_extension_events = TRUE;
+          gdk_input_set_extension_events (gtk_widget_get_window (shell->canvas),
+                                          GDK_EXTENSION_EVENTS_ALL,
+                                          GDK_EXTENSION_EVENTS_ALL);
+        }
+    }
   manager = gimp_devices_get_manager (gimp);
   current_device = gimp_device_manager_get_current_device (manager);
 
@@ -1859,6 +1872,11 @@ gimp_display_shell_get_event_coords (GimpDisplayShell *shell,
                                     state);
 
   *time = gdk_event_get_time (event);
+
+  if (pop_extension_events)
+    gdk_input_set_extension_events (gtk_widget_get_window (shell->canvas),
+				    GDK_EXTENSION_EVENTS_ALL,
+				    GDK_EXTENSION_EVENTS_NONE);
 }
 
 static void
