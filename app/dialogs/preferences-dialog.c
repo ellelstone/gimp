@@ -436,7 +436,10 @@ static void
 prefs_color_management_reset (GtkWidget *widget,
                               GObject   *config)
 {
-  gimp_config_reset (GIMP_CONFIG (config));
+  GimpCoreConfig *core_config = GIMP_CORE_CONFIG (config);
+
+  gimp_config_reset (GIMP_CONFIG (core_config->color_management));
+  gimp_config_reset_property (config, "color-profile-policy");
 }
 
 static void
@@ -1108,7 +1111,7 @@ prefs_dialog_new (Gimp       *gimp,
                                                _("Reset Color Management"));
   g_signal_connect (button, "clicked",
                     G_CALLBACK (prefs_color_management_reset),
-                    core_config->color_management);
+                    config);
 
   {
     GObject      *color_config = G_OBJECT (core_config->color_management);
@@ -1822,6 +1825,70 @@ prefs_dialog_new (Gimp       *gimp,
                                      _("Color profile policy:"),
                                      GTK_TABLE (table), 0, size_group);  */
 
+  /*  Convert to Color Profile Dialog  */
+  vbox2 = prefs_frame_new (_("Convert to Color Profile Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_enum_combo_box_add (object, "image-convert-profile-intent", 0, 0,
+                            _("Rendering intent:"),
+                            GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "image-convert-profile-black-point-compensation",
+                          _("Black point compensation"),
+                          GTK_BOX (vbox2));
+
+  /*  Convert Precision Dialog  */
+  vbox2 = prefs_frame_new (_("Precision Conversion Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (3, GTK_CONTAINER (vbox2));
+
+  prefs_enum_combo_box_add (object,
+                            "image-convert-precision-layer-dither-method",
+                            0, 0,
+                            _("Dither layers:"),
+                            GTK_TABLE (table), 0, size_group);
+  prefs_enum_combo_box_add (object,
+                            "image-convert-precision-text-layer-dither-method",
+                            0, 0,
+                            _("Dither text layers:"),
+                            GTK_TABLE (table), 1, size_group);
+  prefs_enum_combo_box_add (object,
+                            "image-convert-precision-channel-dither-method",
+                            0, 0,
+                            _("Dither channels/masks:"),
+                            GTK_TABLE (table), 2, size_group);
+
+  /*  Convert Indexed Dialog
+  vbox2 = prefs_frame_new (_("Indexed Conversion Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (2, GTK_CONTAINER (vbox2));
+
+  prefs_enum_combo_box_add (object, "image-convert-indexed-palette-type", 0, 0,
+                            _("Colormap:"),
+                            GTK_TABLE (table), 0, size_group);
+  prefs_spin_button_add (object, "image-convert-indexed-max-colors", 1.0, 8.0, 0,
+                         _("Maximum number of colors:"),
+                         GTK_TABLE (table), 1, size_group);
+
+  prefs_check_button_add (object, "image-convert-indexed-remove-duplicates",
+                          _("Remove unused and duplicate colors "
+                            "from colormap"),
+                          GTK_BOX (vbox2));
+
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+  prefs_enum_combo_box_add (object, "image-convert-indexed-dither-type", 0, 0,
+                            _("Color dithering:"),
+                            GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "image-convert-indexed-dither-alpha",
+                          _("Enable dithering of transparency"),
+                          GTK_BOX (vbox2));
+  prefs_check_button_add (object, "image-convert-indexed-dither-text-layers",
+                          _("Enable dithering of text layers"),
+                          GTK_BOX (vbox2));*/
+
+
   /*  New Layer Dialog  */
   vbox2 = prefs_frame_new (_("New Layer Dialog"),
                            GTK_CONTAINER (vbox), FALSE);
@@ -1848,6 +1915,24 @@ prefs_dialog_new (Gimp       *gimp,
                           _("Invert mask"),
                           GTK_BOX (vbox2));
 
+  /*  Merge Layers Dialog  */
+  vbox2 = prefs_frame_new (_("Merge Layers Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_enum_combo_box_add (object, "layer-merge-type",
+                            GIMP_EXPAND_AS_NECESSARY,
+                            GIMP_CLIP_TO_BOTTOM_LAYER,
+                            _("Merged layer size:"),
+                            GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "layer-merge-active-group-only",
+                          _("Merge within active group only"),
+                          GTK_BOX (vbox2));
+  prefs_check_button_add (object, "layer-merge-discard-invisible",
+                          _("Discard invisible layers"),
+                          GTK_BOX (vbox2));
+
   /*  New Channel Dialog  */
   vbox2 = prefs_frame_new (_("New Channel Dialog"),
                            GTK_CONTAINER (vbox), FALSE);
@@ -1871,6 +1956,37 @@ prefs_dialog_new (Gimp       *gimp,
   prefs_entry_add (object, "path-new-name",
                    _("Path name:"),
                    GTK_TABLE (table), 0, size_group);
+
+  /*  Export Path Dialog  */
+  vbox2 = prefs_frame_new (_("Export Paths Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_file_chooser_button_add (object, "path-export-path",
+                                 _("Export folder:"),
+                                 _("Select Default Folder for Exporting Paths"),
+                                 GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "path-export-active-only",
+                          _("Export the active path only"),
+                          GTK_BOX (vbox2));
+
+  /*  Import Path Dialog  */
+  vbox2 = prefs_frame_new (_("Import Paths Dialog"),
+                           GTK_CONTAINER (vbox), FALSE);
+  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+
+  prefs_file_chooser_button_add (object, "path-import-path",
+                                 _("Import folder:"),
+                                 _("Select Default Folder for Importing Paths"),
+                                 GTK_TABLE (table), 0, size_group);
+
+  prefs_check_button_add (object, "path-import-merge",
+                          _("Merge imported paths"),
+                          GTK_BOX (vbox2));
+  prefs_check_button_add (object, "path-import-scale",
+                          _("Scale imported paths"),
+                          GTK_BOX (vbox2));
 
   /*  Feather Selection Dialog  */
   vbox2 = prefs_frame_new (_("Feather Selection Dialog"),
@@ -2554,7 +2670,7 @@ prefs_dialog_new (Gimp       *gimp,
     {
       const gchar *property_name;
       const gchar *label;
-      const gchar *fs_label;
+      const gchar *dialog_title;
     }
     dirs[] =
     {
@@ -2574,13 +2690,10 @@ prefs_dialog_new (Gimp       *gimp,
 
     for (i = 0; i < G_N_ELEMENTS (dirs); i++)
       {
-        button = gimp_prop_file_chooser_button_new (object,
-                                                    dirs[i].property_name,
-                                                    gettext (dirs[i].fs_label),
-                                                    GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
-        gimp_table_attach_aligned (GTK_TABLE (table), 0, i,
-                                   gettext (dirs[i].label), 0.0, 0.5,
-                                   button, 1, FALSE);
+        prefs_file_chooser_button_add (object, dirs[i].property_name,
+                                       gettext (dirs[i].label),
+                                       gettext (dirs[i].dialog_title),
+                                       GTK_TABLE (table), i, NULL);
       }
   }
 

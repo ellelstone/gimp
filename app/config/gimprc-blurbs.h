@@ -420,7 +420,41 @@ _("Sets the folder for temporary storage. Files will appear here " \
 #define ICON_THEME_PATH_BLURB \
 "Sets the icon theme search path."
 
-#define LAYER_NEW_NAME_BLURB \
+#define IMAGE_CONVERT_PROFILE_INTENT_BLURB \
+_("Sets the default rendering intent for the 'Convert to Color Profile' dialog.")
+
+#define IMAGE_CONVERT_PROFILE_BPC_BLURB \
+_("Sets the default 'Black Point Compensation' state for the " \
+  "'Convert to Color Profile' dialog.")
+
+#define IMAGE_CONVERT_PRECISION_LAYER_DITHER_METHOD_BLURB \
+_("Sets the default layer dithering method for the 'Convert Precision' dialog.")
+
+#define IMAGE_CONVERT_PRECISION_TEXT_LAYER_DITHER_METHOD_BLURB \
+_("Sets the default text layer dithering method for the 'Convert Precision' dialog.")
+
+#define IMAGE_CONVERT_PRECISION_CHANNEL_DITHER_METHOD_BLURB \
+_("Sets the default channel dithering method for the 'Convert Precision' dialog.")
+
+/*#define IMAGE_CONVERT_INDEXED_PALETTE_TYPE_BLURB \
+_("Sets the default palette type for the 'Convert to Indexed' dialog.")
+
+#define IMAGE_CONVERT_INDEXED_MAX_COLORS_BLURB \
+_("Sets the default maximum number of colors for the 'Convert to Indexed' dialog.")
+
+#define IMAGE_CONVERT_INDEXED_REMOVE_DUPLICATES_BLURB \
+_("Sets the default 'Remove duplicate colors' state for the 'Convert to Indexed' dialog.")
+
+#define IMAGE_CONVERT_INDEXED_DITHER_TYPE_BLURB                         \
+_("Sets the default dithering type for the 'Convert to Indexed' dialog.")
+
+#define IMAGE_CONVERT_INDEXED_DITHER_ALPHA_BLURB \
+_("Sets the default 'Dither alpha' state for the 'Convert to Indexed' dialog.")
+
+#define IMAGE_CONVERT_INDEXED_DITHER_TEXT_LAYERS_BLURB \
+_("Sets the default 'Dither text layers' state for the 'Convert to Indexed' dialog.")*/
+
+#define LAYER_NEW_NAME_BLURB                                    \
 _("Sets the default layer name for the 'New Layer' dialog.")
 
 #define LAYER_NEW_FILL_TYPE_BLURB \
@@ -432,6 +466,15 @@ _("Sets the default mask for the 'Add Layer Mask' dialog.")
 #define LAYER_ADD_MASK_INVERT_BLURB \
 _("Sets the default 'invert mask' state for the 'Add Layer Mask' dialog.")
 
+#define LAYER_MERGE_TYPE_BLURB \
+_("Sets the default merge type for the 'Merge Visible Layers' dialog.")
+
+#define LAYER_MERGE_ACTIVE_GROUP_ONLY_BLURB \
+_("Sets the default 'Active group only' for the 'Merge Visible Layers' dialog.")
+
+#define LAYER_MERGE_DISCARD_INVISIBLE_BLURB \
+_("Sets the default 'Discard invisible' for the 'Merge Visible Layers' dialog.")
+
 #define CHANNEL_NEW_NAME_BLURB \
 _("Sets the default channel name for the 'New Channel' dialog.")
 
@@ -440,6 +483,21 @@ _("Sets the default color and opacity for the 'New Channel' dialog.")
 
 #define VECTORS_NEW_NAME_BLURB \
 _("Sets the default path name for the 'New Path' dialog.")
+
+#define VECTORS_EXPORT_PATH_BLURB \
+_("Sets the default folder path for the 'Export Path' dialog.")
+
+#define VECTORS_EXPORT_ACTIVE_ONLY_BLURB \
+_("Sets the default 'Export the active path' state for the 'Export Path' dialog.")
+
+#define VECTORS_IMPORT_PATH_BLURB \
+_("Sets the default folder path for the 'Import Path' dialog.")
+
+#define VECTORS_IMPORT_MERGE_BLURB \
+_("Sets the default 'Merge imported paths' state for the 'Import Path' dialog.")
+
+#define VECTORS_IMPORT_SCALE_BLURB \
+_("Sets the default 'Scale imported paths to fit size' state for the 'Import Path' dialog.")
 
 #define SELECTION_FEATHER_RADIUS_BLURB \
 _("Sets the default feather radius for the 'Feather Selection' dialog.")

@@ -42,34 +42,59 @@ typedef struct _GimpDialogConfigClass GimpDialogConfigClass;
 
 struct _GimpDialogConfig
 {
-  GimpGuiConfig           parent_instance;
+  GimpGuiConfig             parent_instance;
 
-  GimpColorProfilePolicy  color_profile_policy;
+  GimpColorProfilePolicy    color_profile_policy;
 
-  gchar                  *layer_new_name;
-  GimpFillType            layer_new_fill_type;
+  GimpColorRenderingIntent  image_convert_profile_intent;
+  gboolean                  image_convert_profile_bpc;
 
-  GimpAddMaskType         layer_add_mask_type;
-  gboolean                layer_add_mask_invert;
+  GeglDitherMethod          image_convert_precision_layer_dither_method;
+  GeglDitherMethod          image_convert_precision_text_layer_dither_method;
+  GeglDitherMethod          image_convert_precision_channel_dither_method;
 
-  gchar                  *channel_new_name;
-  GimpRGB                 channel_new_color;
+/*  GimpConvertPaletteType    image_convert_indexed_palette_type;
+  gint                      image_convert_indexed_max_colors;
+  gboolean                  image_convert_indexed_remove_duplicates;
+  GimpConvertDitherType     image_convert_indexed_dither_type;
+  gboolean                  image_convert_indexed_dither_alpha;
+  gboolean                  image_convert_indexed_dither_text_layers;*/
 
-  gchar                  *vectors_new_name;
+  gchar                    *layer_new_name;
+  GimpFillType              layer_new_fill_type;
 
-  gdouble                 selection_feather_radius;
+  GimpAddMaskType           layer_add_mask_type;
+  gboolean                  layer_add_mask_invert;
 
-  gdouble                 selection_grow_radius;
+  GimpMergeType             layer_merge_type;
+  gboolean                  layer_merge_active_group_only;
+  gboolean                  layer_merge_discard_invisible;
 
-  gdouble                 selection_shrink_radius;
-  gboolean                selection_shrink_edge_lock;
+  gchar                    *channel_new_name;
+  GimpRGB                   channel_new_color;
 
-  gdouble                 selection_border_radius;
-  gboolean                selection_border_edge_lock;
-  GimpChannelBorderStyle  selection_border_style;
+  gchar                    *vectors_new_name;
 
-  GimpFillOptions        *fill_options;
-  GimpStrokeOptions      *stroke_options;
+  gchar                    *vectors_export_path;
+  gboolean                  vectors_export_active_only;
+
+  gchar                    *vectors_import_path;
+  gboolean                  vectors_import_merge;
+  gboolean                  vectors_import_scale;
+
+  gdouble                   selection_feather_radius;
+
+  gdouble                   selection_grow_radius;
+
+  gdouble                   selection_shrink_radius;
+  gboolean                  selection_shrink_edge_lock;
+
+  gdouble                   selection_border_radius;
+  gboolean                  selection_border_edge_lock;
+  GimpChannelBorderStyle    selection_border_style;
+
+  GimpFillOptions          *fill_options;
+  GimpStrokeOptions        *stroke_options;
 };
 
 struct _GimpDialogConfigClass
