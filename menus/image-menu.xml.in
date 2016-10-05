@@ -53,8 +53,8 @@
       <placeholder name="Send" />
       <separator />
       <placeholder name="Info">
-  <menuitem action="file-copy-location" />
-  <menuitem action="file-show-in-file-manager" />
+	<menuitem action="file-copy-location" />
+	<menuitem action="file-show-in-file-manager" />
       </placeholder>
       <separator />
       <menuitem action="view-close" />
@@ -173,6 +173,7 @@
         <menuitem action="context-font-select-next" />
       </menu>
     </menu>
+
 -->
 
     <menu action="edit-menu" name="Edit">
@@ -312,12 +313,13 @@
   </menu>
         <menuitem action="view-display-black-point-compensation" />
         <separator />
-  <menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
+        <menuitem action="view-softproof-profile" />
+	<menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
           <menuitem action="view-softproof-intent-perceptual" />
           <menuitem action="view-softproof-intent-relative-colorimetric" />
           <menuitem action="view-softproof-intent-saturation" />
           <menuitem action="view-softproof-intent-absolute-colorimetric" />
-  </menu>
+	</menu>
         <menuitem action="view-softproof-black-point-compensation" />
         <menuitem action="view-softproof-gamut-check" />
         <separator />

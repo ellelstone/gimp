@@ -1817,7 +1817,7 @@ prefs_dialog_new (Gimp       *gimp,
   size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   /*  Color profile import dialog
-  vbox2 = prefs_frame_new (_("Color Profile Import dialog"), GTK_CONTAINER (vbox),
+  vbox2 = prefs_frame_new (_("Color Profile Import Dialog"), GTK_CONTAINER (vbox),
                            FALSE);
   table = prefs_table_new (1, GTK_CONTAINER (vbox2));
 
@@ -2608,6 +2608,10 @@ prefs_dialog_new (Gimp       *gimp,
   /*  Extended Input Devices  */
   vbox2 = prefs_frame_new (_("Extended Input Devices"),
                            GTK_CONTAINER (vbox), FALSE);
+
+  prefs_check_button_add (object, "devices-share-tool",
+                          _("S_hare tool and tool options between input devices"),
+                          GTK_BOX (vbox2));
 
   button = prefs_button_add ("preferences-system",
                              _("Configure E_xtended Input Devices..."),

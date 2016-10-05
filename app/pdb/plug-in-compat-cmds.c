@@ -1921,22 +1921,33 @@ plug_in_icc_profile_apply_invoker (GimpProcedure         *procedure,
     {
       if (gimp_pdb_image_is_not_base_type (image, GIMP_GRAY, error))
         {
-          GFile            *file = NULL;
-          GimpColorProfile *p    = NULL;
+          GimpColorProfile *p = NULL;
 
           if (profile)
-            file = g_file_new_for_path (profile);
-          else if (image->gimp->config->color_management->rgb_profile)
-            file = g_file_new_for_path (image->gimp->config->color_management->rgb_profile);
-
-          if (file)
             {
-              p = gimp_color_profile_new_from_file (file, error);
+              GFile *file = g_file_new_for_path (profile);
+
+              if (file)
+                {
+                  p = gimp_color_profile_new_from_file (file, error);
+
+                  if (! p)
+                    success = FALSE;
+
+                  g_object_unref (file);
+                }
+              else
+                {
+                  success = FALSE;
+                }
+            }
+          else if (image->gimp->config->color_management->rgb_profile)
+            {
+              p = gimp_color_config_get_rgb_color_profile (image->gimp->config->color_management,
+                                                           error);
 
               if (! p)
                 success = FALSE;
-
-              g_object_unref (file);
             }
 
           if (success)
@@ -1977,20 +1988,15 @@ plug_in_icc_profile_apply_rgb_invoker (GimpProcedure         *procedure,
     {
       if (gimp_pdb_image_is_not_base_type (image, GIMP_GRAY, error))
         {
-          GFile            *file = NULL;
-          GimpColorProfile *p    = NULL;
+          GimpColorProfile *p = NULL;
 
           if (image->gimp->config->color_management->rgb_profile)
-            file = g_file_new_for_path (image->gimp->config->color_management->rgb_profile);
-
-          if (file)
             {
-              p = gimp_color_profile_new_from_file (file, error);
+              p = gimp_color_config_get_rgb_color_profile (image->gimp->config->color_management,
+                                                           error);
 
               if (! p)
                 success = FALSE;
-
-              g_object_unref (file);
             }
 
           if (success)
@@ -1998,8 +2004,8 @@ plug_in_icc_profile_apply_rgb_invoker (GimpProcedure         *procedure,
               if (! p)
                 p = gimp_image_get_builtin_color_profile (image);
 
-             success = gimp_image_convert_color_profile (image, p, intent, bpc,
-                                                         progress, error);
+              success = gimp_image_convert_color_profile (image, p, intent, bpc,
+                                                          progress, error);
             }
         }
       else
@@ -2029,22 +2035,31 @@ plug_in_icc_profile_set_invoker (GimpProcedure         *procedure,
     {
       if (gimp_pdb_image_is_not_base_type (image, GIMP_GRAY, error))
         {
-          GFile            *file = NULL;
-          GimpColorProfile *p    = NULL;
+          GimpColorProfile *p = NULL;
 
           if (profile)
-            file = g_file_new_for_path (profile);
-          else if (image->gimp->config->color_management->rgb_profile)
-            file = g_file_new_for_path (image->gimp->config->color_management->rgb_profile);
-
-          if (file)
             {
-              p = gimp_color_profile_new_from_file (file, error);
+              GFile *file = g_file_new_for_path (profile);
+
+              if (file)
+                {
+                  p = gimp_color_profile_new_from_file (file, error);
+
+                  if (! p)
+                    success = FALSE;
+
+                  g_object_unref (file);
+                }
+              else
+                success = FALSE;
+            }
+          else if (image->gimp->config->color_management->rgb_profile)
+            {
+              p = gimp_color_config_get_rgb_color_profile (image->gimp->config->color_management,
+                                                           error);
 
               if (! p)
                 success = FALSE;
-
-              g_object_unref (file);
             }
 
           if (success)
@@ -2091,20 +2106,15 @@ plug_in_icc_profile_set_rgb_invoker (GimpProcedure         *procedure,
     {
       if (gimp_pdb_image_is_not_base_type (image, GIMP_GRAY, error))
         {
-          GFile            *file = NULL;
-          GimpColorProfile *p    = NULL;
+          GimpColorProfile *p = NULL;
 
           if (image->gimp->config->color_management->rgb_profile)
-            file = g_file_new_for_path (image->gimp->config->color_management->rgb_profile);
-
-          if (file)
             {
-              p = gimp_color_profile_new_from_file (file, error);
+              p = gimp_color_config_get_rgb_color_profile (image->gimp->config->color_management,
+                                                           error);
 
               if (! p)
                 success = FALSE;
-
-              g_object_unref (file);
             }
 
           if (success)
