@@ -402,7 +402,7 @@ GType gimp_image_base_type_get_type (void) G_GNUC_CONST;
 typedef enum
 {
   GIMP_RGB,     /*< desc="RGB color"     >*/
-  GIMP_GRAY,    /*< desc="Grayscale"     >*/
+  GIMP_GRAY    /*< desc="Grayscale"     >*/
 /*  GIMP_INDEXED  < desc="Indexed color" >*/
 } GimpImageBaseType;
 
