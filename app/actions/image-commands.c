@@ -120,12 +120,12 @@ static void   image_profile_convert_callback   (GtkWidget                *dialog
 static void   image_resize_callback            (GtkWidget              *dialog,
                                                 GimpViewable           *viewable,
                                                 GimpContext            *context,
-                                                GimpFillType            fill_type,
                                                 gint                    width,
                                                 gint                    height,
                                                 GimpUnit                unit,
                                                 gint                    offset_x,
                                                 gint                    offset_y,
+                                                GimpFillType            fill_type,
                                                 GimpItemSet             layer_set,
                                                 gboolean                resize_text_layers,
                                                 gpointer                user_data);
@@ -557,15 +557,22 @@ image_resize_cmd_callback (GtkAction *action,
 
   if (! dialog)
     {
+      GimpDialogConfig *config = GIMP_DIALOG_CONFIG (image->gimp->config);
+
       if (image_resize_unit != GIMP_UNIT_PERCENT)
         image_resize_unit = gimp_display_get_shell (display)->unit;
 
       dialog = resize_dialog_new (GIMP_VIEWABLE (image),
                                   action_data_get_context (data),
-                                  _("Set Image Canvas Size"), "gimp-image-resize",
+                                  _("Set Image Canvas Size"),
+                                  "gimp-image-resize",
                                   widget,
-                                  gimp_standard_help_func, GIMP_HELP_IMAGE_RESIZE,
+                                  gimp_standard_help_func,
+                                  GIMP_HELP_IMAGE_RESIZE,
                                   image_resize_unit,
+                                  config->image_resize_fill_type,
+                                  config->image_resize_layer_set,
+                                  config->image_resize_resize_text_layers,
                                   image_resize_callback,
                                   display);
 
@@ -1138,12 +1145,12 @@ static void
 image_resize_callback (GtkWidget    *dialog,
                        GimpViewable *viewable,
                        GimpContext  *context,
-                       GimpFillType  fill_type,
                        gint          width,
                        gint          height,
                        GimpUnit      unit,
                        gint          offset_x,
                        gint          offset_y,
+                       GimpFillType  fill_type,
                        GimpItemSet   layer_set,
                        gboolean      resize_text_layers,
                        gpointer      user_data)
@@ -1154,8 +1161,15 @@ image_resize_callback (GtkWidget    *dialog,
 
   if (width > 0 && height > 0)
     {
-      GimpImage    *image = GIMP_IMAGE (viewable);
-      GimpProgress *progress;
+      GimpImage        *image  = GIMP_IMAGE (viewable);
+      GimpDialogConfig *config = GIMP_DIALOG_CONFIG (image->gimp->config);
+      GimpProgress     *progress;
+
+      g_object_set (config,
+                    "image-resize-fill-type",          fill_type,
+                    "image-resize-layer-set",          layer_set,
+                    "image-resize-resize-text-layers", resize_text_layers,
+                    NULL);
 
       gtk_widget_destroy (dialog);
 
@@ -1240,6 +1254,8 @@ image_scale_callback (GtkWidget              *dialog,
 
   if (width > 0 && height > 0)
     {
+      gtk_widget_destroy (dialog);
+
       if (width           == gimp_image_get_width  (image) &&
           height          == gimp_image_get_height (image) &&
           xresolution     == xres                          &&

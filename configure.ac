@@ -69,7 +69,7 @@ m4_define([libgudev_required_version], [167])
 m4_define([gexiv2_required_version], [0.6.1])
 m4_define([libmypaint_required_version], [1.3.0])
 m4_define([lcms_required_version], [2.7])
-m4_define([libpng_required_version], [1.2.37])
+m4_define([libpng_required_version], [1.6.25])
 m4_define([liblzma_required_version], [5.0.0])
 m4_define([openexr_required_version], [1.6.1])
 m4_define([gtk_mac_integration_required_version], [2.0.0])
@@ -728,14 +728,6 @@ if test "x$GDK_PIXBUF_CSOURCE" = xno; then
   add_deps_error([gdk-pixbuf-csource],
                  [Could not find gdk-pixbuf-csource in your PATH.])
 fi
-
-AC_MSG_CHECKING([if GdkPixbuf is version 2.31.0 or newer])
-if $PKG_CONFIG --atleast-version=2.31.0 gdk-pixbuf-2.0; then
-  have_gdk_pixbuf_2_31=yes
-else
-  have_gdk_pixbuf_2_31=no
-fi
-AC_MSG_RESULT($have_gdk_pixbuf_2_31)
 
 PKG_CHECK_MODULES(CAIRO, cairo >= cairo_required_version,,
                   [add_deps_error([cairo >= cairo_required_version])])
@@ -1618,23 +1610,10 @@ AM_CONDITIONAL(HAVE_WEBKIT, test "x$have_webkit" = xyes)
 # Check for librsvg
 ###################
 
-AC_ARG_WITH(librsvg,[  --without-librsvg       build without librsvg support])
+PKG_CHECK_MODULES(SVG, librsvg-2.0 >= rsvg_required_version,,
+                  [add_deps_error([rsvg >= rsvg_required_version])])
 
-have_librsvg=no
-if test "x$with_librsvg" != xno; then
-  have_librsvg=yes
-  PKG_CHECK_MODULES(SVG, librsvg-2.0 >= rsvg_required_version,
-    FILE_SVG='file-svg$(EXEEXT)',
-    have_librsvg="no (librsvg not found)")
-else
-   have_librsvg="no (librsvg support disabled)"
-fi
-
-if test "x$have_librsvg" = xyes; then
-  MIME_TYPES="$MIME_TYPES;image/svg+xml"
-fi
-
-AC_SUBST(FILE_SVG)
+MIME_TYPES="$MIME_TYPES;image/svg+xml"
 
 
 ####################################
@@ -2084,6 +2063,7 @@ AM_CONDITIONAL(HAVE_XMLLINT, test "x$XMLLINT" != "xno")
 AC_PATH_PROG(XSLTPROC, xsltproc, no)
 AM_CONDITIONAL(HAVE_XSLTPROC, test "x$XSLTPROC" != "xno")
 
+
 ########################
 # Check for vector icons
 ########################
@@ -2092,21 +2072,17 @@ AC_ARG_ENABLE(vector-icons, [  --enable-vector-icons   generate vector icons], ,
               enable_vector_icons=no)
 
 if test "x$enable_vector_icons" = "xyes"; then
-  if test "x$have_librsvg" != "xyes"; then
-    enable_vector_icons="no (librsvg missing)"
+  # Check if librsvg was built with --disable-pixbuf-loader.
+  gdk_pixbuf_moduledir=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
+  # AC_CHECK_FILE macro does not work when cross-compiling and exits with:
+  # error: cannot check for file existence when cross compiling
+  # So let's test files the shell way.
+  if (test "x$platform_win32" = "xyes" &&
+      test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.dll") ||
+     test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.so"; then
+    enable_vector_icons="yes"
   else
-    # Check if librsvg was built with --disable-pixbuf-loader.
-    gdk_pixbuf_moduledir=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
-    # AC_CHECK_FILE macro does not work when cross-compiling and exits with:
-    # error: cannot check for file existence when cross compiling
-    # So let's test files the shell way.
-    if (test "x$platform_win32" = "xyes" &&
-        test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.dll") ||
-       test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.so"; then
-      enable_vector_icons="yes"
-    else
-      enable_vector_icons="no (librsvg GdkPixbuf loader missing)"
-    fi
+    enable_vector_icons="no (librsvg GdkPixbuf loader missing)"
   fi
 fi
 
@@ -2254,10 +2230,6 @@ fi
 
 if test "x$have_gtk_2_26" != "xyes"; then
   CPPFLAGS="${CPPFLAGS} -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED"
-fi
-
-if test "x$have_gdk_pixbuf_2_31" != "xyes"; then
-  CPPFLAGS="${CPPFLAGS} -DGDK_PIXBUF_DISABLE_DEPRECATED"
 fi
 
 if test "x$have_pango_1_32" != "xyes"; then
@@ -2577,7 +2549,6 @@ Optional Plug-Ins:
   Print:               $enable_print
   Python 2:            $enable_python
   Script-Fu:           $have_script_fu
-  SVG:                 $have_librsvg
   TWAIN (Win32):       $os_win32
   Webpage:             $have_webkit
   WMF:                 $have_libwmf

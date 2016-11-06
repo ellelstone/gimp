@@ -60,8 +60,16 @@ struct _GimpDialogConfig
   gboolean                  image_convert_indexed_dither_alpha;
   gboolean                  image_convert_indexed_dither_text_layers;*/
 
+  GimpFillType              image_resize_fill_type;
+  GimpItemSet               image_resize_layer_set;
+  gboolean                  image_resize_resize_text_layers;
+
   gchar                    *layer_new_name;
+  GimpLayerModeEffects      layer_new_mode;
+  gdouble                   layer_new_opacity;
   GimpFillType              layer_new_fill_type;
+
+  GimpFillType              layer_resize_fill_type;
 
   GimpAddMaskType           layer_add_mask_type;
   gboolean                  layer_add_mask_invert;

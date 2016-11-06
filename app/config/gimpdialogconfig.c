@@ -62,8 +62,16 @@ enum
   PROP_IMAGE_CONVERT_INDEXED_DITHER_ALPHA,
   PROP_IMAGE_CONVERT_INDEXED_DITHER_TEXT_LAYERS,*/
 
+  PROP_IMAGE_RESIZE_FILL_TYPE,
+  PROP_IMAGE_RESIZE_LAYER_SET,
+  PROP_IMAGE_RESIZE_RESIZE_TEXT_LAYERS,
+
   PROP_LAYER_NEW_NAME,
+  PROP_LAYER_NEW_MODE,
+  PROP_LAYER_NEW_OPACITY,
   PROP_LAYER_NEW_FILL_TYPE,
+
+  PROP_LAYER_RESIZE_FILL_TYPE,
 
   PROP_LAYER_ADD_MASK_TYPE,
   PROP_LAYER_ADD_MASK_INVERT,
@@ -256,6 +264,29 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                             FALSE,
                             GIMP_PARAM_STATIC_STRINGS);*/
 
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_IMAGE_RESIZE_FILL_TYPE,
+                         "image-resize-fill-type",
+                         "Default image resize fill type",
+                         IMAGE_RESIZE_FILL_TYPE_BLURB,
+                         GIMP_TYPE_FILL_TYPE,
+                         GIMP_FILL_TRANSPARENT,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_IMAGE_RESIZE_LAYER_SET,
+                         "image-resize-layer-set",
+                         "Default image resize layer set",
+                         IMAGE_RESIZE_LAYER_SET_BLURB,
+                         GIMP_TYPE_ITEM_SET,
+                         GIMP_ITEM_SET_NONE,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_IMAGE_RESIZE_RESIZE_TEXT_LAYERS,
+                            "image-resize-resize-text-layers",
+                            "Default image resize text layers",
+                            IMAGE_RESIZE_RESIZE_TEXT_LAYERS_BLURB,
+                            FALSE,
+                            GIMP_PARAM_STATIC_STRINGS);
+
   GIMP_CONFIG_PROP_STRING (object_class, PROP_LAYER_NEW_NAME,
                            "layer-new-name",
                            "Default new layer name",
@@ -263,10 +294,34 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                            _("Layer"),
                            GIMP_PARAM_STATIC_STRINGS);
 
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_MODE,
+                         "layer-new-mode",
+                         "Default new layer mode",
+                         LAYER_NEW_MODE_BLURB,
+                         GIMP_TYPE_LAYER_MODE_EFFECTS,
+                         GIMP_NORMAL_MODE,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_LAYER_NEW_OPACITY,
+                           "layer-new-opacity",
+                           "Default new layer opacity",
+                           LAYER_NEW_OPACITY_BLURB,
+                           GIMP_OPACITY_TRANSPARENT, GIMP_OPACITY_OPAQUE,
+                           GIMP_OPACITY_OPAQUE,
+                           GIMP_PARAM_STATIC_STRINGS);
+
   GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_FILL_TYPE,
                          "layer-new-fill-type",
                          "Default new layer fill type",
                          LAYER_NEW_FILL_TYPE_BLURB,
+                         GIMP_TYPE_FILL_TYPE,
+                         GIMP_FILL_TRANSPARENT,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_RESIZE_FILL_TYPE,
+                         "layer-resize-fill-type",
+                         "Default layer resize fill type",
+                         LAYER_RESIZE_FILL_TYPE_BLURB,
                          GIMP_TYPE_FILL_TYPE,
                          GIMP_FILL_TRANSPARENT,
                          GIMP_PARAM_STATIC_STRINGS);
@@ -567,13 +622,33 @@ gimp_dialog_config_set_property (GObject      *object,
       config->image_convert_indexed_dither_text_layers = g_value_get_boolean (value);
       break;*/
 
+    case PROP_IMAGE_RESIZE_FILL_TYPE:
+      config->image_resize_fill_type = g_value_get_enum (value);
+      break;
+    case PROP_IMAGE_RESIZE_LAYER_SET:
+      config->image_resize_layer_set = g_value_get_enum (value);
+      break;
+    case PROP_IMAGE_RESIZE_RESIZE_TEXT_LAYERS:
+      config->image_resize_resize_text_layers = g_value_get_boolean (value);
+      break;
+
     case PROP_LAYER_NEW_NAME:
       if (config->layer_new_name)
         g_free (config->layer_new_name);
       config->layer_new_name = g_value_dup_string (value);
       break;
+    case PROP_LAYER_NEW_MODE:
+      config->layer_new_mode = g_value_get_enum (value);
+      break;
+    case PROP_LAYER_NEW_OPACITY:
+      config->layer_new_opacity = g_value_get_double (value);
+      break;
     case PROP_LAYER_NEW_FILL_TYPE:
       config->layer_new_fill_type = g_value_get_enum (value);
+      break;
+
+    case PROP_LAYER_RESIZE_FILL_TYPE:
+      config->layer_resize_fill_type = g_value_get_enum (value);
       break;
 
     case PROP_LAYER_ADD_MASK_TYPE:
@@ -729,11 +804,31 @@ gimp_dialog_config_get_property (GObject    *object,
       g_value_set_boolean (value, config->image_convert_indexed_dither_text_layers);
       break;*/
 
+    case PROP_IMAGE_RESIZE_FILL_TYPE:
+      g_value_set_enum (value, config->image_resize_fill_type);
+      break;
+    case PROP_IMAGE_RESIZE_LAYER_SET:
+      g_value_set_enum (value, config->image_resize_layer_set);
+      break;
+    case PROP_IMAGE_RESIZE_RESIZE_TEXT_LAYERS:
+      g_value_set_boolean (value, config->image_resize_resize_text_layers);
+      break;
+
     case PROP_LAYER_NEW_NAME:
       g_value_set_string (value, config->layer_new_name);
       break;
+    case PROP_LAYER_NEW_MODE:
+      g_value_set_enum (value, config->layer_new_mode);
+      break;
+    case PROP_LAYER_NEW_OPACITY:
+      g_value_set_double (value, config->layer_new_opacity);
+      break;
     case PROP_LAYER_NEW_FILL_TYPE:
       g_value_set_enum (value, config->layer_new_fill_type);
+      break;
+
+    case PROP_LAYER_RESIZE_FILL_TYPE:
+      g_value_set_enum (value, config->layer_resize_fill_type);
       break;
 
     case PROP_LAYER_ADD_MASK_TYPE:

@@ -43,12 +43,13 @@
 #define SB_WIDTH       8
 
 
-typedef struct
+typedef struct _ResizeDialog ResizeDialog;
+
+struct _ResizeDialog
 {
   GimpViewable       *viewable;
   GimpContext        *context;
   GimpFillType        fill_type;
-  GimpUnit            old_unit;
   GimpItemSet         layer_set;
   gboolean            resize_text_layers;
   GimpResizeCallback  callback;
@@ -56,17 +57,27 @@ typedef struct
 
   gint                old_width;
   gint                old_height;
+  GimpUnit            old_unit;
+  GimpFillType        old_fill_type;
+  GimpItemSet         old_layer_set;
+  gboolean            old_resize_text_layers;
+
   GtkWidget          *box;
   GtkWidget          *offset;
   GtkWidget          *area;
-} ResizeDialog;
+  GtkWidget          *layer_set_combo;
+  GtkWidget          *fill_type_combo;
+  GtkWidget          *text_layers_button;
+};
 
 
+/*  local function prototypes  */
+
+static void   resize_dialog_free     (ResizeDialog *private);
 static void   resize_dialog_response (GtkWidget    *dialog,
                                       gint          response_id,
                                       ResizeDialog *private);
 static void   resize_dialog_reset    (ResizeDialog *private);
-static void   resize_dialog_free     (ResizeDialog *private);
 
 static void   size_notify            (GimpSizeBox  *box,
                                       GParamSpec   *pspec,
@@ -81,6 +92,8 @@ static void   offset_center_clicked  (GtkWidget    *widget,
                                       ResizeDialog *private);
 
 
+/*  public function  */
+
 GtkWidget *
 resize_dialog_new (GimpViewable       *viewable,
                    GimpContext        *context,
@@ -90,6 +103,9 @@ resize_dialog_new (GimpViewable       *viewable,
                    GimpHelpFunc        help_func,
                    const gchar        *help_id,
                    GimpUnit            unit,
+                   GimpFillType        fill_type,
+                   GimpItemSet         layer_set,
+                   gboolean            resize_text_layers,
                    GimpResizeCallback  callback,
                    gpointer            user_data)
 {
@@ -148,14 +164,18 @@ resize_dialog_new (GimpViewable       *viewable,
 
   private->viewable           = viewable;
   private->context            = context;
-  private->fill_type          = GIMP_FILL_TRANSPARENT;
-  private->old_unit           = unit;
-  private->layer_set          = GIMP_ITEM_SET_NONE;
-  private->resize_text_layers = FALSE;
+  private->fill_type          = fill_type;
+  private->layer_set          = layer_set;
+  private->resize_text_layers = resize_text_layers;
   private->callback           = callback;
   private->user_data          = user_data;
-  private->old_width          = width;
-  private->old_height         = height;
+
+  private->old_width              = width;
+  private->old_height             = height;
+  private->old_unit               = unit;
+  private->old_fill_type          = private->fill_type;
+  private->old_layer_set          = private->layer_set;
+  private->old_resize_text_layers = private->resize_text_layers;
 
   dialog = gimp_viewable_dialog_new (viewable, context,
                                      title, role, GIMP_STOCK_RESIZE, title,
@@ -168,13 +188,13 @@ resize_dialog_new (GimpViewable       *viewable,
 
                                      NULL);
 
-  gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
-
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
                                            RESPONSE_RESET,
                                            GTK_RESPONSE_OK,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
+
+  gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
 
   g_object_weak_ref (G_OBJECT (dialog),
                      (GWeakNotify) resize_dialog_free, private);
@@ -315,7 +335,8 @@ resize_dialog_new (GimpViewable       *viewable,
 
       gtk_size_group_add_widget (size_group, label);
 
-      combo = gimp_enum_combo_box_new (GIMP_TYPE_ITEM_SET);
+      private->layer_set_combo = combo =
+        gimp_enum_combo_box_new (GIMP_TYPE_ITEM_SET);
       gtk_box_pack_start (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
       gtk_widget_show (combo);
 
@@ -331,7 +352,8 @@ resize_dialog_new (GimpViewable       *viewable,
   gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  combo = gimp_enum_combo_box_new (GIMP_TYPE_FILL_TYPE);
+  private->fill_type_combo = combo =
+    gimp_enum_combo_box_new (GIMP_TYPE_FILL_TYPE);
   gtk_box_pack_end (GTK_BOX (hbox), combo, TRUE, TRUE, 0);
   gtk_widget_show (combo);
 
@@ -353,7 +375,8 @@ resize_dialog_new (GimpViewable       *viewable,
 
       gtk_size_group_add_widget (size_group, label);
 
-      button = gtk_check_button_new_with_mnemonic (_("Resize _text layers"));
+      private->text_layers_button = button =
+        gtk_check_button_new_with_mnemonic (_("Resize _text layers"));
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button),
                                     private->resize_text_layers);
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
@@ -363,10 +386,23 @@ resize_dialog_new (GimpViewable       *viewable,
                         G_CALLBACK (gimp_toggle_button_update),
                         &private->resize_text_layers);
 
+      gimp_help_set_help_data (button,
+                               _("Resizing text layers will make them uneditable"),
+                               NULL);
+
       g_object_unref (size_group);
     }
 
   return dialog;
+}
+
+
+/*  private functions  */
+
+static void
+resize_dialog_free (ResizeDialog *private)
+{
+  g_slice_free (ResizeDialog, private);
 }
 
 static void
@@ -395,12 +431,12 @@ resize_dialog_response (GtkWidget    *dialog,
       private->callback (dialog,
                          private->viewable,
                          private->context,
-                         private->fill_type,
                          width,
                          height,
                          unit,
                          gimp_size_entry_get_refval (entry, 0),
                          gimp_size_entry_get_refval (entry, 1),
+                         private->fill_type,
                          private->layer_set,
                          private->resize_text_layers,
                          private->user_data);
@@ -424,12 +460,17 @@ resize_dialog_reset (ResizeDialog *private)
                 "height",      private->old_height,
                 "unit",        private->old_unit,
                 NULL);
-}
 
-static void
-resize_dialog_free (ResizeDialog *private)
-{
-  g_slice_free (ResizeDialog, private);
+  if (private->layer_set_combo)
+    gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->layer_set_combo),
+                                   private->old_layer_set);
+
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->fill_type_combo),
+                                 private->old_fill_type);
+
+  if (private->text_layers_button)
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (private->text_layers_button),
+                                  private->old_resize_text_layers);
 }
 
 static void

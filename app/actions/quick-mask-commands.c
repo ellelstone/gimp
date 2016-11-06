@@ -34,6 +34,7 @@
 
 #include "dialogs/dialogs.h"
 #include "dialogs/channel-options-dialog.h"
+#include "dialogs/item-options-dialog.h"
 
 #include "actions.h"
 #include "quick-mask-commands.h"
@@ -50,6 +51,11 @@ static void   quick_mask_configure_callback (GtkWidget     *dialog,
                                              const gchar   *channel_name,
                                              const GimpRGB *channel_color,
                                              gboolean       save_selection,
+                                             gboolean       channel_visible,
+                                             gboolean       channel_linked,
+                                             GimpColorTag   channel_color_tag,
+                                             gboolean       channel_lock_content,
+                                             gboolean       channel_lock_position,
                                              gpointer       user_data);
 
 
@@ -118,13 +124,20 @@ quick_mask_configure_cmd_callback (GtkAction *action,
                                            GIMP_STOCK_QUICK_MASK_ON,
                                            _("Edit Quick Mask Attributes"),
                                            GIMP_HELP_QUICK_MASK_EDIT,
+                                           _("Edit Quick Mask Color"),
+                                           _("_Mask opacity:"),
+                                           FALSE,
                                            NULL,
                                            &color,
-                                           _("Edit Quick Mask Color"),
-                                           _("_Mask opacity"),
+                                           FALSE,
+                                           FALSE,
+                                           GIMP_COLOR_TAG_NONE,
+                                           FALSE,
                                            FALSE,
                                            quick_mask_configure_callback,
                                            NULL);
+
+      item_options_dialog_set_switches_visible (dialog, FALSE);
 
       dialogs_attach_dialog (G_OBJECT (image), CONFIGURE_DIALOG_KEY, dialog);
     }
@@ -143,6 +156,11 @@ quick_mask_configure_callback (GtkWidget     *dialog,
                                const gchar   *channel_name,
                                const GimpRGB *channel_color,
                                gboolean       save_selection,
+                               gboolean       channel_visible,
+                               gboolean       channel_linked,
+                               GimpColorTag   channel_color_tag,
+                               gboolean       channel_lock_content,
+                               gboolean       channel_lock_position,
                                gpointer       user_data)
 {
   GimpRGB old_color;

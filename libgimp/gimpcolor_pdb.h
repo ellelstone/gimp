@@ -70,6 +70,7 @@ gboolean gimp_curves_explicit     (gint32                drawable_ID,
                                    GimpHistogramChannel  channel,
                                    gint                  num_bytes,
                                    const guint8         *curve);
+GIMP_DEPRECATED_FOR(gimp_drawable_histogram)
 gboolean gimp_histogram           (gint32                drawable_ID,
                                    GimpHistogramChannel  channel,
                                    gint                  start_range,
@@ -86,6 +87,8 @@ gboolean gimp_hue_chroma          (gint32                drawable_ID,
                                    gdouble               hue_offset,
                                    gdouble               lightness,
                                    gdouble               chroma);
+                                   gdouble               saturation);
+GIMP_DEPRECATED_FOR(gimp_drawable_threshold)
 gboolean gimp_threshold           (gint32                drawable_ID,
                                    gint                  low_threshold,
                                    gint                  high_threshold);

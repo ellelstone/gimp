@@ -19,16 +19,26 @@
 #define __LAYER_OPTIONS_DIALOG_H__
 
 
-typedef void (* GimpLayerOptionsCallback) (GtkWidget    *dialog,
-                                           GimpImage    *image,
-                                           GimpLayer    *layer,
-                                           GimpContext  *context,
-                                           const gchar  *layer_name,
-                                           GimpFillType  layer_fill_type,
-                                           gint          layer_width,
-                                           gint          layer_height,
-                                           gboolean      rename_text_layer,
-                                           gpointer      user_data);
+typedef void (* GimpLayerOptionsCallback) (GtkWidget            *dialog,
+                                           GimpImage            *image,
+                                           GimpLayer            *layer,
+                                           GimpContext          *context,
+                                           const gchar          *layer_name,
+                                           GimpLayerModeEffects  layer_mode,
+                                           gdouble               layer_opacity,
+                                           GimpFillType          layer_fill_type,
+                                           gint                  layer_width,
+                                           gint                  layer_height,
+                                           gint                  layer_offset_x,
+                                           gint                  layer_offset_y,
+                                           gboolean              layer_visible,
+                                           gboolean              layer_linked,
+                                           GimpColorTag          layer_color_tag,
+                                           gboolean              layer_lock_content,
+                                           gboolean              layer_lock_position,
+                                           gboolean              layer_lock_alpha,
+                                           gboolean              rename_text_layer,
+                                           gpointer              user_data);
 
 
 GtkWidget * layer_options_dialog_new (GimpImage                *image,
@@ -41,7 +51,15 @@ GtkWidget * layer_options_dialog_new (GimpImage                *image,
                                       const gchar              *desc,
                                       const gchar              *help_id,
                                       const gchar              *layer_name,
+                                      GimpLayerModeEffects      layer_mode,
+                                      gdouble                   layer_opacity,
                                       GimpFillType              layer_fill_type,
+                                      gboolean                  layer_visible,
+                                      gboolean                  layer_linked,
+                                      GimpColorTag              layer_color_tag,
+                                      gboolean                  layer_lock_content,
+                                      gboolean                  layer_lock_position,
+                                      gboolean                  layer_lock_alpha,
                                       GimpLayerOptionsCallback  callback,
                                       gpointer                  user_data);
 
