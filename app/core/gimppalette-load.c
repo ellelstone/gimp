@@ -486,7 +486,7 @@ gimp_palette_load_aco (GimpContext   *context,
 
           color_ok = TRUE;
         }
-      else if (color_space == 1) /* HSV */
+/*      else if (color_space == 1)  HSV 
         {
           GimpHSV hsv;
 
@@ -498,8 +498,8 @@ gimp_palette_load_aco (GimpContext   *context,
           gimp_hsv_to_rgb (&hsv, &color);
 
           color_ok = TRUE;
-        }
-      else if (color_space == 2) /* CMYK */
+        }*/
+/*      else if (color_space == 2)  CMYK 
         {
           GimpCMYK cmyk;
 
@@ -512,7 +512,7 @@ gimp_palette_load_aco (GimpContext   *context,
           gimp_cmyk_to_rgb (&cmyk, &color);
 
           color_ok = TRUE;
-        }
+        }*/
       else if (color_space == 8) /* Grayscale */
         {
           gdouble K = 1.0 - (((gdouble) w) / 10000.0);
@@ -521,7 +521,7 @@ gimp_palette_load_aco (GimpContext   *context,
 
           color_ok = TRUE;
         }
-      else if (color_space == 9) /* Wide? CMYK */
+/*      else if (color_space == 9)  Wide? CMYK 
         {
           GimpCMYK cmyk;
 
@@ -534,7 +534,7 @@ gimp_palette_load_aco (GimpContext   *context,
           gimp_cmyk_to_rgb (&cmyk, &color);
 
           color_ok = TRUE;
-        }
+        }*/
       else
         {
           g_printerr ("Unsupported color space (%d) in ACO file %s\n",

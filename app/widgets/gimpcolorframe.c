@@ -68,7 +68,7 @@ static void       gimp_color_frame_menu_callback     (GtkWidget      *widget,
                                                       GimpColorFrame *frame);
 static void       gimp_color_frame_update            (GimpColorFrame *frame);
 
-static void       gimp_color_frame_create_transform  (GimpColorFrame *frame);
+//static void       gimp_color_frame_create_transform  (GimpColorFrame *frame);
 static void       gimp_color_frame_destroy_transform (GimpColorFrame *frame);
 
 
@@ -676,7 +676,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
         }
       break;
 
-    case GIMP_COLOR_FRAME_MODE_CMYK:
+/*    case GIMP_COLOR_FRAME_MODE_CMYK:
       names[0] = _("Cyan:");
       names[1] = _("Magenta:");
       names[2] = _("Yellow:");
@@ -728,7 +728,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           values[3] = g_strdup_printf ("%.01f %%", cmyk.k * 100.0);
           values[4] = g_strdup_printf ("%.01f %%", cmyk.a * 100.0);
         }
-      break;
+      break;*/
     }
 
   for (i = 0; i < GIMP_COLOR_FRAME_ROWS; i++)
@@ -752,7 +752,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
   g_strfreev (values);
 }
 
-static void
+/*static void
 gimp_color_frame_create_transform (GimpColorFrame *frame)
 {
   if (frame->config)
@@ -771,7 +771,7 @@ gimp_color_frame_create_transform (GimpColorFrame *frame)
 
           frame->transform =
             gimp_color_transform_new (rgb_profile,
-                                      babl_format ("R'G'B' double"),
+                                      babl_format ("RGB double"),
                                       cmyk_profile,
                                       babl_format ("CMYK double"),
                                       GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,
@@ -779,7 +779,7 @@ gimp_color_frame_create_transform (GimpColorFrame *frame)
                                       GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION);
         }
     }
-}
+}*/
 
 static void
 gimp_color_frame_destroy_transform (GimpColorFrame *frame)
@@ -791,4 +791,4 @@ gimp_color_frame_destroy_transform (GimpColorFrame *frame)
     }
 
   gimp_color_frame_update (frame);
-}
+}/* */

@@ -65,8 +65,8 @@ typedef enum
 {
   GIMP_COLOR_FRAME_MODE_PIXEL,  /*< desc="Pixel" >*/
   GIMP_COLOR_FRAME_MODE_RGB,    /*< desc="RGB"   >*/
-  GIMP_COLOR_FRAME_MODE_LCH,    /*< desc="LCH"   >*/
-  GIMP_COLOR_FRAME_MODE_CMYK    /*< desc="CMYK"  >*/
+  GIMP_COLOR_FRAME_MODE_LCH/*,    < desc="LCH"   >*/
+/*  GIMP_COLOR_FRAME_MODE_CMYK    < desc="CMYK"  >*/
 } GimpColorFrameMode;
 
 
