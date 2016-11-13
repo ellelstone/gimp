@@ -87,7 +87,6 @@ gboolean gimp_hue_chroma          (gint32                drawable_ID,
                                    gdouble               hue_offset,
                                    gdouble               lightness,
                                    gdouble               chroma);
-                                   gdouble               saturation);
 GIMP_DEPRECATED_FOR(gimp_drawable_threshold)
 gboolean gimp_threshold           (gint32                drawable_ID,
                                    gint                  low_threshold,
