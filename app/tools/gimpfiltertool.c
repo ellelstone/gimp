@@ -444,11 +444,11 @@ gimp_filter_tool_initialize (GimpTool     *tool,
       gtk_box_pack_start (GTK_BOX (vbox2), combo, FALSE, FALSE, 0);
       gtk_widget_show (combo);*/
 
-      /*  The gamma hack toggle  
-      toggle = gimp_prop_check_button_new (G_OBJECT (tool_info->tool_options),
-                                           "gamma-hack", NULL);
-      gtk_box_pack_start (GTK_BOX (vbox2), toggle, FALSE, FALSE, 0);
-      gtk_widget_show (toggle);*/
+//      /*  The gamma hack toggle  */
+//      toggle = gimp_prop_check_button_new (G_OBJECT (tool_info->tool_options),
+//                                           "gamma-hack", NULL);
+//      gtk_box_pack_start (GTK_BOX (vbox2), toggle, FALSE, FALSE, 0);
+//      gtk_widget_show (toggle);
 
       /*  The area combo  */
       gegl_node_get (filter_tool->operation,
@@ -805,12 +805,12 @@ gimp_filter_tool_options_notify (GimpTool         *tool,
       gimp_drawable_filter_set_region (filter_tool->filter,
                                        filter_options->region);
     }
-  else if (! strcmp (pspec->name, "gamma-hack") &&
-           filter_tool->filter)
-    {
-      gimp_drawable_filter_set_gamma_hack (filter_tool->filter,
-                                           FALSE /*filter_options->gamma_hack*/);
-    }
+/* elle: remove gamma hack functions */ //else if (! strcmp (pspec->name, "gamma-hack") &&
+//           filter_tool->filter)
+//    {
+//      gimp_drawable_filter_set_gamma_hack (filter_tool->filter,
+//                                           FALSE /*filter_options->gamma_hack*/);
+//    }
 }
 
 static gboolean

@@ -38,7 +38,7 @@ enum
   PROP_PREVIEW_POSITION,
   PROP_REGION,
   PROP_COLOR_MANAGED,
-  PROP_GAMMA_HACK,
+//  PROP_GAMMA_HACK,
   PROP_SETTINGS
 };
 
@@ -115,13 +115,14 @@ gimp_filter_options_class_init (GimpFilterOptionsClass *klass)
                                                          GIMP_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT));
 
-  g_object_class_install_property (object_class, PROP_GAMMA_HACK,
-                                   g_param_spec_boolean ("gamma-hack",
-                                                         "Gamma hack (temp hack, please ignore)",
-                                                         NULL,
-                                                         FALSE,
-                                                         GIMP_PARAM_READWRITE |
-                                                         G_PARAM_CONSTRUCT));
+/* elle: remove gamma hack functions */ 
+//g_object_class_install_property (object_class, PROP_GAMMA_HACK,
+//                                   g_param_spec_boolean ("gamma-hack",
+//                                                         "Gamma hack (temp hack, please ignore)",
+//                                                         NULL,
+//                                                         FALSE,
+//                                                         GIMP_PARAM_READWRITE |
+//                                                         G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (object_class, PROP_SETTINGS,
                                    g_param_spec_object ("settings",
@@ -184,9 +185,9 @@ gimp_filter_options_set_property (GObject      *object,
       options->color_managed = g_value_get_boolean (value);
       break;
 
-    case PROP_GAMMA_HACK:
-      options->gamma_hack = FALSE; //g_value_get_boolean (value);
-      break;
+//    case PROP_GAMMA_HACK:
+//      options->gamma_hack = FALSE; //g_value_get_boolean (value);
+//      break;
 
     case PROP_SETTINGS:
       if (options->settings)
@@ -234,9 +235,9 @@ gimp_filter_options_get_property (GObject    *object,
       g_value_set_boolean (value, options->color_managed);
       break;
 
-    case PROP_GAMMA_HACK:
-      g_value_set_boolean (value, FALSE /*options->gamma_hack*/);
-      break;
+//    case PROP_GAMMA_HACK:
+//      g_value_set_boolean (value, FALSE /*options->gamma_hack*/);
+//      break;
 
     case PROP_SETTINGS:
       g_value_set_object (value, options->settings);

@@ -69,8 +69,8 @@ void       gimp_drawable_filter_set_mode       (GimpDrawableFilter   *filter,
 void       gimp_drawable_filter_set_color_managed
                                                (GimpDrawableFilter   *filter,
                                                 gboolean              managed);
-void       gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter   *filter,
-                                                gboolean              gamma_hack);
+//void       gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter   *filter,
+//                                                gboolean              gamma_hack);
 
 void       gimp_drawable_filter_apply          (GimpDrawableFilter   *filter,
                                                 const GeglRectangle  *area);
