@@ -423,26 +423,26 @@ gimp_filter_tool_initialize (GimpTool     *tool,
                               toggle,                             "sensitive",
                               G_BINDING_SYNC_CREATE);
 
-      /*  The Color Options expander  
-      expander = gtk_expander_new (_("Advanced Color Options"));
-      gtk_box_pack_end (GTK_BOX (vbox), expander, FALSE, FALSE, 0);
-      gtk_widget_show (expander);
+      /*  The Color Options expander  */
+//      expander = gtk_expander_new (_("Advanced Color Options"));
+//      gtk_box_pack_end (GTK_BOX (vbox), expander, FALSE, FALSE, 0);
+//      gtk_widget_show (expander);
+//
+//      frame = gimp_frame_new (NULL);
+//      gtk_container_add (GTK_CONTAINER (expander), frame);
+//      gtk_widget_show (frame);
+//
+//      vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+//      gtk_container_add (GTK_CONTAINER (frame), vbox2);
+//      gtk_widget_show (vbox2);
 
-      frame = gimp_frame_new (NULL);
-      gtk_container_add (GTK_CONTAINER (expander), frame);
-      gtk_widget_show (frame);
-
-      vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
-      gtk_container_add (GTK_CONTAINER (frame), vbox2);
-      gtk_widget_show (vbox2);*/
-
-      /*  The color managed combo  
-      combo = gimp_prop_boolean_combo_box_new
-        (G_OBJECT (tool_info->tool_options), "color-managed",
-         _("Apply filter in color managed space (slow)"),
-         _("Apply filter to the layer's raw pixels"));
-      gtk_box_pack_start (GTK_BOX (vbox2), combo, FALSE, FALSE, 0);
-      gtk_widget_show (combo);*/
+      /*  The color managed combo  */
+//      combo = gimp_prop_boolean_combo_box_new
+//        (G_OBJECT (tool_info->tool_options), "color-managed",
+//         _("Apply filter in color managed space (slow)"),
+//         _("Apply filter to the layer's raw pixels"));
+//      gtk_box_pack_start (GTK_BOX (vbox2), combo, FALSE, FALSE, 0);
+//      gtk_widget_show (combo);
 
 //      /*  The gamma hack toggle  */
 //      toggle = gimp_prop_check_button_new (G_OBJECT (tool_info->tool_options),

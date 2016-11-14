@@ -200,23 +200,23 @@ gimp_template_class_init (GimpTemplateClass *klass)
                                                       GIMP_PARAM_STATIC_STRINGS));
 
 /*  g_object_class_install_property (object_class, PROP_LINEAR,
-                                   g_param_spec_boolean ("linear",
-                                                         _("Gamma"),
-                                                         NULL,
-                                                         FALSE,
-                                                         G_PARAM_READWRITE |
-                                                         GIMP_PARAM_STATIC_STRINGS));*/
-
+//                                   g_param_spec_boolean ("linear",
+//                                                         _("Gamma"),
+//                                                         NULL,
+//                                                         FALSE,
+//                                                         G_PARAM_READWRITE |
+//                                                         GIMP_PARAM_STATIC_STRINGS));
+*/
 /*  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_COLOR_MANAGED,
-                            "color-managed",
-                            _("Color managed"),
-                            _("Whether the image is color managed. "
-                              "Disabling color management is equivalent to "
-                              "choosing a built-in sRGB profile. Better "
-                              "leave color management enabled."),
-                            TRUE,
-                            GIMP_PARAM_STATIC_STRINGS);*/
-
+//                            "color-managed",
+//                            _("Color managed"),
+//                            _("Whether the image is color managed. "
+//                              "Disabling color management is equivalent to "
+//                              "choosing a built-in sRGB profile. Better "
+//                              "leave color management enabled."),
+//                            TRUE,
+//                            GIMP_PARAM_STATIC_STRINGS);
+*/
   GIMP_CONFIG_PROP_OBJECT (object_class, PROP_COLOR_PROFILE,
                            "color-profile",
                            _("Color profile"),
@@ -321,12 +321,12 @@ gimp_template_set_property (GObject      *object,
                              gimp_babl_linear (private->precision)*/);
       g_object_notify (object, "precision");
       break;
-/*    case PROP_LINEAR:
-      private->precision =
-        gimp_babl_precision (gimp_babl_component_type (private->precision),
-                             g_value_get_boolean (value));
-      g_object_notify (object, "precision");
-      break;*/
+//    case PROP_LINEAR:
+//      private->precision =
+//        gimp_babl_precision (gimp_babl_component_type (private->precision),
+//                             g_value_get_boolean (value));
+//      g_object_notify (object, "precision");
+//      break;
     case PROP_COLOR_PROFILE:
       if (private->color_profile)
         g_object_unref (private->color_profile);
@@ -557,13 +557,13 @@ gimp_template_get_precision (GimpTemplate *template)
   return GET_PRIVATE (template)->precision;
 }
 
-/*gboolean
-gimp_template_get_color_managed (GimpTemplate *template)
-{
-  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), FALSE);
-
-  return GET_PRIVATE (template)->color_managed;
-}*/
+/* elle: remove stupid color-managed functions */ //gboolean
+//gimp_template_get_color_managed (GimpTemplate *template)
+//{
+//  g_return_val_if_fail (GIMP_IS_TEMPLATE (template), FALSE);
+//
+//  return GET_PRIVATE (template)->color_managed;
+//}
 
 GimpColorProfile *
 gimp_template_get_color_profile (GimpTemplate *template)
