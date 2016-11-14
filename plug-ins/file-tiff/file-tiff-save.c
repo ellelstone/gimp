@@ -276,6 +276,8 @@ save_image (GFile        *file,
   gboolean       alpha;
   gshort         predictor;
   gshort         photometric;
+//  GimpColorProfile *profile = NULL;
+//  gboolean          linear  = FALSE;
   const Babl    *format;
   const Babl    *type;
   gshort         samplesperpixel;
@@ -298,51 +300,11 @@ save_image (GFile        *file,
   gint           number_of_sub_IFDs = 1;
   toff_t         sub_IFDs_offsets[1] = { 0UL };
 
-
-/*
-
-file-tiff-save.c: In function 'save_image':
-file-tiff-save.c:297:18: warning: unused variable 'wb_map' [-Wunused-variable]
-   const guchar   wb_map[] = { 255, 255, 255, 0, 0, 0 };
-                  ^
-file-tiff-save.c:296:18: warning: unused variable 'bw_map' [-Wunused-variable]
-   const guchar   bw_map[] = { 0, 0, 0, 255, 255, 255 };
-                  ^
-file-tiff-save.c:295:18: warning: unused variable 'invert' [-Wunused-variable]
-   gboolean       invert   = TRUE;
-                  ^
-file-tiff-save.c:294:18: warning: unused variable 'is_bw' [-Wunused-variable]
-   gboolean       is_bw    = FALSE;
-                  ^
-file-tiff-save.c:288:18: warning: unused variable 'num_colors' [-Wunused-variable]
-   gint           num_colors;
-                  ^
-file-tiff-save.c:287:18: warning: unused variable 'cmap' [-Wunused-variable]
-   guchar        *cmap;
-                  ^
-file-tiff-save.c:272:35: warning: unused variable 'i' [-Wunused-variable]
-   gint           cols, rows, row, i;
-                                   ^
-file-tiff-save.c:271:18: warning: unused variable 'blu' [-Wunused-variable]
-   gushort        blu[256];
-                  ^
-file-tiff-save.c:270:18: warning: unused variable 'grn' [-Wunused-variable]
-   gushort        grn[256];
-                  ^
-file-tiff-save.c:269:18: warning: unused variable 'red' [-Wunused-variable]
-   gushort        red[256];
-                  ^
-file-tiff-save.c: At top level:
-file-tiff-save.c:960:1: warning: 'byte2bit' defined but not used [-Wunused-function]
- byte2bit (const guchar *byteline,
-
-*/
-
-
   compression = tsvals->compression;
 
   /* Disabled because this isn't in older releases of libtiff, and it
-     wasn't helping much anyway */
+   * wasn't helping much anyway
+   */
 #if 0
   if (TIFFFindCODEC((uint16) compression) == NULL)
     compression = COMPRESSION_NONE; /* CODEC not available */
@@ -868,7 +830,6 @@ save_dialog (TiffSaveVals  *tsvals,
   GtkBuilder  *builder;
   gchar       *ui_file;
   gboolean     run;
-  
   is_indexed = FALSE;
 
   dialog = gimp_export_dialog_new (_("TIFF"), PLUG_IN_ROLE, help_id);

@@ -290,6 +290,56 @@ static ExportAction export_action_convert_grayscale =
   0
 };
 
+/* static ExportAction export_action_convert_indexed =
+{
+//  export_convert_indexed,
+//  NULL,
+//  N_("%s plug-in can only handle indexed images"),
+//  { N_("Convert to Indexed using default settings\n"
+//       "(Do it manually to tune the result)"), NULL },
+//  0
+};*/
+
+/*static ExportAction export_action_convert_bitmap =
+{
+//  export_convert_bitmap,
+//  NULL,
+//  N_("%s plug-in can only handle bitmap (two color) indexed images"),
+//  { N_("Convert to Indexed using bitmap default settings\n"
+//       "(Do it manually to tune the result)"), NULL },
+//  0
+};*/
+
+/*static ExportAction export_action_convert_rgb_or_grayscale =
+{
+//  export_convert_rgb,
+//  export_convert_grayscale,
+//  N_("%s plug-in can only handle RGB or grayscale images"),
+//  { N_("Convert to RGB"), N_("Convert to Grayscale")},
+//  0
+};*/
+
+//static ExportAction export_action_convert_rgb_or_indexed =
+//{
+//  export_convert_rgb,
+//  export_convert_indexed,
+//  N_("%s plug-in can only handle RGB images"),
+//  { N_("Convert to RGB"), N_("Convert to Indexed using default settings\n"
+//                             "(Do it manually to tune the result)")},
+//  0
+//};
+
+//static ExportAction export_action_convert_indexed_or_grayscale =
+//{
+//  export_convert_indexed,
+//  export_convert_grayscale,
+//  N_("%s plug-in can only handle grayscale images"),
+//  { N_("Convert to Indexed using default settings\n"
+//       "(Do it manually to tune the result)"),
+//    N_("Convert to Grayscale") },
+//  0
+//};
+
 static ExportAction export_action_add_alpha =
 {
   export_add_alpha,

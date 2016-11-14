@@ -55,6 +55,9 @@ enum
   PROP_RESOLUTION_UNIT,
   PROP_BASE_TYPE,
   PROP_PRECISION,
+  PROP_COMPONENT_TYPE, //new 20161111
+//  PROP_LINEAR, //new 20161111
+//  PROP_COLOR_MANAGED, //new 20161111
   PROP_COLOR_PROFILE,
   PROP_FILL_TYPE,
   PROP_COMMENT,
@@ -77,7 +80,7 @@ struct _GimpTemplatePrivate
   GimpImageBaseType  base_type;
   GimpPrecision      precision;
 
-  gboolean           color_managed;
+//  gboolean           color_managed;
   GFile             *color_profile;
 
   GimpFillType       fill_type;
@@ -187,6 +190,33 @@ gimp_template_class_init (GimpTemplateClass *klass)
                          GIMP_TYPE_PRECISION, GIMP_PRECISION_U8_GAMMA,
                          GIMP_PARAM_STATIC_STRINGS);
 
+  g_object_class_install_property (object_class, PROP_COMPONENT_TYPE,
+                                   g_param_spec_enum ("component-type",
+                                                      _("Precision"),
+                                                      NULL,
+                                                      GIMP_TYPE_COMPONENT_TYPE,
+                                                      GIMP_COMPONENT_TYPE_U8,
+                                                      G_PARAM_READWRITE |
+                                                      GIMP_PARAM_STATIC_STRINGS));
+
+/*  g_object_class_install_property (object_class, PROP_LINEAR,
+                                   g_param_spec_boolean ("linear",
+                                                         _("Gamma"),
+                                                         NULL,
+                                                         FALSE,
+                                                         G_PARAM_READWRITE |
+                                                         GIMP_PARAM_STATIC_STRINGS));*/
+
+/*  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_COLOR_MANAGED,
+                            "color-managed",
+                            _("Color managed"),
+                            _("Whether the image is color managed. "
+                              "Disabling color management is equivalent to "
+                              "choosing a built-in sRGB profile. Better "
+                              "leave color management enabled."),
+                            TRUE,
+                            GIMP_PARAM_STATIC_STRINGS);*/
+
   GIMP_CONFIG_PROP_OBJECT (object_class, PROP_COLOR_PROFILE,
                            "color-profile",
                            _("Color profile"),
@@ -282,7 +312,21 @@ gimp_template_set_property (GObject      *object,
       break;
     case PROP_PRECISION:
       private->precision = g_value_get_enum (value);
+      g_object_notify (object, "component-type");
+//      g_object_notify (object, "linear");
       break;
+    case PROP_COMPONENT_TYPE:
+      private->precision =
+        gimp_babl_precision (g_value_get_enum (value)/*,
+                             gimp_babl_linear (private->precision)*/);
+      g_object_notify (object, "precision");
+      break;
+/*    case PROP_LINEAR:
+      private->precision =
+        gimp_babl_precision (gimp_babl_component_type (private->precision),
+                             g_value_get_boolean (value));
+      g_object_notify (object, "precision");
+      break;*/
     case PROP_COLOR_PROFILE:
       if (private->color_profile)
         g_object_unref (private->color_profile);
@@ -341,6 +385,15 @@ gimp_template_get_property (GObject    *object,
     case PROP_PRECISION:
       g_value_set_enum (value, private->precision);
       break;
+    case PROP_COMPONENT_TYPE:
+      g_value_set_enum (value, gimp_babl_component_type (private->precision));
+      break;
+//    case PROP_LINEAR:
+//      g_value_set_boolean (value, gimp_babl_linear (private->precision));
+//      break;
+//    case PROP_COLOR_MANAGED:
+//      g_value_set_boolean (value, private->color_managed);
+//      break;
     case PROP_COLOR_PROFILE:
       g_value_set_object (value, private->color_profile);
       break;
@@ -504,13 +557,13 @@ gimp_template_get_precision (GimpTemplate *template)
   return GET_PRIVATE (template)->precision;
 }
 
-gboolean
+/*gboolean
 gimp_template_get_color_managed (GimpTemplate *template)
 {
   g_return_val_if_fail (GIMP_IS_TEMPLATE (template), FALSE);
 
   return GET_PRIVATE (template)->color_managed;
-}
+}*/
 
 GimpColorProfile *
 gimp_template_get_color_profile (GimpTemplate *template)

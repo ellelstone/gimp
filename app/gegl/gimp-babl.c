@@ -163,6 +163,59 @@ gimp_babl_init (void)
                    NULL);
 }
 
+void
+gimp_babl_init_fishes (GimpInitStatusFunc status_callback)
+{
+  /* create a bunch of fishes - to decrease the initial lazy
+   * intialization cost for some interactions
+   */
+  static const struct
+  {
+    const gchar *from_format;
+    const gchar *to_format;
+  }
+  fishes[] =
+  {
+//    { "Y u8",          "RaGaBaA float" },
+    { "Y u8",          "RaGaBaA float" },
+    { "RGBA u8",     "RaGaBaA float" },
+    { "RGBA float",  "RGBA u8"    },
+    { "RGBA float",  "RGB u8"     },
+    { "RGBA u8",     "RGBA float"    },
+    { "RGBA float",     "RGBA u8"    },
+//    { "RGBA float",     "RGBA u8"    },
+    { "RGBA float",     "RGBA float" },
+    { "Y u8",          "RGB u8"     },
+    { "Y u8",           "Y float"       },
+    { "RGB u8",      "cairo-RGB24"   },
+    { "RGB u8",      "RGBA float" },
+    { "RGB u8",      "RGBA u8"    },
+//    { "RGBA u8",     "RGBA float" },
+    { "RGBA u8",     "cairo-ARGB32"  },
+    { "RGBA double", "RGBA float"    },
+    { "RGBA float",  "RGBA double"   },
+    { "RGB u8",      "RGB float"     },
+    { "RGB float",      "RGBA float" },
+//    { "RGB u8",      "RGBA float"    },
+    { "RaGaBaA float",  "RGBA float" },
+//    { "RaGaBaA float",  "RGBA float"    },
+    { "RGBA float",     "RaGaBaA float" },
+    { "RGB u8",      "RaGaBaA float" }
+  };
+
+  gint i;
+
+  for (i = 0; i < G_N_ELEMENTS (fishes); i++)
+    {
+      status_callback (NULL, NULL,
+                       (gdouble) (i + 1) /
+                       (gdouble) G_N_ELEMENTS (fishes) / 2.0);
+
+      babl_fish (babl_format (fishes[i].from_format),
+                 babl_format (fishes[i].to_format));
+    }
+}
+
 static const struct
 {
   const gchar *name;
@@ -388,6 +441,31 @@ gimp_babl_component_type (GimpPrecision precision)
 
   g_return_val_if_reached (-1);
 }
+
+/*gboolean
+//gimp_babl_linear (GimpPrecision precision)
+//{
+//  switch (precision)
+//    {
+//    case GIMP_PRECISION_U8_LINEAR:
+//    case GIMP_PRECISION_U16_LINEAR:
+//    case GIMP_PRECISION_U32_LINEAR:
+//    case GIMP_PRECISION_HALF_LINEAR:
+//    case GIMP_PRECISION_FLOAT_LINEAR:
+//    case GIMP_PRECISION_DOUBLE_LINEAR:
+//      return TRUE;
+//
+//    case GIMP_PRECISION_U8_GAMMA:
+//    case GIMP_PRECISION_U16_GAMMA:
+//    case GIMP_PRECISION_U32_GAMMA:
+//    case GIMP_PRECISION_HALF_GAMMA:
+//    case GIMP_PRECISION_FLOAT_GAMMA:
+//    case GIMP_PRECISION_DOUBLE_GAMMA:
+//      return FALSE;
+//    }
+//
+//  g_return_val_if_reached (FALSE);
+}*/
 
 GimpPrecision
 gimp_babl_precision (GimpComponentType component)
