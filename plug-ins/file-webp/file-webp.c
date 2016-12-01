@@ -77,12 +77,14 @@ query (void)
     { GIMP_PDB_DRAWABLE, "drawable",      "Drawable to save" },
     { GIMP_PDB_STRING,   "filename",      "The name of the file to save the image to" },
     { GIMP_PDB_STRING,   "raw-filename",  "The name entered" },
-    { GIMP_PDB_STRING,   "preset",        "Name of preset to use" },
+    { GIMP_PDB_INT32,    "preset",        "preset (Default=0, Picture=1, Photo=2, Drawing=3, Icon=4, Text=5)" },
     { GIMP_PDB_INT32,    "lossless",      "Use lossless encoding (0/1)" },
     { GIMP_PDB_FLOAT,    "quality",       "Quality of the image (0 <= quality <= 100)" },
     { GIMP_PDB_FLOAT,    "alpha-quality", "Quality of the image's alpha channel (0 <= alpha-quality <= 100)" },
     { GIMP_PDB_INT32,    "animation",     "Use layers for animation (0/1)" },
     { GIMP_PDB_INT32,    "anim-loop",     "Loop animation infinitely (0/1)" },
+    { GIMP_PDB_INT32,    "minimize-size", "Minimize animation size (0/1)" },
+    { GIMP_PDB_INT32,    "kf-distance",   "Maximum distance between key-frames (>=0)" },
     { GIMP_PDB_INT32,    "exif",          "Toggle saving exif data (0/1)" },
     { GIMP_PDB_INT32,    "iptc",          "Toggle saving iptc data (0/1)" },
     { GIMP_PDB_INT32,    "xmp",           "Toggle saving xmp data (0/1)" },
@@ -188,10 +190,13 @@ run (const gchar      *name,
         {
         case GIMP_RUN_WITH_LAST_VALS:
         case GIMP_RUN_INTERACTIVE:
-          /* Default settings. */
+          /* Default settings */
+          params.preset        = WEBP_PRESET_DEFAULT;
           params.lossless      = FALSE;
           params.animation     = FALSE;
           params.loop          = TRUE;
+          params.minimize_size = TRUE;
+          params.kf_distance   = 50;
           params.quality       = 90.0f;
           params.alpha_quality = 100.0f;
           params.exif          = TRUE;
@@ -199,10 +204,9 @@ run (const gchar      *name,
           params.xmp           = TRUE;
           params.delay         = 200;
           params.force_delay   = FALSE;
+
           /*  Possibly override with session data  */
           gimp_get_data (SAVE_PROC, &params);
-          /* can't serialize strings, so restore default */
-          params.preset = g_strdup ("default");
 
           export = gimp_export_image (&image_ID, &drawable_ID, "WebP",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
@@ -220,23 +224,30 @@ run (const gchar      *name,
           break;
 
         case GIMP_RUN_NONINTERACTIVE:
-          if (nparams != 16)
+          if (nparams != 18)
             {
               status = GIMP_PDB_CALLING_ERROR;
             }
           else
             {
-              params.preset        = g_strdup (param[5].data.d_string);
+              if (param[5].data.d_int32 < WEBP_PRESET_DEFAULT ||
+                  param[5].data.d_int32 > WEBP_PRESET_TEXT)
+                params.preset = WEBP_PRESET_DEFAULT;
+              else
+                params.preset = param[5].data.d_int32;
+
               params.lossless      = param[6].data.d_int32;
               params.quality       = param[7].data.d_float;
               params.alpha_quality = param[8].data.d_float;
               params.animation     = param[9].data.d_int32;
               params.loop          = param[10].data.d_int32;
-              params.exif          = param[11].data.d_int32;
-              params.iptc          = param[12].data.d_int32;
-              params.xmp           = param[13].data.d_int32;
-              params.delay         = param[14].data.d_int32;
-              params.force_delay   = param[15].data.d_int32;
+              params.minimize_size = param[11].data.d_int32;
+              params.kf_distance   = param[12].data.d_int32;
+              params.exif          = param[13].data.d_int32;
+              params.iptc          = param[14].data.d_int32;
+              params.xmp           = param[15].data.d_int32;
+              params.delay         = param[16].data.d_int32;
+              params.force_delay   = param[17].data.d_int32;
             }
           break;
 
@@ -248,6 +259,7 @@ run (const gchar      *name,
       if (status == GIMP_PDB_SUCCESS)
         {
           layers = gimp_image_get_layers (image_ID, &n_layers);
+
           if (run_mode == GIMP_RUN_INTERACTIVE)
             {
               if (! save_dialog (&params, image_ID, n_layers))
@@ -270,8 +282,6 @@ run (const gchar      *name,
             }
         }
 
-      g_free (params.preset);
-      params.preset = NULL;
 
       g_free (layers);
 
@@ -281,7 +291,6 @@ run (const gchar      *name,
       if (status == GIMP_PDB_SUCCESS)
         {
           /* save parameters for later */
-          /* we can't serialize strings this way. params.preset isn't saved. */
           gimp_set_data (SAVE_PROC, &params, sizeof (params));
         }
     }

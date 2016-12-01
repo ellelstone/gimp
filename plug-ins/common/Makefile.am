@@ -307,6 +307,24 @@ file_png_LDADD = \
 	$(INTLLIBS)		\
 	$(file_png_RC)
 
+smooth_palette_SOURCES = \
+	smooth-palette.c
+
+smooth_palette_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(smooth_palette_RC)
+
 unit_editor_SOURCES = \
 	unit-editor.c
 

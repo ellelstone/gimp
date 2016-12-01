@@ -42,7 +42,6 @@
 #include "libgimp/stdplugins-intl.h"
 
 
-WebPPreset    webp_preset_by_name   (gchar             *name);
 int           webp_anim_file_writer (FILE              *outfile,
                                      const uint8_t     *data,
                                      size_t             data_size);
@@ -68,35 +67,6 @@ gboolean      save_animation        (const gchar       *filename,
                                      WebPSaveParams    *params,
                                      GError           **error);
 
-
-WebPPreset
-webp_preset_by_name (gchar *name)
-{
-  if (! strcmp (name, "picture"))
-    {
-      return WEBP_PRESET_PICTURE;
-    }
-  else if (! strcmp (name, "photo"))
-    {
-      return WEBP_PRESET_PHOTO;
-    }
-  else if (! strcmp (name, "drawing"))
-    {
-      return WEBP_PRESET_DRAWING;
-    }
-  else if (! strcmp (name, "icon"))
-    {
-      return WEBP_PRESET_ICON;
-    }
-  else if (! strcmp (name, "text"))
-    {
-      return WEBP_PRESET_TEXT;
-    }
-  else
-    {
-      return WEBP_PRESET_DEFAULT;
-    }
-}
 
 int
 webp_anim_file_writer (FILE          *outfile,
@@ -231,9 +201,7 @@ save_layer (const gchar    *filename,
 
       /* Initialize the WebP configuration with a preset and fill in the
        * remaining values */
-      WebPConfigPreset (&config,
-                        webp_preset_by_name (params->preset),
-                        params->quality);
+      WebPConfigPreset (&config, params->preset, params->quality);
 
       config.lossless      = params->lossless;
       config.method        = 6;  /* better quality */
@@ -260,14 +228,20 @@ save_layer (const gchar    *filename,
       /* Use the appropriate function to import the data from the buffer */
       if (! has_alpha)
         {
-          WebPPictureImportRGB (&picture, buffer, w * bpp);
+          status = WebPPictureImportRGB (&picture, buffer, w * bpp);
         }
       else
         {
-          WebPPictureImportRGBA (&picture, buffer, w * bpp);
+          status = WebPPictureImportRGBA (&picture, buffer, w * bpp);
         }
 
       g_free (buffer);
+      if (! status)
+        {
+          g_printerr ("%s: memory error in WebPPictureImportRGB(A)().",
+                      G_STRFUNC);
+          break;
+        }
 
       /* Perform the actual encode */
       if (! WebPEncode (&config, &picture))
@@ -278,6 +252,7 @@ save_layer (const gchar    *filename,
                        picture.error_code,
                        _("WebP error: '%s'"),
                        webp_error_string (picture.error_code));
+          status = FALSE;
           break;
         }
 
@@ -292,7 +267,6 @@ save_layer (const gchar    *filename,
   /* Flush the drawable and detach */
   if (geglbuffer)
     {
-      gegl_buffer_flush (geglbuffer);
       g_object_unref (geglbuffer);
     }
 
@@ -383,7 +357,7 @@ parse_ms_tag (const gchar *str)
     offset++;
 
   if (offset >= length)
-    return(-1);
+    return -1;
 
   if (! g_ascii_isdigit (str[++offset]))
     goto find_another_bra;
@@ -397,7 +371,7 @@ parse_ms_tag (const gchar *str)
   while ((offset < length) && (g_ascii_isdigit (str[offset])));
 
   if (length - offset <= 2)
-    return(-3);
+    return -3;
 
   if ((g_ascii_toupper (str[offset])     != 'M') ||
       (g_ascii_toupper (str[offset + 1]) != 'S'))
@@ -417,6 +391,79 @@ get_layer_delay (gint32 layer)
   g_free (layer_name);
 
   return delay_ms;
+}
+
+static gboolean
+parse_combine (const char* str)
+{
+  gint offset = 0;
+  gint length = strlen (str);
+
+  while ((offset + 9) <= length)
+    {
+      if (strncmp (&str[offset], "(combine)", 9) == 0)
+        return TRUE;
+
+      if (strncmp (&str[offset], "(replace)", 9) == 0)
+        return FALSE;
+
+      offset++;
+    }
+
+  return FALSE;
+}
+
+static gint
+get_layer_needs_combine (gint32 layer)
+{
+  gchar     *layer_name;
+  gboolean   needs_combine;
+
+  layer_name    = gimp_item_get_name (layer);
+  needs_combine = parse_combine (layer_name);
+  g_free (layer_name);
+
+  return needs_combine;
+}
+
+static GeglBuffer*
+combine_buffers (GeglBuffer *layer_buffer,
+                 GeglBuffer *prev_frame_buffer)
+{
+  GeglBuffer *buffer;
+  GeglNode   *graph;
+  GeglNode   *source;
+  GeglNode   *backdrop;
+  GeglNode   *over;
+  GeglNode   *target;
+
+  graph  = gegl_node_new ();
+  buffer = gegl_buffer_new (gegl_buffer_get_extent (prev_frame_buffer),
+                            gegl_buffer_get_format (prev_frame_buffer));
+
+  source = gegl_node_new_child (graph,
+                                "operation", "gegl:buffer-source",
+                                "buffer", layer_buffer,
+                                NULL);
+  backdrop = gegl_node_new_child (graph,
+                                  "operation", "gegl:buffer-source",
+                                  "buffer", prev_frame_buffer,
+                                  NULL);
+
+  over =  gegl_node_new_child (graph,
+                               "operation", "gegl:over",
+                                NULL);
+  target = gegl_node_new_child (graph,
+                                "operation", "gegl:write-buffer",
+                                "buffer", buffer,
+                                NULL);
+  gegl_node_link_many (backdrop, over, target, NULL);
+  gegl_node_connect_to (source, "output",
+                        over, "aux");
+  gegl_node_process (target);
+  g_object_unref (graph);
+
+  return buffer;
 }
 
 gboolean
@@ -440,6 +487,7 @@ save_animation (const gchar    *filename,
   WebPData               webp_data;
   int                    frame_timestamp = 0;
   WebPAnimEncoder       *enc = NULL;
+  GeglBuffer            *prev_frame = NULL;
 
   if (nLayers < 1)
     return FALSE;
@@ -481,17 +529,25 @@ save_animation (const gchar    *filename,
         enc_options.anim_params.loop_count = 1;
 
       enc_options.allow_mixed   = params->lossless ? 0 : 1;
-      enc_options.minimize_size = 1;
+      enc_options.minimize_size = params->minimize_size ? 1 : 0;
+      if (! params->minimize_size)
+        {
+          enc_options.kmax = params->kf_distance;
+          /* explicitly force minimum key-frame distance too, for good measure */
+          enc_options.kmin = params->kf_distance - 1;
+        }
 
       for (loop = 0; loop < nLayers; loop++)
         {
           GeglBuffer       *geglbuffer;
+          GeglBuffer       *current_frame;
           GeglRectangle     extent;
           WebPConfig        config;
           WebPPicture       picture;
           WebPMemoryWriter  mw = { 0 };
           gint32            drawable = allLayers[nLayers - 1 - loop];
           gint              delay = get_layer_delay (drawable);
+          gboolean          needs_combine = get_layer_needs_combine (drawable);
 
           /* Obtain the drawable type */
           has_alpha = gimp_drawable_has_alpha (drawable);
@@ -532,13 +588,9 @@ save_animation (const gchar    *filename,
               break;
             }
 
-          WebPConfigInit (&config);
-          WebPConfigPreset (&config,
-                            webp_preset_by_name (params->preset),
-                            params->quality);
+          WebPConfigPreset (&config, params->preset, params->quality);
 
           config.lossless      = params->lossless;
-          config.quality       = params->quality;
           config.method        = 6;  /* better quality */
           config.alpha_quality = params->alpha_quality;
           config.exact         = 1;
@@ -554,22 +606,43 @@ save_animation (const gchar    *filename,
           picture.custom_ptr    = &mw;
           picture.writer        = WebPMemoryWrite;
 
+          if (loop == 0 || ! needs_combine)
+            {
+              g_clear_object (&prev_frame);
+              current_frame = geglbuffer;
+            }
+          else
+            {
+              current_frame = combine_buffers (geglbuffer, prev_frame);
+
+              /* release resources. */
+              g_object_unref (geglbuffer);
+              g_clear_object (&prev_frame);
+            }
+          prev_frame = current_frame;
+
           /* Read the region into the buffer */
-          gegl_buffer_get (geglbuffer, &extent, 1.0, format, buffer,
+          gegl_buffer_get (current_frame, &extent, 1.0, format, buffer,
                            GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
           /* Use the appropriate function to import the data from the buffer */
           if (! has_alpha)
             {
-              WebPPictureImportRGB (&picture, buffer, w * bpp);
+              status = WebPPictureImportRGB (&picture, buffer, w * bpp);
             }
           else
             {
-              WebPPictureImportRGBA (&picture, buffer, w * bpp);
+              status = WebPPictureImportRGBA (&picture, buffer, w * bpp);
             }
+          g_free (buffer);
 
+          if (! status)
+            {
+              g_printerr ("%s: memory error in WebPPictureImportRGB(A)().",
+                          G_STRFUNC);
+            }
           /* Perform the actual encode */
-          if (! WebPAnimEncoderAdd (enc, &picture, frame_timestamp, &config))
+          else if (! WebPAnimEncoderAdd (enc, &picture, frame_timestamp, &config))
             {
               g_printerr ("ERROR[%d]: %s\n",
                           picture.error_code,
@@ -580,15 +653,8 @@ save_animation (const gchar    *filename,
           WebPMemoryWriterClear (&mw);
           WebPPictureFree (&picture);
 
-          if (buffer)
-            g_free (buffer);
-
           if (status == FALSE)
             break;
-
-          /* Flush the drawable and detach */
-          gegl_buffer_flush (geglbuffer);
-          g_object_unref (geglbuffer);
 
           gimp_progress_update ((loop + 1.0) / nLayers);
           frame_timestamp += (delay <= 0 || force_delay) ? default_delay : delay;
@@ -648,6 +714,11 @@ save_animation (const gchar    *filename,
   WebPDataClear (&webp_data);
   WebPAnimEncoderDelete (enc);
 
+  if (prev_frame != NULL)
+    {
+      g_object_unref (prev_frame);
+    }
+
   if (outfile)
     fclose (outfile);
 
@@ -672,7 +743,7 @@ save_image (const gchar    *filename,
   if (nLayers == 0)
     return FALSE;
 
-  g_printerr("Saving WebP file %s\n", filename);
+  g_printerr ("Saving WebP file %s\n", filename);
 
   if (nLayers == 1)
     {

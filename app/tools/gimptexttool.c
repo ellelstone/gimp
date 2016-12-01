@@ -51,6 +51,7 @@
 #include "vectors/gimpvectors-warp.h"
 
 #include "widgets/gimpdialogfactory.h"
+#include "widgets/gimpdockcontainer.h"
 #include "widgets/gimphelp-ids.h"
 #include "widgets/gimpmenufactory.h"
 #include "widgets/gimptextbuffer.h"
@@ -326,7 +327,7 @@ gimp_text_tool_remove_empty_text_layer (GimpTextTool *text_tool)
     {
       GimpText *text = gimp_text_layer_get_text (text_layer);
 
-      if (text->box_mode == GIMP_TEXT_BOX_DYNAMIC &&
+      if (text && text->box_mode == GIMP_TEXT_BOX_DYNAMIC &&
           (! text->text || text->text[0] == '\0') &&
           (! text->markup || text->markup[0] == '\0'))
         {
@@ -768,11 +769,14 @@ gimp_text_tool_get_popup (GimpTool         *tool,
     {
       if (! text_tool->ui_manager)
         {
+          GimpDisplayShell  *shell = gimp_display_get_shell (tool->display);
+          GimpImageWindow   *image_window;
           GimpDialogFactory *dialog_factory;
           GtkWidget         *im_menu;
           GList             *children;
 
-          dialog_factory = gimp_dialog_factory_get_singleton ();
+          image_window   = gimp_display_shell_get_window (shell);
+          dialog_factory = gimp_dock_container_get_dialog_factory (GIMP_DOCK_CONTAINER (image_window));
 
           text_tool->ui_manager =
             gimp_menu_factory_manager_new (gimp_dialog_factory_get_menu_factory (dialog_factory),

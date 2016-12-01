@@ -146,27 +146,27 @@ void   gimp_action_group_update               (GimpActionGroup       *group,
                                                gpointer               update_data);
 
 void   gimp_action_group_add_actions          (GimpActionGroup             *group,
-					       const gchar                 *msg_context,
+                                               const gchar                 *msg_context,
                                                const GimpActionEntry       *entries,
                                                guint                        n_entries);
 void   gimp_action_group_add_toggle_actions   (GimpActionGroup             *group,
-					       const gchar                 *msg_context,
+                                               const gchar                 *msg_context,
                                                const GimpToggleActionEntry *entries,
                                                guint                        n_entries);
 GSList *gimp_action_group_add_radio_actions   (GimpActionGroup             *group,
-					       const gchar                 *msg_context,
+                                               const gchar                 *msg_context,
                                                const GimpRadioActionEntry  *entries,
                                                guint                        n_entries,
                                                GSList                      *radio_group,
                                                gint                         value,
                                                GCallback                    callback);
 void   gimp_action_group_add_enum_actions     (GimpActionGroup             *group,
-					       const gchar                 *msg_context,
+                                               const gchar                 *msg_context,
                                                const GimpEnumActionEntry   *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
 void   gimp_action_group_add_string_actions   (GimpActionGroup             *group,
-					       const gchar                 *msg_context,
+                                               const gchar                 *msg_context,
                                                const GimpStringActionEntry *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
@@ -174,6 +174,9 @@ void   gimp_action_group_add_procedure_actions(GimpActionGroup             *grou
                                                const GimpProcedureActionEntry *entries,
                                                guint                        n_entries,
                                                GCallback                    callback);
+
+void   gimp_action_group_remove_action        (GimpActionGroup             *group,
+                                               GimpAction                  *action);
 
 void          gimp_action_group_activate_action       (GimpActionGroup *group,
                                                        const gchar     *action_name);

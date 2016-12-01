@@ -259,13 +259,13 @@ gimp_action_group_get_property (GObject    *object,
 
 static gboolean
 gimp_action_group_check_unique_action (GimpActionGroup *group,
-				       const gchar     *action_name)
+                                       const gchar     *action_name)
 {
   if (G_UNLIKELY (gtk_action_group_get_action (GTK_ACTION_GROUP (group),
                                                action_name)))
     {
       g_warning ("Refusing to add non-unique action '%s' to action group '%s'",
-	 	 action_name,
+                 action_name,
                  gtk_action_group_get_name (GTK_ACTION_GROUP (group)));
       return FALSE;
     }
@@ -345,7 +345,7 @@ gimp_action_group_update (GimpActionGroup *group,
 
 void
 gimp_action_group_add_actions (GimpActionGroup       *group,
-			       const gchar           *msg_context,
+                               const gchar           *msg_context,
                                const GimpActionEntry *entries,
                                guint                  n_entries)
 {
@@ -676,6 +676,36 @@ gimp_action_group_add_procedure_actions (GimpActionGroup                *group,
 
       g_object_unref (action);
     }
+}
+
+/**
+ * gimp_action_group_remove_action:
+ * @group:  the #GimpActionGroup to which @action belongs.
+ * @action: the #GimpAction.
+ *
+ * This function removes action from the groupe and clean any
+ * accelerator this action may have set.
+ * If you wish only to only remove the action from the group, use
+ * gtk_action_group_remove_action() instead.
+ */
+void
+gimp_action_group_remove_action (GimpActionGroup *group,
+                                 GimpAction      *action)
+{
+  const gchar *action_name;
+  const gchar *group_name;
+  gchar       *accel_path;
+
+  action_name = gtk_action_get_name (GTK_ACTION (action));
+  group_name  = gtk_action_group_get_name (GTK_ACTION_GROUP (group));
+  accel_path = g_strconcat ("<Actions>/", group_name, "/",
+                            action_name, NULL);
+
+  gtk_accel_map_change_entry (accel_path, 0, 0, FALSE);
+
+  gtk_action_group_remove_action (GTK_ACTION_GROUP (group),
+                                  GTK_ACTION (action));
+  g_free (accel_path);
 }
 
 void

@@ -37,6 +37,7 @@
 
 #include "widgets/gimpdialogfactory.h"
 #include "widgets/gimpdockable.h"
+#include "widgets/gimpdockcontainer.h"
 #include "widgets/gimppaletteeditor.h"
 #include "widgets/gimpsessioninfo.h"
 #include "widgets/gimpwidgets-utils.h"
@@ -443,8 +444,14 @@ gimp_color_tool_real_picked (GimpColorTool      *color_tool,
                              gpointer            pixel,
                              const GimpRGB      *color)
 {
-  GimpTool    *tool = GIMP_TOOL (color_tool);
-  GimpContext *context;
+  GimpTool          *tool  = GIMP_TOOL (color_tool);
+  GimpDisplayShell  *shell = gimp_display_get_shell (tool->display);
+  GimpImageWindow   *image_window;
+  GimpDialogFactory *dialog_factory;
+  GimpContext       *context;
+
+  image_window   = gimp_display_shell_get_window (shell);
+  dialog_factory = gimp_dock_container_get_dialog_factory (GIMP_DOCK_CONTAINER (image_window));
 
   /*  use this tool's own options here (NOT color_tool->options)  */
   context = GIMP_CONTEXT (gimp_tool_get_options (tool));
@@ -454,7 +461,22 @@ gimp_color_tool_real_picked (GimpColorTool      *color_tool,
     {
       GtkWidget *widget;
 
-      widget = gimp_dialog_factory_find_widget (gimp_dialog_factory_get_singleton (),
+//Below is for indexed palettes
+//      if (babl_format_is_palette (sample_format))
+//        {
+//          widget = gimp_dialog_factory_find_widget (dialog_factory,
+//                                                    "gimp-indexed-palette");
+//          if (widget)
+//            {
+//              GtkWidget *editor = gtk_bin_get_child (GTK_BIN (widget));
+//              guchar    *index  = pixel;
+//
+//              gimp_colormap_editor_set_index (GIMP_COLORMAP_EDITOR (editor),
+//                                              *index, NULL);
+//            }
+//        }
+
+      widget = gimp_dialog_factory_find_widget (dialog_factory,
                                                 "gimp-palette-editor");
       if (widget)
         {
@@ -484,15 +506,14 @@ gimp_color_tool_real_picked (GimpColorTool      *color_tool,
 
     case GIMP_COLOR_PICK_MODE_PALETTE:
       {
-        GimpDisplayShell *shell   = gimp_display_get_shell (tool->display);
-        GdkScreen        *screen  = gtk_widget_get_screen (GTK_WIDGET (shell));
-        gint              monitor = gimp_widget_get_monitor (GTK_WIDGET (shell));
-        GtkWidget        *dockable;
+        GdkScreen *screen  = gtk_widget_get_screen (GTK_WIDGET (shell));
+        gint       monitor = gimp_widget_get_monitor (GTK_WIDGET (shell));
+        GtkWidget *dockable;
 
         dockable =
           gimp_window_strategy_show_dockable_dialog (GIMP_WINDOW_STRATEGY (gimp_get_window_strategy (tool->display->gimp)),
                                                      tool->display->gimp,
-                                                     gimp_dialog_factory_get_singleton (),
+                                                     dialog_factory,
                                                      screen,
                                                      monitor,
                                                      "gimp-palette-editor");
