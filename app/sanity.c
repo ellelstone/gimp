@@ -536,7 +536,7 @@ sanity_check_gegl_ops (void)
     "gegl:checkerboard",
     "gegl:color",
     "gegl:color-enhance",
-    "gegl:color-exchange",
+/*    "gegl:color-exchange", */
     "gegl:color-reduction",
 /*    "gegl:color-rotate", uses HSV*/
 /*    "gegl:color-temperature", uses hard-coded sRGB-based table*/
