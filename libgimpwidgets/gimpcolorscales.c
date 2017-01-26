@@ -187,7 +187,7 @@ gimp_color_scales_init (GimpColorScales *scales)
                                     slider_initial_vals[i],
                                     0.0, slider_max_vals[i],
                                     1.0, slider_incs[i],
-                                    0,
+                                    1,
                                     gettext (enum_desc->value_help),
                                     NULL);
 
@@ -310,9 +310,9 @@ gimp_color_scales_update_scales (GimpColorScales *scales,
   values[GIMP_COLOR_SELECTOR_LIGHTNESS]  = ROUND (selector->lch.l /* * 100.0 */);
   values[GIMP_COLOR_SELECTOR_CHROMA]     = ROUND (selector->lch.c /* * 100.0 */);
   values[GIMP_COLOR_SELECTOR_HUE]        = ROUND (selector->lch.h /* * 360.0 */);
-  values[GIMP_COLOR_SELECTOR_RED]        = ROUND ( CLAMP(selector->rgb.r,0.0,1.0) * 100000.0);
-  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND ( CLAMP(selector->rgb.g,0.0,1.0) * 100000.0);
-  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND ( CLAMP(selector->rgb.b,0.0,1.0) * 100000.0);
+  values[GIMP_COLOR_SELECTOR_RED]        = ROUND (selector->rgb.r * 100000.0);
+  values[GIMP_COLOR_SELECTOR_GREEN]      = ROUND (selector->rgb.g * 100000.0);
+  values[GIMP_COLOR_SELECTOR_BLUE]       = ROUND (selector->rgb.b * 100000.0);
   values[GIMP_COLOR_SELECTOR_ALPHA]      = ROUND (selector->rgb.a * 100.0);
 
   for (i = 0; i < 7; i++)
@@ -372,27 +372,28 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
   switch (i)
     {
     case GIMP_COLOR_SELECTOR_LIGHTNESS:
-      selector->lch.l = value /* / 100.0 */;
+      selector->lch.l = value;
       break;
 
     case GIMP_COLOR_SELECTOR_CHROMA:
-      selector->lch.c = value /* / 100.0 */;
+      selector->lch.c = value;
       break;
 
     case GIMP_COLOR_SELECTOR_HUE:
-      selector->lch.h = value /* / 360.0 */;
+      selector->lch.h = value;
       break;
 
     case GIMP_COLOR_SELECTOR_RED:
-      selector->rgb.r = CLAMP (value / 100000.0, 0.0, 1.0);
+      selector->rgb.r = value / 100000.0;
       break;
 
     case GIMP_COLOR_SELECTOR_GREEN:
-      selector->rgb.g = CLAMP (value / 100000.0, 0.0, 1.0);
+      selector->rgb.g = value / 100000.0;
       break;
 
     case GIMP_COLOR_SELECTOR_BLUE:
-      selector->rgb.b = CLAMP (value / 100000.0, 0.0, 1.0);
+      selector->rgb.b = value / 100000.0;
+
       break;
 
     case GIMP_COLOR_SELECTOR_ALPHA:
@@ -409,9 +410,9 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
       babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
     }
 
-      selector->rgb.r = CLAMP (selector->rgb.r, 0.0, 1.0);
-      selector->rgb.g = CLAMP (selector->rgb.g, 0.0, 1.0);
-      selector->rgb.b = CLAMP (selector->rgb.b, 0.0, 1.0);
+//      selector->rgb.r = CLAMP (selector->rgb.r, 0.0, 1.0);
+//      selector->rgb.g = CLAMP (selector->rgb.g, 0.0, 1.0);
+//      selector->rgb.b = CLAMP (selector->rgb.b, 0.0, 1.0);
 
   gimp_color_scales_update_scales (scales, i);
 

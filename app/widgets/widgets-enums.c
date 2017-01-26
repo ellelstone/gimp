@@ -103,18 +103,18 @@ gimp_color_frame_mode_get_type (void)
   static const GEnumValue values[] =
   {
     { GIMP_COLOR_FRAME_MODE_PIXEL, "GIMP_COLOR_FRAME_MODE_PIXEL", "pixel" },
-    { GIMP_COLOR_FRAME_MODE_RGB, "GIMP_COLOR_FRAME_MODE_RGB", "rgb" },
+    { GIMP_COLOR_FRAME_MODE_RGB_PERCENT, "GIMP_COLOR_FRAME_MODE_RGB_PERCENT", "rgb-percent" },
+    { GIMP_COLOR_FRAME_MODE_RGB_U8, "GIMP_COLOR_FRAME_MODE_RGB_U8", "rgb-u8" },
     { GIMP_COLOR_FRAME_MODE_LCH, "GIMP_COLOR_FRAME_MODE_LCH", "lch" },
-//    { GIMP_COLOR_FRAME_MODE_CMYK, "GIMP_COLOR_FRAME_MODE_CMYK", "cmyk" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
-  {
+  {  
     { GIMP_COLOR_FRAME_MODE_PIXEL, NC_("color-frame-mode", "Pixel"), NULL },
-    { GIMP_COLOR_FRAME_MODE_RGB, NC_("color-frame-mode", "RGB"), NULL },
+    { GIMP_COLOR_FRAME_MODE_RGB_PERCENT, NC_("color-frame-mode", "RGB (%)"), NULL },
+    { GIMP_COLOR_FRAME_MODE_RGB_U8, NC_("color-frame-mode", "RGB (0..255)"), NULL },
     { GIMP_COLOR_FRAME_MODE_LCH, NC_("color-frame-mode", "LCH"), NULL },
-//    { GIMP_COLOR_FRAME_MODE_CMYK, NC_("color-frame-mode", "CMYK"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -144,10 +144,10 @@ gimp_color_pick_mode_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_COLOR_PICK_MODE_NONE, NC_("color-pick-mode", "Pick only"), NULL },
+    { GIMP_COLOR_PICK_MODE_NONE,       NC_("color-pick-mode", "Pick only"), NULL },
     { GIMP_COLOR_PICK_MODE_FOREGROUND, NC_("color-pick-mode", "Set foreground color"), NULL },
     { GIMP_COLOR_PICK_MODE_BACKGROUND, NC_("color-pick-mode", "Set background color"), NULL },
-    { GIMP_COLOR_PICK_MODE_PALETTE, NC_("color-pick-mode", "Add to palette"), NULL },
+    { GIMP_COLOR_PICK_MODE_PALETTE,    NC_("color-pick-mode", "Add to palette"), NULL },
     { 0, NULL, NULL }
   };
 

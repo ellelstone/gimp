@@ -410,8 +410,8 @@ sanity_check_gexiv2 (void)
 #ifdef GEXIV2_MAJOR_VERSION
 
 #define GEXIV2_REQUIRED_MAJOR 0
-#define GEXIV2_REQUIRED_MINOR 7
-#define GEXIV2_REQUIRED_MICRO 0
+#define GEXIV2_REQUIRED_MINOR 10
+#define GEXIV2_REQUIRED_MICRO 3
 
   gint gexiv2_version = gexiv2_get_version ();
 
@@ -537,7 +537,6 @@ sanity_check_gegl_ops (void)
     "gegl:color",
     "gegl:color-enhance",
 /*    "gegl:color-exchange", */
-    "gegl:color-reduction",
 /*    "gegl:color-rotate", uses HSV*/
 /*    "gegl:color-temperature", uses hard-coded sRGB-based table*/
     "gegl:color-to-alpha",
@@ -551,9 +550,11 @@ sanity_check_gegl_ops (void)
     "gegl:diffraction-patterns",
     "gegl:displace",
     "gegl:distance-transform",
+    "gegl:dither",
     "gegl:dropshadow",
     "gegl:edge",
     "gegl:edge-laplace",
+/*    "gegl:edge-neon",*/
     "gegl:edge-sobel",
     "gegl:emboss",
     "gegl:engrave",

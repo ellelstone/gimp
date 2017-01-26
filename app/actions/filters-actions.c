@@ -167,6 +167,11 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:component-extract",
     NULL /* FIXME GIMP_HELP_FILTER_COMPONENT_EXTRACT */ },
 
+  { "filters-dither", GIMP_STOCK_GEGL,
+    NC_("filters-action", "Dithe_r..."), NULL, NULL,
+    "gegl:dither",
+    NULL /* FIXME GIMP_HELP_FILTER_DITHER */ },
+
 //  { "filters-color-rotate", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "_Rotate Colors..."), NULL, NULL,
 //    "gegl:color-rotate",
@@ -236,6 +241,11 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "_Laplace"), NULL, NULL,
     "gegl:edge-laplace",
     NULL /* FIXME GIMP_HELP_FILTER_EDGE_LAPLACE */ },
+
+//  { "filters-edge-neon", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Neon..."), NULL, NULL,
+//    "gegl:edge-neon",
+//    NULL /* FIXME GIMP_HELP_FILTER_EDGE_LAPLACE */ },
 
   { "filters-edge-sobel", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Sobel..."), NULL, NULL,
@@ -687,6 +697,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-color-enhance",           writable && !gray);
   SET_SENSITIVE ("filters-color-exchange",          writable);
   SET_SENSITIVE ("filters-color-reduction",         writable);
+  SET_SENSITIVE ("filters-dither",                  writable);
 /*  SET_SENSITIVE ("filters-color-rotate",            writable);*/
 /*  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);*/
   SET_SENSITIVE ("filters-color-to-alpha",          writable && !gray && alpha);
@@ -702,6 +713,7 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-dropshadow",              writable && alpha);
   SET_SENSITIVE ("filters-edge",                    writable);
   SET_SENSITIVE ("filters-edge-laplace",            writable);
+/*  SET_SENSITIVE ("filters-edge-neon",               writable);*/
   SET_SENSITIVE ("filters-edge-sobel",              writable);
   SET_SENSITIVE ("filters-emboss",                  writable);
   SET_SENSITIVE ("filters-engrave",                 writable);

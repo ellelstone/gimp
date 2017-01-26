@@ -348,7 +348,7 @@ gimp_drawable_filter_set_mode (GimpDrawableFilter   *filter,
     }
 }
 
-/* elle remove stupid color-managed functions //void
+//void
 //gimp_drawable_filter_set_color_managed (GimpDrawableFilter *filter,
 //                                        gboolean            color_managed)
 //{
@@ -365,7 +365,7 @@ gimp_drawable_filter_set_mode (GimpDrawableFilter   *filter,
 //    }
 //}
 
-/* elle remove gamma hack functions */ //void
+//void
 //gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter *filter,
 //                                     gboolean            gamma_hack)
 //{

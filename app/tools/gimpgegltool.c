@@ -125,7 +125,6 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:color",
     "gegl:color-enhance",
     "gegl:color-exchange",
-    "gegl:color-reduction",
     "gegl:color-rotate",
 /*    "gegl:color-temperature",*/
     "gegl:color-to-alpha",
@@ -137,6 +136,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:diffraction-patterns",
     "gegl:displace",
     "gegl:distance-transform",
+    "gegl:dither",
     "gegl:dropshadow",
     "gegl:edge",
     "gegl:edge-laplace",
@@ -200,6 +200,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:value-propagate",
     "gegl:video-degradation",
     "gegl:vignette",
+    "gegl:wavelet-blur",
     "gegl:waves",
     "gegl:whirl-pinch",
     "gegl:wind",
@@ -207,18 +208,26 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     /* these ops are blacklisted for other reasons */
     "gegl:contrast-curve",
     "gegl:convert-format", /* pointless */
+    "gegl:ditto", /* elle: pointless */
     "gegl:fill-path",
+    "gegl:gradient-map", /* elle: seems to be broken - the scales don't work */
     "gegl:gray", /* we use gimp's op */
+//    "gegl:grey2.json", /* elle: broken, but this isn't the right name */
     "gegl:hstack", /* pointless */
     "gegl:introspect", /* pointless */
+    "gegl:kuwahara", /* elle: broken  */
     "gegl:layer", /* we use gimp's ops */
     "gegl:lcms-from-profile", /* not usable here */
+    "gegl:levels", /* elle: pointless */
     "gegl:linear-gradient", /* we use the blend tool */
+    "gegl:mandelbrot", /* elle: broken  */
     "gegl:matting-global", /* used in the foreground select tool */
+    "gegl:matting-levin", /* used in the foreground select tool */
     "gegl:opacity", /* poinless */
     "gegl:path",
     "gegl:posterize", /* we use gimp's op */
     "gegl:radial-gradient", /* we use the blend tool */
+    "gegl:rectangle", /* elle: pointless */
     "gegl:seamless-clone", /* used in the seamless clone tool */
     "gegl:text", /* we use gimp's text rendering */
     "gegl:threshold", /* we use gimp's op */

@@ -94,7 +94,7 @@ static const GimpActionEntry image_actions[] =
     G_CALLBACK (image_color_profile_convert_cmd_callback),
     GIMP_HELP_IMAGE_COLOR_PROFILE_CONVERT },
 
-/**/  { "image-color-profile-discard", NULL,
+  { "image-color-profile-discard", NULL,
     NC_("image-action", "_Discard Color Profile"), NULL,
     NC_("image-action", "Remove the image's color profile"),
     G_CALLBACK (image_color_profile_discard_cmd_callback),
@@ -306,25 +306,38 @@ image_actions_update (GimpActionGroup *group,
                       gpointer         data)
 {
   GimpImage *image         = action_data_get_image (data);
+//  gboolean   is_indexed    = FALSE;
+//  gboolean   is_u8_gamma   = FALSE;
+  gboolean   is_double     = FALSE;
   gboolean   aux           = FALSE;
   gboolean   lp            = FALSE;
   gboolean   sel           = FALSE;
+//  gboolean   groups        = FALSE;
+//  gboolean   color_managed = FALSE;
   gboolean   profile       = FALSE;
 
   if (image)
     {
+//      GimpContainer     *layers;
       const gchar       *action = NULL;
       GimpImageBaseType  base_type;
+//      GimpPrecision      precision;
+      GimpComponentType  component_type;
 
-      base_type = gimp_image_get_base_type (image);
+      base_type      = gimp_image_get_base_type (image);
+//      precision      = gimp_image_get_precision (image);
+      component_type = gimp_image_get_component_type (image);
 
       switch (base_type)
         {
         case GIMP_RGB:     action = "image-convert-rgb";       break;
         case GIMP_GRAY:    action = "image-convert-grayscale"; break;
+//        case GIMP_INDEXED: action = "image-convert-indexed";   break;
         }
 
-      switch (gimp_image_get_component_type (image))
+      gimp_action_group_set_action_active (group, action, TRUE);
+
+      switch (component_type)
         {
         case GIMP_COMPONENT_TYPE_U8:     action = "image-convert-u8";     break;
         case GIMP_COMPONENT_TYPE_U16:    action = "image-convert-u16";    break;
@@ -336,10 +349,30 @@ image_actions_update (GimpActionGroup *group,
 
       gimp_action_group_set_action_active (group, action, TRUE);
 
+//      if (gimp_babl_format_get_linear (gimp_image_get_layer_format (image,
+//                                                                    FALSE)))
+//        {
+//          gimp_action_group_set_action_active (group, "image-convert-linear",
+//                                               TRUE);
+//        }
+//      else
+//        {
+//          gimp_action_group_set_action_active (group, "image-convert-gamma",
+//                                               TRUE);
+//        }
+
+//      is_indexed  = (base_type == GIMP_INDEXED);
+//      is_u8_gamma = (precision == GIMP_PRECISION_U8_GAMMA);
+      is_double   = (component_type == GIMP_COMPONENT_TYPE_DOUBLE);
       aux         = (gimp_image_get_active_channel (image) != NULL);
       lp          = ! gimp_image_is_empty (image);
       sel         = ! gimp_channel_is_empty (gimp_image_get_mask (image));
 
+//      layers = gimp_image_get_layers (image);
+
+//      groups = ! gimp_item_stack_is_flat (GIMP_ITEM_STACK (layers));
+
+//      color_managed = gimp_image_get_is_color_managed (image);
       profile       = (gimp_image_get_color_profile (image) != NULL);
     }
 
@@ -349,6 +382,8 @@ image_actions_update (GimpActionGroup *group,
         gimp_action_group_set_action_sensitive (group, action, (condition) != 0)
 #define SET_ACTIVE(action,condition) \
         gimp_action_group_set_action_active (group, action, (condition) != 0)
+#define SET_VISIBLE(action,condition) \
+        gimp_action_group_set_action_visible (group, action, (condition) != 0)
 
   SET_SENSITIVE ("image-duplicate", image);
 
@@ -369,17 +404,25 @@ image_actions_update (GimpActionGroup *group,
 
   SET_SENSITIVE ("image-convert-rgb",       image);
   SET_SENSITIVE ("image-convert-grayscale", image);
+//  SET_SENSITIVE ("image-convert-indexed",   image && !groups && is_u8_gamma);
 
   SET_SENSITIVE ("image-convert-u8",     image);
   SET_SENSITIVE ("image-convert-u16",    image);
   SET_SENSITIVE ("image-convert-u32",    image);
   SET_SENSITIVE ("image-convert-half",   image);
-  SET_SENSITIVE ("image-convert-float",  image );
+  SET_SENSITIVE ("image-convert-float",  image);
   SET_SENSITIVE ("image-convert-double", image);
+  SET_VISIBLE   ("image-convert-double", is_double);
+
+//  SET_SENSITIVE ("image-convert-gamma",  image);
+//  SET_SENSITIVE ("image-convert-linear", image && !is_indexed);
+
+//  SET_SENSITIVE ("image-color-management-enabled", image);
+//  SET_ACTIVE    ("image-color-management-enabled", image && color_managed);
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);
-/**/  SET_SENSITIVE ("image-color-profile-discard", image && profile);
+  SET_SENSITIVE ("image-color-profile-discard", image && profile);
   SET_SENSITIVE ("image-color-profile-save",    image);
 
   SET_SENSITIVE ("image-flip-horizontal", image);
@@ -403,4 +446,5 @@ image_actions_update (GimpActionGroup *group,
 #undef SET_LABEL
 #undef SET_SENSITIVE
 #undef SET_ACTIVE
+#undef SET_VISIBLE
 }

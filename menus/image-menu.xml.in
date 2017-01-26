@@ -631,6 +631,7 @@
       <menu action="filters-noise-menu" name="Noise">
         <menuitem action="filters-noise-cie-lch" />
         <menuitem action="filters-noise-rgb" />
+        <menuitem action="filters-dither" />
 <!--    <menuitem action="filters-noise-hsv" /> uses HSV-->
         <separator />
         <menuitem action="filters-noise-hurl" />

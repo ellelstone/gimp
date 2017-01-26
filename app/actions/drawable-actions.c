@@ -49,13 +49,20 @@ static const GimpActionEntry drawable_actions[] =
 
   { "drawable-invert", GIMP_STOCK_INVERT,
     NC_("drawable-action", "In_vert"), NULL,
-    NC_("drawable-action", "Invert the colors"),
+    NC_("drawable-action", "Invert the colors perceptually"),
     G_CALLBACK (drawable_invert_cmd_callback),
     GIMP_HELP_LAYER_INVERT },
 
+/*  { "drawable-linear-invert", GIMP_STOCK_INVERT,
+    NC_("drawable-action", "_Linear Invert"), NULL,
+    NC_("drawable-action", "Invert the colors in linear light"),
+    G_CALLBACK (drawable_linear_invert_cmd_callback),
+    GIMP_HELP_LAYER_INVERT },*/
+
 /*  { "drawable-value-invert", GIMP_STOCK_GEGL,
     NC_("drawable-action", "_Value Invert"), NULL,
-    NC_("drawable-action", "Invert the brightness of each pixel"),
+    NC_("drawable-action",
+        "Invert the brightness of each pixel, keeping the color"),
     G_CALLBACK (drawable_value_invert_cmd_callback),
     GIMP_HELP_LAYER_INVERT },*/
 
@@ -192,6 +199,7 @@ drawable_actions_update (GimpActionGroup *group,
 {
   GimpImage    *image;
   GimpDrawable *drawable     = NULL;
+//  gboolean      is_rgb       = FALSE;
   gboolean      visible      = FALSE;
   gboolean      linked       = FALSE;
   gboolean      locked       = FALSE;
@@ -211,6 +219,8 @@ drawable_actions_update (GimpActionGroup *group,
       if (drawable)
         {
           GimpItem *item;
+
+//          is_rgb = gimp_drawable_is_rgb (drawable);
 
           if (GIMP_IS_LAYER_MASK (drawable))
             item = GIMP_ITEM (gimp_layer_mask_get_layer (GIMP_LAYER_MASK (drawable)));
@@ -238,6 +248,7 @@ drawable_actions_update (GimpActionGroup *group,
 
 //  SET_SENSITIVE ("drawable-equalize",       writable && !children);
   SET_SENSITIVE ("drawable-invert",         writable && !children);
+//  SET_SENSITIVE ("drawable-linear-invert",  writable && !children);
 //  SET_SENSITIVE ("drawable-value-invert",   writable && !children);
 //  SET_SENSITIVE ("drawable-levels-stretch", writable && !children && is_rgb);
   SET_SENSITIVE ("drawable-dilate",         writable && !children);

@@ -41,8 +41,24 @@
 #include "gimp-intl.h"
 
 
+/*enum
+{
+  PROP_0,
+  PROP_LINEAR
+};
+
+*/
 static void     gimp_histogram_editor_docked_iface_init (GimpDockedInterface *iface);
 
+/*static void     gimp_histogram_editor_set_property  (GObject            *object,
+                                                     guint               property_id,
+                                                     const GValue       *value,
+                                                     GParamSpec         *pspec);
+static void     gimp_histogram_editor_get_property  (GObject            *object,
+                                                     guint               property_id,
+                                                     GValue             *value,
+                                                     GParamSpec         *pspec);
+*/
 static void     gimp_histogram_editor_set_aux_info  (GimpDocked          *docked,
                                                      GList               *aux_info);
 static GList  * gimp_histogram_editor_get_aux_info  (GimpDocked          *docked);
@@ -53,6 +69,8 @@ static void     gimp_histogram_editor_layer_changed (GimpImage           *image,
                                                      GimpHistogramEditor *editor);
 static void     gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
                                                      const GParamSpec    *pspec);
+/*static void     gimp_histogram_editor_buffer_update (GimpHistogramEditor *editor,
+                                                     const GParamSpec    *pspec);*/
 static void     gimp_histogram_editor_update        (GimpHistogramEditor *editor);
 
 static gboolean gimp_histogram_editor_idle_update   (GimpHistogramEditor *editor);
@@ -78,9 +96,20 @@ static GimpDockedInterface *parent_docked_iface = NULL;
 static void
 gimp_histogram_editor_class_init (GimpHistogramEditorClass *klass)
 {
+//  GObjectClass         *object_class       = G_OBJECT_CLASS (klass);
   GimpImageEditorClass *image_editor_class = GIMP_IMAGE_EDITOR_CLASS (klass);
 
+//  object_class->set_property    = gimp_histogram_editor_set_property;
+//  object_class->get_property    = gimp_histogram_editor_get_property;
+
   image_editor_class->set_image = gimp_histogram_editor_set_image;
+
+//  g_object_class_install_property (object_class, PROP_LINEAR,
+//                                   g_param_spec_boolean ("linear",
+//                                                         _("Linear"), NULL,
+//                                                         TRUE,
+//                                                         GIMP_PARAM_READWRITE |
+//                                                         G_PARAM_CONSTRUCT));
 }
 
 static void
@@ -90,6 +119,7 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
   GtkWidget         *hbox;
   GtkWidget         *label;
   GtkWidget         *menu;
+//  GtkWidget         *button;
   GtkWidget         *table;
   gint               i;
 
@@ -135,12 +165,26 @@ gimp_histogram_editor_init (GimpHistogramEditor *editor)
   gtk_box_pack_start (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
 
+//  gimp_help_set_help_data (editor->menu,
+//                           _("Histogram channel"), NULL);
+//
   menu = gimp_prop_enum_icon_box_new (G_OBJECT (view),
                                       "histogram-scale", "gimp-histogram",
                                       0, 0);
   gtk_box_pack_end (GTK_BOX (hbox), menu, FALSE, FALSE, 0);
   gtk_widget_show (menu);
 
+//  button = gimp_prop_check_button_new (G_OBJECT (editor), "linear", NULL);
+//  gtk_toggle_button_set_mode (GTK_TOGGLE_BUTTON (button), FALSE);
+//  gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+//  gtk_widget_show (button);
+
+//  gimp_help_set_help_data (button,
+//                           "This button switches between a histogram in "
+//                           "sRGB (gamma corrected) space and a histogram "
+//                           "in linear space. Also, it's horrible UI and "
+//                           "needs to be changed.", NULL);
+//
   gtk_box_pack_start (GTK_BOX (editor), editor->box, TRUE, TRUE, 0);
   gtk_widget_show (GTK_WIDGET (editor->box));
 
@@ -203,6 +247,65 @@ gimp_histogram_editor_docked_iface_init (GimpDockedInterface *docked_iface)
   docked_iface->get_aux_info = gimp_histogram_editor_get_aux_info;
 }
 
+/*static void
+gimp_histogram_editor_set_property (GObject      *object,
+                                    guint         property_id,
+                                    const GValue *value,
+                                    GParamSpec   *pspec)
+{
+  GimpHistogramEditor *editor = GIMP_HISTOGRAM_EDITOR (object);
+  GimpHistogramView   *view   = GIMP_HISTOGRAM_BOX (editor->box)->view;
+
+  switch (property_id)
+    {
+//    case PROP_LINEAR:
+//      editor->linear = g_value_get_boolean (value);
+//
+//      if (editor->histogram)
+//        {
+//          g_object_unref (editor->histogram);
+//          editor->histogram = NULL;
+//
+//          gimp_histogram_view_set_histogram (view, NULL);
+//        }
+//
+//      if (editor->bg_histogram)
+//        {
+//          g_object_unref (editor->bg_histogram);
+//          editor->bg_histogram = NULL;
+//
+//          gimp_histogram_view_set_background (view, NULL);
+//        }
+
+      gimp_histogram_editor_update (editor);
+      break;
+
+   default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+
+static void
+gimp_histogram_editor_get_property (GObject    *object,
+                                    guint       property_id,
+                                    GValue     *value,
+                                    GParamSpec *pspec)
+{
+  GimpHistogramEditor *editor = GIMP_HISTOGRAM_EDITOR (object);
+
+  switch (property_id)
+    {
+//    case PROP_LINEAR:
+//      g_value_set_boolean (value, editor->linear);
+//      break;
+//
+   default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+      break;
+    }
+}
+*/
 static void
 gimp_histogram_editor_set_aux_info (GimpDocked *docked,
                                     GList      *aux_info)
@@ -310,6 +413,16 @@ gimp_histogram_editor_layer_changed (GimpImage           *image,
 {
   if (editor->drawable)
     {
+//      GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+//
+//      if (editor->histogram)
+//        {
+//          g_object_unref (editor->histogram);
+//          editor->histogram = NULL;
+//
+//          gimp_histogram_view_set_histogram (view, NULL);
+//        }
+//
       if (editor->bg_histogram)
         {
           GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
@@ -330,6 +443,9 @@ gimp_histogram_editor_layer_changed (GimpImage           *image,
                                             gimp_histogram_editor_update,
                                             editor);
       g_signal_handlers_disconnect_by_func (editor->drawable,
+//                                            gimp_histogram_editor_buffer_update,
+//                                            editor);
+//      g_signal_handlers_disconnect_by_func (editor->drawable,
                                             gimp_histogram_editor_frozen_update,
                                             editor);
       editor->drawable = NULL;
@@ -344,6 +460,9 @@ gimp_histogram_editor_layer_changed (GimpImage           *image,
     {
       g_signal_connect_object (editor->drawable, "notify::frozen",
                                G_CALLBACK (gimp_histogram_editor_frozen_update),
+//                               editor, G_CONNECT_SWAPPED);
+//      g_signal_connect_object (editor->drawable, "notify::buffer",
+//                               G_CALLBACK (gimp_histogram_editor_buffer_update),
                                editor, G_CONNECT_SWAPPED);
       g_signal_connect_object (editor->drawable, "update",
                                G_CALLBACK (gimp_histogram_editor_update),
@@ -417,6 +536,15 @@ gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
     }
 }
 
+//static void
+//gimp_histogram_editor_buffer_update (GimpHistogramEditor *editor,
+//                                     const GParamSpec    *pspec)
+//{
+//  g_object_set (editor,
+//                "linear", FALSE /*gimp_drawable_get_linear (editor->drawable)*/,
+//                NULL);
+//}
+//
 static void
 gimp_histogram_editor_update (GimpHistogramEditor *editor)
 {

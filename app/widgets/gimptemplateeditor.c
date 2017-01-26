@@ -410,7 +410,9 @@ gimp_template_editor_constructed (GObject *object)
                              combo, 1, FALSE);
 
   combo = gimp_prop_enum_combo_box_new (G_OBJECT (template),
-                                        "component-type", 0, 0);
+                                        "component-type",
+                                        GIMP_COMPONENT_TYPE_U8,
+                                        GIMP_COMPONENT_TYPE_FLOAT);
   gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("_Precision:"), 0.0, 0.5,
                              combo, 1, FALSE);
@@ -641,7 +643,7 @@ static void
 gimp_template_editor_precision_changed (GtkWidget          *widget,
                                         GimpTemplateEditor *editor)
 {
-  GimpTemplateEditorPrivate *private = GET_PRIVATE (editor);
+//  GimpTemplateEditorPrivate *private = GET_PRIVATE (editor);
   GimpComponentType          component_type;
 
   gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (widget),
