@@ -11,5 +11,6 @@
     'file-png' => { ui => 1, gegl => 1, libs => 'PNG_LIBS', cflags => 'PNG_CFLAGS' },
     'file-pdf-load' => { ui => 1, optional => 1, libs => 'POPPLER_LIBS', cflags => 'POPPLER_CFLAGS' },
     'file-pdf-save' => { ui => 1, gegl => 1, optional => 1, libs => 'CAIRO_PDF_LIBS', cflags => 'CAIRO_PDF_CFLAGS' },
-    'unit-editor' => { ui => 1 }
+    'unit-editor' => { ui => 1 },
+    'wavelet-decompose' => { ui => 1, gegl => 1 }
 );

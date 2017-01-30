@@ -61,7 +61,8 @@ libexec_PROGRAMS = \
 	$(FILE_PDF_SAVE) \
 	file-pat \
 	file-png \
-	unit-editor
+	unit-editor \
+	wavelet-decompose
 
 EXTRA_PROGRAMS = \
 	file-jp2-load \
@@ -323,3 +324,21 @@ unit_editor_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(unit_editor_RC)
+
+wavelet_decompose_SOURCES = \
+	wavelet-decompose.c
+
+wavelet_decompose_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(wavelet_decompose_RC)
