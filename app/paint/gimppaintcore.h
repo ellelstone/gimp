@@ -59,7 +59,6 @@ struct _GimpPaintCore
   GeglBuffer  *saved_proj_buffer; /*  proj tiles which have been modified */
   GeglBuffer  *canvas_buffer;     /*  the buffer to paint the mask to     */
   GeglBuffer  *comp_buffer;       /*  scratch buffer used when masking components */
-
   GeglBuffer  *paint_buffer;      /*  the buffer to paint pixels to       */
   gint         paint_buffer_x;
   gint         paint_buffer_y;
@@ -109,6 +108,7 @@ struct _GimpPaintCoreClass
   GeglBuffer * (* get_paint_buffer) (GimpPaintCore    *core,
                                      GimpDrawable     *drawable,
                                      GimpPaintOptions *paint_options,
+                                     GimpLayerMode     paint_mode,
                                      const GimpCoords *coords,
                                      gint             *paint_buffer_x,
                                      gint             *paint_buffer_y,
@@ -167,6 +167,7 @@ void      gimp_paint_core_round_line                (GimpPaintCore    *core,
 GeglBuffer * gimp_paint_core_get_paint_buffer       (GimpPaintCore    *core,
                                                      GimpDrawable     *drawable,
                                                      GimpPaintOptions *options,
+                                                     GimpLayerMode     paint_mode,
                                                      const GimpCoords *coords,
                                                      gint             *paint_buffer_x,
                                                      gint             *paint_buffer_y,
@@ -183,7 +184,7 @@ void      gimp_paint_core_paste             (GimpPaintCore            *core,
                                              GimpDrawable             *drawable,
                                              gdouble                   paint_opacity,
                                              gdouble                   image_opacity,
-                                             GimpLayerModeEffects      paint_mode,
+                                             GimpLayerMode             paint_mode,
                                              GimpPaintApplicationMode  mode);
 
 void      gimp_paint_core_replace           (GimpPaintCore            *core,

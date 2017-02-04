@@ -22,7 +22,10 @@
 
 
 #include <gegl-types.h>
+
 #include "gegl/gimp-gegl-types.h"
+
+#include "operations-enums.h"
 
 
 /*  operations  */
@@ -49,15 +52,25 @@ typedef struct _GimpThresholdConfig             GimpThresholdConfig;
 
 typedef struct _GimpCagePoint                   GimpCagePoint;
 
+
 /*  functions  */
 
-typedef gboolean (*GimpLayerModeFunction)(gfloat              *in,
-                                          gfloat              *aux,
-                                          gfloat              *mask,
-                                          gfloat              *out,
-                                          gfloat               opacity,
-                                          glong                samples,
-                                          const GeglRectangle *roi,
-                                          gint                 level);
+typedef gboolean (* GimpLayerModeFunc) (gfloat                 *in,
+                                        gfloat                 *aux,
+                                        gfloat                 *mask,
+                                        gfloat                 *out,
+                                        gfloat                  opacity,
+                                        glong                   samples,
+                                        const GeglRectangle    *roi,
+                                        gint                    level,
+                                        GimpLayerColorSpace     blend_trc,
+                                        GimpLayerColorSpace     composite_trc,
+                                        GimpLayerCompositeMode  composite_mode);
+
+typedef  void    (* GimpBlendFunc)     (const float            *dest,
+                                        const float            *src,
+                                        float                  *out,
+                                        gint                    samples);
+
 
 #endif /* __OPERATIONS_TYPES_H__ */

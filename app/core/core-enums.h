@@ -148,47 +148,87 @@ typedef enum
 } GimpHistogramChannel;
 
 
-#define GIMP_TYPE_LAYER_MODE_EFFECTS (gimp_layer_mode_effects_get_type ())
+#define GIMP_TYPE_LAYER_MODE (gimp_layer_mode_get_type ())
 
-GType gimp_layer_mode_effects_get_type (void) G_GNUC_CONST;
+GType gimp_layer_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_NORMAL_MODE,          /*< desc="Normal"               >*/
-  GIMP_DISSOLVE_MODE,        /*< desc="Dissolve"             >*/
-  GIMP_BEHIND_MODE,          /*< desc="Behind"               >*/
-  GIMP_MULTIPLY_MODE,        /*< desc="Multiply"             >*/
-  GIMP_SCREEN_MODE,          /*< desc="Screen"               >*/
-  GIMP_OVERLAY_MODE,         /*< desc="Old broken Overlay"   >*/
-  GIMP_DIFFERENCE_MODE,      /*< desc="Difference"           >*/
-  GIMP_ADDITION_MODE,        /*< desc="Addition"             >*/
-  GIMP_SUBTRACT_MODE,        /*< desc="Subtract"             >*/
-  GIMP_DARKEN_ONLY_MODE,     /*< desc="Darken only"          >*/
-  GIMP_LIGHTEN_ONLY_MODE,    /*< desc="Lighten only"         >*/
-  GIMP_HUE_MODE,             /*< desc="Hue (HSV)"            >*/
-  GIMP_SATURATION_MODE,      /*< desc="Saturation (HSV)"     >*/
-  GIMP_COLOR_MODE,           /*< desc="Color (HSV)"          >*/
-  GIMP_VALUE_MODE,           /*< desc="Value (HSV)"          >*/
-  GIMP_DIVIDE_MODE,          /*< desc="Divide"               >*/
-  GIMP_DODGE_MODE,           /*< desc="Dodge"                >*/
-  GIMP_BURN_MODE,            /*< desc="Burn"                 >*/
-  GIMP_HARDLIGHT_MODE,       /*< desc="Hard light"           >*/
-  GIMP_SOFTLIGHT_MODE,       /*< desc="Soft light"           >*/
-  GIMP_GRAIN_EXTRACT_MODE,   /*< desc="Grain extract"        >*/
-  GIMP_GRAIN_MERGE_MODE,     /*< desc="Grain merge"          >*/
-  GIMP_COLOR_ERASE_MODE,     /*< desc="Color erase"          >*/
-  GIMP_NEW_OVERLAY_MODE,     /*< desc="Overlay"              >*/
-  GIMP_LCH_HUE_MODE,         /*< desc="Hue (LCH)"            >*/
-  GIMP_LCH_CHROMA_MODE,      /*< desc="Chroma (LCH)"         >*/
-  GIMP_LCH_COLOR_MODE,       /*< desc="Color (LCH)"          >*/
-  GIMP_LCH_LIGHTNESS_MODE,   /*< desc="Lightness (LCH)"      >*/
-  GIMP_LUMINANCE_MODE,       /*< desc="Luminance (RGB)"      >*/
+  /*  Modes that exist since ancient times  */
+  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,     /*< desc="Normal (non-linear)"      >*/
+  GIMP_LAYER_MODE_DISSOLVE,              /*< desc="Dissolve"                 >*/
+  GIMP_LAYER_MODE_BEHIND,                /*< desc="Behind"                   >*/
+  GIMP_LAYER_MODE_MULTIPLY_LEGACY,       /*< desc="Multiply (legacy)"        >*/
+  GIMP_LAYER_MODE_SCREEN_LEGACY,         /*< desc="Screen (legacy)"          >*/
+  GIMP_LAYER_MODE_OVERLAY_LEGACY,        /*< desc="Old broken Overlay"       >*/
+  GIMP_LAYER_MODE_DIFFERENCE_LEGACY,     /*< desc="Difference (legacy)"      >*/
+  GIMP_LAYER_MODE_ADDITION_LEGACY,       /*< desc="Addition (legacy)"        >*/
+  GIMP_LAYER_MODE_SUBTRACT_LEGACY,       /*< desc="Subtract (legacy)"        >*/
+  GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,    /*< desc="Darken only (legacy)"     >*/
+  GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,   /*< desc="Lighten only (legacy)"    >*/
+  GIMP_LAYER_MODE_HSV_HUE_LEGACY,        /*< desc="Hue (HSV) (legacy)"       >*/
+  GIMP_LAYER_MODE_HSV_SATURATION_LEGACY, /*< desc="Saturation (HSV) (legacy)">*/
+  GIMP_LAYER_MODE_HSV_COLOR_LEGACY,      /*< desc="Color (HSV) (legacy)"     >*/
+  GIMP_LAYER_MODE_HSV_VALUE_LEGACY,      /*< desc="Value (HSV) (legacy)"     >*/
+  GIMP_LAYER_MODE_DIVIDE_LEGACY,         /*< desc="Divide (legacy)"          >*/
+  GIMP_LAYER_MODE_DODGE_LEGACY,          /*< desc="Dodge (legacy)"           >*/
+  GIMP_LAYER_MODE_BURN_LEGACY,           /*< desc="Burn (legacy)"            >*/
+  GIMP_LAYER_MODE_HARDLIGHT_LEGACY,      /*< desc="Hard light (legacy)"      >*/
+  GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,      /*< desc="Soft light (legacy)"      >*/
+  GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,  /*< desc="Grain extract (legacy)"   >*/
+  GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,    /*< desc="Grain merge (legacy)"     >*/
+  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
 
-  /* internal modes, not available to the PDB */
-  GIMP_ERASE_MODE      = 1000, /*< pdb-skip, desc="Erase"      >*/
-  GIMP_REPLACE_MODE    = 1001, /*< pdb-skip, desc="Replace"    >*/
-  GIMP_ANTI_ERASE_MODE = 1002  /*< pdb-skip, desc="Anti erase" >*/
-} GimpLayerModeEffects;
+  /*  Since 2.8  */
+  GIMP_LAYER_MODE_OVERLAY,               /*< desc="Overlay"                  >*/
+  GIMP_LAYER_MODE_LCH_HUE,               /*< desc="Hue (LCH)"                >*/
+  GIMP_LAYER_MODE_LCH_CHROMA,            /*< desc="Chroma (LCH)"             >*/
+  GIMP_LAYER_MODE_LCH_COLOR,             /*< desc="Color (LCH)"              >*/
+  GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
+  GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
+
+  /*  Since 2.10  */
+  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
+  GIMP_LAYER_MODE_BEHIND_LINEAR,         /*< desc="Behind (linear)"          >*/
+  GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
+  GIMP_LAYER_MODE_MULTIPLY_LINEAR,       /*< desc="Multiply (linear)"        >*/
+  GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/
+  GIMP_LAYER_MODE_SCREEN_LINEAR,         /*< desc="Screen (linear)"          >*/
+  GIMP_LAYER_MODE_OVERLAY_LINEAR,        /*< desc="Overlay (linear)"         >*/
+  GIMP_LAYER_MODE_DIFFERENCE,            /*< desc="Difference"               >*/
+  GIMP_LAYER_MODE_DIFFERENCE_LINEAR,     /*< desc="Difference (linear)"      >*/
+  GIMP_LAYER_MODE_ADDITION,              /*< desc="Addition"                 >*/
+  GIMP_LAYER_MODE_ADDITION_LINEAR,       /*< desc="Addition (linear)"        >*/
+  GIMP_LAYER_MODE_SUBTRACT,              /*< desc="Subtract"                 >*/
+  GIMP_LAYER_MODE_SUBTRACT_LINEAR,       /*< desc="Subtract (linear)"        >*/
+  GIMP_LAYER_MODE_DARKEN_ONLY,           /*< desc="Darken only"              >*/
+  GIMP_LAYER_MODE_DARKEN_ONLY_LINEAR,    /*< desc="Darken only (linear)"     >*/
+  GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
+  GIMP_LAYER_MODE_LIGHTEN_ONLY_LINEAR,   /*< desc="Lighten only (linear)"    >*/
+  GIMP_LAYER_MODE_HSV_HUE,               /*< desc="Hue (HSV)"                >*/
+  GIMP_LAYER_MODE_HSV_SATURATION,        /*< desc="Saturation (HSV)"         >*/
+  GIMP_LAYER_MODE_HSV_COLOR,             /*< desc="Color (HSV)"              >*/
+  GIMP_LAYER_MODE_HSV_VALUE,             /*< desc="Value (HSV)"              >*/
+  GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
+  GIMP_LAYER_MODE_DIVIDE_LINEAR,         /*< desc="Divide (linear)"          >*/
+  GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/
+  GIMP_LAYER_MODE_DODGE_LINEAR,          /*< desc="Dodge (linear)"           >*/
+  GIMP_LAYER_MODE_BURN,                  /*< desc="Burn"                     >*/
+  GIMP_LAYER_MODE_BURN_LINEAR,           /*< desc="Burn (linear)"            >*/
+  GIMP_LAYER_MODE_HARDLIGHT,             /*< desc="Hard light"               >*/
+  GIMP_LAYER_MODE_HARDLIGHT_LINEAR,      /*< desc="Hard light (linear)"      >*/
+  GIMP_LAYER_MODE_SOFTLIGHT,             /*< desc="Soft light"               >*/
+  GIMP_LAYER_MODE_SOFTLIGHT_LINEAR,      /*< desc="Soft light (linear)"      >*/
+  GIMP_LAYER_MODE_GRAIN_EXTRACT,         /*< desc="Grain extract"            >*/
+  GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR,  /*< desc="Grain extract (linear)"   >*/
+  GIMP_LAYER_MODE_GRAIN_MERGE,           /*< desc="Grain merge"              >*/
+  GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR,    /*< desc="Grain merge (linear)"     >*/
+
+  /*  Internal modes, not available to the PDB  */
+  GIMP_LAYER_MODE_ERASE      = 1000,     /*< pdb-skip, desc="Erase"          >*/
+  GIMP_LAYER_MODE_REPLACE    = 1001,     /*< pdb-skip, desc="Replace"        >*/
+  GIMP_LAYER_MODE_ANTI_ERASE = 1002      /*< pdb-skip, desc="Anti erase"     >*/
+} GimpLayerMode;
 
 
 #define GIMP_TYPE_MATTING_ENGINE (gimp_matting_engine_get_type ())
@@ -529,9 +569,7 @@ GType gimp_color_profile_policy_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-/*  GIMP_COLOR_PROFILE_POLICY_ASK,    < desc="Ask what to do"           >*/
   GIMP_COLOR_PROFILE_POLICY_KEEP/*,   < desc="Keep embedded profile"    >*/
-/*  GIMP_COLOR_PROFILE_POLICY_CONVERT < desc="Convert to preferred RGB color profile" >*/
 } GimpColorProfilePolicy;
 
 

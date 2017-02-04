@@ -854,10 +854,12 @@ gimp_image_set_property (GObject      *object,
 
     case PROP_BASE_TYPE:
       private->base_type = g_value_get_enum (value);
+//      _gimp_image_free_color_transforms (image);//stupid color-managed
       break;
 
     case PROP_PRECISION:
       private->precision = g_value_get_enum (value);
+//      _gimp_image_free_color_transforms (image);//stupid color-managed
       break;
 
     case PROP_SYMMETRY:
@@ -2311,19 +2313,19 @@ gimp_image_get_xcf_version (GimpImage    *image,
       switch (gimp_layer_get_mode (layer))
         {
           /* new layer modes not supported by gimp-1.2 */
-        case GIMP_SOFTLIGHT_MODE:
-        case GIMP_GRAIN_EXTRACT_MODE:
-        case GIMP_GRAIN_MERGE_MODE:
-        case GIMP_COLOR_ERASE_MODE:
+        case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
+        case GIMP_LAYER_MODE_COLOR_ERASE:
           version = MAX (2, version);
           break;
 
           /* new layer modes not supported by gimp-2.8 */
-        case GIMP_NEW_OVERLAY_MODE:
-        case GIMP_LCH_HUE_MODE:
-        case GIMP_LCH_CHROMA_MODE:
-        case GIMP_LCH_COLOR_MODE:
-        case GIMP_LCH_LIGHTNESS_MODE:
+        case GIMP_LAYER_MODE_OVERLAY:
+        case GIMP_LAYER_MODE_LCH_HUE:
+        case GIMP_LAYER_MODE_LCH_CHROMA:
+        case GIMP_LAYER_MODE_LCH_COLOR:
+        case GIMP_LAYER_MODE_LCH_LIGHTNESS:
           version = MAX (9, version);
           break;
 
@@ -2613,31 +2615,34 @@ gimp_image_get_component_format (GimpImage       *image,
 
   switch (channel)
     {
-    case GIMP_RED_CHANNEL:
+    case GIMP_CHANNEL_RED:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_image_get_precision (image),
                                          RED);
 
-    case GIMP_GREEN_CHANNEL:
+    case GIMP_CHANNEL_GREEN:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_image_get_precision (image),
                                          GREEN);
 
-    case GIMP_BLUE_CHANNEL:
+    case GIMP_CHANNEL_BLUE:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_image_get_precision (image),
                                          BLUE);
 
-    case GIMP_ALPHA_CHANNEL:
+    case GIMP_CHANNEL_ALPHA:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_image_get_precision (image),
                                          ALPHA);
 
-    case GIMP_GRAY_CHANNEL:
+    case GIMP_CHANNEL_GRAY:
       return gimp_babl_component_format (GIMP_GRAY,
                                          gimp_image_get_precision (image),
                                          GRAY);
 
+//    case GIMP_CHANNEL_INDEXED:
+//      return babl_format ("Y u8"); /* will extract grayscale, the best
+//                                    * we can do here */
     }
 
   return NULL;
@@ -2651,15 +2656,17 @@ gimp_image_get_component_index (GimpImage       *image,
 
   switch (channel)
     {
-    case GIMP_RED_CHANNEL:     return RED;
-    case GIMP_GREEN_CHANNEL:   return GREEN;
-    case GIMP_BLUE_CHANNEL:    return BLUE;
-    case GIMP_GRAY_CHANNEL:    return GRAY;
-    case GIMP_ALPHA_CHANNEL:
+    case GIMP_CHANNEL_RED:     return RED;
+    case GIMP_CHANNEL_GREEN:   return GREEN;
+    case GIMP_CHANNEL_BLUE:    return BLUE;
+    case GIMP_CHANNEL_GRAY:    return GRAY;
+//    case GIMP_CHANNEL_INDEXED: return INDEXED;
+    case GIMP_CHANNEL_ALPHA:
       switch (gimp_image_get_base_type (image))
         {
         case GIMP_RGB:     return ALPHA;
         case GIMP_GRAY:    return ALPHA_G;
+//        case GIMP_INDEXED: return ALPHA_I;
         }
     }
 
@@ -2747,6 +2754,7 @@ gimp_image_get_active_mask (GimpImage *image)
       break;
 
     case GIMP_GRAY:
+//    case GIMP_INDEXED:
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_RED   : 0;
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_GREEN : 0;
       mask |= (private->active[GRAY])    ? GIMP_COMPONENT_MASK_BLUE  : 0;
@@ -2849,6 +2857,7 @@ gimp_image_get_visible_mask (GimpImage *image)
       break;
 
     case GIMP_GRAY:
+//    case GIMP_INDEXED:
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_RED   : 0;
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_GREEN : 0;
       mask |= (private->visible[GRAY])  ? GIMP_COMPONENT_MASK_BLUE  : 0;

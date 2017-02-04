@@ -57,29 +57,29 @@ enum
 
 struct _GimpDrawableFilter
 {
-  GimpFilter            parent_instance;
+  GimpFilter         parent_instance;
 
-  GimpDrawable         *drawable;
-  GeglNode             *operation;
+  GimpDrawable      *drawable;
+  GeglNode          *operation;
 
-  GimpFilterRegion      region;
-  gboolean              preview_enabled;
-  GimpAlignmentType     preview_alignment;
-  gdouble               preview_position;
-  gdouble               opacity;
-  GimpLayerModeEffects  paint_mode;
-//  gboolean              color_managed;
-//  gboolean              gamma_hack;
+  GimpFilterRegion   region;
+  gboolean           preview_enabled;
+  GimpAlignmentType  preview_alignment;
+  gdouble            preview_position;
+  gdouble            opacity;
+  GimpLayerMode      paint_mode;
+//  gboolean           color_managed;
+//  gboolean           gamma_hack;
 
-  GeglRectangle         filter_area;
+  GeglRectangle      filter_area;
 
-  GeglNode             *translate;
-  GeglNode             *crop;
-  GeglNode             *cast_before;
-//  GeglNode             *transform_before;
-//  GeglNode             *transform_after;
-  GeglNode             *cast_after;
-  GimpApplicator       *applicator;
+  GeglNode          *translate;
+  GeglNode          *crop;
+  GeglNode          *cast_before;
+//  GeglNode          *transform_before;
+//  GeglNode          *transform_after;
+  GeglNode          *cast_after;
+  GimpApplicator    *applicator;
 };
 
 
@@ -148,7 +148,7 @@ gimp_drawable_filter_init (GimpDrawableFilter *drawable_filter)
   drawable_filter->preview_alignment = GIMP_ALIGN_LEFT;
   drawable_filter->preview_position  = 1.0;
   drawable_filter->opacity           = GIMP_OPACITY_OPAQUE;
-  drawable_filter->paint_mode        = GIMP_REPLACE_MODE;
+  drawable_filter->paint_mode        = GIMP_LAYER_MODE_REPLACE;
 }
 
 static void
@@ -214,10 +214,7 @@ gimp_drawable_filter_new (GimpDrawable *drawable,
 
   gegl_node_add_child (node, operation);
 
-  filter->applicator =
-    gimp_applicator_new (node,/*
-                         FALSE,*/
-                         TRUE, TRUE);
+  filter->applicator = gimp_applicator_new (node, TRUE, TRUE);
 
   gimp_filter_set_applicator (GIMP_FILTER (filter), filter->applicator);
 
@@ -332,8 +329,8 @@ gimp_drawable_filter_set_opacity (GimpDrawableFilter *filter,
 }
 
 void
-gimp_drawable_filter_set_mode (GimpDrawableFilter   *filter,
-                               GimpLayerModeEffects  paint_mode)
+gimp_drawable_filter_set_mode (GimpDrawableFilter *filter,
+                               GimpLayerMode       paint_mode)
 {
   g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
 
@@ -348,39 +345,39 @@ gimp_drawable_filter_set_mode (GimpDrawableFilter   *filter,
     }
 }
 
-//void
-//gimp_drawable_filter_set_color_managed (GimpDrawableFilter *filter,
-//                                        gboolean            color_managed)
-//{
-//  g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
-//
-//  if (color_managed != filter->color_managed)
-//    {
-//      filter->color_managed = color_managed;
-//
-//      gimp_drawable_filter_sync_transform (filter);
-//
-//      if (gimp_drawable_filter_is_filtering (filter))
-//        gimp_drawable_filter_update_drawable (filter, NULL);
-//    }
-//}
+/*void //elle: remove stupid color-managed option
+gimp_drawable_filter_set_color_managed (GimpDrawableFilter *filter,
+                                        gboolean            color_managed)
+{
+  g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
 
-//void
-//gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter *filter,
-//                                     gboolean            gamma_hack)
-//{
-//  g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
-//  gamma_hack = FALSE;
-//  if (gamma_hack != filter->gamma_hack)
-//    {
-//      filter->gamma_hack = FALSE; //gamma_hack;
-//
-//      gimp_drawable_filter_sync_gamma_hack (filter);
-//
-//      if (gimp_drawable_filter_is_filtering (filter))
-//        gimp_drawable_filter_update_drawable (filter, NULL);
-//    }
-//}
+  if (color_managed != filter->color_managed)
+    {
+      filter->color_managed = color_managed;
+
+      gimp_drawable_filter_sync_transform (filter);
+
+      if (gimp_drawable_filter_is_filtering (filter))
+        gimp_drawable_filter_update_drawable (filter, NULL);
+    }
+}*/
+
+/*void //elle: remove gamma hack
+gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter *filter,
+                                     gboolean            gamma_hack)
+{
+  g_return_if_fail (GIMP_IS_DRAWABLE_FILTER (filter));
+
+  if (gamma_hack != filter->gamma_hack)
+    {
+      filter->gamma_hack = gamma_hack;
+
+      gimp_drawable_filter_sync_gamma_hack (filter);
+
+      if (gimp_drawable_filter_is_filtering (filter))
+        gimp_drawable_filter_update_drawable (filter, NULL);
+    }
+}*/
 
 void
 gimp_drawable_filter_apply (GimpDrawableFilter  *filter,
@@ -637,95 +634,96 @@ gimp_drawable_filter_sync_mask (GimpDrawableFilter *filter)
                             &filter->filter_area.height);
 }
 
-/* elle: remove stupid color-managed option */ //static void
-//gimp_drawable_filter_sync_transform (GimpDrawableFilter *filter)
-//{
-//  GimpColorManaged *managed = GIMP_COLOR_MANAGED (filter->drawable);
-//
-//  if (filter->color_managed)
-//    {
-//      const Babl       *filter_format;
-//      GimpColorProfile *filter_profile;
-//      GimpColorProfile *drawable_profile;
-//
-//      filter_format = gimp_gegl_node_get_format (filter->operation, "output");
-//
-//      g_printerr ("filter format: %s\n", babl_get_name (filter_format));
-//
-//      filter_profile   = gimp_babl_format_get_color_profile (filter_format);
-//      drawable_profile = gimp_color_managed_get_color_profile (managed);
-//
-//      if (! gimp_color_transform_can_gegl_copy (filter_profile,
-//                                                drawable_profile))
-//        {
-//          g_printerr ("using gimp:profile-transform\n");
-//
-//          gegl_node_set (filter->transform_before,
-//                         "operation",    "gimp:profile-transform",
-//                         "src-profile",  drawable_profile,
-//                         "dest-profile", filter_profile,
-//                         NULL);
-//
-//          gegl_node_set (filter->transform_after,
-//                         "operation",    "gimp:profile-transform",
-//                         "src-profile",  filter_profile,
-//                         "dest-profile", drawable_profile,
-//                         NULL);
-//
-//          return;
-//        }
-//    }
-//
-//  g_printerr ("using gegl copy\n");
-//
-//  gegl_node_set (filter->transform_before,
-//                 "operation", "gegl:nop",
-//                 NULL);
-//
-//  gegl_node_set (filter->transform_after,
-//                 "operation", "gegl:nop",
-//                 NULL);
-//}
+/*static void //elle: remove stupid color-managed option 
+gimp_drawable_filter_sync_transform (GimpDrawableFilter *filter)
+{
+  GimpColorManaged *managed = GIMP_COLOR_MANAGED (filter->drawable);
 
-/* elle: remove gamma hack functions */ //static void
-//gimp_drawable_filter_sync_gamma_hack (GimpDrawableFilter *filter)
-//{
-//  if (filter->gamma_hack)
-//    {
-//      const Babl *drawable_format;
-//      const Babl *cast_format;
-//
-//      drawable_format =
-//        gimp_drawable_get_format_with_alpha (filter->drawable);
-//
-//      cast_format =
-//        gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
-//                          gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format)),
-//                          TRUE);
-//
-//      gegl_node_set (filter->cast_before,
-//                     "operation",     "gegl:cast-format",
-//                     "input-format",  drawable_format,
-//                     "output-format", cast_format,
-//                     NULL);
-//
-//      gegl_node_set (filter->cast_after,
-//                     "operation",     "gegl:cast-format",
-//                     "input-format",  cast_format,
-//                     "output-format", drawable_format,
-//                     NULL);
-//    }
-//  else
-//    {
-//      gegl_node_set (filter->cast_before,
-//                     "operation", "gegl:nop",
-//                     NULL);
-//
-//      gegl_node_set (filter->cast_after,
-//                     "operation", "gegl:nop",
-//                     NULL);
-//    }
-//}
+  if (filter->color_managed)
+    {
+      const Babl       *filter_format;
+      GimpColorProfile *filter_profile;
+      GimpColorProfile *drawable_profile;
+
+      filter_format = gimp_gegl_node_get_format (filter->operation, "output");
+
+      g_printerr ("filter format: %s\n", babl_get_name (filter_format));
+
+      filter_profile   = gimp_babl_format_get_color_profile (filter_format);
+      drawable_profile = gimp_color_managed_get_color_profile (managed);
+
+      if (! gimp_color_transform_can_gegl_copy (filter_profile,
+                                                drawable_profile))
+        {
+          g_printerr ("using gimp:profile-transform\n");
+
+          gegl_node_set (filter->transform_before,
+                         "operation",    "gimp:profile-transform",
+                         "src-profile",  drawable_profile,
+                         "dest-profile", filter_profile,
+                         NULL);
+
+          gegl_node_set (filter->transform_after,
+                         "operation",    "gimp:profile-transform",
+                         "src-profile",  filter_profile,
+                         "dest-profile", drawable_profile,
+                         NULL);
+
+          return;
+        }
+    }
+
+  g_printerr ("using gegl copy\n");
+
+  gegl_node_set (filter->transform_before,
+                 "operation", "gegl:nop",
+                 NULL);
+
+  gegl_node_set (filter->transform_after,
+                 "operation", "gegl:nop",
+                 NULL);
+}*/
+
+/*static void //elle: remove gamma hack functions
+gimp_drawable_filter_sync_gamma_hack (GimpDrawableFilter *filter)
+{
+  if (filter->gamma_hack)
+    {
+      const Babl *drawable_format;
+      const Babl *cast_format;
+
+      drawable_format =
+        gimp_drawable_get_format_with_alpha (filter->drawable);
+
+      cast_format =
+        gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
+                          gimp_babl_precision (gimp_babl_format_get_component_type (drawable_format),
+                                               ! gimp_babl_format_get_linear (drawable_format)),
+                          TRUE);
+
+      gegl_node_set (filter->cast_before,
+                     "operation",     "gegl:cast-format",
+                     "input-format",  drawable_format,
+                     "output-format", cast_format,
+                     NULL);
+
+      gegl_node_set (filter->cast_after,
+                     "operation",     "gegl:cast-format",
+                     "input-format",  cast_format,
+                     "output-format", drawable_format,
+                     NULL);
+    }
+  else
+    {
+      gegl_node_set (filter->cast_before,
+                     "operation", "gegl:nop",
+                     NULL);
+
+      gegl_node_set (filter->cast_after,
+                     "operation", "gegl:nop",
+                     NULL);
+    }
+}*/
 
 static gboolean
 gimp_drawable_filter_is_filtering (GimpDrawableFilter *filter)

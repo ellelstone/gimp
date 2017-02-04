@@ -363,8 +363,8 @@ gimp_layer_class_init (GimpLayerClass *klass)
 
   g_object_class_install_property (object_class, PROP_MODE,
                                    g_param_spec_enum ("mode", NULL, NULL,
-                                                      GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                      GIMP_NORMAL_MODE,
+                                                      GIMP_TYPE_LAYER_MODE,
+                                                      GIMP_LAYER_MODE_NORMAL,
                                                       GIMP_PARAM_READABLE));
 
   g_object_class_install_property (object_class, PROP_LOCK_ALPHA,
@@ -390,7 +390,7 @@ static void
 gimp_layer_init (GimpLayer *layer)
 {
   layer->opacity    = GIMP_OPACITY_OPAQUE;
-  layer->mode       = GIMP_NORMAL_MODE;
+  layer->mode       = GIMP_LAYER_MODE_NORMAL;
   layer->lock_alpha = FALSE;
 
   layer->mask       = NULL;
@@ -508,21 +508,21 @@ gimp_layer_finalize (GObject *object)
 static void
 gimp_layer_update_mode_node (GimpLayer *layer)
 {
-  GeglNode             *mode_node;
-  GimpLayerModeEffects  visible_mode;
+  GeglNode      *mode_node;
+  GimpLayerMode  visible_mode;
 
   mode_node = gimp_drawable_get_mode_node (GIMP_DRAWABLE (layer));
 
   if (layer->mask && layer->show_mask)
     {
-      visible_mode = GIMP_NORMAL_MODE;
+      visible_mode = GIMP_LAYER_MODE_NORMAL;
     }
   else
     {
-      if (layer->mode != GIMP_DISSOLVE_MODE &&
+      if (layer->mode != GIMP_LAYER_MODE_DISSOLVE &&
           gimp_filter_get_is_last_node (GIMP_FILTER (layer)))
         {
-          visible_mode = GIMP_NORMAL_MODE;
+          visible_mode = GIMP_LAYER_MODE_NORMAL;
         }
       else
         {
@@ -543,10 +543,7 @@ gimp_layer_notify (GObject    *object,
     {
       gimp_layer_update_mode_node (GIMP_LAYER (object));
 
-      gimp_drawable_update (GIMP_DRAWABLE (object),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (object)),
-                            gimp_item_get_height (GIMP_ITEM (object)));
+      gimp_drawable_update (GIMP_DRAWABLE (object), 0, 0, -1, -1);
     }
 }
 
@@ -874,10 +871,7 @@ gimp_layer_translate (GimpItem *item,
     gimp_image_undo_push_item_displace (gimp_item_get_image (item), NULL, item);
 
   /*  update the old region  */
-  gimp_drawable_update (GIMP_DRAWABLE (layer),
-                        0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+  gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
 
   /*  invalidate the selection boundary because of a layer modification  */
   gimp_drawable_invalidate_boundary (GIMP_DRAWABLE (layer));
@@ -886,10 +880,7 @@ gimp_layer_translate (GimpItem *item,
                                              push_undo);
 
   /*  update the new region  */
-  gimp_drawable_update (GIMP_DRAWABLE (layer),
-                        0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+  gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
 
   if (layer->mask)
     {
@@ -1390,10 +1381,7 @@ gimp_layer_add_mask (GimpLayer      *layer,
   if (gimp_layer_get_apply_mask (layer) ||
       gimp_layer_get_show_mask (layer))
     {
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
     }
 
   g_signal_connect (mask, "update",
@@ -1471,7 +1459,7 @@ gimp_layer_create_mask (GimpLayer       *layer,
           dest_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (mask));
 
           component_format =
-            gimp_image_get_component_format (image, GIMP_ALPHA_CHANNEL);
+            gimp_image_get_component_format (image, GIMP_CHANNEL_ALPHA);
 
           gegl_buffer_set_format (dest_buffer, component_format);
           gegl_buffer_copy (gimp_drawable_get_buffer (drawable), NULL,
@@ -1709,10 +1697,7 @@ gimp_layer_apply_mask (GimpLayer         *layer,
   /*  If applying actually changed the view  */
   if (view_changed)
     {
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (item),
-                            gimp_item_get_height (item));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
     }
   else
     {
@@ -1763,10 +1748,7 @@ gimp_layer_set_apply_mask (GimpLayer *layer,
             }
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
 
       g_signal_emit (layer, layer_signals[APPLY_MASK_CHANGED], 0);
     }
@@ -1852,10 +1834,7 @@ gimp_layer_set_show_mask (GimpLayer *layer,
           gimp_layer_update_mode_node (layer);
         }
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
 
       g_signal_emit (layer, layer_signals[SHOW_MASK_CHANGED], 0);
     }
@@ -2033,10 +2012,7 @@ gimp_layer_set_opacity (GimpLayer *layer,
       if (gimp_filter_peek_node (GIMP_FILTER (layer)))
         gimp_layer_update_mode_node (layer);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
     }
 }
 
@@ -2049,9 +2025,9 @@ gimp_layer_get_opacity (GimpLayer *layer)
 }
 
 void
-gimp_layer_set_mode (GimpLayer            *layer,
-                     GimpLayerModeEffects  mode,
-                     gboolean              push_undo)
+gimp_layer_set_mode (GimpLayer     *layer,
+                     GimpLayerMode  mode,
+                     gboolean       push_undo)
 {
   g_return_if_fail (GIMP_IS_LAYER (layer));
 
@@ -2072,17 +2048,14 @@ gimp_layer_set_mode (GimpLayer            *layer,
       if (gimp_filter_peek_node (GIMP_FILTER (layer)))
         gimp_layer_update_mode_node (layer);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer),
-                            0, 0,
-                            gimp_item_get_width  (GIMP_ITEM (layer)),
-                            gimp_item_get_height (GIMP_ITEM (layer)));
+      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
     }
 }
 
-GimpLayerModeEffects
+GimpLayerMode
 gimp_layer_get_mode (GimpLayer *layer)
 {
-  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_NORMAL_MODE);
+  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_MODE_NORMAL);
 
   return layer->mode;
 }

@@ -185,8 +185,7 @@ _gimp_drawable_add_floating_sel_filter (GimpDrawable *drawable)
 
   gegl_node_add_child (node, fs_source);
 
-  private->fs_applicator = gimp_applicator_new (node,
-                                                FALSE, FALSE);
+  private->fs_applicator = gimp_applicator_new (node, FALSE, FALSE);
 
   private->fs_crop_node =
     gegl_node_new_child (node,
@@ -334,10 +333,7 @@ gimp_drawable_fs_affect_changed (GimpImage       *image,
 
   gimp_drawable_sync_fs_filter (drawable);
 
-  gimp_drawable_update (GIMP_DRAWABLE (fs),
-                        0, 0,
-                        gimp_item_get_width  (GIMP_ITEM (fs)),
-                        gimp_item_get_height (GIMP_ITEM (fs)));
+  gimp_drawable_update (GIMP_DRAWABLE (fs), 0, 0, -1, -1);
 }
 
 static void
@@ -348,10 +344,7 @@ gimp_drawable_fs_mask_changed (GimpImage    *image,
 
   gimp_drawable_sync_fs_filter (drawable);
 
-  gimp_drawable_update (GIMP_DRAWABLE (fs),
-                        0, 0,
-                        gimp_item_get_width  (GIMP_ITEM (fs)),
-                        gimp_item_get_height (GIMP_ITEM (fs)));
+  gimp_drawable_update (GIMP_DRAWABLE (fs), 0, 0, -1, -1);
 }
 
 static void

@@ -28,6 +28,7 @@
 
 #include "gegl/gimp-babl.h"
 
+#include "core/gimp-layer-modes.h"
 #include "core/gimpbrush.h"
 #include "core/gimpbrushgenerated.h"
 #include "core/gimpdrawable.h"
@@ -83,6 +84,7 @@ static void      gimp_brush_core_interpolate        (GimpPaintCore    *core,
 static GeglBuffer * gimp_brush_core_get_paint_buffer(GimpPaintCore    *paint_core,
                                                      GimpDrawable     *drawable,
                                                      GimpPaintOptions *paint_options,
+                                                     GimpLayerMode     paint_mode,
                                                      const GimpCoords *coords,
                                                      gint             *paint_buffer_x,
                                                      gint             *paint_buffer_y,
@@ -819,6 +821,7 @@ static GeglBuffer *
 gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
                                   GimpDrawable     *drawable,
                                   GimpPaintOptions *paint_options,
+                                  GimpLayerMode     paint_mode,
                                   const GimpCoords *coords,
                                   gint             *paint_buffer_x,
                                   gint             *paint_buffer_y,
@@ -858,6 +861,7 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
+//      if (gimp_layer_mode_is_linear (paint_mode))
         format = babl_format ("RGBA float");
 
       if (paint_core->paint_buffer                                       &&
@@ -963,7 +967,7 @@ gimp_brush_core_paste_canvas (GimpBrushCore            *core,
                               const GimpCoords         *coords,
                               gdouble                   brush_opacity,
                               gdouble                   image_opacity,
-                              GimpLayerModeEffects      paint_mode,
+                              GimpLayerMode             paint_mode,
                               GimpBrushApplicationMode  brush_hardness,
                               gdouble                   dynamic_force,
                               GimpPaintApplicationMode  mode,
@@ -993,7 +997,8 @@ gimp_brush_core_paste_canvas (GimpBrushCore            *core,
                              off_x, off_y,
                              drawable,
                              brush_opacity,
-                             image_opacity, paint_mode,
+                             image_opacity,
+                             paint_mode,
                              mode);
     }
 }

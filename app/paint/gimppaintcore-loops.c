@@ -22,9 +22,13 @@
 
 #include "paint-types.h"
 
+#include "core/gimp-layer-modes.h"
 #include "core/gimptempbuf.h"
+
+#include "operations/layer-modes/gimplayermodefunctions.h"
+
 #include "gimppaintcore-loops.h"
-#include "operations/gimplayermodefunctions.h"
+
 
 void
 combine_paint_mask_to_canvas_mask (const GimpTempBuf *paint_mask,
@@ -36,7 +40,7 @@ combine_paint_mask_to_canvas_mask (const GimpTempBuf *paint_mask,
                                    gfloat             opacity,
                                    gboolean           stipple)
 {
-  GeglRectangle roi;
+  GeglRectangle       roi;
   GeglBufferIterator *iter;
 
   const gint   mask_stride       = gimp_temp_buf_get_width (paint_mask);
@@ -282,29 +286,39 @@ paint_mask_to_paint_buffer (const GimpTempBuf  *paint_mask,
 }
 
 void
-do_layer_blend (GeglBuffer  *src_buffer,
-                GeglBuffer  *dst_buffer,
-                GimpTempBuf *paint_buf,
-                GeglBuffer  *mask_buffer,
-                gfloat       opacity,
-                gint         x_offset,
-                gint         y_offset,
-                gint         mask_x_offset,
-                gint         mask_y_offset,
-                GimpLayerModeEffects paint_mode)
+do_layer_blend (GeglBuffer    *src_buffer,
+                GeglBuffer    *dst_buffer,
+                GimpTempBuf   *paint_buf,
+                GeglBuffer    *mask_buffer,
+                gfloat         opacity,
+                gint           x_offset,
+                gint           y_offset,
+                gint           mask_x_offset,
+                gint           mask_y_offset,
+                GimpLayerMode  paint_mode)
 {
-  GeglRectangle       roi;
-  GeglRectangle       mask_roi;
-  GeglRectangle       process_roi;
-  const Babl         *iterator_format;
-  GeglBufferIterator *iter;
+  GeglRectangle           roi;
+  GeglRectangle           mask_roi;
+  GeglRectangle           process_roi;
+  const Babl             *iterator_format;
+  GeglBufferIterator     *iter;
+  guint                   paint_stride;
+  gfloat                 *paint_data;
+  GimpLayerModeFunc       apply_func;
+  GimpLayerColorSpace     blend_trc;
+  GimpLayerColorSpace     composite_trc;
+  GimpLayerCompositeMode  composite_mode;
 
-  const guint         paint_stride = gimp_temp_buf_get_width (paint_buf);
-  gfloat             *paint_data   = (gfloat *) gimp_temp_buf_get_data (paint_buf);
+  paint_stride = gimp_temp_buf_get_width (paint_buf);
+  paint_data   = (gfloat *) gimp_temp_buf_get_data (paint_buf);
 
-  GimpLayerModeFunction apply_func = get_layer_mode_function (paint_mode);
+  apply_func     = gimp_get_layer_mode_function (paint_mode);
+  blend_trc      = gimp_layer_mode_get_blend_space (paint_mode);
+  composite_trc  = gimp_layer_mode_get_composite_space (paint_mode);
+  composite_mode = gimp_layer_mode_get_composite_mode (paint_mode);
 
-  iterator_format = babl_format ("RGBA float");
+//  if (gimp_layer_mode_is_linear (paint_mode))
+    iterator_format = babl_format ("RGBA float");
 
   roi.x = x_offset;
   roi.y = y_offset;
@@ -359,7 +373,10 @@ do_layer_blend (GeglBuffer  *src_buffer,
                          opacity,
                          iter->roi[0].width,
                          &process_roi,
-                         0);
+                         0,
+                         blend_trc,
+                         composite_trc,
+                         composite_mode);
 
           in_pixel    += iter->roi[0].width * 4;
           out_pixel   += iter->roi[0].width * 4;

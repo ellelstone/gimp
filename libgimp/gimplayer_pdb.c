@@ -56,13 +56,13 @@
  * Returns: The newly created layer.
  **/
 gint32
-_gimp_layer_new (gint32                image_ID,
-                 gint                  width,
-                 gint                  height,
-                 GimpImageType         type,
-                 const gchar          *name,
-                 gdouble               opacity,
-                 GimpLayerModeEffects  mode)
+_gimp_layer_new (gint32         image_ID,
+                 gint           width,
+                 gint           height,
+                 GimpImageType  type,
+                 const gchar   *name,
+                 gdouble        opacity,
+                 GimpLayerMode  mode)
 {
   GimpParam *return_vals;
   gint nreturn_vals;
@@ -1100,12 +1100,12 @@ gimp_layer_set_opacity (gint32  layer_ID,
  *
  * Returns: The layer combination mode.
  **/
-GimpLayerModeEffects
+GimpLayerMode
 gimp_layer_get_mode (gint32 layer_ID)
 {
   GimpParam *return_vals;
   gint nreturn_vals;
-  GimpLayerModeEffects mode = 0;
+  GimpLayerMode mode = 0;
 
   return_vals = gimp_run_procedure ("gimp-layer-get-mode",
                                     &nreturn_vals,
@@ -1132,8 +1132,8 @@ gimp_layer_get_mode (gint32 layer_ID)
  * Returns: TRUE on success.
  **/
 gboolean
-gimp_layer_set_mode (gint32               layer_ID,
-                     GimpLayerModeEffects mode)
+gimp_layer_set_mode (gint32        layer_ID,
+                     GimpLayerMode mode)
 {
   GimpParam *return_vals;
   gint nreturn_vals;

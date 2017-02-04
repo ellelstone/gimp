@@ -3119,7 +3119,7 @@
   (parameters
     '("gdouble*" "opacity")
     '("gint*" "spacing")
-    '("GimpLayerModeEffects*" "paint_mode")
+    '("GimpLayerMode*" "paint_mode")
   )
 )
 
@@ -3131,7 +3131,7 @@
     '("const-gchar*" "brush_name")
     '("gdouble" "opacity")
     '("gint" "spacing")
-    '("GimpLayerModeEffects" "paint_mode")
+    '("GimpLayerMode" "paint_mode")
   )
 )
 

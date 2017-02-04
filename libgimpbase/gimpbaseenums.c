@@ -13,13 +13,13 @@ gimp_add_mask_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_ADD_MASK_WHITE, "GIMP_ADD_MASK_WHITE", "white-mask" },
-    { GIMP_ADD_MASK_BLACK, "GIMP_ADD_MASK_BLACK", "black-mask" },
-    { GIMP_ADD_MASK_ALPHA, "GIMP_ADD_MASK_ALPHA", "alpha-mask" },
-    { GIMP_ADD_MASK_ALPHA_TRANSFER, "GIMP_ADD_MASK_ALPHA_TRANSFER", "alpha-transfer-mask" },
-    { GIMP_ADD_MASK_SELECTION, "GIMP_ADD_MASK_SELECTION", "selection-mask" },
-    { GIMP_ADD_MASK_COPY, "GIMP_ADD_MASK_COPY", "copy-mask" },
-    { GIMP_ADD_MASK_CHANNEL, "GIMP_ADD_MASK_CHANNEL", "channel-mask" },
+    { GIMP_ADD_MASK_WHITE, "GIMP_ADD_MASK_WHITE", "white" },
+    { GIMP_ADD_MASK_BLACK, "GIMP_ADD_MASK_BLACK", "black" },
+    { GIMP_ADD_MASK_ALPHA, "GIMP_ADD_MASK_ALPHA", "alpha" },
+    { GIMP_ADD_MASK_ALPHA_TRANSFER, "GIMP_ADD_MASK_ALPHA_TRANSFER", "alpha-transfer" },
+    { GIMP_ADD_MASK_SELECTION, "GIMP_ADD_MASK_SELECTION", "selection" },
+    { GIMP_ADD_MASK_COPY, "GIMP_ADD_MASK_COPY", "copy" },
+    { GIMP_ADD_MASK_CHANNEL, "GIMP_ADD_MASK_CHANNEL", "channel" },
     { 0, NULL, NULL }
   };
 
@@ -53,10 +53,10 @@ gimp_blend_mode_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_BLEND_FG_BG_RGB, "GIMP_BLEND_FG_BG_RGB", "fg-bg-rgb-mode" },
-    { GIMP_BLEND_FG_BG_HSV, "GIMP_BLEND_FG_BG_HSV", "fg-bg-hsv-mode" },
-    { GIMP_BLEND_FG_TRANSPARENT, "GIMP_BLEND_FG_TRANSPARENT", "fg-transparent-mode" },
-    { GIMP_BLEND_CUSTOM, "GIMP_BLEND_CUSTOM", "custom-mode" },
+    { GIMP_BLEND_FG_BG_RGB, "GIMP_BLEND_FG_BG_RGB", "fg-bg-rgb" },
+    { GIMP_BLEND_FG_BG_HSV, "GIMP_BLEND_FG_BG_HSV", "fg-bg-hsv" },
+    { GIMP_BLEND_FG_TRANSPARENT, "GIMP_BLEND_FG_TRANSPARENT", "fg-transparent" },
+    { GIMP_BLEND_CUSTOM, "GIMP_BLEND_CUSTOM", "custom" },
     { 0, NULL, NULL }
   };
 
@@ -119,9 +119,9 @@ gimp_bucket_fill_mode_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_BUCKET_FILL_FG, "GIMP_BUCKET_FILL_FG", "fg-bucket-fill" },
-    { GIMP_BUCKET_FILL_BG, "GIMP_BUCKET_FILL_BG", "bg-bucket-fill" },
-    { GIMP_BUCKET_FILL_PATTERN, "GIMP_BUCKET_FILL_PATTERN", "pattern-bucket-fill" },
+    { GIMP_BUCKET_FILL_FG, "GIMP_BUCKET_FILL_FG", "fg" },
+    { GIMP_BUCKET_FILL_BG, "GIMP_BUCKET_FILL_BG", "bg" },
+    { GIMP_BUCKET_FILL_PATTERN, "GIMP_BUCKET_FILL_PATTERN", "pattern" },
     { 0, NULL, NULL }
   };
 
@@ -217,21 +217,23 @@ gimp_channel_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_RED_CHANNEL, "GIMP_RED_CHANNEL", "red-channel" },
-    { GIMP_GREEN_CHANNEL, "GIMP_GREEN_CHANNEL", "green-channel" },
-    { GIMP_BLUE_CHANNEL, "GIMP_BLUE_CHANNEL", "blue-channel" },
-    { GIMP_GRAY_CHANNEL, "GIMP_GRAY_CHANNEL", "gray-channel" },
-    { GIMP_ALPHA_CHANNEL, "GIMP_ALPHA_CHANNEL", "alpha-channel" },
+    { GIMP_CHANNEL_RED, "GIMP_CHANNEL_RED", "red" },
+    { GIMP_CHANNEL_GREEN, "GIMP_CHANNEL_GREEN", "green" },
+    { GIMP_CHANNEL_BLUE, "GIMP_CHANNEL_BLUE", "blue" },
+    { GIMP_CHANNEL_GRAY, "GIMP_CHANNEL_GRAY", "gray" },
+//    { GIMP_CHANNEL_INDEXED, "GIMP_CHANNEL_INDEXED", "indexed" },
+    { GIMP_CHANNEL_ALPHA, "GIMP_CHANNEL_ALPHA", "alpha" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_RED_CHANNEL, NC_("channel-type", "Red"), NULL },
-    { GIMP_GREEN_CHANNEL, NC_("channel-type", "Green"), NULL },
-    { GIMP_BLUE_CHANNEL, NC_("channel-type", "Blue"), NULL },
-    { GIMP_GRAY_CHANNEL, NC_("channel-type", "Gray"), NULL },
-    { GIMP_ALPHA_CHANNEL, NC_("channel-type", "Alpha"), NULL },
+    { GIMP_CHANNEL_RED, NC_("channel-type", "Red"), NULL },
+    { GIMP_CHANNEL_GREEN, NC_("channel-type", "Green"), NULL },
+    { GIMP_CHANNEL_BLUE, NC_("channel-type", "Blue"), NULL },
+    { GIMP_CHANNEL_GRAY, NC_("channel-type", "Gray"), NULL },
+//    { GIMP_CHANNEL_INDEXED, NC_("channel-type", "Indexed"), NULL },
+    { GIMP_CHANNEL_ALPHA, NC_("channel-type", "Alpha"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -323,8 +325,8 @@ gimp_clone_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_CLONE_IMAGE, "GIMP_CLONE_IMAGE", "image-clone" },
-    { GIMP_CLONE_PATTERN, "GIMP_CLONE_PATTERN", "pattern-clone" },
+    { GIMP_CLONE_IMAGE, "GIMP_CLONE_IMAGE", "image" },
+    { GIMP_CLONE_PATTERN, "GIMP_CLONE_PATTERN", "pattern" },
     { 0, NULL, NULL }
   };
 
@@ -469,8 +471,8 @@ gimp_convolve_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_CONVOLVE_BLUR, "GIMP_CONVOLVE_BLUR", "blur-convolve" },
-    { GIMP_CONVOLVE_SHARPEN, "GIMP_CONVOLVE_SHARPEN", "sharpen-convolve" },
+    { GIMP_CONVOLVE_BLUR, "GIMP_CONVOLVE_BLUR", "blur" },
+    { GIMP_CONVOLVE_SHARPEN, "GIMP_CONVOLVE_SHARPEN", "sharpen" },
     { 0, NULL, NULL }
   };
 
@@ -561,11 +563,11 @@ gimp_fill_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_FILL_FOREGROUND, "GIMP_FILL_FOREGROUND", "foreground-fill" },
-    { GIMP_FILL_BACKGROUND, "GIMP_FILL_BACKGROUND", "background-fill" },
-    { GIMP_FILL_WHITE, "GIMP_FILL_WHITE", "white-fill" },
-    { GIMP_FILL_TRANSPARENT, "GIMP_FILL_TRANSPARENT", "transparent-fill" },
-    { GIMP_FILL_PATTERN, "GIMP_FILL_PATTERN", "pattern-fill" },
+    { GIMP_FILL_FOREGROUND, "GIMP_FILL_FOREGROUND", "foreground" },
+    { GIMP_FILL_BACKGROUND, "GIMP_FILL_BACKGROUND", "background" },
+    { GIMP_FILL_WHITE, "GIMP_FILL_WHITE", "white" },
+    { GIMP_FILL_TRANSPARENT, "GIMP_FILL_TRANSPARENT", "transparent" },
+    { GIMP_FILL_PATTERN, "GIMP_FILL_PATTERN", "pattern" },
     { 0, NULL, NULL }
   };
 
@@ -779,25 +781,25 @@ gimp_hue_range_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_ALL_HUES, "GIMP_ALL_HUES", "all-hues" },
-    { GIMP_RED_HUES, "GIMP_RED_HUES", "red-hues" },
-    { GIMP_YELLOW_HUES, "GIMP_YELLOW_HUES", "yellow-hues" },
-    { GIMP_GREEN_HUES, "GIMP_GREEN_HUES", "green-hues" },
-    { GIMP_CYAN_HUES, "GIMP_CYAN_HUES", "cyan-hues" },
-    { GIMP_BLUE_HUES, "GIMP_BLUE_HUES", "blue-hues" },
-    { GIMP_MAGENTA_HUES, "GIMP_MAGENTA_HUES", "magenta-hues" },
+    { GIMP_HUE_RANGE_ALL, "GIMP_HUE_RANGE_ALL", "all" },
+    { GIMP_HUE_RANGE_RED, "GIMP_HUE_RANGE_RED", "red" },
+    { GIMP_HUE_RANGE_YELLOW, "GIMP_HUE_RANGE_YELLOW", "yellow" },
+    { GIMP_HUE_RANGE_GREEN, "GIMP_HUE_RANGE_GREEN", "green" },
+    { GIMP_HUE_RANGE_CYAN, "GIMP_HUE_RANGE_CYAN", "cyan" },
+    { GIMP_HUE_RANGE_BLUE, "GIMP_HUE_RANGE_BLUE", "blue" },
+    { GIMP_HUE_RANGE_MAGENTA, "GIMP_HUE_RANGE_MAGENTA", "magenta" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_ALL_HUES, "GIMP_ALL_HUES", NULL },
-    { GIMP_RED_HUES, "GIMP_RED_HUES", NULL },
-    { GIMP_YELLOW_HUES, "GIMP_YELLOW_HUES", NULL },
-    { GIMP_GREEN_HUES, "GIMP_GREEN_HUES", NULL },
-    { GIMP_CYAN_HUES, "GIMP_CYAN_HUES", NULL },
-    { GIMP_BLUE_HUES, "GIMP_BLUE_HUES", NULL },
-    { GIMP_MAGENTA_HUES, "GIMP_MAGENTA_HUES", NULL },
+    { GIMP_HUE_RANGE_ALL, "GIMP_HUE_RANGE_ALL", NULL },
+    { GIMP_HUE_RANGE_RED, "GIMP_HUE_RANGE_RED", NULL },
+    { GIMP_HUE_RANGE_YELLOW, "GIMP_HUE_RANGE_YELLOW", NULL },
+    { GIMP_HUE_RANGE_GREEN, "GIMP_HUE_RANGE_GREEN", NULL },
+    { GIMP_HUE_RANGE_CYAN, "GIMP_HUE_RANGE_CYAN", NULL },
+    { GIMP_HUE_RANGE_BLUE, "GIMP_HUE_RANGE_BLUE", NULL },
+    { GIMP_HUE_RANGE_MAGENTA, "GIMP_HUE_RANGE_MAGENTA", NULL },
     { 0, NULL, NULL }
   };
 
@@ -1004,6 +1006,78 @@ gimp_join_style_get_type (void)
       type = g_enum_register_static ("GimpJoinStyle", values);
       gimp_type_set_translation_domain (type, GETTEXT_PACKAGE "-libgimp");
       gimp_type_set_translation_context (type, "join-style");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_layer_mode_effects_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_NORMAL_MODE, "GIMP_NORMAL_MODE", "normal-mode" },
+    { GIMP_DISSOLVE_MODE, "GIMP_DISSOLVE_MODE", "dissolve-mode" },
+    { GIMP_BEHIND_MODE, "GIMP_BEHIND_MODE", "behind-mode" },
+    { GIMP_MULTIPLY_MODE, "GIMP_MULTIPLY_MODE", "multiply-mode" },
+    { GIMP_SCREEN_MODE, "GIMP_SCREEN_MODE", "screen-mode" },
+    { GIMP_OVERLAY_MODE, "GIMP_OVERLAY_MODE", "overlay-mode" },
+    { GIMP_DIFFERENCE_MODE, "GIMP_DIFFERENCE_MODE", "difference-mode" },
+    { GIMP_ADDITION_MODE, "GIMP_ADDITION_MODE", "addition-mode" },
+    { GIMP_SUBTRACT_MODE, "GIMP_SUBTRACT_MODE", "subtract-mode" },
+    { GIMP_DARKEN_ONLY_MODE, "GIMP_DARKEN_ONLY_MODE", "darken-only-mode" },
+    { GIMP_LIGHTEN_ONLY_MODE, "GIMP_LIGHTEN_ONLY_MODE", "lighten-only-mode" },
+    { GIMP_HUE_MODE, "GIMP_HUE_MODE", "hue-mode" },
+    { GIMP_SATURATION_MODE, "GIMP_SATURATION_MODE", "saturation-mode" },
+    { GIMP_COLOR_MODE, "GIMP_COLOR_MODE", "color-mode" },
+    { GIMP_VALUE_MODE, "GIMP_VALUE_MODE", "value-mode" },
+    { GIMP_DIVIDE_MODE, "GIMP_DIVIDE_MODE", "divide-mode" },
+    { GIMP_DODGE_MODE, "GIMP_DODGE_MODE", "dodge-mode" },
+    { GIMP_BURN_MODE, "GIMP_BURN_MODE", "burn-mode" },
+    { GIMP_HARDLIGHT_MODE, "GIMP_HARDLIGHT_MODE", "hardlight-mode" },
+    { GIMP_SOFTLIGHT_MODE, "GIMP_SOFTLIGHT_MODE", "softlight-mode" },
+    { GIMP_GRAIN_EXTRACT_MODE, "GIMP_GRAIN_EXTRACT_MODE", "grain-extract-mode" },
+    { GIMP_GRAIN_MERGE_MODE, "GIMP_GRAIN_MERGE_MODE", "grain-merge-mode" },
+    { GIMP_COLOR_ERASE_MODE, "GIMP_COLOR_ERASE_MODE", "color-erase-mode" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_NORMAL_MODE, "GIMP_NORMAL_MODE", NULL },
+    { GIMP_DISSOLVE_MODE, "GIMP_DISSOLVE_MODE", NULL },
+    { GIMP_BEHIND_MODE, "GIMP_BEHIND_MODE", NULL },
+    { GIMP_MULTIPLY_MODE, "GIMP_MULTIPLY_MODE", NULL },
+    { GIMP_SCREEN_MODE, "GIMP_SCREEN_MODE", NULL },
+    { GIMP_OVERLAY_MODE, "GIMP_OVERLAY_MODE", NULL },
+    { GIMP_DIFFERENCE_MODE, "GIMP_DIFFERENCE_MODE", NULL },
+    { GIMP_ADDITION_MODE, "GIMP_ADDITION_MODE", NULL },
+    { GIMP_SUBTRACT_MODE, "GIMP_SUBTRACT_MODE", NULL },
+    { GIMP_DARKEN_ONLY_MODE, "GIMP_DARKEN_ONLY_MODE", NULL },
+    { GIMP_LIGHTEN_ONLY_MODE, "GIMP_LIGHTEN_ONLY_MODE", NULL },
+    { GIMP_HUE_MODE, "GIMP_HUE_MODE", NULL },
+    { GIMP_SATURATION_MODE, "GIMP_SATURATION_MODE", NULL },
+    { GIMP_COLOR_MODE, "GIMP_COLOR_MODE", NULL },
+    { GIMP_VALUE_MODE, "GIMP_VALUE_MODE", NULL },
+    { GIMP_DIVIDE_MODE, "GIMP_DIVIDE_MODE", NULL },
+    { GIMP_DODGE_MODE, "GIMP_DODGE_MODE", NULL },
+    { GIMP_BURN_MODE, "GIMP_BURN_MODE", NULL },
+    { GIMP_HARDLIGHT_MODE, "GIMP_HARDLIGHT_MODE", NULL },
+    { GIMP_SOFTLIGHT_MODE, "GIMP_SOFTLIGHT_MODE", NULL },
+    { GIMP_GRAIN_EXTRACT_MODE, "GIMP_GRAIN_EXTRACT_MODE", NULL },
+    { GIMP_GRAIN_MERGE_MODE, "GIMP_GRAIN_MERGE_MODE", NULL },
+    { GIMP_COLOR_ERASE_MODE, "GIMP_COLOR_ERASE_MODE", NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpLayerModeEffects", values);
+      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE "-libgimp");
+      gimp_type_set_translation_context (type, "layer-mode-effects");
       gimp_enum_set_value_descriptions (type, descs);
     }
 

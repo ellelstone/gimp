@@ -74,6 +74,7 @@ AM_LDFLAGS = \
 	-Wl,-u,$(SYMPREFIX)internal_procs_init			\
 	-Wl,-u,$(SYMPREFIX)gimp_plug_in_manager_restore		\
 	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec		\
+	-Wl,-u,$(SYMPREFIX)gimp_layer_mode_is_linear		\
 	-Wl,-u,$(SYMPREFIX)gui_init				\
 	-Wl,-u,$(SYMPREFIX)gimp_lebl_dialog
 
@@ -81,52 +82,54 @@ AM_LDFLAGS = \
 # circular dependencies and systems on the same architectural layer as
 # an alternative to LDFLAGS above
 LDADD = \
-	$(top_builddir)/app/gui/libappgui.a			\
-	$(top_builddir)/app/tools/libapptools.a			\
-	$(top_builddir)/app/dialogs/libappdialogs.a		\
-	$(top_builddir)/app/menus/libappmenus.a			\
-	$(top_builddir)/app/actions/libappactions.a		\
-	$(top_builddir)/app/dialogs/libappdialogs.a		\
-	$(top_builddir)/app/display/libappdisplay.a		\
-	$(top_builddir)/app/widgets/libappwidgets.a		\
-	$(top_builddir)/app/xcf/libappxcf.a			\
-	$(top_builddir)/app/pdb/libappinternal-procs.a		\
-	$(top_builddir)/app/pdb/libapppdb.a			\
-	$(top_builddir)/app/plug-in/libappplug-in.a		\
-	$(top_builddir)/app/vectors/libappvectors.a		\
-	$(top_builddir)/app/core/libappcore.a			\
-	$(top_builddir)/app/file/libappfile.a			\
-	$(top_builddir)/app/text/libapptext.a			\
-	$(top_builddir)/app/paint/libapppaint.a			\
-	$(top_builddir)/app/config/libappconfig.a		\
-	$(top_builddir)/app/libapp.a				\
-	$(top_builddir)/app/gegl/libappgegl.a			\
-	$(top_builddir)/app/operations/libappoperations.a	\
-	libgimpapptestutils.a					\
-	$(libgimpwidgets)					\
-	$(libgimpconfig)					\
-	$(libgimpmath)						\
-	$(libgimpthumb)						\
-	$(libgimpcolor)						\
-	$(libgimpmodule)					\
-	$(libgimpbase)						\
-	$(GIMPICONRC)						\
-	$(GTK_LIBS)						\
-	$(DBUS_GLIB_LIBS)					\
-	$(GDK_PIXBUF_LIBS)					\
-	$(FREETYPE_LIBS)					\
-	$(FONTCONFIG_LIBS)					\
-	$(PANGOCAIRO_LIBS)					\
-	$(HARFBUZZ_LIBS)					\
-	$(CAIRO_LIBS)						\
-	$(GEGL_LIBS)						\
-	$(GIO_LIBS)						\
-	$(GEXIV2_LIBS)						\
-	$(Z_LIBS)						\
-	$(JSON_C_LIBS)						\
-	$(LIBMYPAINT_LIBS)					\
-	$(INTLLIBS)						\
-	$(RT_LIBS)						\
+	../gui/libappgui.a						\
+	../tools/libapptools.a						\
+	../dialogs/libappdialogs.a					\
+	../menus/libappmenus.a						\
+	../actions/libappactions.a					\
+	../dialogs/libappdialogs.a					\
+	../display/libappdisplay.a					\
+	../widgets/libappwidgets.a					\
+	../xcf/libappxcf.a						\
+	../pdb/libappinternal-procs.a					\
+	../pdb/libapppdb.a						\
+	../plug-in/libappplug-in.a					\
+	../vectors/libappvectors.a					\
+	../core/libappcore.a						\
+	../file/libappfile.a						\
+	../text/libapptext.a						\
+	../paint/libapppaint.a						\
+	../config/libappconfig.a					\
+	../libapp.a							\
+	../gegl/libappgegl.a						\
+	../operations/layer-modes/libapplayermodes.a			\
+	../operations/layer-modes-legacy/libapplayermodeslegacy.a	\
+	../operations/libappoperations.a				\
+	libgimpapptestutils.a						\
+	$(libgimpwidgets)						\
+	$(libgimpconfig)						\
+	$(libgimpmath)							\
+	$(libgimpthumb)							\
+	$(libgimpcolor)							\
+	$(libgimpmodule)						\
+	$(libgimpbase)							\
+	$(GIMPICONRC)							\
+	$(GTK_LIBS)							\
+	$(DBUS_GLIB_LIBS)						\
+	$(GDK_PIXBUF_LIBS)						\
+	$(FREETYPE_LIBS)						\
+	$(FONTCONFIG_LIBS)						\
+	$(PANGOCAIRO_LIBS)						\
+	$(HARFBUZZ_LIBS)						\
+	$(CAIRO_LIBS)							\
+	$(GEGL_LIBS)							\
+	$(GIO_LIBS)							\
+	$(GEXIV2_LIBS)							\
+	$(Z_LIBS)							\
+	$(JSON_C_LIBS)							\
+	$(LIBMYPAINT_LIBS)						\
+	$(INTLLIBS)							\
+	$(RT_LIBS)							\
 	$(libm)
 
 gimpdir-output:

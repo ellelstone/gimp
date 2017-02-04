@@ -40,16 +40,16 @@
 
 
 void
-gimp_drawable_real_apply_buffer (GimpDrawable         *drawable,
-                                 GeglBuffer           *buffer,
-                                 const GeglRectangle  *buffer_region,
-                                 gboolean              push_undo,
-                                 const gchar          *undo_desc,
-                                 gdouble               opacity,
-                                 GimpLayerModeEffects  mode,
-                                 GeglBuffer           *base_buffer,
-                                 gint                  base_x,
-                                 gint                  base_y)
+gimp_drawable_real_apply_buffer (GimpDrawable        *drawable,
+                                 GeglBuffer          *buffer,
+                                 const GeglRectangle *buffer_region,
+                                 gboolean             push_undo,
+                                 const gchar         *undo_desc,
+                                 gdouble              opacity,
+                                 GimpLayerMode        mode,
+                                 GeglBuffer          *base_buffer,
+                                 gint                 base_x,
+                                 gint                 base_y)
 {
   GimpItem          *item  = GIMP_ITEM (drawable);
   GimpImage         *image = gimp_item_get_image (item);
@@ -119,8 +119,7 @@ gimp_drawable_real_apply_buffer (GimpDrawable         *drawable,
         }
     }
 
-  applicator = gimp_applicator_new (NULL,/* FALSE,*/
-                                    FALSE, FALSE);
+  applicator = gimp_applicator_new (NULL, FALSE, FALSE);
 
   if (mask)
     {

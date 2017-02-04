@@ -23,22 +23,22 @@ NESTED_STACK_END = object()
 
 
 layermodes_map = {
-    "svg:src-over": NORMAL_MODE,
-    "svg:multiply": MULTIPLY_MODE,
-    "svg:screen": SCREEN_MODE,
-    "svg:overlay": NEW_OVERLAY_MODE,
-    "svg:darken": DARKEN_ONLY_MODE,
-    "svg:lighten": LIGHTEN_ONLY_MODE,
-    "svg:color-dodge": DODGE_MODE,
-    "svg:color-burn": BURN_MODE,
-    "svg:hard-light": HARDLIGHT_MODE,
-    "svg:soft-light": SOFTLIGHT_MODE,
-    "svg:difference": DIFFERENCE_MODE,
-    "svg:color": COLOR_MODE,
-    "svg:luminosity": VALUE_MODE,
-    "svg:hue": HUE_MODE,
-    "svg:saturation": SATURATION_MODE,
-    "svg:plus": ADDITION_MODE,
+    "svg:src-over": LAYER_MODE_NORMAL,
+    "svg:multiply": LAYER_MODE_MULTIPLY_LEGACY,
+    "svg:screen": LAYER_MODE_SCREEN_LEGACY,
+    "svg:overlay": LAYER_MODE_OVERLAY,
+    "svg:darken": LAYER_MODE_DARKEN_ONLY_LEGACY,
+    "svg:lighten": LAYER_MODE_LIGHTEN_ONLY_LEGACY,
+    "svg:color-dodge": LAYER_MODE_DODGE_LEGACY,
+    "svg:color-burn": LAYER_MODE_BURN_LEGACY,
+    "svg:hard-light": LAYER_MODE_HARDLIGHT_LEGACY,
+    "svg:soft-light": LAYER_MODE_SOFTLIGHT_LEGACY,
+    "svg:difference": LAYER_MODE_DIFFERENCE_LEGACY,
+    "svg:color": LAYER_MODE_HSV_COLOR_LEGACY,
+    "svg:luminosity": LAYER_MODE_HSV_VALUE_LEGACY,
+    "svg:hue": LAYER_MODE_HSV_HUE_LEGACY,
+    "svg:saturation": LAYER_MODE_HSV_SATURATION_LEGACY,
+    "svg:plus": LAYER_MODE_ADDITION_LEGACY,
 }
 
 def reverse_map(mapping):
@@ -62,7 +62,7 @@ def get_layer_attributes(layer):
     opac = float(a.get('opacity', '1.0'))
     visible = a.get('visibility', 'visible') != 'hidden'
     m = a.get('composite-op', 'svg:src-over')
-    layer_mode = layermodes_map.get(m, NORMAL_MODE)
+    layer_mode = layermodes_map.get(m, LAYER_MODE_NORMAL)
 
     return path, name, x, y, opac, visible, layer_mode
 

@@ -34,6 +34,7 @@
 #include "gegl/gimpapplicator.h"
 
 #include "core/gimp.h"
+#include "core/gimp-layer-modes.h"
 #include "core/gimp-utils.h"
 #include "core/gimpchannel.h"
 #include "core/gimpimage.h"
@@ -105,6 +106,7 @@ static GeglBuffer *
                gimp_paint_core_real_get_paint_buffer (GimpPaintCore    *core,
                                                       GimpDrawable     *drawable,
                                                       GimpPaintOptions *options,
+                                                      GimpLayerMode     paint_mode,
                                                       const GimpCoords *coords,
                                                       gint             *paint_buffer_x,
                                                       gint             *paint_buffer_y,
@@ -267,6 +269,7 @@ static GeglBuffer *
 gimp_paint_core_real_get_paint_buffer (GimpPaintCore    *core,
                                        GimpDrawable     *drawable,
                                        GimpPaintOptions *paint_options,
+                                       GimpLayerMode     paint_mode,
                                        const GimpCoords *coords,
                                        gint             *paint_buffer_x,
                                        gint             *paint_buffer_y,
@@ -444,8 +447,7 @@ gimp_paint_core_start (GimpPaintCore     *core,
 
   if (paint_options->use_applicator)
     {
-      core->applicator = gimp_applicator_new (NULL,
-                                              FALSE, FALSE);
+      core->applicator = gimp_applicator_new (NULL, FALSE, FALSE);
 
       if (core->mask_buffer)
         {
@@ -474,8 +476,8 @@ gimp_paint_core_start (GimpPaintCore     *core,
         {
           const Babl *format;
 
-          format = babl_format ("RGBA float");
-
+//          if (gimp_drawable_get_linear (drawable))
+            format = babl_format ("RGBA float");
           core->comp_buffer =
             gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                              gimp_item_get_width  (item),
@@ -760,6 +762,7 @@ GeglBuffer *
 gimp_paint_core_get_paint_buffer (GimpPaintCore    *core,
                                   GimpDrawable     *drawable,
                                   GimpPaintOptions *paint_options,
+                                  GimpLayerMode     paint_mode,
                                   const GimpCoords *coords,
                                   gint             *paint_buffer_x,
                                   gint             *paint_buffer_y,
@@ -779,6 +782,7 @@ gimp_paint_core_get_paint_buffer (GimpPaintCore    *core,
   paint_buffer =
     GIMP_PAINT_CORE_GET_CLASS (core)->get_paint_buffer (core, drawable,
                                                         paint_options,
+                                                        paint_mode,
                                                         coords,
                                                         paint_buffer_x,
                                                         paint_buffer_y,
@@ -817,7 +821,7 @@ gimp_paint_core_paste (GimpPaintCore            *core,
                        GimpDrawable             *drawable,
                        gdouble                   paint_opacity,
                        gdouble                   image_opacity,
-                       GimpLayerModeEffects      paint_mode,
+                       GimpLayerMode             paint_mode,
                        GimpPaintApplicationMode  mode)
 {
   gint width  = gegl_buffer_get_width  (core->paint_buffer);
@@ -974,12 +978,12 @@ gimp_paint_core_paste (GimpPaintCore            *core,
           mask_components_onto (src_buffer,
                                 core->comp_buffer,
                                 gimp_drawable_get_buffer (drawable),
-                                GEGL_RECTANGLE(core->paint_buffer_x,
-                                               core->paint_buffer_y,
-                                               width,
-                                               height),
-                                gimp_drawable_get_active_mask (drawable)
-                               );
+                                GEGL_RECTANGLE (core->paint_buffer_x,
+                                                core->paint_buffer_y,
+                                                width,
+                                                height),
+                                gimp_drawable_get_active_mask (drawable),
+//                                gimp_drawable_get_linear (drawable));
         }
     }
 
@@ -1025,7 +1029,8 @@ gimp_paint_core_replace (GimpPaintCore            *core,
                              paint_mask_offset_y,
                              drawable,
                              paint_opacity,
-                             image_opacity, GIMP_NORMAL_MODE,
+                             image_opacity,
+                             GIMP_LAYER_MODE_NORMAL,
                              mode);
       return;
     }

@@ -40,13 +40,13 @@ GType gimp_add_mask_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_ADD_MASK_WHITE,     /*< nick=white-mask,     desc="_White (full opacity)"        >*/
-  GIMP_ADD_MASK_BLACK,     /*< nick=black-mask,     desc="_Black (full transparency)"   >*/
-  GIMP_ADD_MASK_ALPHA,     /*< nick=alpha-mask,     desc="Layer's _alpha channel"       >*/
-  GIMP_ADD_MASK_ALPHA_TRANSFER, /*< nick=alpha-transfer-mask, desc="_Transfer layer's alpha channel" >*/
-  GIMP_ADD_MASK_SELECTION, /*< nick=selection-mask, desc="_Selection"                   >*/
-  GIMP_ADD_MASK_COPY,      /*< nick=copy-mask,      desc="_Grayscale copy of layer"     >*/
-  GIMP_ADD_MASK_CHANNEL,   /*< nick=channel-mask,   desc="C_hannel"                     >*/
+  GIMP_ADD_MASK_WHITE,          /*< desc="_White (full opacity)"           >*/
+  GIMP_ADD_MASK_BLACK,          /*< desc="_Black (full transparency)"      >*/
+  GIMP_ADD_MASK_ALPHA,          /*< desc="Layer's _alpha channel"          >*/
+  GIMP_ADD_MASK_ALPHA_TRANSFER, /*< desc="_Transfer layer's alpha channel" >*/
+  GIMP_ADD_MASK_SELECTION,      /*< desc="_Selection"                      >*/
+  GIMP_ADD_MASK_COPY,           /*< desc="_Grayscale copy of layer"        >*/
+  GIMP_ADD_MASK_CHANNEL,        /*< desc="C_hannel"                        >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_ADD_WHITE_MASK          = GIMP_ADD_MASK_WHITE,     /*< skip, pdb-skip >*/
@@ -66,10 +66,10 @@ GType gimp_blend_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_BLEND_FG_BG_RGB,      /*< nick=fg-bg-rgb-mode, desc="FG to BG (RGB)"  >*/
-  GIMP_BLEND_FG_BG_HSV,      /*< nick=fg-bg-hsv-mode, desc="FG to BG (HSV)"  >*/
-  GIMP_BLEND_FG_TRANSPARENT, /*< nick=fg-transparent-mode, desc="FG to transparent" >*/
-  GIMP_BLEND_CUSTOM,         /*< nick=custom-mode,    desc="Custom gradient" >*/
+  GIMP_BLEND_FG_BG_RGB,      /*< desc="FG to BG (RGB)"    >*/
+  GIMP_BLEND_FG_BG_HSV,      /*< desc="FG to BG (HSV)"    >*/
+  GIMP_BLEND_FG_TRANSPARENT, /*< desc="FG to transparent" >*/
+  GIMP_BLEND_CUSTOM,         /*< desc="Custom gradient"   >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_FG_BG_RGB_MODE      = GIMP_BLEND_FG_BG_RGB,      /*< skip, pdb-skip >*/
@@ -98,9 +98,9 @@ GType gimp_bucket_fill_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_BUCKET_FILL_FG,      /*< nick=fg-bucket-fill,      desc="FG color fill" >*/
-  GIMP_BUCKET_FILL_BG,      /*< nick=bg-bucket-fill,      desc="BG color fill" >*/
-  GIMP_BUCKET_FILL_PATTERN, /*< nick=pattern-bucket-fill, desc="Pattern fill"  >*/
+  GIMP_BUCKET_FILL_FG,      /*< desc="FG color fill" >*/
+  GIMP_BUCKET_FILL_BG,      /*< desc="BG color fill" >*/
+  GIMP_BUCKET_FILL_PATTERN, /*< desc="Pattern fill"  >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_FG_BUCKET_FILL      = GIMP_BUCKET_FILL_FG,     /*< skip, pdb-skip >*/
@@ -141,11 +141,21 @@ GType gimp_channel_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_RED_CHANNEL,      /*< desc="Red"     >*/
-  GIMP_GREEN_CHANNEL,    /*< desc="Green"   >*/
-  GIMP_BLUE_CHANNEL,     /*< desc="Blue"    >*/
-  GIMP_GRAY_CHANNEL,     /*< desc="Gray"    >*/
-  GIMP_ALPHA_CHANNEL     /*< desc="Alpha"   >*/
+  GIMP_CHANNEL_RED,      /*< desc="Red"     >*/
+  GIMP_CHANNEL_GREEN,    /*< desc="Green"   >*/
+  GIMP_CHANNEL_BLUE,     /*< desc="Blue"    >*/
+  GIMP_CHANNEL_GRAY,     /*< desc="Gray"    >*/
+//  GIMP_CHANNEL_INDEXED,  /*< desc="Indexed" >*/
+  GIMP_CHANNEL_ALPHA,    /*< desc="Alpha"   >*/
+
+#ifndef GIMP_DISABLE_DEPRECATED
+  GIMP_RED_CHANNEL     = GIMP_CHANNEL_RED,     /*< skip, pdb-skip >*/
+  GIMP_GREEN_CHANNEL   = GIMP_CHANNEL_GREEN,   /*< skip, pdb-skip >*/
+  GIMP_BLUE_CHANNEL    = GIMP_CHANNEL_BLUE,    /*< skip, pdb-skip >*/
+  GIMP_GRAY_CHANNEL    = GIMP_CHANNEL_GRAY,    /*< skip, pdb-skip >*/
+//  GIMP_INDEXED_CHANNEL = GIMP_CHANNEL_INDEXED, /*< skip, pdb-skip >*/
+  GIMP_ALPHA_CHANNEL   = GIMP_CHANNEL_ALPHA    /*< skip, pdb-skip >*/
+#endif /* GIMP_DISABLE_DEPRECATED */
 } GimpChannelType;
 
 
@@ -182,8 +192,8 @@ GType gimp_clone_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_CLONE_IMAGE,    /*< nick=image-clone,   desc="Image"   >*/
-  GIMP_CLONE_PATTERN,  /*< nick=pattern-clone, desc="Pattern" >*/
+  GIMP_CLONE_IMAGE,    /*< desc="Image"   >*/
+  GIMP_CLONE_PATTERN,  /*< desc="Pattern" >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_IMAGE_CLONE   = GIMP_CLONE_IMAGE,  /*< skip, pdb-skip >*/
@@ -245,8 +255,8 @@ GType gimp_convolve_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_CONVOLVE_BLUR,    /*< nick=blur-convolve,    desc="Blur"    >*/
-  GIMP_CONVOLVE_SHARPEN, /*< nick=sharpen-convolve, desc="Sharpen" >*/
+  GIMP_CONVOLVE_BLUR,    /*< desc="Blur"    >*/
+  GIMP_CONVOLVE_SHARPEN, /*< desc="Sharpen" >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_BLUR_CONVOLVE    = GIMP_CONVOLVE_BLUR,   /*< skip, pdb-skip >*/
@@ -294,11 +304,11 @@ GType gimp_fill_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_FILL_FOREGROUND,  /*< nick=foreground-fill,  desc="Foreground color" >*/
-  GIMP_FILL_BACKGROUND,  /*< nick=background-fill,  desc="Background color" >*/
-  GIMP_FILL_WHITE,       /*< nick=white-fill,       desc="White"            >*/
-  GIMP_FILL_TRANSPARENT, /*< nick=transparent-fill, desc="Transparency"     >*/
-  GIMP_FILL_PATTERN,     /*< nick=pattern-fill,     desc="Pattern"          >*/
+  GIMP_FILL_FOREGROUND,  /*< desc="Foreground color" >*/
+  GIMP_FILL_BACKGROUND,  /*< desc="Background color" >*/
+  GIMP_FILL_WHITE,       /*< desc="White"            >*/
+  GIMP_FILL_TRANSPARENT, /*< desc="Transparency"     >*/
+  GIMP_FILL_PATTERN,     /*< desc="Pattern"          >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_FOREGROUND_FILL  = GIMP_FILL_FOREGROUND,  /*< skip, pdb-skip >*/
@@ -387,13 +397,23 @@ GType gimp_hue_range_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_ALL_HUES,
-  GIMP_RED_HUES,
-  GIMP_YELLOW_HUES,
-  GIMP_GREEN_HUES,
-  GIMP_CYAN_HUES,
-  GIMP_BLUE_HUES,
-  GIMP_MAGENTA_HUES
+  GIMP_HUE_RANGE_ALL,
+  GIMP_HUE_RANGE_RED,
+  GIMP_HUE_RANGE_YELLOW,
+  GIMP_HUE_RANGE_GREEN,
+  GIMP_HUE_RANGE_CYAN,
+  GIMP_HUE_RANGE_BLUE,
+  GIMP_HUE_RANGE_MAGENTA,
+
+#ifndef GIMP_DISABLE_DEPRECATED
+  GIMP_ALL_HUES     = GIMP_HUE_RANGE_ALL,    /*< skip, pdb-skip >*/
+  GIMP_RED_HUES     = GIMP_HUE_RANGE_RED,    /*< skip, pdb-skip >*/
+  GIMP_YELLOW_HUES  = GIMP_HUE_RANGE_YELLOW, /*< skip, pdb-skip >*/
+  GIMP_GREEN_HUES   = GIMP_HUE_RANGE_GREEN,  /*< skip, pdb-skip >*/
+  GIMP_CYAN_HUES    = GIMP_HUE_RANGE_CYAN,   /*< skip, pdb-skip >*/
+  GIMP_BLUE_HUES    = GIMP_HUE_RANGE_BLUE,   /*< skip, pdb-skip >*/
+  GIMP_MAGENTA_HUES = GIMP_HUE_RANGE_MAGENTA /*< skip, pdb-skip >*/
+#endif /* GIMP_DISABLE_DEPRECATED */
 } GimpHueRange;
 
 
@@ -478,6 +498,40 @@ typedef enum
   GIMP_JOIN_ROUND,  /*< desc="Round" >*/
   GIMP_JOIN_BEVEL   /*< desc="Bevel" >*/
 } GimpJoinStyle;
+
+
+#ifndef GIMP_DISABLE_DEPRECATED
+#define GIMP_TYPE_LAYER_MODE_EFFECTS (gimp_layer_mode_effects_get_type ())
+
+GType gimp_layer_mode_effects_get_type (void) G_GNUC_CONST;
+
+typedef enum  /*< pdb-skip >*/
+{
+  GIMP_NORMAL_MODE,
+  GIMP_DISSOLVE_MODE,
+  GIMP_BEHIND_MODE,
+  GIMP_MULTIPLY_MODE,
+  GIMP_SCREEN_MODE,
+  GIMP_OVERLAY_MODE,
+  GIMP_DIFFERENCE_MODE,
+  GIMP_ADDITION_MODE,
+  GIMP_SUBTRACT_MODE,
+  GIMP_DARKEN_ONLY_MODE,
+  GIMP_LIGHTEN_ONLY_MODE,
+  GIMP_HUE_MODE,
+  GIMP_SATURATION_MODE,
+  GIMP_COLOR_MODE,
+  GIMP_VALUE_MODE,
+  GIMP_DIVIDE_MODE,
+  GIMP_DODGE_MODE,
+  GIMP_BURN_MODE,
+  GIMP_HARDLIGHT_MODE,
+  GIMP_SOFTLIGHT_MODE,
+  GIMP_GRAIN_EXTRACT_MODE,
+  GIMP_GRAIN_MERGE_MODE,
+  GIMP_COLOR_ERASE_MODE
+} GimpLayerModeEffects;
+#endif /* GIMP_DISABLE_DEPRECATED */
 
 
 #define GIMP_TYPE_MASK_APPLY_MODE (gimp_mask_apply_mode_get_type ())

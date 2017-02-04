@@ -703,8 +703,8 @@ xcf_save_prop (XcfInfo    *info,
         mode = va_arg (args, gint32);
         size = 4;
 
-        if (mode == GIMP_OVERLAY_MODE)
-          mode = GIMP_SOFTLIGHT_MODE;
+        if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
+          mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
 
         xcf_write_prop_type_check_error (info, prop_type);
         xcf_write_int32_check_error (info, &size, 1);

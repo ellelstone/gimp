@@ -24,6 +24,8 @@
 
 #include "gimp-gegl-types.h"
 
+#include "core/gimp-layer-modes.h"
+
 #include "gimp-gegl-nodes.h"
 #include "gimp-gegl-utils.h"
 
@@ -139,51 +141,12 @@ gimp_gegl_add_buffer_source (GeglNode   *parent,
 }
 
 void
-gimp_gegl_mode_node_set_mode (GeglNode             *node,
-                              GimpLayerModeEffects  mode)
+gimp_gegl_mode_node_set_mode (GeglNode      *node,
+                              GimpLayerMode  mode)
 {
-  const gchar *operation = "gimp:normal-mode";
-  gdouble      opacity;
+  gdouble opacity;
 
   g_return_if_fail (GEGL_IS_NODE (node));
-
-  switch (mode)
-    {
-    case GIMP_NORMAL_MODE:        operation = "gimp:normal-mode"; break;
-    case GIMP_DISSOLVE_MODE:      operation = "gimp:dissolve-mode"; break;
-    case GIMP_BEHIND_MODE:        operation = "gimp:behind-mode"; break;
-    case GIMP_MULTIPLY_MODE:      operation = "gimp:multiply-mode"; break;
-    case GIMP_SCREEN_MODE:        operation = "gimp:screen-mode"; break;
-    case GIMP_OVERLAY_MODE:       operation = "gimp:softlight-mode"; break;
-    case GIMP_DIFFERENCE_MODE:    operation = "gimp:difference-mode"; break;
-    case GIMP_ADDITION_MODE:      operation = "gimp:addition-mode"; break;
-    case GIMP_SUBTRACT_MODE:      operation = "gimp:subtract-mode"; break;
-    case GIMP_DARKEN_ONLY_MODE:   operation = "gimp:darken-only-mode"; break;
-    case GIMP_LIGHTEN_ONLY_MODE:  operation = "gimp:lighten-only-mode"; break;
-    case GIMP_HUE_MODE:           operation = "gimp:hue-mode"; break;
-    case GIMP_SATURATION_MODE:    operation = "gimp:saturation-mode"; break;
-    case GIMP_COLOR_MODE:         operation = "gimp:color-mode"; break;
-    case GIMP_VALUE_MODE:         operation = "gimp:value-mode"; break;
-    case GIMP_DIVIDE_MODE:        operation = "gimp:divide-mode"; break;
-    case GIMP_DODGE_MODE:         operation = "gimp:dodge-mode"; break;
-    case GIMP_BURN_MODE:          operation = "gimp:burn-mode"; break;
-    case GIMP_HARDLIGHT_MODE:     operation = "gimp:hardlight-mode"; break;
-    case GIMP_SOFTLIGHT_MODE:     operation = "gimp:softlight-mode"; break;
-    case GIMP_GRAIN_EXTRACT_MODE: operation = "gimp:grain-extract-mode"; break;
-    case GIMP_GRAIN_MERGE_MODE:   operation = "gimp:grain-merge-mode"; break;
-    case GIMP_COLOR_ERASE_MODE:   operation = "gimp:color-erase-mode"; break;
-    case GIMP_NEW_OVERLAY_MODE:   operation = "gimp:overlay-mode"; break;
-    case GIMP_ERASE_MODE:         operation = "gimp:erase-mode"; break;
-    case GIMP_REPLACE_MODE:       operation = "gimp:replace-mode"; break;
-    case GIMP_ANTI_ERASE_MODE:    operation = "gimp:anti-erase-mode"; break;
-    case GIMP_LCH_HUE_MODE:       operation = "gimp:lch-hue-mode"; break;
-    case GIMP_LCH_CHROMA_MODE:    operation = "gimp:lch-chroma-mode"; break;
-    case GIMP_LCH_COLOR_MODE:     operation = "gimp:lch-color-mode"; break;
-    case GIMP_LCH_LIGHTNESS_MODE: operation = "gimp:lch-lightness-mode"; break;
-    case GIMP_LUMINANCE_MODE:     operation = "gimp:luminance-mode"; break;
-    default:
-      break;
-    }
 
   gegl_node_get (node,
                  "opacity", &opacity,
@@ -193,8 +156,17 @@ gimp_gegl_mode_node_set_mode (GeglNode             *node,
    * all its properties
    */
   gegl_node_set (node,
-                 "operation", operation,
-                 "opacity",   opacity,
+//<<<<<<< HEAD
+//                 "operation", operation,
+//                 "opacity",   opacity,
+//=======
+                 "operation",      gimp_layer_mode_get_operation (mode),
+                 "opacity",        opacity,
+                 "linear",         gimp_layer_mode_is_linear (mode),
+                 "blend-trc",      gimp_layer_mode_get_blend_space (mode),
+                 "composite-trc",  gimp_layer_mode_get_composite_space (mode),
+                 "composite-mode", gimp_layer_mode_get_composite_mode (mode),
+//>>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
                  NULL);
 }
 

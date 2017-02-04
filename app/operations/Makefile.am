@@ -1,6 +1,9 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = tests
+SUBDIRS = \
+	layer-modes		\
+	layer-modes-legacy	\
+	tests
 
 AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"Gimp-Operations\"	\
@@ -14,13 +17,11 @@ AM_CPPFLAGS = \
 	-I$(includedir)
 
 noinst_LIBRARIES = \
-	libappoperations-generic.a		\
-	libappoperations-sse2.a			\
-	libappoperations-sse4.a			\
 	libappoperations.a
 
-libappoperations_generic_a_sources = \
+libappoperations_a_sources = \
 	operations-types.h			\
+	operations-enums.h			\
 	gimp-operations.c			\
 	gimp-operations.h			\
 	\
@@ -85,99 +86,31 @@ libappoperations_generic_a_sources = \
 	gimpoperationposterize.c		\
 	gimpoperationposterize.h		\
 	gimpoperationthreshold.c		\
-	gimpoperationthreshold.h		\
-	\
-	gimpoperationpointlayermode.c		\
-	gimpoperationpointlayermode.h		\
-	gimpoperationnormalmode.c		\
-	gimpoperationnormalmode.h		\
-	gimpoperationdissolvemode.c     	\
-	gimpoperationdissolvemode.h     	\
-	gimpoperationbehindmode.c       	\
-	gimpoperationbehindmode.h       	\
-	gimpoperationmultiplymode.c     	\
-	gimpoperationmultiplymode.h     	\
-	gimpoperationscreenmode.c       	\
-	gimpoperationscreenmode.h       	\
-	gimpoperationoverlaymode.c      	\
-	gimpoperationoverlaymode.h      	\
-	gimpoperationdifferencemode.c   	\
-	gimpoperationdifferencemode.h   	\
-	gimpoperationadditionmode.c     	\
-	gimpoperationadditionmode.h     	\
-	gimpoperationsubtractmode.c     	\
-	gimpoperationsubtractmode.h     	\
-	gimpoperationdarkenonlymode.c   	\
-	gimpoperationdarkenonlymode.h   	\
-	gimpoperationlightenonlymode.c  	\
-	gimpoperationlightenonlymode.h  	\
-	gimpoperationhuemode.c          	\
-	gimpoperationhuemode.h          	\
-	gimpoperationsaturationmode.c   	\
-	gimpoperationsaturationmode.h   	\
-	gimpoperationcolormode.c        	\
-	gimpoperationcolormode.h        	\
-	gimpoperationvaluemode.c        	\
-	gimpoperationvaluemode.h        	\
-	gimpoperationdividemode.c       	\
-	gimpoperationdividemode.h       	\
-	gimpoperationdodgemode.c        	\
-	gimpoperationdodgemode.h        	\
-	gimpoperationburnmode.c         	\
-	gimpoperationburnmode.h         	\
-	gimpoperationhardlightmode.c    	\
-	gimpoperationhardlightmode.h    	\
-	gimpoperationsoftlightmode.c    	\
-	gimpoperationsoftlightmode.h    	\
-	gimpoperationgrainextractmode.c 	\
-	gimpoperationgrainextractmode.h 	\
-	gimpoperationgrainmergemode.c   	\
-	gimpoperationgrainmergemode.h   	\
-	gimpoperationcolorerasemode.c   	\
-	gimpoperationcolorerasemode.h   	\
-	gimpoperationlchhuemode.c		\
-	gimpoperationlchhuemode.h		\
-	gimpoperationlchchromamode.c		\
-	gimpoperationlchchromamode.h		\
-	gimpoperationlchcolormode.c		\
-	gimpoperationlchcolormode.h		\
-	gimpoperationlchlightnessmode.c		\
-	gimpoperationlchlightnessmode.h		\
-	gimpoperationluminancemode.c	 \
-	gimpoperationluminancemode.h		\
-	gimpoperationerasemode.c        	\
-	gimpoperationerasemode.h        	\
-	gimpoperationreplacemode.c      	\
-	gimpoperationreplacemode.h      	\
-	gimpoperationantierasemode.c    	\
-	gimpoperationantierasemode.h		\
-	\
-	gimplayermodefunctions.c		\
-	gimplayermodefunctions.h
+	gimpoperationthreshold.h
 
-libappoperations_sse2_a_sources = \
-	gimpoperationnormalmode-sse2.c
+libappoperations_a_built_sources = operations-enums.c
 
-libappoperations_sse4_a_sources = \
-	gimpoperationnormalmode-sse4.c
+libappoperations_a_SOURCES = \
+	$(libappoperations_a_built_sources)	\
+	$(libappoperations_a_sources)
 
-libappoperations_sse2_a_SOURCES = $(libappoperations_sse2_a_sources)
+#
+# rules to generate built sources
+#
+# setup autogeneration dependencies
+gen_sources = xgen-pec
+CLEANFILES = $(gen_sources)
 
-libappoperations_sse2_a_CFLAGS = $(SSE2_EXTRA_CFLAGS)
-
-libappoperations_sse4_a_SOURCES = $(libappoperations_sse4_a_sources)
-
-libappoperations_sse4_a_CFLAGS = $(SSE4_1_EXTRA_CFLAGS)
-
-libappoperations_generic_a_SOURCES = $(libappoperations_generic_a_sources)
-
-libappoperations_a_SOURCES =
-
-libappoperations.a: libappoperations-generic.a \
-                    libappoperations-sse2.a \
-                    libappoperations-sse4.a
-	$(AR) $(ARFLAGS) libappoperations.a \
-	  $(libappoperations_generic_a_OBJECTS) \
-	  $(libappoperations_sse2_a_OBJECTS) \
-	  $(libappoperations_sse4_a_OBJECTS)
-	$(RANLIB) libappoperations.a
+operations-enums.c: $(srcdir)/operations-enums.h $(GIMP_MKENUMS)
+	$(GIMP_MKENUMS) \
+		--fhead "#include \"config.h\"\n#include <gio/gio.h>\n#include \"libgimpbase/gimpbase.h\"\n#include \"operations-enums.h\"\n#include \"gimp-intl.h\"" \
+		--fprod "\n/* enumerations from \"@filename@\" */" \
+		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
+		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+		--vtail "    { 0, NULL, NULL }\n  };\n" \
+		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
+		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
+		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
+		$(srcdir)/operations-enums.h > xgen-pec \
+	&& cp xgen-pec $(@F) \
+	&& rm -f xgen-pec

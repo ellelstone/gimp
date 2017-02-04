@@ -89,38 +89,41 @@ test_config_LDFLAGS = \
 	-Wl,-u,$(SYMPREFIX)xcf_init				\
 	-Wl,-u,$(SYMPREFIX)internal_procs_init			\
 	-Wl,-u,$(SYMPREFIX)gimp_plug_in_manager_restore		\
-	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec
+	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec		\
+	-Wl,-u,$(SYMPREFIX)gimp_layer_mode_is_linear
 
 test_config_LDADD = \
-	../xcf/libappxcf.a			\
-	../pdb/libappinternal-procs.a		\
-	../pdb/libapppdb.a			\
-	../plug-in/libappplug-in.a		\
-	../vectors/libappvectors.a		\
-	../core/libappcore.a			\
-	../file/libappfile.a			\
-	../text/libapptext.a			\
-	../paint/libapppaint.a			\
-	../gegl/libappgegl.a			\
-	../operations/libappoperations.a	\
-	libappconfig.a				\
-	../gimp-debug.o				\
-	../gimp-log.o				\
-	$(libgimpmodule)			\
-	$(libgimpcolor)				\
-	$(libgimpthumb)				\
-	$(libgimpmath)				\
-	$(libgimpconfig)			\
-	$(libgimpbase)				\
-	$(PANGOCAIRO_LIBS)			\
-	$(HARFBUZZ_LIBS)			\
-	$(GDK_PIXBUF_LIBS)			\
-	$(GEGL_LIBS)				\
-	$(GIO_LIBS)				\
-	$(GEXIV2_LIBS)				\
-	$(Z_LIBS)				\
-	$(JSON_C_LIBS)				\
-	$(LIBMYPAINT_LIBS)		\
+	../xcf/libappxcf.a						\
+	../pdb/libappinternal-procs.a					\
+	../pdb/libapppdb.a						\
+	../plug-in/libappplug-in.a					\
+	../vectors/libappvectors.a					\
+	../core/libappcore.a						\
+	../file/libappfile.a						\
+	../text/libapptext.a						\
+	../paint/libapppaint.a						\
+	../gegl/libappgegl.a						\
+	../operations/layer-modes/libapplayermodes.a			\
+	../operations/layer-modes-legacy/libapplayermodeslegacy.a	\
+	../operations/libappoperations.a				\
+	libappconfig.a							\
+	../gimp-debug.o							\
+	../gimp-log.o							\
+	$(libgimpmodule)						\
+	$(libgimpcolor)							\
+	$(libgimpthumb)							\
+	$(libgimpmath)							\
+	$(libgimpconfig)						\
+	$(libgimpbase)							\
+	$(PANGOCAIRO_LIBS)						\
+	$(HARFBUZZ_LIBS)						\
+	$(GDK_PIXBUF_LIBS)						\
+	$(GEGL_LIBS)							\
+	$(GIO_LIBS)							\
+	$(GEXIV2_LIBS)							\
+	$(Z_LIBS)							\
+	$(JSON_C_LIBS)							\
+	$(LIBMYPAINT_LIBS)						\
 	$(libm)
 
 CLEANFILES = $(EXTRA_PROGRAMS) foorc

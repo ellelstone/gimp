@@ -1817,8 +1817,10 @@ image_get_component_active_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (component == GIMP_GRAY_CHANNEL)
+      if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
+//      else if (component == GIMP_CHANNEL_INDEXED)
+//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1854,8 +1856,10 @@ image_set_component_active_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (component == GIMP_GRAY_CHANNEL)
+      if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
+//      else if (component == GIMP_CHANNEL_INDEXED)
+//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1886,8 +1890,10 @@ image_get_component_visible_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (component == GIMP_GRAY_CHANNEL)
+      if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
+//      else if (component == GIMP_CHANNEL_INDEXED)
+//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1923,8 +1929,10 @@ image_set_component_visible_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (component == GIMP_GRAY_CHANNEL)
+      if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
+//      else if (component == GIMP_CHANNEL_INDEXED)
+//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -4413,7 +4421,7 @@ register_image_procs (GimpPDB *pdb)
                                                   "component",
                                                   "The image component",
                                                   GIMP_TYPE_CHANNEL_TYPE,
-                                                  GIMP_RED_CHANNEL,
+                                                  GIMP_CHANNEL_RED,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("active",
@@ -4449,7 +4457,7 @@ register_image_procs (GimpPDB *pdb)
                                                   "component",
                                                   "The image component",
                                                   GIMP_TYPE_CHANNEL_TYPE,
-                                                  GIMP_RED_CHANNEL,
+                                                  GIMP_CHANNEL_RED,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_boolean ("active",
@@ -4485,7 +4493,7 @@ register_image_procs (GimpPDB *pdb)
                                                   "component",
                                                   "The image component",
                                                   GIMP_TYPE_CHANNEL_TYPE,
-                                                  GIMP_RED_CHANNEL,
+                                                  GIMP_CHANNEL_RED,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_return_value (procedure,
                                    g_param_spec_boolean ("visible",
@@ -4521,7 +4529,7 @@ register_image_procs (GimpPDB *pdb)
                                                   "component",
                                                   "The image component",
                                                   GIMP_TYPE_CHANNEL_TYPE,
-                                                  GIMP_RED_CHANNEL,
+                                                  GIMP_CHANNEL_RED,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_boolean ("visible",

@@ -88,8 +88,8 @@ layer_new_invoker (GimpProcedure         *procedure,
       gboolean           has_alpha = FALSE;
       const Babl        *format;
 
-      if (mode == GIMP_OVERLAY_MODE)
-        mode = GIMP_SOFTLIGHT_MODE;
+      if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
+        mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
 
       switch (type)
         {
@@ -172,7 +172,7 @@ layer_new_from_visible_invoker (GimpProcedure         *procedure,
                                                                             TRUE),
                                                name,
                                                GIMP_OPACITY_OPAQUE,
-                                               GIMP_NORMAL_MODE,
+                                               GIMP_LAYER_MODE_NORMAL,
                                                profile);
     }
 
@@ -1130,8 +1130,8 @@ layer_set_mode_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (mode == GIMP_OVERLAY_MODE)
-        mode = GIMP_SOFTLIGHT_MODE;
+      if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
+        mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
 
       gimp_layer_set_mode (layer, mode, TRUE);
     }
@@ -1201,8 +1201,8 @@ register_layer_procs (GimpPDB *pdb)
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "The layer combination mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
+                                                  GIMP_TYPE_LAYER_MODE,
+                                                  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_return_value (procedure,
                                    gimp_param_spec_layer_id ("layer",
@@ -2137,8 +2137,8 @@ register_layer_procs (GimpPDB *pdb)
                                    g_param_spec_enum ("mode",
                                                       "mode",
                                                       "The layer combination mode",
-                                                      GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                      GIMP_NORMAL_MODE,
+                                                      GIMP_TYPE_LAYER_MODE,
+                                                      GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
                                                       GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
@@ -2167,8 +2167,8 @@ register_layer_procs (GimpPDB *pdb)
                                g_param_spec_enum ("mode",
                                                   "mode",
                                                   "The new layer combination mode",
-                                                  GIMP_TYPE_LAYER_MODE_EFFECTS,
-                                                  GIMP_NORMAL_MODE,
+                                                  GIMP_TYPE_LAYER_MODE,
+                                                  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
                                                   GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);

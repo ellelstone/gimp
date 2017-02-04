@@ -445,7 +445,7 @@ gimp_drawable_get_node (GimpFilter *filter)
 
   drawable->private->mode_node =
     gegl_node_new_child (node,
-                         "operation", "gimp:normal-mode",
+                         "operation", "gimp:normal",
                          NULL);
 
   input  = gegl_node_get_input_proxy  (node, "input");
@@ -972,6 +972,12 @@ gimp_drawable_update (GimpDrawable *drawable,
 {
   g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
 
+  if (width == -1)
+    width = gimp_item_get_width (GIMP_ITEM (drawable));
+
+  if (height == -1)
+    height = gimp_item_get_height (GIMP_ITEM (drawable));
+
   g_signal_emit (drawable, gimp_drawable_signals[UPDATE], 0,
                  x, y, width, height);
 }
@@ -1090,16 +1096,16 @@ gimp_drawable_convert_type (GimpDrawable      *drawable,
 }
 
 void
-gimp_drawable_apply_buffer (GimpDrawable         *drawable,
-                            GeglBuffer           *buffer,
-                            const GeglRectangle  *buffer_region,
-                            gboolean              push_undo,
-                            const gchar          *undo_desc,
-                            gdouble               opacity,
-                            GimpLayerModeEffects  mode,
-                            GeglBuffer           *base_buffer,
-                            gint                  base_x,
-                            gint                  base_y)
+gimp_drawable_apply_buffer (GimpDrawable        *drawable,
+                            GeglBuffer          *buffer,
+                            const GeglRectangle *buffer_region,
+                            gboolean             push_undo,
+                            const gchar         *undo_desc,
+                            gdouble              opacity,
+                            GimpLayerMode        mode,
+                            GeglBuffer          *base_buffer,
+                            gint                 base_x,
+                            gint                 base_y)
 {
   g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
   g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
@@ -1191,10 +1197,7 @@ gimp_drawable_set_buffer_full (GimpDrawable *drawable,
       gimp_item_get_offset_x (item) != offset_x                        ||
       gimp_item_get_offset_y (item) != offset_y)
     {
-      gimp_drawable_update (drawable,
-                            0, 0,
-                            gimp_item_get_width  (item),
-                            gimp_item_get_height (item));
+      gimp_drawable_update (drawable, 0, 0, -1, -1);
     }
 
   g_object_freeze_notify (G_OBJECT (drawable));
@@ -1206,10 +1209,7 @@ gimp_drawable_set_buffer_full (GimpDrawable *drawable,
 
   g_object_thaw_notify (G_OBJECT (drawable));
 
-  gimp_drawable_update (drawable,
-                        0, 0,
-                        gimp_item_get_width  (item),
-                        gimp_item_get_height (item));
+  gimp_drawable_update (drawable, 0, 0, -1, -1);
 }
 
 GeglNode *
@@ -1409,31 +1409,37 @@ gimp_drawable_get_component_format (GimpDrawable    *drawable,
 
   switch (channel)
     {
-    case GIMP_RED_CHANNEL:
+    case GIMP_CHANNEL_RED:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_drawable_get_precision (drawable),
                                          RED);
 
-    case GIMP_GREEN_CHANNEL:
+    case GIMP_CHANNEL_GREEN:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_drawable_get_precision (drawable),
                                          GREEN);
 
-    case GIMP_BLUE_CHANNEL:
+    case GIMP_CHANNEL_BLUE:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_drawable_get_precision (drawable),
                                          BLUE);
 
-    case GIMP_ALPHA_CHANNEL:
+    case GIMP_CHANNEL_ALPHA:
       return gimp_babl_component_format (GIMP_RGB,
                                          gimp_drawable_get_precision (drawable),
                                          ALPHA);
 
-    case GIMP_GRAY_CHANNEL:
+    case GIMP_CHANNEL_GRAY:
       return gimp_babl_component_format (GIMP_GRAY,
                                          gimp_drawable_get_precision (drawable),
                                          GRAY);
 
+<<<<<<< HEAD
+=======
+    case GIMP_CHANNEL_INDEXED:
+      return babl_format ("Y u8"); /* will extract grayscale, the best
+                                    * we can do here */
+>>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
     }
 
   return NULL;
@@ -1447,11 +1453,20 @@ gimp_drawable_get_component_index (GimpDrawable    *drawable,
 
   switch (channel)
     {
+<<<<<<< HEAD
     case GIMP_RED_CHANNEL:     return RED;
     case GIMP_GREEN_CHANNEL:   return GREEN;
     case GIMP_BLUE_CHANNEL:    return BLUE;
     case GIMP_GRAY_CHANNEL:    return GRAY;
     case GIMP_ALPHA_CHANNEL:
+=======
+    case GIMP_CHANNEL_RED:     return RED;
+    case GIMP_CHANNEL_GREEN:   return GREEN;
+    case GIMP_CHANNEL_BLUE:    return BLUE;
+    case GIMP_CHANNEL_GRAY:    return GRAY;
+    case GIMP_CHANNEL_INDEXED: return INDEXED;
+    case GIMP_CHANNEL_ALPHA:
+>>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
       switch (gimp_drawable_get_base_type (drawable))
         {
         case GIMP_RGB:     return ALPHA;
