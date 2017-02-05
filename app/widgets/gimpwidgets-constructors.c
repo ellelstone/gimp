@@ -105,7 +105,6 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
 
   store = gimp_enum_store_new_with_values (GIMP_TYPE_LAYER_MODE,
                                            45,
-                                           GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
                                            GIMP_LAYER_MODE_NORMAL,
                                            GIMP_LAYER_MODE_DISSOLVE,
                                            GIMP_LAYER_MODE_LIGHTEN_ONLY,
@@ -114,7 +113,6 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
                                            GIMP_LAYER_MODE_ADDITION,
                                            GIMP_LAYER_MODE_DARKEN_ONLY,
                                            GIMP_LAYER_MODE_MULTIPLY,
-                                           GIMP_LAYER_MODE_MULTIPLY_LINEAR,
                                            GIMP_LAYER_MODE_BURN,
                                            GIMP_LAYER_MODE_OVERLAY,
                                            GIMP_LAYER_MODE_SOFTLIGHT,
@@ -124,15 +122,11 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
                                            GIMP_LAYER_MODE_GRAIN_EXTRACT,
                                            GIMP_LAYER_MODE_GRAIN_MERGE,
                                            GIMP_LAYER_MODE_DIVIDE,
-                                           GIMP_LAYER_MODE_HSV_HUE,
-                                           GIMP_LAYER_MODE_HSV_SATURATION,
-                                           GIMP_LAYER_MODE_HSV_COLOR,
-                                           GIMP_LAYER_MODE_HSV_VALUE,
-                                           GIMP_LAYER_MODE_LUMINANCE,
                                            GIMP_LAYER_MODE_LCH_HUE,
                                            GIMP_LAYER_MODE_LCH_CHROMA,
                                            GIMP_LAYER_MODE_LCH_COLOR,
-                                           GIMP_LAYER_MODE_LCH_LIGHTNESS);
+                                           GIMP_LAYER_MODE_LCH_LIGHTNESS,
+                                           GIMP_LAYER_MODE_LUMINANCE);
 
   gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
                                          GIMP_LAYER_MODE_DISSOLVE, -1);
@@ -142,11 +136,11 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
       gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
                                           GIMP_LAYER_MODE_DISSOLVE,
                                           GIMP_LAYER_MODE_BEHIND);
+//      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
+//                                          GIMP_LAYER_MODE_BEHIND,
+//                                          GIMP_LAYER_MODE_BEHIND_LINEAR);
       gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
                                           GIMP_LAYER_MODE_BEHIND,
-                                          GIMP_LAYER_MODE_BEHIND_LINEAR);
-      gimp_enum_store_insert_value_after (GIMP_ENUM_STORE (store),
-                                          GIMP_LAYER_MODE_BEHIND_LINEAR,
                                           GIMP_LAYER_MODE_COLOR_ERASE);
     }
 

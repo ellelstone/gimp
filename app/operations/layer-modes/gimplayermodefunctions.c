@@ -67,7 +67,6 @@ gimp_get_layer_mode_function (GimpLayerMode  paint_mode)
   switch (paint_mode)
     {
     case GIMP_LAYER_MODE_NORMAL:
-    case GIMP_LAYER_MODE_NORMAL_NON_LINEAR:
       func = gimp_operation_normal_process_pixels;
       break;
 
@@ -76,12 +75,10 @@ gimp_get_layer_mode_function (GimpLayerMode  paint_mode)
       break;
 
     case GIMP_LAYER_MODE_BEHIND:
-    case GIMP_LAYER_MODE_BEHIND_LINEAR:
       func = gimp_operation_behind_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_MULTIPLY:
-    case GIMP_LAYER_MODE_MULTIPLY_LINEAR:
       func = gimp_operation_multiply_process_pixels;
       break;
 
@@ -90,58 +87,34 @@ gimp_get_layer_mode_function (GimpLayerMode  paint_mode)
       break;
 
     case GIMP_LAYER_MODE_DIFFERENCE:
-    case GIMP_LAYER_MODE_DIFFERENCE_LINEAR:
       func = gimp_operation_difference_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_ADDITION:
-    case GIMP_LAYER_MODE_ADDITION_LINEAR:
       func = gimp_operation_addition_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_SUBTRACT:
-    case GIMP_LAYER_MODE_SUBTRACT_LINEAR:
       func = gimp_operation_subtract_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_DARKEN_ONLY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LINEAR:
       func = gimp_operation_darken_only_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_LIGHTEN_ONLY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LINEAR:
       func = gimp_operation_lighten_only_process_pixels;
       break;
 
-    case GIMP_LAYER_MODE_HSV_HUE:
-      func = gimp_operation_hsv_hue_process_pixels;
-      break;
-
-    case GIMP_LAYER_MODE_HSV_SATURATION:
-      func = gimp_operation_hsv_saturation_process_pixels;
-      break;
-
-    case GIMP_LAYER_MODE_HSV_COLOR:
-      func = gimp_operation_hsv_color_process_pixels;
-      break;
-
-    case GIMP_LAYER_MODE_HSV_VALUE:
-      func = gimp_operation_hsv_value_process_pixels;
-      break;
-
     case GIMP_LAYER_MODE_DIVIDE:
-    case GIMP_LAYER_MODE_DIVIDE_LINEAR:
       func = gimp_operation_divide_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_DODGE:
-    case GIMP_LAYER_MODE_DODGE_LINEAR:
       func = gimp_operation_dodge_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_BURN:
-    case GIMP_LAYER_MODE_BURN_LINEAR:
       func = gimp_operation_burn_process_pixels;
       break;
 
@@ -154,12 +127,10 @@ gimp_get_layer_mode_function (GimpLayerMode  paint_mode)
       break;
 
     case GIMP_LAYER_MODE_GRAIN_EXTRACT:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR:
       func = gimp_operation_grain_extract_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_GRAIN_MERGE:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR:
       func = gimp_operation_grain_merge_process_pixels;
       break;
 

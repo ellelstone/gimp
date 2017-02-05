@@ -79,10 +79,6 @@
 #include "layer-modes/gimpoperationgrainextract.h"
 #include "layer-modes/gimpoperationgrainmerge.h"
 #include "layer-modes/gimpoperationhardlight.h"
-#include "layer-modes/gimpoperationhsvcolor.h"
-#include "layer-modes/gimpoperationhsvhue.h"
-#include "layer-modes/gimpoperationhsvsaturation.h"
-#include "layer-modes/gimpoperationhsvvalue.h"
 #include "layer-modes/gimpoperationlchchroma.h"
 #include "layer-modes/gimpoperationlchcolor.h"
 #include "layer-modes/gimpoperationlchhue.h"
@@ -140,10 +136,6 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_SUBTRACT);
   g_type_class_ref (GIMP_TYPE_OPERATION_DARKEN_ONLY);
   g_type_class_ref (GIMP_TYPE_OPERATION_LIGHTEN_ONLY);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_HUE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_SATURATION);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_COLOR);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_VALUE);
   g_type_class_ref (GIMP_TYPE_OPERATION_DIVIDE);
   g_type_class_ref (GIMP_TYPE_OPERATION_DODGE);
   g_type_class_ref (GIMP_TYPE_OPERATION_BURN);

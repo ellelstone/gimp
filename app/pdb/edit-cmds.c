@@ -1337,7 +1337,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
+                                                  GIMP_LAYER_MODE_NORMAL,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
@@ -1404,7 +1404,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
+                                                  GIMP_LAYER_MODE_NORMAL,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
@@ -1484,7 +1484,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL_NON_LINEAR,
+                                                  GIMP_LAYER_MODE_NORMAL,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_enum ("gradient-type",
