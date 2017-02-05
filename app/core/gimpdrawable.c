@@ -1433,13 +1433,6 @@ gimp_drawable_get_component_format (GimpDrawable    *drawable,
       return gimp_babl_component_format (GIMP_GRAY,
                                          gimp_drawable_get_precision (drawable),
                                          GRAY);
-
-<<<<<<< HEAD
-=======
-    case GIMP_CHANNEL_INDEXED:
-      return babl_format ("Y u8"); /* will extract grayscale, the best
-                                    * we can do here */
->>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
     }
 
   return NULL;
@@ -1453,20 +1446,11 @@ gimp_drawable_get_component_index (GimpDrawable    *drawable,
 
   switch (channel)
     {
-<<<<<<< HEAD
-    case GIMP_RED_CHANNEL:     return RED;
-    case GIMP_GREEN_CHANNEL:   return GREEN;
-    case GIMP_BLUE_CHANNEL:    return BLUE;
-    case GIMP_GRAY_CHANNEL:    return GRAY;
-    case GIMP_ALPHA_CHANNEL:
-=======
     case GIMP_CHANNEL_RED:     return RED;
     case GIMP_CHANNEL_GREEN:   return GREEN;
     case GIMP_CHANNEL_BLUE:    return BLUE;
     case GIMP_CHANNEL_GRAY:    return GRAY;
-    case GIMP_CHANNEL_INDEXED: return INDEXED;
     case GIMP_CHANNEL_ALPHA:
->>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
       switch (gimp_drawable_get_base_type (drawable))
         {
         case GIMP_RGB:     return ALPHA;

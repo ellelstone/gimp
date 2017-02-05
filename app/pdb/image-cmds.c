@@ -1819,8 +1819,6 @@ image_get_component_active_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//      else if (component == GIMP_CHANNEL_INDEXED)
-//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1858,8 +1856,6 @@ image_set_component_active_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//      else if (component == GIMP_CHANNEL_INDEXED)
-//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1892,8 +1888,6 @@ image_get_component_visible_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//      else if (component == GIMP_CHANNEL_INDEXED)
-//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 
@@ -1931,8 +1925,6 @@ image_set_component_visible_invoker (GimpProcedure         *procedure,
     {
       if (component == GIMP_CHANNEL_GRAY)
         success = gimp_pdb_image_is_base_type (image, GIMP_GRAY, error);
-//      else if (component == GIMP_CHANNEL_INDEXED)
-//        success = gimp_pdb_image_is_base_type (image, GIMP_INDEXED, error);
       else
         success = gimp_pdb_image_is_base_type (image, GIMP_RGB, error);
 

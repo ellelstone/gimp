@@ -1,7 +1,7 @@
 /* GIMP - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * gimpoperationluminancemode.c
+ * gimpoperationluminance.c
  * Copyright (C) 2015 Elle Stone <ellestone@ninedegreesbelow.com>
  *                    immanuel <ISchBug@der-ball-ist-rund.net>
  *                    Massimo Valentini <mvalentini@src.gnome.org>
@@ -21,36 +21,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- #include "config.h"
+#include "config.h"
 
-#include <cairo.h>
 #include <gegl-plugin.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "libgimpcolor/gimpcolor.h"
+#include "../operations-types.h"
 
-#include "operations-types.h"
-
-#include "gimpoperationluminancemode.h"
+#include "gimpoperationluminance.h"
+#include "gimpblendcomposite.h"
 
 
-static gboolean gimp_operation_luminance_mode_process (GeglOperation       *operation,
-                                                           void                *in_buf,
-                                                           void                *aux_buf,
-                                                           void                *aux2_buf,
-                                                           void                *out_buf,
-                                                           glong                samples,
-                                                           const GeglRectangle *roi,
-                                                           gint                 level);
+static gboolean gimp_operation_luminance_process (GeglOperation       *operation,
+                                                  void                *in_buf,
+                                                  void                *aux_buf,
+                                                  void                *aux2_buf,
+                                                  void                *out_buf,
+                                                  glong                samples,
+                                                  const GeglRectangle *roi,
+                                                  gint                 level);
 
-G_DEFINE_TYPE (GimpOperationLuminanceMode, gimp_operation_luminance_mode,
+
+G_DEFINE_TYPE (GimpOperationLuminance, gimp_operation_luminance,
                GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
 
-#define parent_class gimp_operation_luminance_mode_parent_class
+#define parent_class gimp_operation_luminance_parent_class
 
 
 static void
-gimp_operation_luminance_mode_class_init (GimpOperationLuminanceModeClass *klass)
+gimp_operation_luminance_class_init (GimpOperationLuminanceClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
@@ -61,33 +59,37 @@ gimp_operation_luminance_mode_class_init (GimpOperationLuminanceModeClass *klass
   operation_class->want_in_place = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gimp:luminance-mode",
+                                 "name",        "gimp:luminance",
                                  "description", "GIMP Luminance mode operation",
                                  NULL);
 
-  point_class->process = gimp_operation_luminance_mode_process;
+  point_class->process = gimp_operation_luminance_process;
 }
 
 static void
-gimp_operation_luminance_mode_init (GimpOperationLuminanceMode *self)
+gimp_operation_luminance_init (GimpOperationLuminance *self)
 {
 }
 
 static gboolean
-gimp_operation_luminance_mode_process (GeglOperation       *operation,
-                                           void                *in_buf,
-                                           void                *aux_buf,
-                                           void                *aux2_buf,
-                                           void                *out_buf,
-                                           glong                samples,
-                                           const GeglRectangle *roi,
-                                           gint                 level)
+gimp_operation_luminance_process (GeglOperation       *operation,
+                                  void                *in_buf,
+                                  void                *aux_buf,
+                                  void                *aux2_buf,
+                                  void                *out_buf,
+                                  glong                samples,
+                                  const GeglRectangle *roi,
+                                  gint                 level)
 {
-  GimpOperationPointLayerMode *gimp_op = GIMP_OPERATION_POINT_LAYER_MODE (operation);
-  gfloat                       opacity = gimp_op->opacity;
+  GimpOperationPointLayerMode *layer_mode = (gpointer) operation;
 
-  return (gimp_operation_luminance_mode_process_pixels)
-    (in_buf, aux_buf, aux2_buf, out_buf, opacity, samples, roi, level);
+  return gimp_operation_luminance_process_pixels (in_buf, aux_buf, aux2_buf,
+                                                  out_buf,
+                                                  layer_mode->opacity,
+                                                  samples, roi, level,
+                                                  layer_mode->blend_trc,
+                                                  layer_mode->composite_trc,
+                                                  layer_mode->composite_mode);
 }
 
 static void
@@ -100,7 +102,6 @@ luminance_pre_process (const Babl   *format,
   gfloat tmp1[2 * samples], *layer_Y = tmp1;
   gfloat tmp2[2 * samples], *in_Y = tmp2;
   gint i;
-
   babl_process (babl_fish (format, "RGBA float"), in, out, samples);
   babl_process (babl_fish (format, "YA float"), layer, layer_Y, samples);
   babl_process (babl_fish (format, "YA float"), in, in_Y, samples);
@@ -161,14 +162,17 @@ luminance_post_process (const gfloat *in,
 }
 
 gboolean
-gimp_operation_luminance_mode_process_pixels (gfloat              *in,
-                                              gfloat              *layer,
-                                              gfloat              *mask,
-                                              gfloat              *out,
-                                              gfloat               opacity,
-                                              glong                samples,
-                                              const GeglRectangle *roi,
-                                              gint                 level)
+gimp_operation_luminance_process_pixels (gfloat              *in,
+                                         gfloat              *layer,
+                                         gfloat              *mask,
+                                         gfloat              *out,
+                                         gfloat               opacity,
+                                         glong                samples,
+                                         const GeglRectangle *roi,
+                                         gint                   level,
+                                         GimpLayerColorSpace    blend_trc,
+                                         GimpLayerColorSpace    composite_trc,
+                                         GimpLayerCompositeMode composite_mode)
 {
   const gsize bytes_per_sample = 4 * sizeof * in;
   gfloat *in2 = in == out ? g_memdup (in, samples * bytes_per_sample) : in;

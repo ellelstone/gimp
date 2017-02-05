@@ -145,7 +145,6 @@ typedef enum
   GIMP_CHANNEL_GREEN,    /*< desc="Green"   >*/
   GIMP_CHANNEL_BLUE,     /*< desc="Blue"    >*/
   GIMP_CHANNEL_GRAY,     /*< desc="Gray"    >*/
-//  GIMP_CHANNEL_INDEXED,  /*< desc="Indexed" >*/
   GIMP_CHANNEL_ALPHA,    /*< desc="Alpha"   >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
@@ -153,7 +152,6 @@ typedef enum
   GIMP_GREEN_CHANNEL   = GIMP_CHANNEL_GREEN,   /*< skip, pdb-skip >*/
   GIMP_BLUE_CHANNEL    = GIMP_CHANNEL_BLUE,    /*< skip, pdb-skip >*/
   GIMP_GRAY_CHANNEL    = GIMP_CHANNEL_GRAY,    /*< skip, pdb-skip >*/
-//  GIMP_INDEXED_CHANNEL = GIMP_CHANNEL_INDEXED, /*< skip, pdb-skip >*/
   GIMP_ALPHA_CHANNEL   = GIMP_CHANNEL_ALPHA    /*< skip, pdb-skip >*/
 #endif /* GIMP_DISABLE_DEPRECATED */
 } GimpChannelType;

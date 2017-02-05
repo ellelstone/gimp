@@ -181,7 +181,7 @@ run (const gchar      *name,
           wavelet_blur (blur_id, 1 << id);
 
           /* grain extract */
-          gimp_layer_set_mode (blur_id,GIMP_GRAIN_EXTRACT_MODE);
+          gimp_layer_set_mode (blur_id,GIMP_LAYER_MODE_GRAIN_EXTRACT);
 
           /* new from visible */
           g_snprintf (scale_name, sizeof (scale_name), "Scale %d", id + 1);
@@ -191,8 +191,8 @@ run (const gchar      *name,
           gimp_image_insert_layer (image_id, scale_ids[id], 0,
                                    gimp_image_get_item_position (image_id,
                                                                  blur_id) );
-          gimp_layer_set_mode (scale_ids[id], GIMP_GRAIN_MERGE_MODE);
-          gimp_layer_set_mode (blur_id, GIMP_NORMAL_MODE);
+          gimp_layer_set_mode (scale_ids[id], GIMP_LAYER_MODE_GRAIN_MERGE);
+          gimp_layer_set_mode (blur_id, GIMP_LAYER_MODE_NORMAL);
           gimp_item_set_visible (scale_ids[id], FALSE);
 
           gimp_image_remove_layer (image_id, original_id);

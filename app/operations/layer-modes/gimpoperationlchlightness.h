@@ -63,5 +63,4 @@ gboolean gimp_operation_lch_lightness_process_pixels (gfloat                *in,
                                                       GimpLayerColorSpace    composite_trc,
                                                       GimpLayerCompositeMode composite_mode);
 
-
 #endif /* __GIMP_OPERATION_LCH_LIGHTNESS_H__ */

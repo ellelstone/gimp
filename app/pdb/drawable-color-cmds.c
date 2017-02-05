@@ -302,18 +302,10 @@ drawable_histogram_invoker (GimpProcedure         *procedure,
           GimpHistogram *histogram;
           gint           n_bins;
           gint           start;
-          gboolean       precision_enabled;
           gboolean       linear;
           gint           end;
 
-          precision_enabled =
-            gimp->plug_in_manager->current_plug_in &&
-            gimp_plug_in_precision_enabled (gimp->plug_in_manager->current_plug_in);
-
-//          if (precision_enabled)
-//            linear = gimp_drawable_get_linear (drawable);
-//          else
-            linear = FALSE;
+          linear = FALSE;
 
           histogram = gimp_histogram_new (linear);
           gimp_drawable_calculate_histogram (drawable, histogram);
@@ -336,7 +328,7 @@ drawable_histogram_invoker (GimpProcedure         *procedure,
 
           g_object_unref (histogram);
 
-          if (n_bins == 256 || ! precision_enabled)
+          if (n_bins == 256)
             {
               mean    *= 255;
               std_dev *= 255;

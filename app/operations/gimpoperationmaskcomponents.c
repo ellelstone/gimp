@@ -149,8 +149,8 @@ gimp_operation_mask_components_prepare (GeglOperation *operation)
 //    {
 //      const Babl *model = babl_format_get_model (format);
 
-//      if (model == babl_model ("R'G'B'A"))
-//        format = babl_format ("R'G'B'A float");
+//      if (model == babl_model ("RGBA"))
+//        format = babl_format ("RGBA float");
 //      else
 //        format = babl_format ("RGBA float");
 //    }

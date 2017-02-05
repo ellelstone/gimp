@@ -1068,4 +1068,27 @@ blendfun_lch_lightness (const float *dest,
     }
 }
 
+static inline void
+blendfun_luminance (const float *dest,
+                    const float *src,
+                    float       *out,
+                    int          samples)
+{
+  while (samples--)
+    {
+      if (src[ALPHA] != 0.0f)
+        {
+          out[0] = src[0];
+          out[1] = dest[1];
+          out[2] = dest[2];
+        }
+
+      out[ALPHA] = src[ALPHA];
+
+      out  += 4;
+      src  += 4;
+      dest += 4;
+    }
+}
+
 #endif /* __GIMP_BLEND_COMPOSITE_H__ */

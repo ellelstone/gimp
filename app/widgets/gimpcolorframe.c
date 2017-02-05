@@ -710,7 +710,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
               rgb_values[2] = frame->color.b;
 
               gimp_color_transform_process_pixels (frame->transform,
-                                                   babl_format ("R'G'B' double"),
+                                                   babl_format ("RGB double"),
                                                    rgb_values,
                                                    babl_format ("CMYK double"),
                                                    cmyk_values,

@@ -91,7 +91,7 @@ map_lightness (GimpHueChromaConfig *config,
                GimpHueRange             range,
                gdouble                  value)
 {
-  value += config->lightness[GIMP_ALL_HUES];
+  value += config->lightness[GIMP_HUE_RANGE_ALL];
 
     return value;
 }
@@ -101,7 +101,7 @@ map_chroma (GimpHueChromaConfig *config,
             GimpHueRange         range,
             gdouble              value)
 {
-  value += config->chroma[GIMP_ALL_HUES];
+  value += config->chroma[GIMP_HUE_RANGE_ALL];
 
   return CLAMP (value, 0.0, 200.0);
 }
@@ -111,7 +111,7 @@ map_hue (GimpHueChromaConfig *config,
          GimpHueRange             range,
          gdouble                  value)
 {
-  value += config->hue[GIMP_ALL_HUES];
+  value += config->hue[GIMP_HUE_RANGE_ALL];
 
     return value;
 }

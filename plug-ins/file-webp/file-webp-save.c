@@ -187,9 +187,9 @@ save_layer (const gchar    *filename,
       has_alpha = gimp_drawable_has_alpha (drawable_ID);
 
       if (has_alpha)
-        format = babl_format ("R'G'B'A u8");
+        format = babl_format ("RGBA u8");
       else
-        format = babl_format ("R'G'B' u8");
+        format = babl_format ("RGB u8");
 
       bpp = babl_format_get_bytes_per_pixel (format);
 
@@ -553,9 +553,9 @@ save_animation (const gchar    *filename,
           has_alpha = gimp_drawable_has_alpha (drawable);
 
           if (has_alpha)
-            format = babl_format ("R'G'B'A u8");
+            format = babl_format ("RGBA u8");
           else
-            format = babl_format ("R'G'B' u8");
+            format = babl_format ("RGB u8");
 
           bpp = babl_format_get_bytes_per_pixel (format);
 

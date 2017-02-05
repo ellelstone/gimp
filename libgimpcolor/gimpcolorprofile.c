@@ -1355,8 +1355,7 @@ gimp_color_profile_new_d50_gray_lab_trc (void)
  * used instead of the passed @format, which usually is the same as
  * @format, unless lcms doesn't support @format.
  *
- * Note that this function currently only supports RGB, RGBA, R'G'B',
- * R'G'B'A, Y, YA, Y', Y'A and the cairo-RGB24 and cairo-ARGB32 formats.
+ * Note that this function currently only supports RGB, RGBA, Y, YA, and the cairo-RGB24 and cairo-ARGB32 formats.
  *
  * Return value: the #Babl format to be used instead of @format, or %NULL
  *               is the passed @format is not supported at all.

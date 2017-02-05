@@ -71,6 +71,8 @@ libapplayermodes_generic_a_sources = \
 	gimpoperationlchlightness.h	\
 	gimpoperationlightenonly.c	\
 	gimpoperationlightenonly.h	\
+	gimpoperationluminance.c	\
+	gimpoperationluminance.h	\
 	gimpoperationmultiply.c		\
 	gimpoperationmultiply.h		\
 	gimpoperationnormal.c		\

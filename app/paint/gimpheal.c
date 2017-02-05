@@ -508,7 +508,7 @@ gimp_heal_motion (GimpSourceCore   *source_core,
       return;
     }
 
-  /*  heal should work in perceptual space, use R'G'B' instead of RGB  */
+  /* Should heal work in perceptual space? */
   src_copy = gegl_buffer_new (GEGL_RECTANGLE (0, 0,
                                               src_rect->width,
                                               src_rect->height),

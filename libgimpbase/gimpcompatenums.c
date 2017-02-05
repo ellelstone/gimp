@@ -123,7 +123,6 @@ gimp_channel_type_compat_get_type (void)
     { GIMP_GREEN_CHANNEL, "GIMP_GREEN_CHANNEL", "green-channel" },
     { GIMP_BLUE_CHANNEL, "GIMP_BLUE_CHANNEL", "blue-channel" },
     { GIMP_GRAY_CHANNEL, "GIMP_GRAY_CHANNEL", "gray-channel" },
-    { GIMP_INDEXED_CHANNEL, "GIMP_INDEXED_CHANNEL", "indexed-channel" },
     { GIMP_ALPHA_CHANNEL, "GIMP_ALPHA_CHANNEL", "alpha-channel" },
     { 0, NULL, NULL }
   };
@@ -134,7 +133,6 @@ gimp_channel_type_compat_get_type (void)
     { GIMP_GREEN_CHANNEL, "GIMP_GREEN_CHANNEL", NULL },
     { GIMP_BLUE_CHANNEL, "GIMP_BLUE_CHANNEL", NULL },
     { GIMP_GRAY_CHANNEL, "GIMP_GRAY_CHANNEL", NULL },
-    { GIMP_INDEXED_CHANNEL, "GIMP_INDEXED_CHANNEL", NULL },
     { GIMP_ALPHA_CHANNEL, "GIMP_ALPHA_CHANNEL", NULL },
     { 0, NULL, NULL }
   };

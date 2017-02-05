@@ -1546,17 +1546,11 @@ save_image (const gchar  *filename,
         color_type = PNG_COLOR_TYPE_RGB;
         if (bit_depth == 8)
           {
-//            if (linear)
               file_format = babl_format ("RGB u8");
-//            else
-//              file_format = babl_format ("R'G'B' u8");
           }
         else
           {
-//            if (linear)
               file_format = babl_format ("RGB u16");
-//            else
-//              file_format = babl_format ("R'G'B' u16");
           }
         break;
 
@@ -1564,17 +1558,11 @@ save_image (const gchar  *filename,
         color_type = PNG_COLOR_TYPE_RGB_ALPHA;
         if (bit_depth == 8)
           {
-//            if (linear)
               file_format = babl_format ("RGBA u8");
-//            else
-//              file_format = babl_format ("R'G'B'A u8");
           }
         else
           {
-//            if (linear)
               file_format = babl_format ("RGBA u16");
-//            else
-//              file_format = babl_format ("R'G'B'A u16");
           }
         break;
 
@@ -1582,17 +1570,11 @@ save_image (const gchar  *filename,
         color_type = PNG_COLOR_TYPE_GRAY;
         if (bit_depth == 8)
           {
-//            if (linear)
               file_format = babl_format ("Y u8");
-//            else
-//              file_format = babl_format ("Y' u8");
           }
         else
           {
-//            if (linear)
               file_format = babl_format ("Y u16");
-//            else
-//              file_format = babl_format ("Y' u16");
           }
         break;
 
@@ -1600,17 +1582,11 @@ save_image (const gchar  *filename,
         color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
         if (bit_depth == 8)
           {
-//            if (linear)
               file_format = babl_format ("YA u8");
-//            else
-//              file_format = babl_format ("Y'A u8");
           }
         else
           {
-//            if (linear)
               file_format = babl_format ("YA u16");
-//            else
-//              file_format = babl_format ("Y'A u16");
           }
         break;
 

@@ -476,7 +476,6 @@ gimp_paint_core_start (GimpPaintCore     *core,
         {
           const Babl *format;
 
-//          if (gimp_drawable_get_linear (drawable))
             format = babl_format ("RGBA float");
           core->comp_buffer =
             gegl_buffer_new (GEGL_RECTANGLE (0, 0,
@@ -982,8 +981,7 @@ gimp_paint_core_paste (GimpPaintCore            *core,
                                                 core->paint_buffer_y,
                                                 width,
                                                 height),
-                                gimp_drawable_get_active_mask (drawable),
-//                                gimp_drawable_get_linear (drawable));
+                                gimp_drawable_get_active_mask (drawable));
         }
     }
 

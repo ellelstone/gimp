@@ -104,6 +104,7 @@ gimp_layer_mode_is_linear (GimpLayerMode  mode)
     case GIMP_LAYER_MODE_LCH_CHROMA:
     case GIMP_LAYER_MODE_LCH_COLOR:
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:
+    case GIMP_LAYER_MODE_LUMINANCE:
       return TRUE;
 
     case GIMP_LAYER_MODE_NORMAL:
@@ -206,6 +207,7 @@ gimp_layer_mode_get_blend_space (GimpLayerMode  mode)
       return GIMP_LAYER_COLOR_SPACE_LAB;
 
     case GIMP_LAYER_MODE_NORMAL:
+    case GIMP_LAYER_MODE_LUMINANCE:
       return GIMP_LAYER_COLOR_SPACE_RGB_LINEAR;
 
     case GIMP_LAYER_MODE_MULTIPLY:
@@ -430,6 +432,9 @@ gimp_layer_mode_get_operation (GimpLayerMode  mode)
 
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:
       return "gimp:lch-lightness";
+
+    case GIMP_LAYER_MODE_LUMINANCE:
+      return "gimp:luminance";
 
     case GIMP_LAYER_MODE_ERASE:
       return "gimp:erase";

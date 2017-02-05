@@ -68,6 +68,7 @@
 #include "gimpoperationlchhue.h"
 #include "gimpoperationlchlightness.h"
 #include "gimpoperationlightenonly.h"
+#include "gimpoperationluminance.h"
 #include "gimpoperationmultiply.h"
 #include "gimpoperationnormal.h"
 #include "gimpoperationoverlay.h"
@@ -279,6 +280,10 @@ gimp_get_layer_mode_function (GimpLayerMode  paint_mode)
 
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:
       func = gimp_operation_lch_lightness_process_pixels;
+      break;
+
+    case GIMP_LAYER_MODE_LUMINANCE:
+      func = gimp_operation_luminance_process_pixels;
       break;
 
     case GIMP_LAYER_MODE_ERASE:
