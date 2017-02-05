@@ -104,29 +104,46 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
   GtkWidget    *combo;
 
   store = gimp_enum_store_new_with_values (GIMP_TYPE_LAYER_MODE,
-                                           45,
+                                           22,
+
                                            GIMP_LAYER_MODE_NORMAL,
-                                           GIMP_LAYER_MODE_DISSOLVE,
-                                           GIMP_LAYER_MODE_LIGHTEN_ONLY,
-                                           GIMP_LAYER_MODE_SCREEN,
-                                           GIMP_LAYER_MODE_DODGE,
-                                           GIMP_LAYER_MODE_ADDITION,
-                                           GIMP_LAYER_MODE_DARKEN_ONLY,
                                            GIMP_LAYER_MODE_MULTIPLY,
-                                           GIMP_LAYER_MODE_BURN,
-                                           GIMP_LAYER_MODE_OVERLAY,
-                                           GIMP_LAYER_MODE_SOFTLIGHT,
-                                           GIMP_LAYER_MODE_HARDLIGHT,
-                                           GIMP_LAYER_MODE_DIFFERENCE,
-                                           GIMP_LAYER_MODE_SUBTRACT,
-                                           GIMP_LAYER_MODE_GRAIN_EXTRACT,
-                                           GIMP_LAYER_MODE_GRAIN_MERGE,
                                            GIMP_LAYER_MODE_DIVIDE,
+                                           GIMP_LAYER_MODE_ADDITION,
+                                           GIMP_LAYER_MODE_SUBTRACT,
+
+                                           GIMP_LAYER_MODE_LUMINANCE,
+                                           GIMP_LAYER_MODE_LCH_LIGHTNESS,
                                            GIMP_LAYER_MODE_LCH_HUE,
                                            GIMP_LAYER_MODE_LCH_CHROMA,
                                            GIMP_LAYER_MODE_LCH_COLOR,
-                                           GIMP_LAYER_MODE_LCH_LIGHTNESS,
-                                           GIMP_LAYER_MODE_LUMINANCE);
+
+                                           GIMP_LAYER_MODE_LIGHTEN_ONLY,
+                                           GIMP_LAYER_MODE_DARKEN_ONLY,
+                                           GIMP_LAYER_MODE_DODGE,
+                                           GIMP_LAYER_MODE_BURN,
+
+                                           GIMP_LAYER_MODE_SCREEN,
+                                           GIMP_LAYER_MODE_SOFTLIGHT,
+                                           GIMP_LAYER_MODE_OVERLAY,
+                                           GIMP_LAYER_MODE_HARDLIGHT,
+
+                                           GIMP_LAYER_MODE_DIFFERENCE,
+                                           GIMP_LAYER_MODE_GRAIN_EXTRACT,
+                                           GIMP_LAYER_MODE_GRAIN_MERGE,
+                                           GIMP_LAYER_MODE_DISSOLVE);
+
+  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
+                                         GIMP_LAYER_MODE_SUBTRACT, -1);
+
+  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
+                                         GIMP_LAYER_MODE_LCH_COLOR, -1);
+
+  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
+                                         GIMP_LAYER_MODE_BURN, -1);
+
+  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
+                                         GIMP_LAYER_MODE_HARDLIGHT, -1);
 
   gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
                                          GIMP_LAYER_MODE_DISSOLVE, -1);
