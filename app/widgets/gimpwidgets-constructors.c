@@ -109,43 +109,25 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
                                            GIMP_LAYER_MODE_NORMAL,
                                            GIMP_LAYER_MODE_DISSOLVE,
                                            GIMP_LAYER_MODE_LIGHTEN_ONLY,
-                                           GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,
                                            GIMP_LAYER_MODE_SCREEN,
-                                           GIMP_LAYER_MODE_SCREEN_LEGACY,
                                            GIMP_LAYER_MODE_DODGE,
-                                           GIMP_LAYER_MODE_DODGE_LEGACY,
                                            GIMP_LAYER_MODE_ADDITION,
-                                           GIMP_LAYER_MODE_ADDITION_LEGACY,
                                            GIMP_LAYER_MODE_DARKEN_ONLY,
-                                           GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,
                                            GIMP_LAYER_MODE_MULTIPLY,
                                            GIMP_LAYER_MODE_MULTIPLY_LINEAR,
-                                           GIMP_LAYER_MODE_MULTIPLY_LEGACY,
                                            GIMP_LAYER_MODE_BURN,
-                                           GIMP_LAYER_MODE_BURN_LEGACY,
                                            GIMP_LAYER_MODE_OVERLAY,
                                            GIMP_LAYER_MODE_SOFTLIGHT,
-                                           GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,
                                            GIMP_LAYER_MODE_HARDLIGHT,
-                                           GIMP_LAYER_MODE_HARDLIGHT_LEGACY,
                                            GIMP_LAYER_MODE_DIFFERENCE,
-                                           GIMP_LAYER_MODE_DIFFERENCE_LEGACY,
                                            GIMP_LAYER_MODE_SUBTRACT,
-                                           GIMP_LAYER_MODE_SUBTRACT_LEGACY,
                                            GIMP_LAYER_MODE_GRAIN_EXTRACT,
-                                           GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,
                                            GIMP_LAYER_MODE_GRAIN_MERGE,
-                                           GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,
                                            GIMP_LAYER_MODE_DIVIDE,
-                                           GIMP_LAYER_MODE_DIVIDE_LEGACY,
                                            GIMP_LAYER_MODE_HSV_HUE,
                                            GIMP_LAYER_MODE_HSV_SATURATION,
                                            GIMP_LAYER_MODE_HSV_COLOR,
                                            GIMP_LAYER_MODE_HSV_VALUE,
-                                           GIMP_LAYER_MODE_HSV_HUE_LEGACY,
-                                           GIMP_LAYER_MODE_HSV_SATURATION_LEGACY,
-                                           GIMP_LAYER_MODE_HSV_COLOR_LEGACY,
-                                           GIMP_LAYER_MODE_HSV_VALUE_LEGACY,
                                            GIMP_LAYER_MODE_LUMINANCE,
                                            GIMP_LAYER_MODE_LCH_HUE,
                                            GIMP_LAYER_MODE_LCH_CHROMA,
@@ -154,21 +136,6 @@ gimp_paint_mode_menu_new (gboolean with_behind_mode,
 
   gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
                                          GIMP_LAYER_MODE_DISSOLVE, -1);
-
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_LAYER_MODE_ADDITION_LEGACY, -1);
-
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_LAYER_MODE_BURN_LEGACY, -1);
-
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_LAYER_MODE_HARDLIGHT_LEGACY, -1);
-
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_LAYER_MODE_DIVIDE_LEGACY, -1);
-
-  gimp_int_store_insert_separator_after (GIMP_INT_STORE (store),
-                                         GIMP_LAYER_MODE_HSV_VALUE_LEGACY, -1);
 
   if (with_behind_mode)
     {

@@ -61,9 +61,6 @@ brushes_popup_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (paint_mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-        paint_mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
-
       if (gimp->no_interface ||
           ! gimp_pdb_lookup_procedure (gimp->pdb, brush_callback) ||
           ! gimp_pdb_dialog_new (gimp, context, progress,
@@ -129,9 +126,6 @@ brushes_set_popup_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (paint_mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-        paint_mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
-
       if (gimp->no_interface ||
           ! gimp_pdb_lookup_procedure (gimp->pdb, brush_callback) ||
           ! gimp_pdb_dialog_set (gimp, gimp_data_factory_get_container (gimp->brush_factory),

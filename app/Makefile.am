@@ -147,7 +147,6 @@ gimpconsoleldadd = \
 	text/libapptext.a					\
 	paint/libapppaint.a					\
 	operations/layer-modes/libapplayermodes.a		\
-	operations/layer-modes-legacy/libapplayermodeslegacy.a	\
 	operations/libappoperations.a				\
 	gegl/libappgegl.a					\
 	config/libappconfig.a					\

@@ -1046,9 +1046,6 @@ xcf_load_layer_props (XcfInfo    *info,
 
             info->cp += xcf_read_int32 (info->input, &mode, 1);
 
-            if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-              mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
-
             gimp_layer_set_mode (*layer, (GimpLayerMode) mode, FALSE);
           }
           break;
