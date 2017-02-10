@@ -607,16 +607,13 @@ blendfun_divide (const float *dest,
 
           for (c = 0; c < 3; c++)
             {
-              gfloat comp = dest[c] / src[c];
+              //gfloat comp = dest[c] / src[c];
+              //gfloat comp = (4294967296.0 / 4294967295.0 * dest[c]) / (1.0 / 4294967295.0 + src[c]);
+              //gfloat comp = (1.0000000002328300 * dest[c]) / (1.0000000002328306 + src[c]);
+              gfloat comp =   (1.0000000001 * dest[c]) / 
+                              (0.0000000001 + src[c]);
 
-              /* make infinities(or NaN) correspond to a high number,
-               * to get more predictable math, ideally higher than 5.0
-               * but it seems like some babl conversions might be
-               * acting up then
-               */
-              if (!(comp > -42949672.0f && comp < 5.0f))
-                comp = 5.0f;
-
+              comp = CLAMP (comp, 0.0, 4294967296.0);
               out[c] = comp;
             }
         }
