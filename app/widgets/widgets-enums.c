@@ -110,7 +110,7 @@ gimp_color_frame_mode_get_type (void)
   };
 
   static const GimpEnumDesc descs[] =
-  {  
+  {
     { GIMP_COLOR_FRAME_MODE_PIXEL, NC_("color-frame-mode", "Pixel"), NULL },
     { GIMP_COLOR_FRAME_MODE_RGB_PERCENT, NC_("color-frame-mode", "RGB (%)"), NULL },
     { GIMP_COLOR_FRAME_MODE_RGB_U8, NC_("color-frame-mode", "RGB (0..255)"), NULL },
@@ -144,10 +144,10 @@ gimp_color_pick_mode_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_COLOR_PICK_MODE_NONE,       NC_("color-pick-mode", "Pick only"), NULL },
+    { GIMP_COLOR_PICK_MODE_NONE, NC_("color-pick-mode", "Pick only"), NULL },
     { GIMP_COLOR_PICK_MODE_FOREGROUND, NC_("color-pick-mode", "Set foreground color"), NULL },
     { GIMP_COLOR_PICK_MODE_BACKGROUND, NC_("color-pick-mode", "Set background color"), NULL },
-    { GIMP_COLOR_PICK_MODE_PALETTE,    NC_("color-pick-mode", "Add to palette"), NULL },
+    { GIMP_COLOR_PICK_MODE_PALETTE, NC_("color-pick-mode", "Add to palette"), NULL },
     { 0, NULL, NULL }
   };
 
