@@ -383,7 +383,7 @@ gimp_help_browser_error (Gimp         *gimp,
                                     NULL, 0,
                                     NULL, NULL,
 
-                                    GTK_STOCK_CANCEL,      GTK_RESPONSE_CANCEL,
+                                    _("_Cancel"),          GTK_RESPONSE_CANCEL,
                                     _("Use _Web Browser"), GTK_RESPONSE_OK,
 
                                     NULL);
@@ -591,12 +591,93 @@ gimp_help_get_default_domain_uri (Gimp *gimp)
 static gchar *
 gimp_help_get_locales (Gimp *gimp)
 {
-  GimpGuiConfig *config = GIMP_GUI_CONFIG (gimp->config);
+  GimpGuiConfig  *config = GIMP_GUI_CONFIG (gimp->config);
+  gchar         **names;
+  gchar          *locales      = NULL;
+  GList          *locales_list = NULL;
+  GList          *iter;
+  gint            i;
 
   if (config->help_locales && strlen (config->help_locales))
     return g_strdup (config->help_locales);
 
-  return g_strjoinv (":", (gchar **) g_get_language_names ());
+  /* Process locales. */
+  names = (gchar **) g_get_language_names ();
+  for (i = 0; names[i]; i++)
+    {
+      gchar *locale = g_strdup (names[i]);
+      gchar *c;
+
+      /* We don't care about encoding in context of our help system. */
+      c = strchr (locale, '.');
+      if (c)
+        *c = '\0';
+      /* We don't care about variants as well. */
+      c = strchr (locale, '@');
+      if (c)
+        *c = '\0';
+      /* Apparently some systems (i.e. Windows) would return a value as
+       * IETF language tag, which is a different format from POSIX
+       * locale; especially it would separate the lang and the region
+       * with an hyphen instead of an underscore.
+       * Actually the difference is much deeper, and IETF language tags
+       * can have extended language subtags, a script subtag, variants,
+       * moreover using different codes.
+       * We'd actually need to look into this in details (TODO).
+       * this dirty hack should do for easy translation at least (like
+       * "en-GB" -> "en_GB).
+       * Cf. bug 777754.
+       */
+      c = strchr (locale, '-');
+      if (c)
+        *c = '_';
+      if (locale && *locale &&
+          ! g_list_find_custom (locales_list, locale,
+                                (GCompareFunc) g_strcmp0))
+        {
+          gchar *base;
+
+          /* Adding this locale. */
+          locales_list = g_list_prepend (locales_list, locale);
+
+          /* Adding the base language as well. */
+          base = strdup (locale);
+          c = strchr (base, '_');
+          if (c)
+            *c = '\0';
+          if (base && *base &&
+              ! g_list_find_custom (locales_list, base,
+                                    (GCompareFunc) g_strcmp0))
+            {
+              locales_list = g_list_prepend (locales_list, base);
+            }
+          else
+            {
+              g_free (base);
+            }
+        }
+      else
+        {
+          /* Avoid duplicates. */
+          g_free (locale);
+        }
+    }
+  locales_list = g_list_reverse (locales_list);
+
+  /* Finally generate the colon-separated value. */
+  if (locales_list)
+    {
+      locales = g_strdup (locales_list->data);
+      for (iter = locales_list->next; iter; iter = iter->next)
+        {
+          gchar *temp = locales;
+          locales = g_strconcat (temp, ":", iter->data, NULL);
+          g_free (temp);
+        }
+    }
+  g_list_free_full (locales_list, g_free);
+
+  return locales;
 }
 
 static GFile *
@@ -632,25 +713,21 @@ static void
 gimp_help_query_user_manual_online (GimpIdleHelp *idle_help)
 {
   GtkWidget *dialog;
-  GtkWidget *button;
 
   dialog = gimp_message_dialog_new (_("GIMP user manual is missing"),
                                     GIMP_STOCK_USER_MANUAL,
                                     NULL, 0, NULL, NULL,
-                                    GTK_STOCK_CANCEL,  GTK_RESPONSE_CANCEL,
+
+                                    _("_Cancel"),      GTK_RESPONSE_CANCEL,
+                                    _("Read _Online"), GTK_RESPONSE_ACCEPT,
+
                                     NULL);
 
-  button = gtk_dialog_add_button (GTK_DIALOG (dialog),
-                                  _("_Read Online"), GTK_RESPONSE_ACCEPT);
-  gtk_button_set_image (GTK_BUTTON (button),
-                        gtk_image_new_from_icon_name (GIMP_STOCK_WEB,
-                                                      GTK_ICON_SIZE_BUTTON));
-
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
   gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
                                            GTK_RESPONSE_ACCEPT,
                                            GTK_RESPONSE_CANCEL,
                                            -1);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
 
   if (idle_help->progress)
     {

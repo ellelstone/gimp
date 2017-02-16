@@ -24,7 +24,7 @@
 
 #include "gimp-gegl-types.h"
 
-#include "core/gimp-layer-modes.h"
+#include "operations/layer-modes/gimp-layer-modes.h"
 
 #include "gimp-gegl-nodes.h"
 #include "gimp-gegl-utils.h"
@@ -141,12 +141,24 @@ gimp_gegl_add_buffer_source (GeglNode   *parent,
 }
 
 void
-gimp_gegl_mode_node_set_mode (GeglNode      *node,
-                              GimpLayerMode  mode)
+gimp_gegl_mode_node_set_mode (GeglNode               *node,
+                              GimpLayerMode           mode,
+                              GimpLayerColorSpace     blend_space,
+                              GimpLayerColorSpace     composite_space,
+                              GimpLayerCompositeMode  composite_mode)
 {
   gdouble opacity;
 
   g_return_if_fail (GEGL_IS_NODE (node));
+
+  if (blend_space == GIMP_LAYER_COLOR_SPACE_AUTO)
+    blend_space = gimp_layer_mode_get_blend_space (mode);
+
+  if (composite_space == GIMP_LAYER_COLOR_SPACE_AUTO)
+    composite_space = gimp_layer_mode_get_composite_space (mode);
+
+  if (composite_mode == GIMP_LAYER_COMPOSITE_AUTO)
+    composite_mode = gimp_layer_mode_get_composite_mode (mode);
 
   gegl_node_get (node,
                  "opacity", &opacity,
@@ -156,17 +168,13 @@ gimp_gegl_mode_node_set_mode (GeglNode      *node,
    * all its properties
    */
   gegl_node_set (node,
-//<<<<<<< HEAD
-//                 "operation", operation,
-//                 "opacity",   opacity,
-//=======
-                 "operation",      gimp_layer_mode_get_operation (mode),
-                 "opacity",        opacity,
-                 "linear",         gimp_layer_mode_is_linear (mode),
-                 "blend-trc",      gimp_layer_mode_get_blend_space (mode),
-                 "composite-trc",  gimp_layer_mode_get_composite_space (mode),
-                 "composite-mode", gimp_layer_mode_get_composite_mode (mode),
-//>>>>>>> a1b844897c4581a8af2017c40a6c8f124a09b48d
+                 "operation",       gimp_layer_mode_get_operation (mode),
+                 "layer-mode",      mode,
+                 "opacity",         opacity,
+                 "linear",          gimp_layer_mode_wants_linear_data (mode),
+                 "blend-space",     blend_space,
+                 "composite-space", composite_space,
+                 "composite-mode",  composite_mode,
                  NULL);
 }
 

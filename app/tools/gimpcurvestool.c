@@ -125,7 +125,9 @@ static gboolean   curves_menu_sensitivity          (gint                  value,
 static void       curves_curve_type_callback       (GtkWidget            *widget,
                                                     GimpCurvesTool       *tool);
 
-static const GimpRGB * curves_get_channel_color    (GimpHistogramChannel  channel);
+static gboolean   curves_get_channel_color         (GtkWidget            *widget,
+                                                    GimpHistogramChannel  channel,
+                                                    GimpRGB              *color);
 
 
 G_DEFINE_TYPE (GimpCurvesTool, gimp_curves_tool, GIMP_TYPE_FILTER_TOOL)
@@ -221,9 +223,6 @@ gimp_curves_tool_initialize (GimpTool     *tool,
     {
       return FALSE;
     }
-
-  gimp_int_combo_box_set_sensitivity (GIMP_INT_COMBO_BOX (c_tool->channel_menu),
-                                      curves_menu_sensitivity, drawable, NULL);
 
   histogram = gimp_histogram_new (FALSE);
   gimp_drawable_calculate_histogram (drawable, histogram);
@@ -471,6 +470,8 @@ gimp_curves_tool_dialog (GimpFilterTool *filter_tool)
                                  config->channel);
   gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (tool->channel_menu),
                                        "gimp-channel");
+  gimp_int_combo_box_set_sensitivity (GIMP_INT_COMBO_BOX (tool->channel_menu),
+                                      curves_menu_sensitivity, filter_tool, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), tool->channel_menu, FALSE, FALSE, 0);
   gtk_widget_show (tool->channel_menu);
 
@@ -752,16 +753,21 @@ gimp_curves_tool_update_channel (GimpCurvesTool *tool)
        channel <= GIMP_HISTOGRAM_ALPHA;
        channel++)
     {
+      GimpRGB  curve_color;
+      gboolean has_color;
+
+      has_color = curves_get_channel_color (tool->graph, channel, &curve_color);
+
       if (channel == config->channel)
         {
           gimp_curve_view_set_curve (GIMP_CURVE_VIEW (tool->graph), curve,
-                                     curves_get_channel_color (channel));
+                                     has_color ? &curve_color : NULL);
         }
       else
         {
           gimp_curve_view_add_background (GIMP_CURVE_VIEW (tool->graph),
                                           config->curve[channel],
-                                          curves_get_channel_color (channel));
+                                          has_color ? &curve_color : NULL);
         }
     }
 
@@ -822,8 +828,11 @@ static gboolean
 curves_menu_sensitivity (gint      value,
                          gpointer  data)
 {
-  GimpDrawable         *drawable = GIMP_DRAWABLE (data);
+  GimpDrawable         *drawable = GIMP_FILTER_TOOL (data)->drawable;
   GimpHistogramChannel  channel  = value;
+
+  if (!drawable)
+    return FALSE;
 
   switch (channel)
     {
@@ -865,8 +874,10 @@ curves_curve_type_callback (GtkWidget      *widget,
     }
 }
 
-static const GimpRGB *
-curves_get_channel_color (GimpHistogramChannel channel)
+static gboolean
+curves_get_channel_color (GtkWidget            *widget,
+                          GimpHistogramChannel  channel,
+                          GimpRGB              *color)
 {
   static const GimpRGB channel_colors[GIMP_HISTOGRAM_RGB] =
   {
@@ -878,7 +889,20 @@ curves_get_channel_color (GimpHistogramChannel channel)
   };
 
   if (channel == GIMP_HISTOGRAM_VALUE)
-    return NULL;
+    return FALSE;
 
-  return &channel_colors[channel];
+  if (channel == GIMP_HISTOGRAM_ALPHA)
+    {
+      GtkStyle *style = gtk_widget_get_style (widget);
+
+      gimp_rgba_set (color,
+                     style->text_aa[GTK_STATE_NORMAL].red / 65535.0,
+                     style->text_aa[GTK_STATE_NORMAL].green / 65535.0,
+                     style->text_aa[GTK_STATE_NORMAL].blue / 65535.0,
+                     1.0);
+      return TRUE;
+    }
+
+  *color = channel_colors[channel];
+  return TRUE;
 }

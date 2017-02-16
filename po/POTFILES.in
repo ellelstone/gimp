@@ -85,6 +85,7 @@ app/actions/vectors-commands.c
 app/actions/view-actions.c
 app/actions/view-commands.c
 app/actions/window-actions.c
+app/actions/window-commands.c
 app/actions/windows-actions.c
 app/actions/windows-commands.c
 
@@ -261,6 +262,7 @@ app/file/file-utils.c
 app/gegl/gimp-babl.c
 app/gegl/gimp-gegl-enums.c
 
+app/operations/operations-enums.c
 app/operations/gimpbrightnesscontrastconfig.c
 app/operations/gimpcolorbalanceconfig.c
 app/operations/gimpcolorizeconfig.c
@@ -522,6 +524,7 @@ app/widgets/gimpimageprofileview.c
 app/widgets/gimpimagepropview.c
 app/widgets/gimpitemtreeview.c
 app/widgets/gimplanguagestore-parser.c
+app/widgets/gimplayermodebox.c
 app/widgets/gimplayertreeview.c
 app/widgets/gimpmenudock.c
 app/widgets/gimpmessagebox.c

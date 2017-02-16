@@ -1096,16 +1096,19 @@ gimp_drawable_convert_type (GimpDrawable      *drawable,
 }
 
 void
-gimp_drawable_apply_buffer (GimpDrawable        *drawable,
-                            GeglBuffer          *buffer,
-                            const GeglRectangle *buffer_region,
-                            gboolean             push_undo,
-                            const gchar         *undo_desc,
-                            gdouble              opacity,
-                            GimpLayerMode        mode,
-                            GeglBuffer          *base_buffer,
-                            gint                 base_x,
-                            gint                 base_y)
+gimp_drawable_apply_buffer (GimpDrawable           *drawable,
+                            GeglBuffer             *buffer,
+                            const GeglRectangle    *buffer_region,
+                            gboolean                push_undo,
+                            const gchar            *undo_desc,
+                            gdouble                 opacity,
+                            GimpLayerMode           mode,
+                            GimpLayerColorSpace     blend_space,
+                            GimpLayerColorSpace     composite_space,
+                            GimpLayerCompositeMode  composite_mode,
+                            GeglBuffer             *base_buffer,
+                            gint                    base_x,
+                            gint                    base_y)
 {
   g_return_if_fail (GIMP_IS_DRAWABLE (drawable));
   g_return_if_fail (gimp_item_is_attached (GIMP_ITEM (drawable)));
@@ -1117,6 +1120,9 @@ gimp_drawable_apply_buffer (GimpDrawable        *drawable,
                                                     buffer_region,
                                                     push_undo, undo_desc,
                                                     opacity, mode,
+                                                    blend_space,
+                                                    composite_space,
+                                                    composite_mode,
                                                     base_buffer,
                                                     base_x, base_y);
 }

@@ -117,8 +117,8 @@ fade_dialog_new (GimpImage *image,
                                      gimp_standard_help_func,
                                      GIMP_HELP_EDIT_FADE,
 
-                                     GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                     _("_Fade"),       GTK_RESPONSE_OK,
+                                     _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                     _("_Fade"),   GTK_RESPONSE_OK,
 
                                      NULL);
 
@@ -151,8 +151,8 @@ fade_dialog_new (GimpImage *image,
   gtk_widget_show (table);
 
   /*  the paint mode menu  */
-  menu = gimp_prop_paint_mode_menu_new (G_OBJECT (private->context),
-                                        "paint-mode", TRUE, TRUE);
+  menu = gimp_prop_layer_mode_box_new (G_OBJECT (private->context),
+                                       "paint-mode", TRUE, TRUE);
   gimp_table_attach_aligned (GTK_TABLE (table), 0, table_row++,
                              _("_Mode:"), 0.0, 0.5,
                              menu, 2, FALSE);

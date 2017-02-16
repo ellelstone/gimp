@@ -24,6 +24,8 @@ libappoperations_a_sources = \
 	gimp-operations.c			\
 	gimp-operations.h			\
 	\
+	gimp-operation-config.c			\
+	gimp-operation-config.h			\
 	gimpbrightnesscontrastconfig.c		\
 	gimpbrightnesscontrastconfig.h		\
 	gimpcageconfig.c			\

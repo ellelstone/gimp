@@ -32,18 +32,12 @@
 #define RANDOM_TABLE_SIZE 4096
 
 
-static gboolean gimp_operation_dissolve_process (GeglOperation       *operation,
-                                                 void                *in_buf,
-                                                 void                *aux_buf,
-                                                 void                *aux2_buf,
-                                                 void                *out_buf,
-                                                 glong                samples,
-                                                 const GeglRectangle *result,
-                                                 gint                 level);
+static GimpLayerModeAffectMask gimp_operation_dissolve_get_affect_mask (GimpOperationLayerMode *layer_mode);
 
 
 G_DEFINE_TYPE (GimpOperationDissolve, gimp_operation_dissolve,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+               GIMP_TYPE_OPERATION_LAYER_MODE)
+
 
 static gint32 random_table[RANDOM_TABLE_SIZE];
 
@@ -53,11 +47,13 @@ gimp_operation_dissolve_class_init (GimpOperationDissolveClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_composer_class;
+  GimpOperationLayerModeClass      *layer_mode_class;
   GRand                            *gr;
   gint                              i;
 
   operation_class      = GEGL_OPERATION_CLASS (klass);
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
+  layer_mode_class     = GIMP_OPERATION_LAYER_MODE_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gimp:dissolve",
@@ -66,6 +62,8 @@ gimp_operation_dissolve_class_init (GimpOperationDissolveClass *klass)
                                  NULL);
 
   point_composer_class->process = gimp_operation_dissolve_process;
+
+  layer_mode_class->get_affect_mask = gimp_operation_dissolve_get_affect_mask;
 
   /* generate a table of random seeds */
   gr = g_rand_new_with_seed (314159265);
@@ -80,42 +78,24 @@ gimp_operation_dissolve_init (GimpOperationDissolve *self)
 {
 }
 
-static gboolean
-gimp_operation_dissolve_process (GeglOperation       *operation,
-                                 void                *in_buf,
-                                 void                *aux_buf,
-                                 void                *aux2_buf,
-                                 void                *out_buf,
+gboolean
+gimp_operation_dissolve_process (GeglOperation       *op,
+                                 void                *in_p,
+                                 void                *layer_p,
+                                 void                *mask_p,
+                                 void                *out_p,
                                  glong                samples,
                                  const GeglRectangle *result,
                                  gint                 level)
 {
-  GimpOperationPointLayerMode *layer_mode = (gpointer) operation;
-
-  return gimp_operation_dissolve_process_pixels (in_buf, aux_buf, aux2_buf,
-                                                 out_buf,
-                                                 layer_mode->opacity,
-                                                 samples, result, level,
-                                                 layer_mode->blend_trc,
-                                                 layer_mode->composite_trc,
-                                                 layer_mode->composite_mode);
-}
-
-gboolean
-gimp_operation_dissolve_process_pixels (gfloat                *in,
-                                        gfloat                *aux,
-                                        gfloat                *mask,
-                                        gfloat                *out,
-                                        gfloat                 opacity,
-                                        glong                  samples,
-                                        const GeglRectangle   *result,
-                                        gint                   level,
-                                        GimpLayerColorSpace    blend_trc,
-                                        GimpLayerColorSpace    composite_trc,
-                                        GimpLayerCompositeMode composite_mode)
-{
-  const gboolean has_mask = mask != NULL;
-  gint           x, y;
+  GimpOperationLayerMode *layer_mode = (gpointer) op;
+  gfloat                 *in         = in_p;
+  gfloat                 *out        = out_p;
+  gfloat                 *layer      = layer_p;
+  gfloat                 *mask       = mask_p;
+  gfloat                  opacity    = layer_mode->opacity;
+  const gboolean          has_mask   = mask != NULL;
+  gint                    x, y;
 
   for (y = result->y; y < result->y + result->height; y++)
     {
@@ -127,7 +107,7 @@ gimp_operation_dissolve_process_pixels (gfloat                *in,
 
       for (x = result->x; x < result->x + result->width; x++)
         {
-          gfloat value = aux[ALPHA] * opacity * 255;
+          gfloat value = layer[ALPHA] * opacity * 255;
 
           if (has_mask)
             value *= *mask;
@@ -141,21 +121,28 @@ gimp_operation_dissolve_process_pixels (gfloat                *in,
             }
           else
             {
-              out[0] = aux[0];
-              out[1] = aux[1];
-              out[2] = aux[2];
+              out[0] = layer[0];
+              out[1] = layer[1];
+              out[2] = layer[2];
               out[3] = 1.0;
             }
 
-          in   += 4;
-          out  += 4;
-          aux  += 4;
+          in    += 4;
+          layer += 4;
+          out   += 4;
 
           if (has_mask)
-            mask ++;
+            mask++;
         }
+
       g_rand_free (gr);
     }
 
   return TRUE;
+}
+
+static GimpLayerModeAffectMask
+gimp_operation_dissolve_get_affect_mask (GimpOperationLayerMode *layer_mode)
+{
+  return GIMP_LAYER_MODE_AFFECT_SRC;
 }

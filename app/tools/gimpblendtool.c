@@ -31,7 +31,7 @@
 
 #include "tools-types.h"
 
-#include "gegl/gimp-gegl-config.h"
+#include "operations/gimp-operation-config.h"
 
 #include "core/gimp-utils.h"
 #include "core/gimpdrawable.h"
@@ -642,7 +642,10 @@ gimp_blend_tool_options_notify (GimpTool         *tool,
            ! strcmp (pspec->name, "paint-mode"))
     {
       gimp_drawable_filter_set_mode (blend_tool->filter,
-                                     gimp_context_get_paint_mode (context));
+                                     gimp_context_get_paint_mode (context),
+                                     GIMP_LAYER_COLOR_SPACE_AUTO,
+                                     GIMP_LAYER_COLOR_SPACE_AUTO,
+                                     GIMP_LAYER_COMPOSITE_AUTO);
     }
 }
 
@@ -879,7 +882,8 @@ gimp_blend_tool_start (GimpBlendTool *blend_tool,
   gimp_blend_tool_create_filter (blend_tool, drawable);
 
   /* Initially sync all of the properties */
-  gimp_gegl_config_sync_node (GIMP_OBJECT (options), blend_tool->render_node);
+  gimp_operation_config_sync_node (GIMP_OBJECT (options),
+                                   blend_tool->render_node);
 
   /* Connect signal handlers for the gradient */
   gimp_blend_tool_set_gradient (blend_tool, context->gradient);
@@ -1203,7 +1207,10 @@ gimp_blend_tool_create_filter (GimpBlendTool *blend_tool,
   gimp_drawable_filter_set_opacity (blend_tool->filter,
                                     gimp_context_get_opacity (context));
   gimp_drawable_filter_set_mode (blend_tool->filter,
-                                 gimp_context_get_paint_mode (context));
+                                 gimp_context_get_paint_mode (context),
+                                 GIMP_LAYER_COLOR_SPACE_AUTO,
+                                 GIMP_LAYER_COLOR_SPACE_AUTO,
+                                 GIMP_LAYER_COMPOSITE_AUTO);
 
   g_signal_connect (blend_tool->filter, "flush",
                     G_CALLBACK (gimp_blend_tool_filter_flush),

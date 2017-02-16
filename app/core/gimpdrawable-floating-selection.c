@@ -304,7 +304,10 @@ gimp_drawable_sync_fs_filter (GimpDrawable *drawable)
   gimp_applicator_set_opacity (private->fs_applicator,
                                gimp_layer_get_opacity (fs));
   gimp_applicator_set_mode (private->fs_applicator,
-                            gimp_layer_get_mode (fs));
+                            gimp_layer_get_mode (fs),
+                            gimp_layer_get_blend_space (fs),
+                            gimp_layer_get_composite_space (fs),
+                            gimp_layer_get_composite_mode (fs));
   gimp_applicator_set_affect (private->fs_applicator,
                               gimp_drawable_get_active_mask (drawable));
 }

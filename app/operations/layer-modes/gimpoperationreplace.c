@@ -27,18 +27,11 @@
 #include "gimpoperationreplace.h"
 
 
-static gboolean gimp_operation_replace_process (GeglOperation       *operation,
-                                                void                *in_buf,
-                                                void                *aux_buf,
-                                                void                *aux2_buf,
-                                                void                *out_buf,
-                                                glong                samples,
-                                                const GeglRectangle *roi,
-                                                gint                 level);
+static GimpLayerModeAffectMask gimp_operation_replace_get_affect_mask (GimpOperationLayerMode *layer_mode);
 
 
 G_DEFINE_TYPE (GimpOperationReplace, gimp_operation_replace,
-               GIMP_TYPE_OPERATION_POINT_LAYER_MODE)
+               GIMP_TYPE_OPERATION_LAYER_MODE)
 
 
 static void
@@ -46,9 +39,11 @@ gimp_operation_replace_class_init (GimpOperationReplaceClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_class;
+  GimpOperationLayerModeClass      *layer_mode_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
-  point_class     = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
+  operation_class  = GEGL_OPERATION_CLASS (klass);
+  point_class      = GEGL_OPERATION_POINT_COMPOSER3_CLASS (klass);
+  layer_mode_class = GIMP_OPERATION_LAYER_MODE_CLASS (klass);
 
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gimp:replace",
@@ -56,6 +51,8 @@ gimp_operation_replace_class_init (GimpOperationReplaceClass *klass)
                                  NULL);
 
   point_class->process = gimp_operation_replace_process;
+
+  layer_mode_class->get_affect_mask = gimp_operation_replace_get_affect_mask;
 }
 
 static void
@@ -63,41 +60,23 @@ gimp_operation_replace_init (GimpOperationReplace *self)
 {
 }
 
-static gboolean
-gimp_operation_replace_process (GeglOperation       *operation,
-                                void                *in_buf,
-                                void                *aux_buf,
-                                void                *aux2_buf,
-                                void                *out_buf,
+gboolean
+gimp_operation_replace_process (GeglOperation       *op,
+                                void                *in_p,
+                                void                *layer_p,
+                                void                *mask_p,
+                                void                *out_p,
                                 glong                samples,
                                 const GeglRectangle *roi,
                                 gint                 level)
 {
-  GimpOperationPointLayerMode *layer_mode = (gpointer) operation;
-
-  return gimp_operation_replace_process_pixels (in_buf, aux_buf, aux2_buf,
-                                                out_buf,
-                                                layer_mode->opacity,
-                                                samples, roi, level,
-                                                layer_mode->blend_trc,
-                                                layer_mode->composite_trc,
-                                                layer_mode->composite_mode);
-}
-
-gboolean
-gimp_operation_replace_process_pixels (gfloat                *in,
-                                       gfloat                *layer,
-                                       gfloat                *mask,
-                                       gfloat                *out,
-                                       gfloat                 opacity,
-                                       glong                  samples,
-                                       const GeglRectangle   *roi,
-                                       gint                   level,
-                                       GimpLayerColorSpace    blend_trc,
-                                       GimpLayerColorSpace    composite_trc,
-                                       GimpLayerCompositeMode composite_mode)
-{
-  const gboolean has_mask = mask != NULL;
+  GimpOperationLayerMode *layer_mode = (gpointer) op;
+  gfloat                 *in         = in_p;
+  gfloat                 *out        = out_p;
+  gfloat                 *layer      = layer_p;
+  gfloat                 *mask       = mask_p;
+  gfloat                  opacity    = layer_mode->opacity;
+  const gboolean          has_mask   = mask != NULL;
 
   while (samples--)
     {
@@ -134,4 +113,19 @@ gimp_operation_replace_process_pixels (gfloat                *in,
     }
 
   return TRUE;
+}
+
+static GimpLayerModeAffectMask
+gimp_operation_replace_get_affect_mask (GimpOperationLayerMode *layer_mode)
+{
+  GimpLayerModeAffectMask affect_mask = GIMP_LAYER_MODE_AFFECT_NONE;
+
+  if (layer_mode->opacity != 0.0)
+    affect_mask |= GIMP_LAYER_MODE_AFFECT_DST;
+
+  /* if opacity != 1.0, or we have a mask, thne we also affect SRC, but this is
+   * considered the case anyway, so no need for special handling.
+   */
+
+  return affect_mask;
 }

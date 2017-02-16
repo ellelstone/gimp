@@ -149,6 +149,9 @@ gimp_drawable_blend (GimpDrawable     *drawable,
                               GEGL_RECTANGLE (x, y, width, height),
                               TRUE, C_("undo-type", "Blend"),
                               opacity, paint_mode,
+                              GIMP_LAYER_COLOR_SPACE_AUTO,
+                              GIMP_LAYER_COLOR_SPACE_AUTO,
+                              GIMP_LAYER_COMPOSITE_AUTO,
                               NULL, x, y);
 
   gimp_drawable_update (drawable, x, y, width, height);

@@ -39,7 +39,8 @@
 
 #include "config/gimpguiconfig.h"
 
-#include "gegl/gimp-gegl-config.h"
+#include "operations/gimp-operation-config.h"
+
 #include "gegl/gimp-gegl-utils.h"
 
 #include "core/gimp.h"
@@ -351,9 +352,9 @@ gimp_filter_tool_initialize (GimpTool     *tool,
                            gimp_widget_get_monitor (GTK_WIDGET (shell)),
                            filter_tool->overlay,
 
-                           GIMP_STOCK_RESET, RESPONSE_RESET,
-                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                           GTK_STOCK_OK,     GTK_RESPONSE_OK,
+                           _("_Reset"),  RESPONSE_RESET,
+                           _("_Cancel"), GTK_RESPONSE_CANCEL,
+                           _("_OK"),     GTK_RESPONSE_OK,
 
                            NULL);
 
@@ -379,7 +380,7 @@ gimp_filter_tool_initialize (GimpTool     *tool,
           GFile         *default_folder;
           GtkWidget     *settings_ui;
 
-          settings = gimp_gegl_config_get_container (type);
+          settings = gimp_operation_config_get_container (type);
           if (! gimp_list_get_sort_func (GIMP_LIST (settings)))
             gimp_list_set_sort_func (GIMP_LIST (settings),
                                      (GCompareFunc) gimp_settings_compare);
@@ -484,9 +485,9 @@ gimp_filter_tool_initialize (GimpTool     *tool,
   gimp_tool_gui_set_shell (filter_tool->gui, shell);
   gimp_tool_gui_set_viewable (filter_tool->gui, GIMP_VIEWABLE (drawable));
 
+  filter_tool->drawable = drawable;
   gimp_tool_gui_show (filter_tool->gui);
 
-  filter_tool->drawable = drawable;
   gimp_filter_tool_create_map (filter_tool);
 
   return TRUE;
@@ -1300,14 +1301,15 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
   filter_tool->operation = gegl_node_new_child (NULL,
                                                 "operation", operation_name,
                                                 NULL);
-  filter_tool->config = G_OBJECT (gimp_gegl_config_new (operation_name,
-                                                        filter_tool->icon_name,
-                                                        GIMP_TYPE_SETTINGS));
+  filter_tool->config =
+    G_OBJECT (gimp_operation_config_new (operation_name,
+                                         filter_tool->icon_name,
+                                         GIMP_TYPE_SETTINGS));
 
-  gimp_gegl_config_sync_node (GIMP_OBJECT (filter_tool->config),
-                              filter_tool->operation);
-  gimp_gegl_config_connect_node (GIMP_OBJECT (filter_tool->config),
-                                 filter_tool->operation);
+  gimp_operation_config_sync_node (GIMP_OBJECT (filter_tool->config),
+                                   filter_tool->operation);
+  gimp_operation_config_connect_node (GIMP_OBJECT (filter_tool->config),
+                                      filter_tool->operation);
 
   if (filter_tool->gui)
     {

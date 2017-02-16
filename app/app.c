@@ -81,6 +81,9 @@ static gboolean   app_exit_after_callback    (Gimp               *gimp,
                                               GMainLoop         **loop);
 static void       app_initialize_colorants    (void);
 
+GType gimp_layer_mode_effects_get_type (void); /* compat cruft */
+
+
 /*  local variables  */
 
 static GObject *initial_screen  = NULL;
@@ -117,7 +120,7 @@ app_libs_init (GOptionContext *context,
   quark = g_quark_from_static_string ("gimp-compat-enum");
 
   g_type_set_qdata (GIMP_TYPE_LAYER_MODE, quark,
-		    (gpointer) GIMP_TYPE_LAYER_MODE_EFFECTS);
+		    (gpointer) gimp_layer_mode_effects_get_type ());
 }
 
 void

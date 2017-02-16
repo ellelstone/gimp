@@ -26,9 +26,10 @@
 
 #include "paint-types.h"
 
+#include "operations/layer-modes/gimp-layer-modes.h"
+
 #include "gegl/gimp-gegl-utils.h"
 
-#include "core/gimp-layer-modes.h"
 #include "core/gimp-palettes.h"
 #include "core/gimpdrawable.h"
 #include "core/gimpimage.h"
@@ -258,7 +259,6 @@ gimp_ink_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
-//      if (gimp_layer_mode_is_linear (paint_mode))
         format = babl_format ("RGBA float");
 
       temp_buf = gimp_temp_buf_new ((x2 - x1), (y2 - y1),

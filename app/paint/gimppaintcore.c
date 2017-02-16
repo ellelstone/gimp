@@ -28,13 +28,14 @@
 
 #include "paint-types.h"
 
+#include "operations/layer-modes/gimp-layer-modes.h"
+
 #include "gegl/gimp-gegl-loops.h"
 #include "gegl/gimp-gegl-nodes.h"
 #include "gegl/gimp-gegl-utils.h"
 #include "gegl/gimpapplicator.h"
 
 #include "core/gimp.h"
-#include "core/gimp-layer-modes.h"
 #include "core/gimp-utils.h"
 #include "core/gimpchannel.h"
 #include "core/gimpimage.h"
@@ -897,7 +898,10 @@ gimp_paint_core_paste (GimpPaintCore            *core,
                                         core->paint_buffer_y);
 
       gimp_applicator_set_opacity (core->applicator, image_opacity);
-      gimp_applicator_set_mode (core->applicator, paint_mode);
+      gimp_applicator_set_mode (core->applicator, paint_mode,
+                                GIMP_LAYER_COLOR_SPACE_AUTO,
+                                GIMP_LAYER_COLOR_SPACE_AUTO,
+                                gimp_layer_mode_get_paint_composite_mode (paint_mode));
 
       /*  apply the paint area to the image  */
       gimp_applicator_blit (core->applicator,

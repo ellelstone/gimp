@@ -26,6 +26,8 @@
 
 #include "dialogs-types.h"
 
+#include "operations/layer-modes/gimp-layer-modes.h"
+
 #include "core/gimpcontext.h"
 #include "core/gimpdrawable-filters.h"
 #include "core/gimpimage.h"
@@ -35,9 +37,9 @@
 #include "text/gimptextlayer.h"
 
 #include "widgets/gimpcontainertreeview.h"
+#include "widgets/gimplayermodebox.h"
 #include "widgets/gimpspinscale.h"
 #include "widgets/gimpviewabledialog.h"
-#include "widgets/gimpwidgets-constructors.h"
 
 #include "item-options-dialog.h"
 #include "layer-options-dialog.h"
@@ -51,6 +53,9 @@ struct _LayerOptionsDialog
 {
   GimpLayer                *layer;
   GimpLayerMode             mode;
+  GimpLayerColorSpace       blend_space;
+  GimpLayerColorSpace       composite_space;
+  GimpLayerCompositeMode    composite_mode;
   gdouble                   opacity;
   GimpFillType              fill_type;
   gboolean                  lock_alpha;
@@ -58,6 +63,10 @@ struct _LayerOptionsDialog
   GimpLayerOptionsCallback  callback;
   gpointer                  user_data;
 
+  GtkWidget                *mode_box;
+  GtkWidget                *blend_space_combo;
+  GtkWidget                *composite_space_combo;
+  GtkWidget                *composite_mode_combo;
   GtkWidget                *size_se;
   GtkWidget                *offset_se;
 };
@@ -65,20 +74,23 @@ struct _LayerOptionsDialog
 
 /*  local function prototypes  */
 
-static void   layer_options_dialog_free          (LayerOptionsDialog *private);
-static void   layer_options_dialog_callback      (GtkWidget          *dialog,
-                                                  GimpImage          *image,
-                                                  GimpItem           *item,
-                                                  GimpContext        *context,
-                                                  const gchar        *item_name,
-                                                  gboolean            item_visible,
-                                                  gboolean            item_linked,
-                                                  GimpColorTag        item_color_tag,
-                                                  gboolean            item_lock_content,
-                                                  gboolean            item_lock_position,
-                                                  gpointer            user_data);
-static void   layer_options_dialog_toggle_rename (GtkWidget          *widget,
-                                                  LayerOptionsDialog *private);
+static void   layer_options_dialog_free           (LayerOptionsDialog *private);
+static void   layer_options_dialog_callback       (GtkWidget          *dialog,
+                                                   GimpImage          *image,
+                                                   GimpItem           *item,
+                                                   GimpContext        *context,
+                                                   const gchar        *item_name,
+                                                   gboolean            item_visible,
+                                                   gboolean            item_linked,
+                                                   GimpColorTag        item_color_tag,
+                                                   gboolean            item_lock_content,
+                                                   gboolean            item_lock_position,
+                                                   gpointer            user_data);
+static void   layer_options_dialog_mode_notify    (GtkWidget          *widget,
+                                                   const GParamSpec   *pspec,
+                                                   LayerOptionsDialog *private);
+static void   layer_options_dialog_rename_toggled (GtkWidget          *widget,
+                                                   LayerOptionsDialog *private);
 
 
 /*  public functions  */
@@ -95,6 +107,9 @@ layer_options_dialog_new (GimpImage                *image,
                           const gchar              *help_id,
                           const gchar              *layer_name,
                           GimpLayerMode             layer_mode,
+                          GimpLayerColorSpace       layer_blend_space,
+                          GimpLayerColorSpace       layer_composite_space,
+                          GimpLayerCompositeMode    layer_composite_mode,
                           gdouble                   layer_opacity,
                           GimpFillType              layer_fill_type,
                           gboolean                  layer_visible,
@@ -109,6 +124,7 @@ layer_options_dialog_new (GimpImage                *image,
   LayerOptionsDialog *private;
   GtkWidget          *dialog;
   GtkWidget          *table;
+  GtkListStore       *space_model;
   GtkWidget          *combo;
   GtkWidget          *scale;
   GtkWidget          *label;
@@ -128,6 +144,9 @@ layer_options_dialog_new (GimpImage                *image,
 
   private->layer              = layer;
   private->mode               = layer_mode;
+  private->blend_space        = layer_blend_space;
+  private->composite_space    = layer_composite_space;
+  private->composite_mode     = layer_composite_mode;
   private->opacity            = layer_opacity * 100.0;
   private->fill_type          = layer_fill_type;
   private->lock_alpha         = layer_lock_alpha;
@@ -157,12 +176,51 @@ layer_options_dialog_new (GimpImage                *image,
   g_object_weak_ref (G_OBJECT (dialog),
                      (GWeakNotify) layer_options_dialog_free, private);
 
-  combo = gimp_paint_mode_menu_new (FALSE, FALSE);
-  item_options_dialog_add_widget (dialog, _("_Mode:"), combo);
+  private->mode_box = gimp_layer_mode_box_new (FALSE, FALSE);
+  item_options_dialog_add_widget (dialog, _("_Mode:"), private->mode_box);
+  gimp_layer_mode_box_set_mode (GIMP_LAYER_MODE_BOX (private->mode_box),
+                                private->mode);
+
+  g_signal_connect (private->mode_box, "notify::layer-mode",
+                    G_CALLBACK (layer_options_dialog_mode_notify),
+                    private);
+
+  space_model =
+    gimp_enum_store_new_with_range (GIMP_TYPE_LAYER_COLOR_SPACE,
+                                    GIMP_LAYER_COLOR_SPACE_AUTO,
+                                    GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL);
+
+  private->blend_space_combo = combo =
+    gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (space_model));
+  item_options_dialog_add_widget (dialog, _("Blend space:"), combo);
+  gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (combo),
+                                       "gimp-layer-color-space");
   gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
-                              private->mode,
+                              private->blend_space,
                               G_CALLBACK (gimp_int_combo_box_get_active),
-                              &private->mode);
+                              &private->blend_space);
+
+  private->composite_space_combo = combo =
+    gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (space_model));
+  item_options_dialog_add_widget (dialog, _("Composite space:"), combo);
+  gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (combo),
+                                       "gimp-layer-color-space");
+  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+                              private->composite_space,
+                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              &private->composite_space);
+
+  g_object_unref (space_model);
+
+  private->composite_mode_combo = combo =
+    gimp_enum_combo_box_new (GIMP_TYPE_LAYER_COMPOSITE_MODE);
+  item_options_dialog_add_widget (dialog, _("Composite mode:"), combo);
+  gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (combo),
+                                       "gimp-layer-composite");
+  gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
+                              private->composite_mode,
+                              G_CALLBACK (gimp_int_combo_box_get_active),
+                              &private->composite_mode);
 
   adjustment = GTK_ADJUSTMENT (gtk_adjustment_new (private->opacity, 0.0, 100.0,
                                                    1.0, 10.0, 0.0));
@@ -386,7 +444,7 @@ layer_options_dialog_new (GimpImage                *image,
                         &private->rename_text_layers);
 
       g_signal_connect (button, "toggled",
-                        G_CALLBACK (layer_options_dialog_toggle_rename),
+                        G_CALLBACK (layer_options_dialog_rename_toggled),
                         private);
     }
 
@@ -444,6 +502,9 @@ layer_options_dialog_callback (GtkWidget    *dialog,
                      context,
                      item_name,
                      private->mode,
+                     private->blend_space,
+                     private->composite_space,
+                     private->composite_mode,
                      private->opacity / 100.0,
                      private->fill_type,
                      width,
@@ -461,8 +522,33 @@ layer_options_dialog_callback (GtkWidget    *dialog,
 }
 
 static void
-layer_options_dialog_toggle_rename (GtkWidget          *widget,
-                                    LayerOptionsDialog *private)
+layer_options_dialog_mode_notify (GtkWidget          *widget,
+                                  const GParamSpec   *pspec,
+                                  LayerOptionsDialog *private)
+{
+  gboolean mutable;
+
+  private->mode = gimp_layer_mode_box_get_mode (GIMP_LAYER_MODE_BOX (widget));
+
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->blend_space_combo),
+                                 GIMP_LAYER_COLOR_SPACE_AUTO);
+  mutable = gimp_layer_mode_is_blend_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->blend_space_combo, mutable);
+
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_space_combo),
+                                 GIMP_LAYER_COLOR_SPACE_AUTO);
+  mutable = gimp_layer_mode_is_composite_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->composite_space_combo, mutable);
+
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_mode_combo),
+                                 GIMP_LAYER_COMPOSITE_AUTO);
+  mutable = gimp_layer_mode_is_composite_mode_mutable (private->mode);
+  gtk_widget_set_sensitive (private->composite_mode_combo, mutable);
+}
+
+static void
+layer_options_dialog_rename_toggled (GtkWidget          *widget,
+                                     LayerOptionsDialog *private)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)) &&
       gimp_item_is_text_layer (GIMP_ITEM (private->layer)))

@@ -34,19 +34,22 @@ typedef struct _GimpLayerClass GimpLayerClass;
 
 struct _GimpLayer
 {
-  GimpDrawable   parent_instance;
+  GimpDrawable            parent_instance;
 
-  gdouble        opacity;          /*  layer opacity              */
-  GimpLayerMode  mode;             /*  layer combination mode     */
-  gboolean       lock_alpha;       /*  lock the alpha channel     */
+  gdouble                 opacity;          /*  layer opacity              */
+  GimpLayerMode           mode;             /*  layer combination mode     */
+  GimpLayerColorSpace     blend_space;      /*  layer blend space          */
+  GimpLayerColorSpace     composite_space;  /*  layer composite space      */
+  GimpLayerCompositeMode  composite_mode;   /*  layer composite mode       */
+  gboolean                lock_alpha;       /*  lock the alpha channel     */
 
-  GimpLayerMask *mask;             /*  possible layer mask        */
-  gboolean       apply_mask;       /*  controls mask application  */
-  gboolean       edit_mask;        /*  edit mask or layer?        */
-  gboolean       show_mask;        /*  show mask or layer?        */
+  GimpLayerMask          *mask;             /*  possible layer mask        */
+  gboolean                apply_mask;       /*  controls mask application  */
+  gboolean                edit_mask;        /*  edit mask or layer?        */
+  gboolean                show_mask;        /*  show mask or layer?        */
 
-  GeglNode      *layer_offset_node;
-  GeglNode      *mask_offset_node;
+  GeglNode               *layer_offset_node;
+  GeglNode               *mask_offset_node;
 
   /*  Floating selections  */
   struct
@@ -62,13 +65,16 @@ struct _GimpLayerClass
 {
   GimpDrawableClass  parent_class;
 
-  void (* opacity_changed)    (GimpLayer *layer);
-  void (* mode_changed)       (GimpLayer *layer);
-  void (* lock_alpha_changed) (GimpLayer *layer);
-  void (* mask_changed)       (GimpLayer *layer);
-  void (* apply_mask_changed) (GimpLayer *layer);
-  void (* edit_mask_changed)  (GimpLayer *layer);
-  void (* show_mask_changed)  (GimpLayer *layer);
+  void (* opacity_changed)         (GimpLayer *layer);
+  void (* mode_changed)            (GimpLayer *layer);
+  void (* blend_space_changed)     (GimpLayer *layer);
+  void (* composite_space_changed) (GimpLayer *layer);
+  void (* composite_mode_changed)  (GimpLayer *layer);
+  void (* lock_alpha_changed)      (GimpLayer *layer);
+  void (* mask_changed)            (GimpLayer *layer);
+  void (* apply_mask_changed)      (GimpLayer *layer);
+  void (* edit_mask_changed)       (GimpLayer *layer);
+  void (* show_mask_changed)       (GimpLayer *layer);
 };
 
 
@@ -126,6 +132,24 @@ void            gimp_layer_set_mode            (GimpLayer            *layer,
                                                 GimpLayerMode         mode,
                                                 gboolean              push_undo);
 GimpLayerMode   gimp_layer_get_mode            (GimpLayer            *layer);
+
+void            gimp_layer_set_blend_space     (GimpLayer            *layer,
+                                                GimpLayerColorSpace   blend_space,
+                                                gboolean              push_undo);
+GimpLayerColorSpace
+                gimp_layer_get_blend_space     (GimpLayer            *layer);
+
+void            gimp_layer_set_composite_space (GimpLayer            *layer,
+                                                GimpLayerColorSpace   composite_space,
+                                                gboolean              push_undo);
+GimpLayerColorSpace
+                gimp_layer_get_composite_space (GimpLayer            *layer);
+
+void            gimp_layer_set_composite_mode  (GimpLayer            *layer,
+                                                GimpLayerCompositeMode  composite_mode,
+                                                gboolean              push_undo);
+GimpLayerCompositeMode
+                gimp_layer_get_composite_mode  (GimpLayer            *layer);
 
 void            gimp_layer_set_lock_alpha      (GimpLayer            *layer,
                                                 gboolean              lock_alpha,

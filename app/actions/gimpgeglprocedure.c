@@ -30,6 +30,8 @@
 
 #include "actions-types.h"
 
+#include "operations/gimp-operation-config.h"
+
 #include "core/gimp.h"
 #include "core/gimp-memsize.h"
 #include "core/gimpcontainer.h"
@@ -40,8 +42,6 @@
 #include "core/gimpparamspecs.h"
 #include "core/gimpsettings.h"
 #include "core/gimptoolinfo.h"
-
-#include "gegl/gimp-gegl-config.h"
 
 #include "display/gimpdisplay.h"
 
@@ -128,7 +128,7 @@ gimp_gegl_procedure_finalize (GObject *object)
 
 static gint64
 gimp_gegl_procedure_get_memsize (GimpObject *object,
-                                    gint64     *gui_size)
+                                 gint64     *gui_size)
 {
   GimpGeglProcedure *proc    = GIMP_GEGL_PROCEDURE (object);
   gint64             memsize = 0;
@@ -142,7 +142,7 @@ gimp_gegl_procedure_get_memsize (GimpObject *object,
 
 static gchar *
 gimp_gegl_procedure_get_description (GimpViewable  *viewable,
-                                        gchar        **tooltip)
+                                     gchar        **tooltip)
 {
   GimpProcedure *procedure = GIMP_PROCEDURE (viewable);
 
@@ -251,11 +251,11 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
   GimpContainer *container;
   GimpTool      *active_tool;
 
-  settings = gimp_gegl_config_new (procedure->original_name,
-                                   gimp_viewable_get_icon_name (GIMP_VIEWABLE (procedure)),
-                                   GIMP_TYPE_SETTINGS);
+  settings = gimp_operation_config_new (procedure->original_name,
+                                        gimp_viewable_get_icon_name (GIMP_VIEWABLE (procedure)),
+                                        GIMP_TYPE_SETTINGS);
 
-  container = gimp_gegl_config_get_container (G_TYPE_FROM_INSTANCE (settings));
+  container = gimp_operation_config_get_container (G_TYPE_FROM_INSTANCE (settings));
 
   g_object_unref (settings);
 
@@ -279,7 +279,7 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
           node = gegl_node_new_child (NULL,
                                       "operation", procedure->original_name,
                                       NULL);
-          gimp_gegl_config_sync_node (settings, node);
+          gimp_operation_config_sync_node (settings, node);
 
           image = gimp_value_get_image (gimp_value_array_index (args, 1),
                                         gimp);
@@ -326,6 +326,16 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
 
   if (GIMP_IS_OPERATION_TOOL (active_tool))
     {
+      /*  Remember the prodecure that created this tool, because we
+       *  can't just switch to an operation tool using
+       *  gimp_context_set_tool(), we also have to go through the
+       *  initialization code below, otherwise we end up with a dummy
+       *  tool that does nothing. See bug #776370.
+       */
+      g_object_set_data_full (G_OBJECT (active_tool), "gimp-gegl-procedure",
+                              g_object_ref (procedure),
+                              (GDestroyNotify) g_object_unref);
+
       gimp_operation_tool_set_operation (GIMP_OPERATION_TOOL (active_tool),
                                          procedure->original_name,
                                          gimp_procedure_get_label (procedure),

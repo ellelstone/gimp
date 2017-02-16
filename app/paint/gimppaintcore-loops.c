@@ -22,10 +22,11 @@
 
 #include "paint-types.h"
 
-#include "core/gimp-layer-modes.h"
+#include "operations/layer-modes/gimp-layer-modes.h"
+
 #include "core/gimptempbuf.h"
 
-#include "operations/layer-modes/gimplayermodefunctions.h"
+#include "operations/layer-modes/gimpoperationlayermode.h"
 
 #include "gimppaintcore-loops.h"
 
@@ -304,20 +305,21 @@ do_layer_blend (GeglBuffer    *src_buffer,
   GeglBufferIterator     *iter;
   guint                   paint_stride;
   gfloat                 *paint_data;
+  gboolean                linear;
   GimpLayerModeFunc       apply_func;
-  GimpLayerColorSpace     blend_trc;
-  GimpLayerColorSpace     composite_trc;
+  GimpLayerColorSpace     blend_space;
+  GimpLayerColorSpace     composite_space;
   GimpLayerCompositeMode  composite_mode;
 
   paint_stride = gimp_temp_buf_get_width (paint_buf);
   paint_data   = (gfloat *) gimp_temp_buf_get_data (paint_buf);
 
-  apply_func     = gimp_get_layer_mode_function (paint_mode);
-  blend_trc      = gimp_layer_mode_get_blend_space (paint_mode);
-  composite_trc  = gimp_layer_mode_get_composite_space (paint_mode);
-  composite_mode = gimp_layer_mode_get_composite_mode (paint_mode);
+  linear          = gimp_layer_mode_wants_linear_data (paint_mode);
+  apply_func      = gimp_layer_mode_get_function (paint_mode);
+  blend_space     = gimp_layer_mode_get_blend_space (paint_mode);
+  composite_space = gimp_layer_mode_get_composite_space (paint_mode);
+  composite_mode  = gimp_layer_mode_get_paint_composite_mode (paint_mode);
 
-//  if (gimp_layer_mode_is_linear (paint_mode))
     iterator_format = babl_format ("RGBA float");
 
   roi.x = x_offset;
@@ -349,11 +351,21 @@ do_layer_blend (GeglBuffer    *src_buffer,
 
   while (gegl_buffer_iterator_next (iter))
     {
-      gfloat *out_pixel   = (gfloat *)iter->data[0];
-      gfloat *in_pixel    = (gfloat *)iter->data[1];
-      gfloat *mask_pixel  = NULL;
-      gfloat *paint_pixel = paint_data + ((iter->roi[0].y - roi.y) * paint_stride + iter->roi[0].x - roi.x) * 4;
-      int iy;
+      GimpOperationLayerMode  layer_data;
+      gfloat                 *out_pixel   = (gfloat *) iter->data[0];
+      gfloat                 *in_pixel    = (gfloat *) iter->data[1];
+      gfloat                 *mask_pixel  = NULL;
+      gfloat                 *paint_pixel;
+      gint                    iy;
+
+      paint_pixel = paint_data + ((iter->roi[0].y - roi.y) * paint_stride + iter->roi[0].x - roi.x) * 4;
+
+      layer_data.layer_mode      = paint_mode;
+      layer_data.linear          = linear;
+      layer_data.opacity         = opacity;
+      layer_data.blend_space     = blend_space;
+      layer_data.composite_space = composite_space;
+      layer_data.composite_mode  = composite_mode;
 
       if (mask_buffer)
         mask_pixel  = (gfloat *)iter->data[2];
@@ -362,21 +374,19 @@ do_layer_blend (GeglBuffer    *src_buffer,
       process_roi.width  = iter->roi[0].width;
       process_roi.height = 1;
 
+
       for (iy = 0; iy < iter->roi[0].height; iy++)
         {
           process_roi.y = iter->roi[0].y + iy;
 
-          (*apply_func) (in_pixel,
+          (*apply_func) ((GeglOperation*)&layer_data,
+                         in_pixel,
                          paint_pixel,
                          mask_pixel,
                          out_pixel,
-                         opacity,
                          iter->roi[0].width,
                          &process_roi,
-                         0,
-                         blend_trc,
-                         composite_trc,
-                         composite_mode);
+                         0);
 
           in_pixel    += iter->roi[0].width * 4;
           out_pixel   += iter->roi[0].width * 4;

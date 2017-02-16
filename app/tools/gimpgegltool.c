@@ -140,10 +140,12 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:dropshadow",
     "gegl:edge",
     "gegl:edge-laplace",
+    "gegl:edge-neon",
     "gegl:edge-sobel",
     "gegl:emboss",
     "gegl:engrave",
     "gegl:exposure",
+    "gegl:fattal02",
     "gegl:fractal-trace",
     "gegl:gaussian-blur",
     "gegl:gaussian-blur-selective",
@@ -151,10 +153,12 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:grid",
     "gegl:high-pass",
     "gegl:illusion",
+    "gegl:image-gradient",
     "gegl:invert-linear",
     "gegl:invert-gamma",
     "gegl:lens-distortion",
     "gegl:lens-flare",
+    "gegl:mantiuk06",
     "gegl:maze",
     "gegl:median-blur",
     "gegl:mirrors",
@@ -180,6 +184,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:plasma",
     "gegl:polar-coordinates",
     "gegl:red-eye-removal",
+    "gegl:reinhard05",
     "gegl:rgb-clip",
     "gegl:ripple",
     "gegl:saturation",
@@ -187,10 +192,14 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:shift",
     "gegl:simplex-noise",
     "gegl:sinus",
+    "gegl:slic",
+    "gegl:snn-mean",
     "gegl:softglow",
     "gegl:stretch-contrast",
 /*    "gegl:stretch-contrast-hsv",*/
 /*    "gegl:supernova",*/
+    "gegl:stress",
+    "gegl:supernova",
     "gegl:texturize-canvas",
     "gegl:tile-glass",
     "gegl:tile-paper",
@@ -200,6 +209,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:value-propagate",
     "gegl:video-degradation",
     "gegl:vignette",
+    "gegl:waterpixels",
     "gegl:wavelet-blur",
     "gegl:waves",
     "gegl:whirl-pinch",
@@ -208,11 +218,10 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     /* these ops are blacklisted for other reasons */
     "gegl:contrast-curve",
     "gegl:convert-format", /* pointless */
-    "gegl:ditto", /* elle: pointless */
+    "gegl:ditto", /* pointless */
     "gegl:fill-path",
     "gegl:gradient-map", /* elle: seems to be broken - the scales don't work */
     "gegl:gray", /* we use gimp's op */
-//    "gegl:grey2.json", /* elle: broken, but this isn't the right name */
     "gegl:hstack", /* pointless */
     "gegl:introspect", /* pointless */
     "gegl:kuwahara", /* elle: broken  */
@@ -221,17 +230,20 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:levels", /* elle: pointless */
     "gegl:linear-gradient", /* we use the blend tool */
     "gegl:mandelbrot", /* elle: broken  */
+    "gegl:map-absolute", /* pointless */
+    "gegl:map-relative", /* pointless */
     "gegl:matting-global", /* used in the foreground select tool */
     "gegl:matting-levin", /* used in the foreground select tool */
     "gegl:opacity", /* poinless */
     "gegl:path",
     "gegl:posterize", /* we use gimp's op */
     "gegl:radial-gradient", /* we use the blend tool */
-    "gegl:rectangle", /* elle: pointless */
+    "gegl:rectangle", /* pointless */
     "gegl:seamless-clone", /* used in the seamless clone tool */
     "gegl:text", /* we use gimp's text rendering */
     "gegl:threshold", /* we use gimp's op */
     "gegl:tile", /* pointless */
+    "gegl:unpremul", /* pointless */
     "gegl:vector-stroke",
   };
 

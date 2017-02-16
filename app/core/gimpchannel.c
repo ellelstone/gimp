@@ -164,6 +164,9 @@ static void      gimp_channel_apply_buffer   (GimpDrawable        *drawable,
                                               const gchar         *undo_desc,
                                               gdouble              opacity,
                                               GimpLayerMode        mode,
+                                              GimpLayerColorSpace  blend_space,
+                                              GimpLayerColorSpace  composite_space,
+                                              GimpLayerCompositeMode composite_mode,
                                               GeglBuffer          *base_buffer,
                                               gint                 base_x,
                                               gint                 base_y);
@@ -1004,16 +1007,19 @@ gimp_channel_get_active_mask (GimpDrawable *drawable)
 }
 
 static void
-gimp_channel_apply_buffer (GimpDrawable        *drawable,
-                           GeglBuffer          *buffer,
-                           const GeglRectangle *buffer_region,
-                           gboolean             push_undo,
-                           const gchar         *undo_desc,
-                           gdouble              opacity,
-                           GimpLayerMode        mode,
-                           GeglBuffer          *base_buffer,
-                           gint                 base_x,
-                           gint                 base_y)
+gimp_channel_apply_buffer (GimpDrawable           *drawable,
+                           GeglBuffer             *buffer,
+                           const GeglRectangle    *buffer_region,
+                           gboolean                push_undo,
+                           const gchar            *undo_desc,
+                           gdouble                 opacity,
+                           GimpLayerMode           mode,
+                           GimpLayerColorSpace     blend_space,
+                           GimpLayerColorSpace     composite_space,
+                           GimpLayerCompositeMode  composite_mode,
+                           GeglBuffer             *base_buffer,
+                           gint                    base_x,
+                           gint                    base_y)
 {
   gimp_drawable_invalidate_boundary (drawable);
 
@@ -1021,6 +1027,9 @@ gimp_channel_apply_buffer (GimpDrawable        *drawable,
                                                     buffer_region,
                                                     push_undo, undo_desc,
                                                     opacity, mode,
+                                                    blend_space,
+                                                    composite_space,
+                                                    composite_mode,
                                                     base_buffer,
                                                     base_x, base_y);
 

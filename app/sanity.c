@@ -453,7 +453,7 @@ sanity_check_babl (void)
 
 #define BABL_REQUIRED_MAJOR 0
 #define BABL_REQUIRED_MINOR 1
-#define BABL_REQUIRED_MICRO 18
+#define BABL_REQUIRED_MICRO 24
 
   babl_get_version (&babl_major_version,
                     &babl_minor_version,
@@ -491,7 +491,7 @@ sanity_check_gegl (void)
 
 #define GEGL_REQUIRED_MAJOR 0
 #define GEGL_REQUIRED_MINOR 3
-#define GEGL_REQUIRED_MICRO 10
+#define GEGL_REQUIRED_MICRO 12
 
   gegl_get_version (&gegl_major_version,
                     &gegl_minor_version,
@@ -559,6 +559,7 @@ sanity_check_gegl_ops (void)
     "gegl:emboss",
     "gegl:engrave",
     "gegl:exposure",
+    "gegl:fattal02",
     "gegl:fractal-trace",
     "gegl:gaussian-blur",
     "gegl:gaussian-blur-selective",
@@ -566,11 +567,13 @@ sanity_check_gegl_ops (void)
     "gegl:grid",
     "gegl:high-pass",
     "gegl:illusion",
+    "gegl:image-gradient",
     "gegl:introspect",
     "gegl:invert-gamma",
     "gegl:invert-linear",
     "gegl:lens-distortion",
     "gegl:lens-flare",
+    "gegl:mantiuk06",
     "gegl:map-absolute",
     "gegl:map-relative",
     "gegl:matting-global",
@@ -600,6 +603,7 @@ sanity_check_gegl_ops (void)
     "gegl:pixelize",
     "gegl:polar-coordinates",
     "gegl:red-eye-removal",
+    "gegl:reinhard05",
     "gegl:rgb-clip",
     "gegl:ripple",
     "gegl:saturation",
@@ -610,10 +614,14 @@ sanity_check_gegl_ops (void)
     "gegl:simplex-noise",
     "gegl:shift",
     "gegl:sinus",
+    "gegl:slic",
+    "gegl:snn-mean",
     "gegl:softglow",
     "gegl:stretch-contrast",
 /*    "gegl:stretch-contrast-hsv", uses HSV*/
 /*    "gegl:supernova", uses HSL*/
+    "gegl:stress",
+    "gegl:supernova",
     "gegl:threshold",
     "gegl:tile",
     "gegl:tile-paper",
@@ -627,6 +635,8 @@ sanity_check_gegl_ops (void)
     "gegl:video-degradation",
     "gegl:vignette",
     "gegl:warp",
+    "gegl:waterpixels",
+    "gegl:wavelet-blur",
     "gegl:waves",
     "gegl:whirl-pinch",
     "gegl:write-buffer"

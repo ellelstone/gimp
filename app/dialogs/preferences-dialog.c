@@ -273,8 +273,8 @@ prefs_response (GtkWidget *widget,
                                            GTK_DIALOG_DESTROY_WITH_PARENT,
                                            gimp_standard_help_func, NULL,
 
-                                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                           GIMP_STOCK_RESET, GTK_RESPONSE_OK,
+                                           _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                           _("_Reset"),  GTK_RESPONSE_OK,
 
                                            NULL);
 
@@ -603,8 +603,8 @@ prefs_menus_remove_callback (GtkWidget *widget,
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                     gimp_standard_help_func, NULL,
 
-                                    GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                    GTK_STOCK_CLEAR,  GTK_RESPONSE_OK,
+                                    _("_Cancel"), GTK_RESPONSE_CANCEL,
+                                    _("Cl_ear"),  GTK_RESPONSE_OK,
 
                                     NULL);
 
@@ -995,9 +995,9 @@ prefs_dialog_new (Gimp       *gimp,
                             prefs_help_func,
                             GIMP_HELP_PREFS_DIALOG,
 
-                            GIMP_STOCK_RESET, RESPONSE_RESET,
-                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                            GTK_STOCK_OK,     GTK_RESPONSE_OK,
+                            _("_Reset"),  RESPONSE_RESET,
+                            _("_Cancel"), GTK_RESPONSE_CANCEL,
+                            _("_OK"),     GTK_RESPONSE_OK,
 
                             NULL);
 
@@ -1275,6 +1275,30 @@ prefs_dialog_new (Gimp       *gimp,
 
     g_object_unref (store);*/
   }
+
+
+  /***************************/
+  /*  Image Import / Export  */
+  /***************************/
+  vbox = gimp_prefs_box_add_page (GIMP_PREFS_BOX (prefs_box),
+                                  "gimp-prefs-import-export",
+                                  _("Image Import & Export"),
+                                  _("Image Import"),
+                                  GIMP_HELP_PREFS_DIALOG,
+                                  NULL,
+                                  &top_iter);
+
+  vbox2 = prefs_frame_new (_("Import Policies"),
+                           GTK_CONTAINER (vbox), TRUE);
+
+  button = prefs_check_button_add (object, "import-promote-float",
+                                   _("Promote imported images to "
+                                     "_floating point precision"),
+                                   GTK_BOX (vbox2));
+  button = prefs_check_button_add (object, "import-promote-dither",
+                                   _("Dither images when promoting to "
+                                     "floating point"),
+                                   GTK_BOX (vbox2));
 
 
   /****************/

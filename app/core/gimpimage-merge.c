@@ -596,10 +596,13 @@ gimp_image_merge_layers (GimpImage     *image,
 
   for (layers = reverse_list; layers; layers = g_slist_next (layers))
     {
-      GeglBuffer     *merge_buffer;
-      GeglBuffer     *layer_buffer;
-      GimpApplicator *applicator;
-      GimpLayerMode   mode;
+      GeglBuffer             *merge_buffer;
+      GeglBuffer             *layer_buffer;
+      GimpApplicator         *applicator;
+      GimpLayerMode           mode;
+      GimpLayerColorSpace     blend_space;
+      GimpLayerColorSpace     composite_space;
+      GimpLayerCompositeMode  composite_mode;
 
       layer = layers->data;
 
@@ -609,9 +612,18 @@ gimp_image_merge_layers (GimpImage     *image,
        *  work on the projection with the lower layer, but only locally on
        *  the layers alpha channel.
        */
-      mode = gimp_layer_get_mode (layer);
+      mode            = gimp_layer_get_mode (layer);
+      blend_space     = gimp_layer_get_blend_space (layer);
+      composite_space = gimp_layer_get_composite_space (layer);
+      composite_mode  = gimp_layer_get_composite_mode (layer);
+
       if (layer == bottom_layer && mode != GIMP_LAYER_MODE_DISSOLVE)
-        mode = GIMP_LAYER_MODE_NORMAL;
+        {
+          mode            = GIMP_LAYER_MODE_NORMAL;
+          blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
+          composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
+          composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;
+        }
 
       merge_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (merge_layer));
       layer_buffer = gimp_drawable_get_buffer (GIMP_DRAWABLE (layer));
@@ -640,7 +652,8 @@ gimp_image_merge_layers (GimpImage     *image,
                                         - (y1 - off_y));
 
       gimp_applicator_set_opacity (applicator, gimp_layer_get_opacity (layer));
-      gimp_applicator_set_mode (applicator, mode);
+      gimp_applicator_set_mode (applicator, mode,
+                                blend_space, composite_space, composite_mode);
 
       gimp_applicator_blit (applicator,
                             GEGL_RECTANGLE (0, 0,

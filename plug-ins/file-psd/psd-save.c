@@ -73,6 +73,7 @@
 #include "libgimp/gimp.h"
 #include "libgimp/gimpui.h"
 
+#include "psd-util.h"
 #include "psd-save.h"
 
 #include "libgimp/stdplugins-intl.h"
@@ -199,39 +200,50 @@ psd_lmode_layer (gint32  idLayer,
     case GIMP_LAYER_MODE_NORMAL:
       strcpy (psdMode, "norm");
       break;
+    case GIMP_LAYER_MODE_DARKEN_ONLY:
     case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
       strcpy (psdMode, "dark");
       break;
+    case GIMP_LAYER_MODE_LIGHTEN_ONLY:
     case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
       strcpy (psdMode, "lite");
       break;
+    case GIMP_LAYER_MODE_LCH_HUE:
     case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
       strcpy (psdMode, "hue ");
       break;
+    case GIMP_LAYER_MODE_LCH_CHROMA:
     case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
       strcpy (psdMode, "sat ");
       break;
+    case GIMP_LAYER_MODE_LCH_COLOR:
     case GIMP_LAYER_MODE_HSV_COLOR_LEGACY:
       strcpy (psdMode, "colr");
       break;
+    case GIMP_LAYER_MODE_ADDITION:
     case GIMP_LAYER_MODE_ADDITION_LEGACY:
       strcpy (psdMode, "lddg");
       break;
+    case GIMP_LAYER_MODE_MULTIPLY:
     case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
       strcpy (psdMode, "mul ");
       break;
+    case GIMP_LAYER_MODE_SCREEN:
     case GIMP_LAYER_MODE_SCREEN_LEGACY:
       strcpy (psdMode, "scrn");
       break;
     case GIMP_LAYER_MODE_DISSOLVE:
       strcpy (psdMode, "diss");
       break;
+    case GIMP_LAYER_MODE_DIFFERENCE:
     case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
       strcpy (psdMode, "diff");
       break;
+    case GIMP_LAYER_MODE_LCH_LIGHTNESS:
     case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:                  /* ? */
       strcpy (psdMode, "lum ");
       break;
+    case GIMP_LAYER_MODE_HARDLIGHT:
     case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
       strcpy (psdMode, "hLit");
       break;
@@ -242,6 +254,33 @@ psd_lmode_layer (gint32  idLayer,
     case GIMP_LAYER_MODE_OVERLAY:
       strcpy (psdMode, "over");
       break;
+    case GIMP_LAYER_MODE_DODGE:
+    case GIMP_LAYER_MODE_DODGE_LEGACY:
+      strcpy (psdMode, "div");
+      break;
+    case GIMP_LAYER_MODE_EXCLUSION:
+      strcpy (psdMode, "smud");
+      break;
+    case GIMP_LAYER_MODE_BURN:
+    case GIMP_LAYER_MODE_BURN_LEGACY:
+      strcpy (psdMode, "idiv");
+      break;
+    case GIMP_LAYER_MODE_LINEAR_BURN:
+      strcpy (psdMode, "lbrn");
+      break;
+    case GIMP_LAYER_MODE_LINEAR_LIGHT:
+      strcpy (psdMode, "lLit");
+      break;
+    case GIMP_LAYER_MODE_PIN_LIGHT:
+      strcpy (psdMode, "pLit");
+      break;
+    case GIMP_LAYER_MODE_VIVID_LIGHT:
+      strcpy (psdMode, "vLit");
+      break;
+    case GIMP_LAYER_MODE_HARD_MIX:
+      strcpy (psdMode, "hMix");
+      break;
+
     default:
       {
         const gchar *nick = "?";
@@ -1074,7 +1113,19 @@ save_layer_and_mask (FILE   *fd,
       write_pascalstring (fd, layerName, 4, "layer name");
       IFDBG printf ("\t\tLayer name: %s\n", layerName);
 
+      /* Additional layer information blocks */
+      /* Unicode layer name */
       write_datablock_luni(fd, layerName, "luni extra data block");
+
+      /* Layer color tag */
+      xfwrite (fd, "8BIMlclr", 8, "sheet color signature");
+      write_gint32 (fd, 8, "sheet color size");
+      write_gint16 (fd,
+                    gimp_to_psd_layer_color_tag(gimp_item_get_color_tag(PSDImageData.lLayers[i])),
+                    "sheet color code");
+      write_gint16 (fd, 0, "sheet color unused value");
+      write_gint16 (fd, 0, "sheet color unused value");
+      write_gint16 (fd, 0, "sheet color unused value");
 
       /* Write real length for: Extra data */
 

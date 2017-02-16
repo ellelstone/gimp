@@ -21,6 +21,7 @@
 #ifndef __GIMP_CORE_CONFIG_H__
 #define __GIMP_CORE_CONFIG_H__
 
+#include "operations/operations-enums.h"
 #include "core/core-enums.h"
 
 #include "config/gimpgeglconfig.h"
@@ -90,6 +91,8 @@ struct _GimpCoreConfig
   GimpColorConfig        *color_management;
   gboolean                save_document_history;
   GimpRGB                 quick_mask_color;
+  gboolean                import_promote_float;
+  gboolean                import_promote_dither;
 };
 
 struct _GimpCoreConfigClass

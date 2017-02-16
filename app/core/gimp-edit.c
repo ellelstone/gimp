@@ -623,6 +623,9 @@ gimp_edit_fill (GimpImage       *image,
                               TRUE, undo_desc,
                               gimp_context_get_opacity (GIMP_CONTEXT (options)),
                               gimp_context_get_paint_mode (GIMP_CONTEXT (options)),
+                              GIMP_LAYER_COLOR_SPACE_AUTO,
+                              GIMP_LAYER_COLOR_SPACE_AUTO,
+                              GIMP_LAYER_COMPOSITE_AUTO,
                               NULL, x, y);
 
   g_object_unref (buffer);
@@ -661,6 +664,9 @@ gimp_edit_fade (GimpImage   *image,
                                   gimp_object_get_name (undo),
                                   gimp_context_get_opacity (context),
                                   gimp_context_get_paint_mode (context),
+                                  GIMP_LAYER_COLOR_SPACE_AUTO,
+                                  GIMP_LAYER_COLOR_SPACE_AUTO,
+                                  GIMP_LAYER_COMPOSITE_AUTO,
                                   NULL, undo->x, undo->y);
 
       g_object_unref (buffer);

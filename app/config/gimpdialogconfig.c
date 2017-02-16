@@ -68,6 +68,9 @@ enum
 
   PROP_LAYER_NEW_NAME,
   PROP_LAYER_NEW_MODE,
+  PROP_LAYER_NEW_BLEND_SPACE,
+  PROP_LAYER_NEW_COMPOSITE_SPACE,
+  PROP_LAYER_NEW_COMPOSITE_MODE,
   PROP_LAYER_NEW_OPACITY,
   PROP_LAYER_NEW_FILL_TYPE,
 
@@ -300,6 +303,30 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                          LAYER_NEW_MODE_BLURB,
                          GIMP_TYPE_LAYER_MODE,
                          GIMP_LAYER_MODE_NORMAL,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_BLEND_SPACE,
+                         "layer-new-blend-space",
+                         "Default new layer blend space",
+                         LAYER_NEW_BLEND_SPACE_BLURB,
+                         GIMP_TYPE_LAYER_COLOR_SPACE,
+                         GIMP_LAYER_COLOR_SPACE_AUTO,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_COMPOSITE_SPACE,
+                         "layer-new-composite-space",
+                         "Default new layer composite space",
+                         LAYER_NEW_COMPOSITE_SPACE_BLURB,
+                         GIMP_TYPE_LAYER_COLOR_SPACE,
+                         GIMP_LAYER_COLOR_SPACE_AUTO,
+                         GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_COMPOSITE_MODE,
+                         "layer-new-composite-mode",
+                         "Default new layer composite mode",
+                         LAYER_NEW_COMPOSITE_MODE_BLURB,
+                         GIMP_TYPE_LAYER_COMPOSITE_MODE,
+                         GIMP_LAYER_COMPOSITE_AUTO,
                          GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_DOUBLE (object_class, PROP_LAYER_NEW_OPACITY,
@@ -640,6 +667,15 @@ gimp_dialog_config_set_property (GObject      *object,
     case PROP_LAYER_NEW_MODE:
       config->layer_new_mode = g_value_get_enum (value);
       break;
+    case PROP_LAYER_NEW_BLEND_SPACE:
+      config->layer_new_blend_space = g_value_get_enum (value);
+      break;
+    case PROP_LAYER_NEW_COMPOSITE_SPACE:
+      config->layer_new_composite_space = g_value_get_enum (value);
+      break;
+    case PROP_LAYER_NEW_COMPOSITE_MODE:
+      config->layer_new_composite_mode = g_value_get_enum (value);
+      break;
     case PROP_LAYER_NEW_OPACITY:
       config->layer_new_opacity = g_value_get_double (value);
       break;
@@ -819,6 +855,15 @@ gimp_dialog_config_get_property (GObject    *object,
       break;
     case PROP_LAYER_NEW_MODE:
       g_value_set_enum (value, config->layer_new_mode);
+      break;
+    case PROP_LAYER_NEW_BLEND_SPACE:
+      g_value_set_enum (value, config->layer_new_blend_space);
+      break;
+    case PROP_LAYER_NEW_COMPOSITE_SPACE:
+      g_value_set_enum (value, config->layer_new_composite_space);
+      break;
+    case PROP_LAYER_NEW_COMPOSITE_MODE:
+      g_value_set_enum (value, config->layer_new_composite_mode);
       break;
     case PROP_LAYER_NEW_OPACITY:
       g_value_set_double (value, config->layer_new_opacity);

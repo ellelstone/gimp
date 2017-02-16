@@ -26,9 +26,10 @@
 
 #include "paint-types.h"
 
+#include "operations/layer-modes/gimp-layer-modes.h"
+
 #include "gegl/gimp-babl.h"
 
-#include "core/gimp-layer-modes.h"
 #include "core/gimpbrush.h"
 #include "core/gimpbrushgenerated.h"
 #include "core/gimpdrawable.h"
@@ -861,7 +862,6 @@ gimp_brush_core_get_paint_buffer (GimpPaintCore    *paint_core,
       GimpTempBuf *temp_buf;
       const Babl  *format;
 
-//      if (gimp_layer_mode_is_linear (paint_mode))
         format = babl_format ("RGBA float");
 
       if (paint_core->paint_buffer                                       &&

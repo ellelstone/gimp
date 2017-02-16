@@ -148,49 +148,6 @@ typedef enum
 } GimpHistogramChannel;
 
 
-#define GIMP_TYPE_LAYER_MODE (gimp_layer_mode_get_type ())
-
-GType gimp_layer_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  /*  Modes that exist since ancient times  */
-  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
-  GIMP_LAYER_MODE_DISSOLVE,              /*< desc="Dissolve"                 >*/
-  GIMP_LAYER_MODE_BEHIND,                /*< desc="Behind"                   >*/
-  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
-
-  /*  Since 2.8  */
-  GIMP_LAYER_MODE_OVERLAY,               /*< desc="Overlay"                  >*/
-  GIMP_LAYER_MODE_LCH_HUE,               /*< desc="Hue (LCH)"                >*/
-  GIMP_LAYER_MODE_LCH_CHROMA,            /*< desc="Chroma (LCH)"             >*/
-  GIMP_LAYER_MODE_LCH_COLOR,             /*< desc="Color (LCH)"              >*/
-  GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
-
-  /*  Since 2.10  */
-  GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
-  GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
-  GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/
-  GIMP_LAYER_MODE_DIFFERENCE,            /*< desc="Difference"               >*/
-  GIMP_LAYER_MODE_ADDITION,              /*< desc="Addition"                 >*/
-  GIMP_LAYER_MODE_SUBTRACT,              /*< desc="Subtract"                 >*/
-  GIMP_LAYER_MODE_DARKEN_ONLY,           /*< desc="Darken only"              >*/
-  GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
-  GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
-  GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/
-  GIMP_LAYER_MODE_BURN,                  /*< desc="Burn"                     >*/
-  GIMP_LAYER_MODE_HARDLIGHT,             /*< desc="Hard light"               >*/
-  GIMP_LAYER_MODE_SOFTLIGHT,             /*< desc="Soft light"               >*/
-  GIMP_LAYER_MODE_GRAIN_EXTRACT,         /*< desc="Grain extract"            >*/
-  GIMP_LAYER_MODE_GRAIN_MERGE,           /*< desc="Grain merge"              >*/
-
-  /*  Internal modes, not available to the PDB  */
-  GIMP_LAYER_MODE_ERASE      = 1000,     /*< pdb-skip, desc="Erase"          >*/
-  GIMP_LAYER_MODE_REPLACE    = 1001,     /*< pdb-skip, desc="Replace"        >*/
-  GIMP_LAYER_MODE_ANTI_ERASE = 1002      /*< pdb-skip, desc="Anti erase"     >*/
-} GimpLayerMode;
-
-
 #define GIMP_TYPE_MATTING_ENGINE (gimp_matting_engine_get_type ())
 
 GType gimp_matting_engine_get_type (void) G_GNUC_CONST;

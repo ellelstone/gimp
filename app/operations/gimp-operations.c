@@ -26,8 +26,6 @@
 
 #include "core/gimp.h"
 
-#include "gegl/gimp-gegl-config.h"
-
 #include "gimp-operations.h"
 
 #include "gimpoperationblend.h"
@@ -58,6 +56,7 @@
 #include "gimpoperationposterize.h"
 #include "gimpoperationthreshold.h"
 
+#include "gimp-operation-config.h"
 #include "gimpbrightnesscontrastconfig.h"
 //#include "gimpcolorbalanceconfig.h"
 //#include "gimpcolorizeconfig.h"
@@ -65,38 +64,21 @@
 #include "gimplchhuechromaconfig.h"
 #include "gimplevelsconfig.h"
 
-#include "layer-modes/gimpoperationaddition.h"
+#include "layer-modes/gimp-layer-modes.h"
 #include "layer-modes/gimpoperationantierase.h"
 #include "layer-modes/gimpoperationbehind.h"
-#include "layer-modes/gimpoperationburn.h"
-#include "layer-modes/gimpoperationcolorerase.h"
-#include "layer-modes/gimpoperationdarkenonly.h"
-#include "layer-modes/gimpoperationdifference.h"
-#include "layer-modes/gimpoperationdissolve.h"
-#include "layer-modes/gimpoperationdivide.h"
-#include "layer-modes/gimpoperationdodge.h"
 #include "layer-modes/gimpoperationerase.h"
-#include "layer-modes/gimpoperationgrainextract.h"
-#include "layer-modes/gimpoperationgrainmerge.h"
-#include "layer-modes/gimpoperationhardlight.h"
-#include "layer-modes/gimpoperationlchchroma.h"
-#include "layer-modes/gimpoperationlchcolor.h"
-#include "layer-modes/gimpoperationlchhue.h"
-#include "layer-modes/gimpoperationlchlightness.h"
-#include "layer-modes/gimpoperationluminance.h"
-#include "layer-modes/gimpoperationlightenonly.h"
-#include "layer-modes/gimpoperationmultiply.h"
+#include "layer-modes/gimpoperationcolorerase.h"
+#include "layer-modes/gimpoperationdissolve.h"
 #include "layer-modes/gimpoperationnormal.h"
-#include "layer-modes/gimpoperationoverlay.h"
 #include "layer-modes/gimpoperationreplace.h"
-#include "layer-modes/gimpoperationscreen.h"
-#include "layer-modes/gimpoperationsoftlight.h"
-#include "layer-modes/gimpoperationsubtract.h"
 
 
 void
 gimp_operations_init (void)
 {
+  gimp_layer_modes_init ();
+
   g_type_class_ref (GIMP_TYPE_OPERATION_BLEND);
   g_type_class_ref (GIMP_TYPE_OPERATION_BORDER);
   g_type_class_ref (GIMP_TYPE_OPERATION_CAGE_COEF_CALC);
@@ -128,41 +110,21 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_NORMAL);
   g_type_class_ref (GIMP_TYPE_OPERATION_DISSOLVE);
   g_type_class_ref (GIMP_TYPE_OPERATION_BEHIND);
-  g_type_class_ref (GIMP_TYPE_OPERATION_MULTIPLY);
-  g_type_class_ref (GIMP_TYPE_OPERATION_SCREEN);
-  g_type_class_ref (GIMP_TYPE_OPERATION_OVERLAY);
-  g_type_class_ref (GIMP_TYPE_OPERATION_DIFFERENCE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_ADDITION);
-  g_type_class_ref (GIMP_TYPE_OPERATION_SUBTRACT);
-  g_type_class_ref (GIMP_TYPE_OPERATION_DARKEN_ONLY);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LIGHTEN_ONLY);
-  g_type_class_ref (GIMP_TYPE_OPERATION_DIVIDE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_DODGE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_BURN);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HARDLIGHT);
-  g_type_class_ref (GIMP_TYPE_OPERATION_SOFTLIGHT);
-  g_type_class_ref (GIMP_TYPE_OPERATION_GRAIN_EXTRACT);
-  g_type_class_ref (GIMP_TYPE_OPERATION_GRAIN_MERGE);
   g_type_class_ref (GIMP_TYPE_OPERATION_COLOR_ERASE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LCH_HUE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LCH_CHROMA);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LCH_COLOR);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LCH_LIGHTNESS);
-  g_type_class_ref (GIMP_TYPE_OPERATION_LUMINANCE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ERASE);
   g_type_class_ref (GIMP_TYPE_OPERATION_REPLACE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ANTI_ERASE);
 
-  gimp_gegl_config_register ("gimp:brightness-contrast",
-                             GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
-/*  gimp_gegl_config_register ("gimp:color-balance",
-                             GIMP_TYPE_COLOR_BALANCE_CONFIG);*/
-/*  gimp_gegl_config_register ("gimp:colorize",
-                             GIMP_TYPE_COLORIZE_CONFIG);*/
-  gimp_gegl_config_register ("gimp:curves",
-                             GIMP_TYPE_CURVES_CONFIG);
-  gimp_gegl_config_register ("gimp:hue-chroma",
-                             GIMP_TYPE_HUE_CHROMA_CONFIG);
-  gimp_gegl_config_register ("gimp:levels",
-                             GIMP_TYPE_LEVELS_CONFIG);
+  gimp_operation_config_register ("gimp:brightness-contrast",
+                                  GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
+/*  gimp_operation_config_register ("gimp:color-balance",
+                                  GIMP_TYPE_COLOR_BALANCE_CONFIG);
+  gimp_operation_config_register ("gimp:colorize",
+                                  GIMP_TYPE_COLORIZE_CONFIG);*/
+  gimp_operation_config_register ("gimp:curves",
+                                  GIMP_TYPE_CURVES_CONFIG);
+  gimp_operation_config_register ("gimp:hue-chroma",
+                                  GIMP_TYPE_HUE_SATURATION_CONFIG);
+  gimp_operation_config_register ("gimp:levels",
+                                  GIMP_TYPE_LEVELS_CONFIG);
 }

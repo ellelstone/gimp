@@ -87,6 +87,7 @@ EXPORTS
 	gimp_metadata_duplicate
 	gimp_metadata_get_colorspace
 	gimp_metadata_get_resolution
+	gimp_metadata_get_type
 	gimp_metadata_is_tag_supported
 	gimp_metadata_load_from_file
 	gimp_metadata_new
@@ -174,6 +175,7 @@ EXPORTS
 	gimp_unit_get_number_of_built_in_units
 	gimp_unit_get_number_of_units
 	gimp_unit_get_plural
+	gimp_unit_get_scaled_digits
 	gimp_unit_get_singular
 	gimp_unit_get_symbol
 	gimp_unit_get_type

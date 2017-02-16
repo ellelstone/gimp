@@ -22,7 +22,7 @@
 #define __GIMP_OPERATION_DIVIDE_LEGACY_H__
 
 
-#include "operations/layer-modes/gimpoperationpointlayermode.h"
+#include "operations/layer-modes/gimpoperationlayermode.h"
 
 
 #define GIMP_TYPE_OPERATION_DIVIDE_LEGACY            (gimp_operation_divide_legacy_get_type ())
@@ -38,28 +38,25 @@ typedef struct _GimpOperationDivideLegacyClass GimpOperationDivideLegacyClass;
 
 struct _GimpOperationDivideLegacy
 {
-  GimpOperationPointLayerMode  parent_instance;
+  GimpOperationLayerMode  parent_instance;
 };
 
 struct _GimpOperationDivideLegacyClass
 {
-  GimpOperationPointLayerModeClass  parent_class;
+  GimpOperationLayerModeClass  parent_class;
 };
 
 
-GType    gimp_operation_divide_legacy_get_type       (void) G_GNUC_CONST;
+GType    gimp_operation_divide_legacy_get_type (void) G_GNUC_CONST;
 
-gboolean gimp_operation_divide_legacy_process_pixels (gfloat                *in,
-                                                      gfloat                *layer,
-                                                      gfloat                *mask,
-                                                      gfloat                *out,
-                                                      gfloat                 opacity,
-                                                      glong                  samples,
-                                                      const GeglRectangle   *roi,
-                                                      gint                   level,
-                                                      GimpLayerColorSpace    blend_trc,
-                                                      GimpLayerColorSpace    composite_trc,
-                                                      GimpLayerCompositeMode composite_mode);
+gboolean gimp_operation_divide_legacy_process  (GeglOperation       *op,
+                                                void                *in,
+                                                void                *layer,
+                                                void                *mask,
+                                                void                *out,
+                                                glong                samples,
+                                                const GeglRectangle *roi,
+                                                gint                 level);
 
 
 #endif /* __GIMP_OPERATION_DIVIDE_LEGACY_H__ */

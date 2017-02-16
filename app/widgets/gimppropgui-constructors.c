@@ -460,6 +460,99 @@ _gimp_prop_gui_new_color_rotate (GObject              *config,
   return main_vbox;
 }
 
+static const gchar *
+convolution_matrix_prop_name (gint x,
+                              gint y)
+{
+  static const gchar * const prop_names[5][5] = {
+    {"a1", "a2", "a3", "a4", "a5"},
+    {"b1", "b2", "b3", "b4", "b5"},
+    {"c1", "c2", "c3", "c4", "c5"},
+    {"d1", "d2", "d3", "d4", "d5"},
+    {"e1", "e2", "e3", "e4", "e5"}};
+
+  return prop_names[x][y];
+}
+
+static void
+convolution_matrix_rotate_flip (GtkWidget *button,
+                                GObject   *config)
+{
+  gint rotate = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
+                                                    "convolution-matrix-rotate"));
+  gint flip   = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (button),
+                                                    "convolution-matrix-flip"));
+  gint x, y;
+
+  while (rotate--)
+    {
+      for (y = 0; y < 2; y++)
+        {
+          for (x = y; x < 4 - y; x++)
+            {
+              gint    i;
+              gdouble temp;
+
+              g_object_get (config,
+                            convolution_matrix_prop_name (x, y), &temp,
+                            NULL);
+
+              for (i = 0; i < 4; i++)
+                {
+                  gint    next_x, next_y;
+                  gdouble val;
+
+                  next_x = 4 - y;
+                  next_y = x;
+
+                  if  (i < 3)
+                    {
+                      g_object_get (config,
+                                    convolution_matrix_prop_name (next_x, next_y), &val,
+                                    NULL);
+                    }
+                  else
+                    {
+                      val = temp;
+                    }
+
+                  g_object_set (config,
+                                convolution_matrix_prop_name (x, y), val,
+                                NULL);
+
+                  x = next_x;
+                  y = next_y;
+                }
+            }
+        }
+    }
+
+  while (flip--)
+    {
+      for (y = 0; y < 5; y++)
+        {
+          for (x = 0; x < 2; x++)
+            {
+              gdouble val1, val2;
+
+              g_object_get (config,
+                            convolution_matrix_prop_name (x, y), &val1,
+                            NULL);
+              g_object_get (config,
+                            convolution_matrix_prop_name (4 - x, y), &val2,
+                            NULL);
+
+              g_object_set (config,
+                            convolution_matrix_prop_name (x, y), val2,
+                            NULL);
+              g_object_set (config,
+                            convolution_matrix_prop_name (4 - x, y), val1,
+                            NULL);
+            }
+        }
+    }
+}
+
 GtkWidget *
 _gimp_prop_gui_new_convolution_matrix (GObject              *config,
                                        GParamSpec          **param_specs,
@@ -470,24 +563,31 @@ _gimp_prop_gui_new_convolution_matrix (GObject              *config,
                                        gpointer              picker_creator)
 {
   GtkWidget   *main_vbox;
+  GtkWidget   *vbox;
   GtkWidget   *table;
   GtkWidget   *hbox;
   GtkWidget   *scale;
-  GtkWidget   *vbox;
+  GtkWidget   *vbox2;
   const gchar *label;
-  gint          x, y;
+  gint         x, y;
 
   g_return_val_if_fail (G_IS_OBJECT (config), NULL);
   g_return_val_if_fail (param_specs != NULL, NULL);
   g_return_val_if_fail (n_param_specs > 0, NULL);
   g_return_val_if_fail (GIMP_IS_CONTEXT (context), NULL);
 
-  main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+  main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 8);
+
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+  gtk_box_pack_start (GTK_BOX (main_vbox), vbox, FALSE, FALSE, 0);
+  gtk_widget_show (vbox);
+
+  /* matrix */
 
   table = gtk_table_new (5, 5, TRUE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 2);
   gtk_table_set_col_spacings (GTK_TABLE (table), 4);
-  gtk_box_pack_start (GTK_BOX (main_vbox), table, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), table, FALSE, FALSE, 0);
   gtk_widget_show (table);
 
   for (y = 0; y < 5; y++)
@@ -495,12 +595,9 @@ _gimp_prop_gui_new_convolution_matrix (GObject              *config,
       for (x = 0; x < 5; x++)
         {
           GtkWidget *spin;
-          gchar      prop_name[3] = { 0, };
 
-          prop_name[0] = "abcde"[x];
-          prop_name[1] = "12345"[y];
-
-          spin = gimp_prop_spin_button_new (config, prop_name,
+          spin = gimp_prop_spin_button_new (config,
+                                            convolution_matrix_prop_name (x, y),
                                             1.0, 10.0, 2);
           gtk_entry_set_width_chars (GTK_ENTRY (spin), 8);
           gtk_table_attach (GTK_TABLE (table), spin,
@@ -511,9 +608,87 @@ _gimp_prop_gui_new_convolution_matrix (GObject              *config,
         }
     }
 
+  /* rotate / flip buttons */
+  {
+    typedef struct
+    {
+      const gchar *tooltip;
+      const gchar *icon_name;
+      gint         rotate;
+      gint         flip;
+    } ButtonInfo;
+
+    gint             i;
+    const ButtonInfo buttons[] = {
+      {
+        .tooltip   = _("Rotate matrix 90° counter-clockwise"),
+        .icon_name = GIMP_STOCK_ROTATE_270,
+        .rotate    = 1,
+        .flip      = 0
+      },
+      {
+        .tooltip   = _("Rotate matrix 90° clockwise"),
+        .icon_name = GIMP_STOCK_ROTATE_90,
+        .rotate    = 3,
+        .flip      = 0
+      },
+      {
+        .tooltip   = _("Flip matrix horizontally"),
+        .icon_name = GIMP_STOCK_FLIP_HORIZONTAL,
+        .rotate    = 0,
+        .flip      = 1
+      },
+      {
+        .tooltip   = _("Flip matrix vertically"),
+        .icon_name = GIMP_STOCK_FLIP_VERTICAL,
+        .rotate    = 2,
+        .flip      = 1
+      }};
+
+    hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
+    gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+    gtk_widget_show (hbox);
+
+    for (i = 0; i < G_N_ELEMENTS (buttons); i++)
+      {
+        const ButtonInfo *info = &buttons[i];
+        GtkWidget        *button;
+        GtkWidget        *image;
+
+        button = gtk_button_new ();
+        gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0);
+        gtk_widget_set_tooltip_text (button, info->tooltip);
+        gtk_widget_set_can_focus (button, FALSE);
+        gtk_button_set_relief (GTK_BUTTON (button), GTK_RELIEF_NONE);
+        gtk_widget_show (button);
+
+        image = gtk_image_new_from_icon_name (info->icon_name,
+                                              GTK_ICON_SIZE_BUTTON);
+        gtk_container_add (GTK_CONTAINER (button), image);
+        gtk_widget_show (image);
+
+        g_object_set_data (G_OBJECT (button),
+                           "convolution-matrix-rotate",
+                           GINT_TO_POINTER (info->rotate));
+        g_object_set_data (G_OBJECT (button),
+                           "convolution-matrix-flip",
+                           GINT_TO_POINTER (info->flip));
+
+        g_signal_connect (button, "clicked",
+                          G_CALLBACK (convolution_matrix_rotate_flip),
+                          config);
+      }
+  }
+
+  vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+  gtk_box_pack_start (GTK_BOX (main_vbox), vbox, FALSE, FALSE, 0);
+  gtk_widget_show (vbox);
+
+  /* divisor / offset spin scales */
+
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);
-  gtk_box_pack_start (GTK_BOX (main_vbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
   scale = gimp_prop_widget_new (config, "divisor",
@@ -526,25 +701,27 @@ _gimp_prop_gui_new_convolution_matrix (GObject              *config,
   gtk_box_pack_start (GTK_BOX (hbox), scale, TRUE, TRUE, 0);
   gtk_widget_show (scale);
 
+  /* rest of the properties */
+
   hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
   gtk_box_set_homogeneous (GTK_BOX (hbox), TRUE);
-  gtk_box_pack_start (GTK_BOX (main_vbox), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  vbox = _gimp_prop_gui_new_generic (config,
-                                     param_specs + 27, 4,
-                                     area, context,
-                                     create_picker_func, picker_creator);
-  gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
+  vbox2 = _gimp_prop_gui_new_generic (config,
+                                      param_specs + 27, 4,
+                                      area, context,
+                                      create_picker_func, picker_creator);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 0);
+  gtk_widget_show (vbox2);
 
-  vbox = _gimp_prop_gui_new_generic (config,
-                                     param_specs + 31,
-                                     n_param_specs - 31,
-                                     area, context,
-                                     create_picker_func, picker_creator);
-  gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
+  vbox2 = _gimp_prop_gui_new_generic (config,
+                                      param_specs + 31,
+                                      n_param_specs - 31,
+                                      area, context,
+                                      create_picker_func, picker_creator);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox2, TRUE, TRUE, 0);
+  gtk_widget_show (vbox2);
 
   return main_vbox;
 }

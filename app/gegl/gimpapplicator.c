@@ -57,9 +57,12 @@ gimp_applicator_class_init (GimpApplicatorClass *klass)
 static void
 gimp_applicator_init (GimpApplicator *applicator)
 {
-  applicator->opacity    = 1.0;
-  applicator->paint_mode = GIMP_LAYER_MODE_NORMAL;
-  applicator->affect     = GIMP_COMPONENT_MASK_ALL;
+  applicator->opacity         = 1.0;
+  applicator->paint_mode      = GIMP_LAYER_MODE_NORMAL;
+  applicator->blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
+  applicator->composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
+  applicator->composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;
+  applicator->affect          = GIMP_COMPONENT_MASK_ALL;
 }
 
 static void
@@ -134,7 +137,10 @@ gimp_applicator_new (GeglNode *parent,
                                                NULL);
 
   gimp_gegl_mode_node_set_mode (applicator->mode_node,
-                                applicator->paint_mode);
+                                applicator->paint_mode,
+                                applicator->blend_space,
+                                applicator->composite_space,
+                                applicator->composite_mode);
   gimp_gegl_mode_node_set_opacity (applicator->mode_node,
                                    applicator->opacity);
 
@@ -445,16 +451,27 @@ gimp_applicator_set_opacity (GimpApplicator *applicator,
 }
 
 void
-gimp_applicator_set_mode (GimpApplicator *applicator,
-                          GimpLayerMode   paint_mode)
+gimp_applicator_set_mode (GimpApplicator         *applicator,
+                          GimpLayerMode           paint_mode,
+                          GimpLayerColorSpace     blend_space,
+                          GimpLayerColorSpace     composite_space,
+                          GimpLayerCompositeMode  composite_mode)
 {
   g_return_if_fail (GIMP_IS_APPLICATOR (applicator));
 
-  if (applicator->paint_mode != paint_mode)
+  if (applicator->paint_mode      != paint_mode      ||
+      applicator->blend_space     != blend_space     ||
+      applicator->composite_space != composite_space ||
+      applicator->composite_mode  != composite_mode)
     {
-      applicator->paint_mode = paint_mode;
+      applicator->paint_mode      = paint_mode;
+      applicator->blend_space     = blend_space;
+      applicator->composite_space = composite_space;
+      applicator->composite_mode  = composite_mode;
 
-      gimp_gegl_mode_node_set_mode (applicator->mode_node, paint_mode);
+      gimp_gegl_mode_node_set_mode (applicator->mode_node,
+                                    paint_mode, blend_space,
+                                    composite_space, composite_mode);
     }
 }
 
