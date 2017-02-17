@@ -54,11 +54,11 @@ static const GimpActionEntry layers_actions[] =
 
   { "layers-blend-space-menu", NULL,
     NC_("layers-action", "Blend Space"), NULL, NULL, NULL,
-    NULL },
+    NULL },/**/
 
   { "layers-composite-space-menu", NULL,
     NC_("layers-action", "Composite Space"), NULL, NULL, NULL,
-    NULL },
+    NULL },/**/
 
   { "layers-composite-mode-menu", NULL,
     NC_("layers-action", "Composite Mode"), NULL, NULL, NULL,
@@ -331,7 +331,7 @@ static const GimpToggleActionEntry layers_toggle_actions[] =
 
 static const GimpRadioActionEntry layers_blend_space_actions[] =
 {
-  { "layers-blend-space-auto", NULL,
+/*  { "layers-blend-space-auto", NULL,
     NC_("layers-action", "Auto"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_AUTO,
     NULL },
@@ -344,12 +344,12 @@ static const GimpRadioActionEntry layers_blend_space_actions[] =
   { "layers-blend-space-rgb-perceptual", NULL,
     NC_("layers-action", "RGB (perceptual)"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    NULL }
+    NULL }*/
 };
 
 static const GimpRadioActionEntry layers_composite_space_actions[] =
 {
-  { "layers-composite-space-auto", NULL,
+/*  { "layers-composite-space-auto", NULL,
     NC_("layers-action", "Auto"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_AUTO,
     NULL },
@@ -362,7 +362,7 @@ static const GimpRadioActionEntry layers_composite_space_actions[] =
   { "layers-composite-space-rgb-perceptual", NULL,
     NC_("layers-action", "RGB (perceptual)"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    NULL }
+    NULL }*/
 };
 
 static const GimpRadioActionEntry layers_composite_mode_actions[] =
@@ -660,17 +660,17 @@ layers_actions_setup (GimpActionGroup *group)
                                         layers_toggle_actions,
                                         G_N_ELEMENTS (layers_toggle_actions));
 
-  gimp_action_group_add_radio_actions (group, "layers-action",
+/*  gimp_action_group_add_radio_actions (group, "layers-action",
                                        layers_blend_space_actions,
                                        G_N_ELEMENTS (layers_blend_space_actions),
                                        NULL, 0,
-                                       G_CALLBACK (layers_blend_space_cmd_callback));
+                                       G_CALLBACK (layers_blend_space_cmd_callback));*/
 
-  gimp_action_group_add_radio_actions (group, "layers-action",
+/*  gimp_action_group_add_radio_actions (group, "layers-action",
                                        layers_composite_space_actions,
                                        G_N_ELEMENTS (layers_composite_space_actions),
                                        NULL, 0,
-                                       G_CALLBACK (layers_composite_space_cmd_callback));
+                                       G_CALLBACK (layers_composite_space_cmd_callback));*/
 
   gimp_action_group_add_radio_actions (group, "layers-action",
                                        layers_composite_mode_actions,
@@ -767,11 +767,11 @@ layers_actions_update (GimpActionGroup *group,
           switch (gimp_layer_get_blend_space (layer))
             {
             case GIMP_LAYER_COLOR_SPACE_AUTO:
-              action = "layers-blend-space-auto"; break;
-            case GIMP_LAYER_COLOR_SPACE_RGB_LINEAR:
-              action = "layers-blend-space-rgb-linear"; break;
-            case GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL:
-              action = "layers-blend-space-rgb-perceptual"; break;
+//              action = "layers-blend-space-auto"; break;
+//            case GIMP_LAYER_COLOR_SPACE_RGB_LINEAR:
+//              action = "layers-blend-space-rgb-linear"; break;
+//            case GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL:
+//              action = "layers-blend-space-rgb-perceptual"; break;
             default:
               action = NULL; break; /* can't happen */
             }
@@ -782,11 +782,11 @@ layers_actions_update (GimpActionGroup *group,
           switch (gimp_layer_get_composite_space (layer))
             {
             case GIMP_LAYER_COLOR_SPACE_AUTO:
-              action = "layers-composite-space-auto"; break;
-            case GIMP_LAYER_COLOR_SPACE_RGB_LINEAR:
-              action = "layers-composite-space-rgb-linear"; break;
-            case GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL:
-              action = "layers-composite-space-rgb-perceptual"; break;
+//              action = "layers-composite-space-auto"; break;
+//            case GIMP_LAYER_COLOR_SPACE_RGB_LINEAR:
+//              action = "layers-composite-space-rgb-linear"; break;
+//            case GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL:
+//              action = "layers-composite-space-rgb-perceptual"; break;
             default:
               action = NULL; break; /* can't happen */
             }
@@ -919,13 +919,13 @@ layers_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("layers-lock-alpha", can_lock_alpha);
   SET_ACTIVE    ("layers-lock-alpha", lock_alpha);
 
-  SET_SENSITIVE ("layers-blend-space-auto",           layer && bs_mutable);
-  SET_SENSITIVE ("layers-blend-space-rgb-linear",     layer && bs_mutable);
-  SET_SENSITIVE ("layers-blend-space-rgb-perceptual", layer && bs_mutable);
+//  SET_SENSITIVE ("layers-blend-space-auto",           layer && bs_mutable);
+//  SET_SENSITIVE ("layers-blend-space-rgb-linear",     layer && bs_mutable);
+//  SET_SENSITIVE ("layers-blend-space-rgb-perceptual", layer && bs_mutable);
 
-  SET_SENSITIVE ("layers-composite-space-auto",           layer && cs_mutable);
-  SET_SENSITIVE ("layers-composite-space-rgb-linear",     layer && cs_mutable);
-  SET_SENSITIVE ("layers-composite-space-rgb-perceptual", layer && cs_mutable);
+//  SET_SENSITIVE ("layers-composite-space-auto",           layer && cs_mutable);
+//  SET_SENSITIVE ("layers-composite-space-rgb-linear",     layer && cs_mutable);
+//  SET_SENSITIVE ("layers-composite-space-rgb-perceptual", layer && cs_mutable);
 
   SET_SENSITIVE ("layers-composite-mode-auto",     layer && cm_mutable);
   SET_SENSITIVE ("layers-composite-mode-src-over", layer && cm_mutable);

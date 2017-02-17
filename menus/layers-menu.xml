@@ -6,14 +6,14 @@
     <menuitem action="layers-text-tool" />
     <menuitem action="layers-edit-attributes" />
     <menu action="layers-blend-space-menu" name="Blend Space">
-      <menuitem action="layers-blend-space-auto" />
-      <menuitem action="layers-blend-space-rgb-linear" />
-      <menuitem action="layers-blend-space-rgb-perceptual" />
+<!--      <menuitem action="layers-blend-space-auto" />
+      <menuitem action="layers-blend-space-rgb-linear" /> 
+      <menuitem action="layers-blend-space-rgb-perceptual" />-->
     </menu>
-    <menu action="layers-composite-space-menu" name="Composite Space">
-      <menuitem action="layers-composite-space-auto" />
-      <menuitem action="layers-composite-space-rgb-linear" />
-      <menuitem action="layers-composite-space-rgb-perceptual" />
+   <menu action="layers-composite-space-menu" name="Composite Space">
+<!--      <menuitem action="layers-composite-space-auto" />
+      <menuitem action="layers-composite-space-rgb-linear" /> 
+      <menuitem action="layers-composite-space-rgb-perceptual" />-->
     </menu>
     <menu action="layers-composite-mode-menu" name="Composite Mode">
       <menuitem action="layers-composite-mode-auto" />

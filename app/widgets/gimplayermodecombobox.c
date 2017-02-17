@@ -377,7 +377,7 @@ gimp_enum_store_new_from_array (GType       enum_type,
   return store;
 }
 
-static void
+/*static void
 gimp_layer_mode_combo_box_fix_default_store (GimpLayerModeComboBox *combo,
                                              GtkListStore          *store)
 {
@@ -421,9 +421,9 @@ gimp_layer_mode_combo_box_fix_default_store (GimpLayerModeComboBox *combo,
                                               GIMP_LAYER_MODE_ERASE,
                                               GIMP_LAYER_MODE_ANTI_ERASE);
     }
-}
+}*/
 
-static void
+/*static void
 gimp_layer_mode_combo_box_fix_linear_store (GimpLayerModeComboBox *combo,
                                             GtkListStore          *store)
 {
@@ -461,7 +461,7 @@ gimp_layer_mode_combo_box_fix_linear_store (GimpLayerModeComboBox *combo,
                                               GIMP_LAYER_MODE_ERASE,
                                               GIMP_LAYER_MODE_ANTI_ERASE);
     }
-}
+}*/
 
 static void
 gimp_layer_mode_combo_box_fix_perceptual_store (GimpLayerModeComboBox *combo,
@@ -514,9 +514,9 @@ gimp_layer_mode_combo_box_update_model (GimpLayerModeComboBox *combo,
 //      gimp_layer_mode_combo_box_fix_default_store (combo, store);
 //      break;
 
-    case GIMP_LAYER_MODE_GROUP_LINEAR:
-      gimp_layer_mode_combo_box_fix_linear_store (combo, store);
-      break;
+//    case GIMP_LAYER_MODE_GROUP_LINEAR:
+//      gimp_layer_mode_combo_box_fix_linear_store (combo, store);
+//      break;
 
     case GIMP_LAYER_MODE_GROUP_PERCEPTUAL:
       gimp_layer_mode_combo_box_fix_perceptual_store (combo, store);

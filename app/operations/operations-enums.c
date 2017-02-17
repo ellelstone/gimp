@@ -132,9 +132,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LINEAR_BURN, "GIMP_LAYER_MODE_LINEAR_BURN", "linear-burn" },
     { GIMP_LAYER_MODE_LINEAR_BURN_LINEAR, "GIMP_LAYER_MODE_LINEAR_BURN_LINEAR", "linear-burn-linear" },
     { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, "GIMP_LAYER_MODE_LUMA_DARKEN_ONLY", "luma-darken-only" },
-    { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY, "GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY", "luminance-darken-only" },
     { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY", "luma-lighten-only" },
-    { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY", "luminance-lighten-only" },
     { GIMP_LAYER_MODE_ERASE, "GIMP_LAYER_MODE_ERASE", "erase" },
     { GIMP_LAYER_MODE_REPLACE, "GIMP_LAYER_MODE_REPLACE", "replace" },
     { GIMP_LAYER_MODE_ANTI_ERASE, "GIMP_LAYER_MODE_ANTI_ERASE", "anti-erase" },
@@ -194,9 +192,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LINEAR_BURN, NC_("layer-mode", "Linear burn"), NULL },
     { GIMP_LAYER_MODE_LINEAR_BURN_LINEAR, NC_("layer-mode", "Linear burn (linear)"), NULL },
     { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, NC_("layer-mode", "Luma darken only"), NULL },
-    { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY, NC_("layer-mode", "Luminance darken only"), NULL },
     { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, NC_("layer-mode", "Luma lighten only"), NULL },
-    { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY, NC_("layer-mode", "Luminance lighten only"), NULL },
     { GIMP_LAYER_MODE_ERASE, NC_("layer-mode", "Erase"), NULL },
     { GIMP_LAYER_MODE_REPLACE, NC_("layer-mode", "Replace"), NULL },
     { GIMP_LAYER_MODE_ANTI_ERASE, NC_("layer-mode", "Anti erase"), NULL },
@@ -220,16 +216,12 @@ gimp_layer_mode_group_get_type (void)
 {
   static const GEnumValue values[] =
   {
-//    { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", "default" },
-    { GIMP_LAYER_MODE_GROUP_LINEAR, "GIMP_LAYER_MODE_GROUP_LINEAR", "linear" },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, "GIMP_LAYER_MODE_GROUP_PERCEPTUAL", "perceptual" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-//    { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
-    { GIMP_LAYER_MODE_GROUP_LINEAR, NC_("layer-mode-group", "Linear light"), NULL },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, NC_("layer-mode-group", "Perceptual"), NULL },
     { 0, NULL, NULL }
   };

@@ -561,7 +561,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY,
+/*  { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -569,7 +569,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,
     "gimp:layer-mode",
@@ -581,7 +581,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,
+/*  { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -589,7 +589,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_ERASE,
     "gimp:erase",
@@ -659,7 +659,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
   GIMP_LAYER_MODE_LINEAR_BURN
 };*/
 
-static const GimpLayerMode layer_mode_group_linear[] =
+/*static const GimpLayerMode layer_mode_group_linear[] =
 {
   GIMP_LAYER_MODE_NORMAL_LINEAR,
   GIMP_LAYER_MODE_DISSOLVE,
@@ -691,7 +691,7 @@ static const GimpLayerMode layer_mode_group_linear[] =
 
   GIMP_LAYER_MODE_EXCLUSION_LINEAR,
   GIMP_LAYER_MODE_LINEAR_BURN_LINEAR
-};
+};*/
 
 static const GimpLayerMode layer_mode_group_perceptual[] =
 {
@@ -870,17 +870,17 @@ static const GimpLayerMode layer_mode_groups[][4] =
     -1
   },
 
-  { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY,
+/*  { GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY,
     GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY,
     GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,
     -1
-  },
+  },*/
 
-  { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,
+/*  { GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,
     GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,
     GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,
     -1
-  },
+  },*/
 
   { GIMP_LAYER_MODE_ERASE,
     GIMP_LAYER_MODE_ERASE,
@@ -1036,7 +1036,7 @@ gimp_layer_mode_get_group (GimpLayerMode  mode)
     {
       return GIMP_LAYER_MODE_GROUP_DEFAULT;
     }
-  else */ if (is_mode_in_array (layer_mode_group_linear,
+  else  if (is_mode_in_array (layer_mode_group_linear,
                              G_N_ELEMENTS (layer_mode_group_linear), mode))
     {
       return GIMP_LAYER_MODE_GROUP_LINEAR;
@@ -1045,7 +1045,7 @@ gimp_layer_mode_get_group (GimpLayerMode  mode)
                              G_N_ELEMENTS (layer_mode_group_perceptual), mode))
     {
       return GIMP_LAYER_MODE_GROUP_PERCEPTUAL;
-    }
+    }*/
 
   return GIMP_LAYER_MODE_GROUP_PERCEPTUAL;
 }
@@ -1062,9 +1062,9 @@ gimp_layer_mode_get_group_array (GimpLayerModeGroup  group,
 //      *n_modes = G_N_ELEMENTS (layer_mode_group_default);
 //      return layer_mode_group_default;
 
-    case GIMP_LAYER_MODE_GROUP_LINEAR:
-      *n_modes = G_N_ELEMENTS (layer_mode_group_linear);
-      return layer_mode_group_linear;
+//    case GIMP_LAYER_MODE_GROUP_LINEAR:
+//      *n_modes = G_N_ELEMENTS (layer_mode_group_linear);
+//      return layer_mode_group_linear;
 
     case GIMP_LAYER_MODE_GROUP_PERCEPTUAL:
       *n_modes = G_N_ELEMENTS (layer_mode_group_perceptual);

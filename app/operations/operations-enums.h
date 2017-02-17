@@ -110,9 +110,7 @@ typedef enum
   GIMP_LAYER_MODE_LINEAR_BURN,           /*< desc="Linear burn"              >*/
   GIMP_LAYER_MODE_LINEAR_BURN_LINEAR,    /*< desc="Linear burn (linear)"     >*/
   GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,      /*< desc="Luma darken only"         >*/
-  GIMP_LAYER_MODE_LUMINANCE_DARKEN_ONLY, /*< desc="Luminance darken only"    >*/
   GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,     /*< desc="Luma lighten only"        >*/
-  GIMP_LAYER_MODE_LUMINANCE_LIGHTEN_ONLY,/*< desc="Luminance lighten only"   >*/
 
   /*  Internal modes, not available to the PDB, must be kept at the end  */
   GIMP_LAYER_MODE_ERASE,                 /*< pdb-skip, desc="Erase"          >*/
@@ -127,10 +125,7 @@ GType gimp_layer_mode_group_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-//  GIMP_LAYER_MODE_GROUP_DEFAULT,     /*< desc="Default"      >*/
-  GIMP_LAYER_MODE_GROUP_LINEAR,      /*< desc="Linear light" >*/
   GIMP_LAYER_MODE_GROUP_PERCEPTUAL,  /*< desc="Perceptual"   >*/
-//  GIMP_LAYER_MODE_GROUP_LEGACY,      /*< desc="Legacy"       >*/
 } GimpLayerModeGroup;
 
 
