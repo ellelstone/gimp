@@ -88,8 +88,8 @@ typedef enum
   GIMP_LAYER_MODE_HARD_MIX,              /*< desc="Hard mix"                 >*/
   GIMP_LAYER_MODE_EXCLUSION,             /*< desc="Exclusion"                >*/
   GIMP_LAYER_MODE_LINEAR_BURN,           /*< desc="Linear burn"              >*/
-  GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,      /*< desc="Luma darken only"         >*/
-  GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,     /*< desc="Luma lighten only"        >*/
+  GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,      /*< desc="Lum darken only"         >*/
+  GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,     /*< desc="Lum lighten only"        >*/
 
   /*  Internal modes, not available to the PDB, must be kept at the end  */
   GIMP_LAYER_MODE_ERASE,                 /*< pdb-skip, desc="Erase"          >*/

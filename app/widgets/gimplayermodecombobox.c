@@ -468,22 +468,22 @@ gimp_layer_mode_combo_box_fix_perceptual_store (GimpLayerModeComboBox *combo,
                                                 GtkListStore          *store)
 {
   gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_DISSOLVE, -1);
+                                              GIMP_LAYER_MODE_SUBTRACT, -1);
 
   gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_ADDITION, -1);
+                                              GIMP_LAYER_MODE_LCH_COLOR, -1);
 
   gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_BURN, -1);
+                                              GIMP_LAYER_MODE_DODGE, -1);
+
+  gimp_layer_mode_combo_box_insert_separator (store,
+                                              GIMP_LAYER_MODE_LINEAR_BURN, -1);
 
   gimp_layer_mode_combo_box_insert_separator (store,
                                               GIMP_LAYER_MODE_HARD_MIX, -1);
 
   gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_DIVIDE, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_LCH_LIGHTNESS, -1);
+                                              GIMP_LAYER_MODE_DISSOLVE, -1);
 
   if (combo->priv->with_behind)
     {
