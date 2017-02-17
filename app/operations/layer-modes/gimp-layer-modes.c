@@ -143,21 +143,21 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_LAB
   },
 
-  { GIMP_LAYER_MODE_NORMAL_LINEAR,
+/*  { GIMP_LAYER_MODE_NORMAL_LINEAR,
     "gimp:normal",
     gimp_operation_normal_process,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA |
     GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE,
-  },
+  },*/
 
-  { GIMP_LAYER_MODE_BEHIND_LINEAR,
+/*  { GIMP_LAYER_MODE_BEHIND_LINEAR,
     "gimp:behind",
     gimp_operation_behind_process,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA |
     GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE,
     GIMP_LAYER_COMPOSITE_DST_ATOP,
     GIMP_LAYER_COMPOSITE_DST_ATOP,
-  },
+  },*/
 
   { GIMP_LAYER_MODE_MULTIPLY,
     "gimp:layer-mode",
@@ -169,7 +169,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_MULTIPLY_LINEAR,
+/*  { GIMP_LAYER_MODE_MULTIPLY_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -177,7 +177,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_SCREEN,
     "gimp:layer-mode",
@@ -189,7 +189,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_SCREEN_LINEAR,
+/*  { GIMP_LAYER_MODE_SCREEN_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -197,9 +197,9 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
-  { GIMP_LAYER_MODE_OVERLAY_LINEAR,
+/*  { GIMP_LAYER_MODE_OVERLAY_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -207,7 +207,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_DIFFERENCE,
     "gimp:layer-mode",
@@ -219,7 +219,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_DIFFERENCE_LINEAR,
+/*  { GIMP_LAYER_MODE_DIFFERENCE_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -227,7 +227,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_ADDITION,
     "gimp:layer-mode",
@@ -239,7 +239,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_ADDITION_LINEAR,
+/*  { GIMP_LAYER_MODE_ADDITION_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -247,7 +247,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_SUBTRACT,
     "gimp:layer-mode",
@@ -259,7 +259,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_SUBTRACT_LINEAR,
+/*  { GIMP_LAYER_MODE_SUBTRACT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -267,7 +267,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_DARKEN_ONLY,
     "gimp:layer-mode",
@@ -301,7 +301,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_DIVIDE_LINEAR,
+/*  { GIMP_LAYER_MODE_DIVIDE_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -309,7 +309,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_DODGE,
     "gimp:layer-mode",
@@ -321,7 +321,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_DODGE_LINEAR,
+/*  { GIMP_LAYER_MODE_DODGE_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -329,7 +329,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_BURN,
     "gimp:layer-mode",
@@ -341,7 +341,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_BURN_LINEAR,
+/*  { GIMP_LAYER_MODE_BURN_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -349,7 +349,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_HARDLIGHT,
     "gimp:layer-mode",
@@ -361,7 +361,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_HARDLIGHT_LINEAR,
+/*  { GIMP_LAYER_MODE_HARDLIGHT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -369,7 +369,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_SOFTLIGHT,
     "gimp:layer-mode",
@@ -381,7 +381,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_SOFTLIGHT_LINEAR,
+/*  { GIMP_LAYER_MODE_SOFTLIGHT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -389,7 +389,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_GRAIN_EXTRACT,
     "gimp:layer-mode",
@@ -401,7 +401,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR,
+/*  { GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -409,7 +409,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_GRAIN_MERGE,
     "gimp:layer-mode",
@@ -421,7 +421,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR,
+/*  { GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -429,7 +429,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_VIVID_LIGHT,
     "gimp:layer-mode",
@@ -441,7 +441,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_VIVID_LIGHT_LINEAR,
+/*  { GIMP_LAYER_MODE_VIVID_LIGHT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -449,7 +449,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_PIN_LIGHT,
     "gimp:layer-mode",
@@ -461,7 +461,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_PIN_LIGHT_LINEAR,
+/*  { GIMP_LAYER_MODE_PIN_LIGHT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -469,7 +469,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_LINEAR_LIGHT,
     "gimp:layer-mode",
@@ -481,7 +481,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_LINEAR_LIGHT_LINEAR,
+/*  { GIMP_LAYER_MODE_LINEAR_LIGHT_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -489,7 +489,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_HARD_MIX,
     "gimp:layer-mode",
@@ -501,7 +501,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_HARD_MIX_LINEAR,
+/*  { GIMP_LAYER_MODE_HARD_MIX_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -509,7 +509,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_EXCLUSION,
     "gimp:layer-mode",
@@ -521,7 +521,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_EXCLUSION_LINEAR,
+/*  { GIMP_LAYER_MODE_EXCLUSION_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -529,7 +529,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_LINEAR_BURN,
     "gimp:layer-mode",
@@ -541,7 +541,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
-  { GIMP_LAYER_MODE_LINEAR_BURN_LINEAR,
+/*  { GIMP_LAYER_MODE_LINEAR_BURN_LINEAR,
     "gimp:layer-mode",
     gimp_operation_layer_mode_process_pixels,
     GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA,
@@ -549,7 +549,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     GIMP_LAYER_COMPOSITE_SRC_ATOP,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     GIMP_LAYER_COLOR_SPACE_RGB_LINEAR
-  },
+  },*/
 
   { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,
     "gimp:layer-mode",
@@ -735,7 +735,7 @@ static const GimpLayerMode layer_mode_group_perceptual[] =
 static const GimpLayerMode layer_mode_groups[][4] =
 {
   { GIMP_LAYER_MODE_NORMAL,
-    GIMP_LAYER_MODE_NORMAL_LINEAR,
+    GIMP_LAYER_MODE_NORMAL,
     GIMP_LAYER_MODE_NORMAL,
     GIMP_LAYER_MODE_NORMAL
   },
@@ -747,39 +747,39 @@ static const GimpLayerMode layer_mode_groups[][4] =
   },
 
   { GIMP_LAYER_MODE_BEHIND,
-    GIMP_LAYER_MODE_BEHIND_LINEAR,
+    GIMP_LAYER_MODE_BEHIND,
     GIMP_LAYER_MODE_BEHIND,
     GIMP_LAYER_MODE_BEHIND
   },
 
   { GIMP_LAYER_MODE_MULTIPLY,
-    GIMP_LAYER_MODE_MULTIPLY_LINEAR,
+    GIMP_LAYER_MODE_MULTIPLY,
     GIMP_LAYER_MODE_MULTIPLY
   },
 
   { GIMP_LAYER_MODE_SCREEN,
-    GIMP_LAYER_MODE_SCREEN_LINEAR,
+    GIMP_LAYER_MODE_SCREEN,
     GIMP_LAYER_MODE_SCREEN
   },
 
   { GIMP_LAYER_MODE_OVERLAY,
-    GIMP_LAYER_MODE_OVERLAY_LINEAR,
+    GIMP_LAYER_MODE_OVERLAY,
     GIMP_LAYER_MODE_OVERLAY,
     -1
   },
 
   { GIMP_LAYER_MODE_DIFFERENCE,
-    GIMP_LAYER_MODE_DIFFERENCE_LINEAR,
+    GIMP_LAYER_MODE_DIFFERENCE,
     GIMP_LAYER_MODE_DIFFERENCE
   },
 
   { GIMP_LAYER_MODE_ADDITION,
-    GIMP_LAYER_MODE_ADDITION_LINEAR,
+    GIMP_LAYER_MODE_ADDITION,
     GIMP_LAYER_MODE_ADDITION
   },
 
   { GIMP_LAYER_MODE_SUBTRACT,
-    GIMP_LAYER_MODE_SUBTRACT_LINEAR,
+    GIMP_LAYER_MODE_SUBTRACT,
     GIMP_LAYER_MODE_SUBTRACT
   },
 
@@ -794,37 +794,37 @@ static const GimpLayerMode layer_mode_groups[][4] =
   },
 
   { GIMP_LAYER_MODE_DIVIDE,
-    GIMP_LAYER_MODE_DIVIDE_LINEAR,
+    GIMP_LAYER_MODE_DIVIDE,
     GIMP_LAYER_MODE_DIVIDE
   },
 
   { GIMP_LAYER_MODE_DODGE,
-    GIMP_LAYER_MODE_DODGE_LINEAR,
+    GIMP_LAYER_MODE_DODGE,
     GIMP_LAYER_MODE_DODGE
   },
 
   { GIMP_LAYER_MODE_BURN,
-    GIMP_LAYER_MODE_BURN_LINEAR,
+    GIMP_LAYER_MODE_BURN,
     GIMP_LAYER_MODE_BURN
   },
 
   { GIMP_LAYER_MODE_HARDLIGHT,
-    GIMP_LAYER_MODE_HARDLIGHT_LINEAR,
+    GIMP_LAYER_MODE_HARDLIGHT,
     GIMP_LAYER_MODE_HARDLIGHT
   },
 
   { GIMP_LAYER_MODE_SOFTLIGHT,
-    GIMP_LAYER_MODE_SOFTLIGHT_LINEAR,
+    GIMP_LAYER_MODE_SOFTLIGHT,
     GIMP_LAYER_MODE_SOFTLIGHT
   },
 
   { GIMP_LAYER_MODE_GRAIN_EXTRACT,
-    GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR,
+    GIMP_LAYER_MODE_GRAIN_EXTRACT,
     GIMP_LAYER_MODE_GRAIN_EXTRACT
   },
 
   { GIMP_LAYER_MODE_GRAIN_MERGE,
-    GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR,
+    GIMP_LAYER_MODE_GRAIN_MERGE,
     GIMP_LAYER_MODE_GRAIN_MERGE
   },
 
@@ -835,37 +835,37 @@ static const GimpLayerMode layer_mode_groups[][4] =
   },
 
   { GIMP_LAYER_MODE_VIVID_LIGHT,
-    GIMP_LAYER_MODE_VIVID_LIGHT_LINEAR,
+    GIMP_LAYER_MODE_VIVID_LIGHT,
     GIMP_LAYER_MODE_VIVID_LIGHT,
     -1
   },
 
   { GIMP_LAYER_MODE_PIN_LIGHT,
-    GIMP_LAYER_MODE_PIN_LIGHT_LINEAR,
+    GIMP_LAYER_MODE_PIN_LIGHT,
     GIMP_LAYER_MODE_PIN_LIGHT,
     -1
   },
 
   { GIMP_LAYER_MODE_LINEAR_LIGHT,
-    GIMP_LAYER_MODE_LINEAR_LIGHT_LINEAR,
+    GIMP_LAYER_MODE_LINEAR_LIGHT,
     GIMP_LAYER_MODE_LINEAR_LIGHT,
     -1
   },
 
   { GIMP_LAYER_MODE_HARD_MIX,
-    GIMP_LAYER_MODE_HARD_MIX_LINEAR,
+    GIMP_LAYER_MODE_HARD_MIX,
     GIMP_LAYER_MODE_HARD_MIX,
     -1
   },
 
   { GIMP_LAYER_MODE_EXCLUSION,
-    GIMP_LAYER_MODE_EXCLUSION_LINEAR,
+    GIMP_LAYER_MODE_EXCLUSION,
     GIMP_LAYER_MODE_EXCLUSION,
     -1
   },
 
   { GIMP_LAYER_MODE_LINEAR_BURN,
-    GIMP_LAYER_MODE_LINEAR_BURN_LINEAR,
+    GIMP_LAYER_MODE_LINEAR_BURN,
     GIMP_LAYER_MODE_LINEAR_BURN,
     -1
   },

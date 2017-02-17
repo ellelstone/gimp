@@ -68,47 +68,26 @@ typedef enum
   GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
 
   /*  Since 2.10  */
-  GIMP_LAYER_MODE_NORMAL_LINEAR,         /*< desc="Normal (linear)"          >*/
-  GIMP_LAYER_MODE_BEHIND_LINEAR,         /*< desc="Behind (linear)"          >*/
   GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
-  GIMP_LAYER_MODE_MULTIPLY_LINEAR,       /*< desc="Multiply (linear)"        >*/
   GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/
-  GIMP_LAYER_MODE_SCREEN_LINEAR,         /*< desc="Screen (linear)"          >*/
-  GIMP_LAYER_MODE_OVERLAY_LINEAR,        /*< desc="Overlay (linear)"         >*/
   GIMP_LAYER_MODE_DIFFERENCE,            /*< desc="Difference"               >*/
-  GIMP_LAYER_MODE_DIFFERENCE_LINEAR,     /*< desc="Difference (linear)"      >*/
   GIMP_LAYER_MODE_ADDITION,              /*< desc="Addition"                 >*/
-  GIMP_LAYER_MODE_ADDITION_LINEAR,       /*< desc="Addition (linear)"        >*/
   GIMP_LAYER_MODE_SUBTRACT,              /*< desc="Subtract"                 >*/
-  GIMP_LAYER_MODE_SUBTRACT_LINEAR,       /*< desc="Subtract (linear)"        >*/
   GIMP_LAYER_MODE_DARKEN_ONLY,           /*< desc="Darken only"              >*/
   GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
   GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
-  GIMP_LAYER_MODE_DIVIDE_LINEAR,         /*< desc="Divide (linear)"          >*/
   GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/
-  GIMP_LAYER_MODE_DODGE_LINEAR,          /*< desc="Dodge (linear)"           >*/
   GIMP_LAYER_MODE_BURN,                  /*< desc="Burn"                     >*/
-  GIMP_LAYER_MODE_BURN_LINEAR,           /*< desc="Burn (linear)"            >*/
   GIMP_LAYER_MODE_HARDLIGHT,             /*< desc="Hard light"               >*/
-  GIMP_LAYER_MODE_HARDLIGHT_LINEAR,      /*< desc="Hard light (linear)"      >*/
   GIMP_LAYER_MODE_SOFTLIGHT,             /*< desc="Soft light"               >*/
-  GIMP_LAYER_MODE_SOFTLIGHT_LINEAR,      /*< desc="Soft light (linear)"      >*/
   GIMP_LAYER_MODE_GRAIN_EXTRACT,         /*< desc="Grain extract"            >*/
-  GIMP_LAYER_MODE_GRAIN_EXTRACT_LINEAR,  /*< desc="Grain extract (linear)"   >*/
   GIMP_LAYER_MODE_GRAIN_MERGE,           /*< desc="Grain merge"              >*/
-  GIMP_LAYER_MODE_GRAIN_MERGE_LINEAR,    /*< desc="Grain merge (linear)"     >*/
   GIMP_LAYER_MODE_VIVID_LIGHT,           /*< desc="Vivid light"              >*/
-  GIMP_LAYER_MODE_VIVID_LIGHT_LINEAR,    /*< desc="Vivid light (linear)"     >*/
   GIMP_LAYER_MODE_PIN_LIGHT,             /*< desc="Pin light"                >*/
-  GIMP_LAYER_MODE_PIN_LIGHT_LINEAR,      /*< desc="Pin light (linear)"       >*/
   GIMP_LAYER_MODE_LINEAR_LIGHT,          /*< desc="Linear light"             >*/
-  GIMP_LAYER_MODE_LINEAR_LIGHT_LINEAR,   /*< desc="Linear light (linear)"    >*/
   GIMP_LAYER_MODE_HARD_MIX,              /*< desc="Hard mix"                 >*/
-  GIMP_LAYER_MODE_HARD_MIX_LINEAR,       /*< desc="Hard mix (linear)"        >*/
   GIMP_LAYER_MODE_EXCLUSION,             /*< desc="Exclusion"                >*/
-  GIMP_LAYER_MODE_EXCLUSION_LINEAR,      /*< desc="Exclusion (linear)"       >*/
   GIMP_LAYER_MODE_LINEAR_BURN,           /*< desc="Linear burn"              >*/
-  GIMP_LAYER_MODE_LINEAR_BURN_LINEAR,    /*< desc="Linear burn (linear)"     >*/
   GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,      /*< desc="Luma darken only"         >*/
   GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,     /*< desc="Luma lighten only"        >*/
 
