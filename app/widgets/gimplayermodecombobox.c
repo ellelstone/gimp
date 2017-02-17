@@ -483,9 +483,6 @@ gimp_layer_mode_combo_box_fix_perceptual_store (GimpLayerModeComboBox *combo,
                                               GIMP_LAYER_MODE_DIVIDE, -1);
 
   gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_HSV_VALUE, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
                                               GIMP_LAYER_MODE_LCH_LIGHTNESS, -1);
 
   if (combo->priv->with_behind)

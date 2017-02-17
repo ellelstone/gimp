@@ -83,10 +83,6 @@ typedef enum
   GIMP_LAYER_MODE_SUBTRACT_LINEAR,       /*< desc="Subtract (linear)"        >*/
   GIMP_LAYER_MODE_DARKEN_ONLY,           /*< desc="Darken only"              >*/
   GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
-  GIMP_LAYER_MODE_HSV_HUE,               /*< desc="Hue (HSV)"                >*/
-  GIMP_LAYER_MODE_HSV_SATURATION,        /*< desc="Saturation (HSV)"         >*/
-  GIMP_LAYER_MODE_HSV_COLOR,             /*< desc="Color (HSV)"              >*/
-  GIMP_LAYER_MODE_HSV_VALUE,             /*< desc="Value (HSV)"              >*/
   GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
   GIMP_LAYER_MODE_DIVIDE_LINEAR,         /*< desc="Divide (linear)"          >*/
   GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/

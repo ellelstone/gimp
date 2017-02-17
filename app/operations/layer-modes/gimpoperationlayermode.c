@@ -1952,10 +1952,6 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_DODGE:          return blendfun_dodge;
     case GIMP_LAYER_MODE_OVERLAY_LINEAR:
     case GIMP_LAYER_MODE_OVERLAY:        return blendfun_overlay;
-    case GIMP_LAYER_MODE_HSV_COLOR:      return blendfun_hsv_color;
-    case GIMP_LAYER_MODE_HSV_HUE:        return blendfun_hsv_hue;
-    case GIMP_LAYER_MODE_HSV_SATURATION: return blendfun_hsv_saturation;
-    case GIMP_LAYER_MODE_HSV_VALUE:      return blendfun_hsv_value;
     case GIMP_LAYER_MODE_LCH_CHROMA:     return blendfun_lch_chroma;
     case GIMP_LAYER_MODE_LCH_COLOR:      return blendfun_lch_color;
     case GIMP_LAYER_MODE_LCH_HUE:        return blendfun_lch_hue;

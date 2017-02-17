@@ -105,10 +105,6 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_SUBTRACT_LINEAR, "GIMP_LAYER_MODE_SUBTRACT_LINEAR", "subtract-linear" },
     { GIMP_LAYER_MODE_DARKEN_ONLY, "GIMP_LAYER_MODE_DARKEN_ONLY", "darken-only" },
     { GIMP_LAYER_MODE_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LIGHTEN_ONLY", "lighten-only" },
-    { GIMP_LAYER_MODE_HSV_HUE, "GIMP_LAYER_MODE_HSV_HUE", "hsv-hue" },
-    { GIMP_LAYER_MODE_HSV_SATURATION, "GIMP_LAYER_MODE_HSV_SATURATION", "hsv-saturation" },
-    { GIMP_LAYER_MODE_HSV_COLOR, "GIMP_LAYER_MODE_HSV_COLOR", "hsv-color" },
-    { GIMP_LAYER_MODE_HSV_VALUE, "GIMP_LAYER_MODE_HSV_VALUE", "hsv-value" },
     { GIMP_LAYER_MODE_DIVIDE, "GIMP_LAYER_MODE_DIVIDE", "divide" },
     { GIMP_LAYER_MODE_DIVIDE_LINEAR, "GIMP_LAYER_MODE_DIVIDE_LINEAR", "divide-linear" },
     { GIMP_LAYER_MODE_DODGE, "GIMP_LAYER_MODE_DODGE", "dodge" },
@@ -171,10 +167,6 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_SUBTRACT_LINEAR, NC_("layer-mode", "Subtract (linear)"), NULL },
     { GIMP_LAYER_MODE_DARKEN_ONLY, NC_("layer-mode", "Darken only"), NULL },
     { GIMP_LAYER_MODE_LIGHTEN_ONLY, NC_("layer-mode", "Lighten only"), NULL },
-    { GIMP_LAYER_MODE_HSV_HUE, NC_("layer-mode", "Hue (HSV)"), NULL },
-    { GIMP_LAYER_MODE_HSV_SATURATION, NC_("layer-mode", "Saturation (HSV)"), NULL },
-    { GIMP_LAYER_MODE_HSV_COLOR, NC_("layer-mode", "Color (HSV)"), NULL },
-    { GIMP_LAYER_MODE_HSV_VALUE, NC_("layer-mode", "Value (HSV)"), NULL },
     { GIMP_LAYER_MODE_DIVIDE, NC_("layer-mode", "Divide"), NULL },
     { GIMP_LAYER_MODE_DIVIDE_LINEAR, NC_("layer-mode", "Divide (linear)"), NULL },
     { GIMP_LAYER_MODE_DODGE, NC_("layer-mode", "Dodge"), NULL },
@@ -231,7 +223,6 @@ gimp_layer_mode_group_get_type (void)
     { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", "default" },
     { GIMP_LAYER_MODE_GROUP_LINEAR, "GIMP_LAYER_MODE_GROUP_LINEAR", "linear" },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, "GIMP_LAYER_MODE_GROUP_PERCEPTUAL", "perceptual" },
-//    { GIMP_LAYER_MODE_GROUP_LEGACY, "GIMP_LAYER_MODE_GROUP_LEGACY", "legacy" },
     { 0, NULL, NULL }
   };
 
@@ -240,7 +231,6 @@ gimp_layer_mode_group_get_type (void)
     { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
     { GIMP_LAYER_MODE_GROUP_LINEAR, NC_("layer-mode-group", "Linear light"), NULL },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, NC_("layer-mode-group", "Perceptual"), NULL },
-//    { GIMP_LAYER_MODE_GROUP_LEGACY, NC_("layer-mode-group", "Legacy"), NULL },
     { 0, NULL, NULL }
   };
 
