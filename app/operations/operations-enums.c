@@ -220,7 +220,7 @@ gimp_layer_mode_group_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", "default" },
+//    { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", "default" },
     { GIMP_LAYER_MODE_GROUP_LINEAR, "GIMP_LAYER_MODE_GROUP_LINEAR", "linear" },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, "GIMP_LAYER_MODE_GROUP_PERCEPTUAL", "perceptual" },
     { 0, NULL, NULL }
@@ -228,7 +228,7 @@ gimp_layer_mode_group_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
+//    { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
     { GIMP_LAYER_MODE_GROUP_LINEAR, NC_("layer-mode-group", "Linear light"), NULL },
     { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, NC_("layer-mode-group", "Perceptual"), NULL },
     { 0, NULL, NULL }

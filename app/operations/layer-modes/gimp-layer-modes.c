@@ -620,7 +620,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
   }
 };
 
-static const GimpLayerMode layer_mode_group_default[] =
+/*static const GimpLayerMode layer_mode_group_default[] =
 {
   GIMP_LAYER_MODE_NORMAL,
   GIMP_LAYER_MODE_DISSOLVE,
@@ -657,7 +657,7 @@ static const GimpLayerMode layer_mode_group_default[] =
 
   GIMP_LAYER_MODE_EXCLUSION,
   GIMP_LAYER_MODE_LINEAR_BURN
-};
+};*/
 
 static const GimpLayerMode layer_mode_group_linear[] =
 {
@@ -1031,12 +1031,12 @@ is_mode_in_array (const GimpLayerMode *modes,
 GimpLayerModeGroup
 gimp_layer_mode_get_group (GimpLayerMode  mode)
 {
-  if (is_mode_in_array (layer_mode_group_default,
+/*  if (is_mode_in_array (layer_mode_group_default,
                         G_N_ELEMENTS (layer_mode_group_default), mode))
     {
       return GIMP_LAYER_MODE_GROUP_DEFAULT;
     }
-  else if (is_mode_in_array (layer_mode_group_linear,
+  else */ if (is_mode_in_array (layer_mode_group_linear,
                              G_N_ELEMENTS (layer_mode_group_linear), mode))
     {
       return GIMP_LAYER_MODE_GROUP_LINEAR;
@@ -1047,7 +1047,7 @@ gimp_layer_mode_get_group (GimpLayerMode  mode)
       return GIMP_LAYER_MODE_GROUP_PERCEPTUAL;
     }
 
-  return GIMP_LAYER_MODE_GROUP_DEFAULT;
+  return GIMP_LAYER_MODE_GROUP_PERCEPTUAL;
 }
 
 const GimpLayerMode *
@@ -1058,9 +1058,9 @@ gimp_layer_mode_get_group_array (GimpLayerModeGroup  group,
 
   switch (group)
     {
-    case GIMP_LAYER_MODE_GROUP_DEFAULT:
-      *n_modes = G_N_ELEMENTS (layer_mode_group_default);
-      return layer_mode_group_default;
+//    case GIMP_LAYER_MODE_GROUP_DEFAULT:
+//      *n_modes = G_N_ELEMENTS (layer_mode_group_default);
+//      return layer_mode_group_default;
 
     case GIMP_LAYER_MODE_GROUP_LINEAR:
       *n_modes = G_N_ELEMENTS (layer_mode_group_linear);

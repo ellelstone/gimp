@@ -116,7 +116,7 @@ gimp_layer_mode_combo_box_class_init (GimpLayerModeComboBoxClass *klass)
                                    g_param_spec_enum ("group",
                                                       NULL, NULL,
                                                       GIMP_TYPE_LAYER_MODE_GROUP,
-                                                      GIMP_LAYER_MODE_GROUP_DEFAULT,
+                                                      GIMP_LAYER_MODE_GROUP_PERCEPTUAL,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -320,7 +320,7 @@ GimpLayerModeGroup
 gimp_layer_mode_combo_box_get_group (GimpLayerModeComboBox *combo)
 {
   g_return_val_if_fail (GIMP_IS_LAYER_MODE_COMBO_BOX (combo),
-                        GIMP_LAYER_MODE_GROUP_DEFAULT);
+                        GIMP_LAYER_MODE_GROUP_PERCEPTUAL);
 
   return combo->priv->group;
 }
@@ -510,9 +510,9 @@ gimp_layer_mode_combo_box_update_model (GimpLayerModeComboBox *combo,
 
   switch (combo->priv->group)
     {
-    case GIMP_LAYER_MODE_GROUP_DEFAULT:
-      gimp_layer_mode_combo_box_fix_default_store (combo, store);
-      break;
+//    case GIMP_LAYER_MODE_GROUP_DEFAULT:
+//      gimp_layer_mode_combo_box_fix_default_store (combo, store);
+//      break;
 
     case GIMP_LAYER_MODE_GROUP_LINEAR:
       gimp_layer_mode_combo_box_fix_linear_store (combo, store);
