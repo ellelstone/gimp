@@ -53,8 +53,8 @@ struct _LayerOptionsDialog
 {
   GimpLayer                *layer;
   GimpLayerMode             mode;
-  //GimpLayerColorSpace       blend_space;
-  //GimpLayerColorSpace       composite_space;
+  GimpLayerColorSpace       blend_space;
+  GimpLayerColorSpace       composite_space;
   GimpLayerCompositeMode    composite_mode;
   gdouble                   opacity;
   GimpFillType              fill_type;
@@ -64,8 +64,8 @@ struct _LayerOptionsDialog
   gpointer                  user_data;
 
   GtkWidget                *mode_box;
-//  GtkWidget                *blend_space_combo;
-//  GtkWidget                *composite_space_combo;
+  GtkWidget                *blend_space_combo;
+  GtkWidget                *composite_space_combo;
   GtkWidget                *composite_mode_combo;
   GtkWidget                *size_se;
   GtkWidget                *offset_se;
@@ -107,8 +107,8 @@ layer_options_dialog_new (GimpImage                *image,
                           const gchar              *help_id,
                           const gchar              *layer_name,
                           GimpLayerMode             layer_mode,
-                          //GimpLayerColorSpace       layer_blend_space,
-                          //GimpLayerColorSpace       layer_composite_space,
+                          GimpLayerColorSpace       layer_blend_space,
+                          GimpLayerColorSpace       layer_composite_space,
                           GimpLayerCompositeMode    layer_composite_mode,
                           gdouble                   layer_opacity,
                           GimpFillType              layer_fill_type,
@@ -124,7 +124,7 @@ layer_options_dialog_new (GimpImage                *image,
   LayerOptionsDialog *private;
   GtkWidget          *dialog;
   GtkWidget          *table;
-//  GtkListStore       *space_model;
+  GtkListStore       *space_model;
   GtkWidget          *combo;
   GtkWidget          *scale;
   GtkWidget          *label;
@@ -144,8 +144,8 @@ layer_options_dialog_new (GimpImage                *image,
 
   private->layer              = layer;
   private->mode               = layer_mode;
-  //private->blend_space        = layer_blend_space;
-  //private->composite_space    = layer_composite_space;
+  private->blend_space        = layer_blend_space;
+  private->composite_space    = layer_composite_space;
   private->composite_mode     = layer_composite_mode;
   private->opacity            = layer_opacity * 100.0;
   private->fill_type          = layer_fill_type;
@@ -185,14 +185,14 @@ layer_options_dialog_new (GimpImage                *image,
                     G_CALLBACK (layer_options_dialog_mode_notify),
                     private);
 
-/*  space_model =
+  space_model =
     gimp_enum_store_new_with_range (GIMP_TYPE_LAYER_COLOR_SPACE,
                                     GIMP_LAYER_COLOR_SPACE_AUTO,
                                     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL);
 
   private->blend_space_combo = combo =
     gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (space_model));
-  item_options_dialog_add_widget (dialog, _("Blend space:"), combo);
+//  item_options_dialog_add_widget (dialog, _("Blend space:"), combo);
   gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (combo),
                                        "gimp-layer-color-space");
   gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
@@ -202,7 +202,7 @@ layer_options_dialog_new (GimpImage                *image,
 
   private->composite_space_combo = combo =
     gimp_enum_combo_box_new_with_model (GIMP_ENUM_STORE (space_model));
-  item_options_dialog_add_widget (dialog, _("Composite space:"), combo);
+//  item_options_dialog_add_widget (dialog, _("Composite space:"), combo);
   gimp_enum_combo_box_set_icon_prefix (GIMP_ENUM_COMBO_BOX (combo),
                                        "gimp-layer-color-space");
   gimp_int_combo_box_connect (GIMP_INT_COMBO_BOX (combo),
@@ -210,7 +210,7 @@ layer_options_dialog_new (GimpImage                *image,
                               G_CALLBACK (gimp_int_combo_box_get_active),
                               &private->composite_space);
 
-  g_object_unref (space_model);*/
+  g_object_unref (space_model);
 
   private->composite_mode_combo = combo =
     gimp_enum_combo_box_new (GIMP_TYPE_LAYER_COMPOSITE_MODE);
@@ -502,8 +502,8 @@ layer_options_dialog_callback (GtkWidget    *dialog,
                      context,
                      item_name,
                      private->mode,
-                     //private->blend_space,
-                     //private->composite_space,
+                     private->blend_space,
+                     private->composite_space,
                      private->composite_mode,
                      private->opacity / 100.0,
                      private->fill_type,
@@ -530,15 +530,15 @@ layer_options_dialog_mode_notify (GtkWidget          *widget,
 
   private->mode = gimp_layer_mode_box_get_mode (GIMP_LAYER_MODE_BOX (widget));
 
-//  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->blend_space_combo),
-//                                 GIMP_LAYER_COLOR_SPACE_AUTO);
-//  mutable = gimp_layer_mode_is_blend_space_mutable (private->mode);
-//  gtk_widget_set_sensitive (private->blend_space_combo, mutable);
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->blend_space_combo),
+                                 GIMP_LAYER_COLOR_SPACE_AUTO);
+  mutable = gimp_layer_mode_is_blend_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->blend_space_combo, mutable);
 
-//  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_space_combo),
-//                                 GIMP_LAYER_COLOR_SPACE_AUTO);
-//  mutable = gimp_layer_mode_is_composite_space_mutable (private->mode);
-//  gtk_widget_set_sensitive (private->composite_space_combo, mutable);
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_space_combo),
+                                 GIMP_LAYER_COLOR_SPACE_AUTO);
+  mutable = gimp_layer_mode_is_composite_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->composite_space_combo, mutable);
 
   gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_mode_combo),
                                  GIMP_LAYER_COMPOSITE_AUTO);
