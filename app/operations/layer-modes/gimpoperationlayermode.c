@@ -304,7 +304,7 @@ gimp_operation_layer_mode_get_property (GObject    *object,
 static void
 gimp_operation_layer_mode_prepare (GeglOperation *operation)
 {
-  GimpOperationLayerMode *self = GIMP_OPERATION_LAYER_MODE (operation);
+//  GimpOperationLayerMode *self = GIMP_OPERATION_LAYER_MODE (operation);
   const Babl             *format;
 
 //  if (self->linear)
@@ -1727,6 +1727,29 @@ blendfun_lch_lightness (const float *dest,
     }
 }
 
+static inline void /* elle: this is just a placeholder function that sets out=src */
+blendfun_luminance (const float *dest,
+                    const float *src,
+                    float       *out,
+                    int          samples)
+{
+  while (samples--)
+    {
+      if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
+        {
+          gint c;
+
+          for (c = 0; c < 3; c++)
+               out[c] = src[c];
+        }
+
+      out[ALPHA] = src[ALPHA];
+
+      out  += 4;
+      src  += 4;
+      dest += 4;
+    }
+}
 
 static inline void
 blendfun_copy (const float *dest,
@@ -1946,9 +1969,10 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_LCH_COLOR:      return blendfun_lch_color;
     case GIMP_LAYER_MODE_LCH_HUE:        return blendfun_lch_hue;
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:  return blendfun_lch_lightness;
+    case GIMP_LAYER_MODE_LUMINANCE:      return blendfun_luminance;
     case GIMP_LAYER_MODE_HARDLIGHT:      return blendfun_hardlight;
     case GIMP_LAYER_MODE_SOFTLIGHT:      return blendfun_softlight;
-    case GIMP_LAYER_MODE_DIVIDE:  return blendfun_divide;
+    case GIMP_LAYER_MODE_DIVIDE:         return blendfun_divide;
     case GIMP_LAYER_MODE_DIFFERENCE:     return blendfun_difference;
     case GIMP_LAYER_MODE_DARKEN_ONLY:    return blendfun_darken_only;
     case GIMP_LAYER_MODE_LIGHTEN_ONLY:   return blendfun_lighten_only;
