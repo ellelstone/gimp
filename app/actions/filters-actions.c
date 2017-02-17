@@ -135,7 +135,7 @@ static const GimpStringActionEntry filters_actions[] =
 //  { "filters-cartoon", GIMP_STOCK_GEGL,
 //    NC_("filters-action", "Ca_rtoon..."), NULL, NULL,
 //    "gegl:cartoon",
-//    NULL /* FIXME GIMP_HELP_FILTER_CARTOON */ },
+//    GIMP_HELP_FILTER_CARTOON */ },
 
   { "filters-channel-mixer", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Channel Mixer..."), NULL, NULL,
@@ -156,11 +156,6 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "_Color Exchange..."), NULL, NULL,
     "gegl:color-exchange",
     GIMP_HELP_FILTER_COLOR_EXCHANGE },
-
-  { "filters-component-extract", GIMP_STOCK_GEGL,
-    NC_("filters-action", "Component _Extract..."), NULL, NULL,
-    "gegl:component-extract",
-    NULL /* FIXME GIMP_HELP_FILTER_COMPONENT_EXTRACT */ },
 
   { "filters-dither", GIMP_STOCK_GEGL,
     NC_("filters-action", "Dithe_r..."), NULL, NULL,
@@ -242,10 +237,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:edge-laplace",
     GIMP_HELP_FILTER_EDGE_LAPLACE },
 
-  { "filters-edge-neon", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_Neon..."), NULL, NULL,
-    "gegl:edge-neon",
-    GIMP_HELP_FILTER_EDGE_NEON },
+//  { "filters-edge-neon", GIMP_STOCK_GEGL,
+//    NC_("filters-action", "_Neon..."), NULL, NULL,
+//    "gegl:edge-neon",
+//    GIMP_HELP_FILTER_EDGE_NEON },
 
   { "filters-edge-sobel", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Sobel..."), NULL, NULL,
@@ -340,7 +335,7 @@ static const GimpStringActionEntry filters_actions[] =
   { "filters-median-blur", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Median Blur..."), NULL, NULL,
     "gegl:median-blur",
-    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */ },
+    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */},
 
   { "filters-mono-mixer", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Mono Mixer..."), NULL, NULL,
@@ -476,11 +471,6 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "RGB _Clip..."), NULL, NULL,
     "gegl:rgb-clip",
     GIMP_HELP_FILTER_RGB_CLIP },
-
-  { "filters-rgb-clip", GIMP_STOCK_GEGL,
-    NC_("filters-action", "_RGB Clip"), NULL, NULL,
-    "gegl:rgb-clip",
-    NULL /* FIXME GIMP_HELP_RGB_CLIP */ },
 
   { "filters-ripple", GIMP_STOCK_GEGL,
     NC_("filters-action", "_Ripple..."), NULL, NULL,
@@ -806,8 +796,8 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-rgb-clip",                writable);
   SET_SENSITIVE ("filters-ripple",                  writable);
   SET_SENSITIVE ("filters-saturation",              writable && !gray);
-/*  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);
-  SET_SENSITIVE ("filters-sepia",                   writable && !gray);*/
+/*  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);*/
+/*  SET_SENSITIVE ("filters-sepia",                   writable && !gray);*/
   SET_SENSITIVE ("filters-shift",                   writable);
   SET_SENSITIVE ("filters-sinus",                   writable);
   SET_SENSITIVE ("filters-slic",                    writable);
@@ -845,7 +835,7 @@ filters_actions_update (GimpActionGroup *group,
       {
         gimp_action_group_set_action_sensitive (group, "filters-repeat", FALSE);
         gimp_action_group_set_action_sensitive (group, "filters-reshow", FALSE);
-     }
+      }
 
     for (i = 0; i < gimp_filter_history_length (group->gimp); i++)
       {
@@ -860,7 +850,7 @@ filters_actions_update (GimpActionGroup *group,
 
         g_free (name);
       }
- }
+  }
 }
 
 static GimpActionGroup *
@@ -940,7 +930,7 @@ filters_actions_history_changed (Gimp            *gimp,
                                               sensitive);
       gimp_action_group_set_action_sensitive (group, "filters-reshow",
                                               sensitive);
-   }
+    }
   else
     {
       gimp_action_group_set_action_label (group, "filters-repeat",

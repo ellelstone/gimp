@@ -124,7 +124,7 @@ gimp_operations_init (void)
   gimp_operation_config_register ("gimp:curves",
                                   GIMP_TYPE_CURVES_CONFIG);
   gimp_operation_config_register ("gimp:hue-chroma",
-                                  GIMP_TYPE_HUE_SATURATION_CONFIG);
+                                  GIMP_TYPE_HUE_CHROMA_CONFIG);
   gimp_operation_config_register ("gimp:levels",
                                   GIMP_TYPE_LEVELS_CONFIG);
 }

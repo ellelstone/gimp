@@ -619,9 +619,8 @@ sanity_check_gegl_ops (void)
     "gegl:softglow",
     "gegl:stretch-contrast",
 /*    "gegl:stretch-contrast-hsv", uses HSV*/
-/*    "gegl:supernova", uses HSL*/
     "gegl:stress",
-    "gegl:supernova",
+/*    "gegl:supernova", uses HSL*/
     "gegl:threshold",
     "gegl:tile",
     "gegl:tile-paper",

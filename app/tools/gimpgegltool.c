@@ -117,8 +117,8 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:apply-lens",
     "gegl:box-blur",
     "gegl:bump-map",
-/*    "gegl:c2g",*/
-/*    "gegl:cartoon",*/
+/*    "gegl:c2g", elle removed or moved or something*/
+/*    "gegl:cartoon", elle removed*/
     "gegl:cell-noise",
     "gegl:channel-mixer",
     "gegl:checkerboard",
@@ -126,7 +126,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:color-enhance",
     "gegl:color-exchange",
     "gegl:color-rotate",
-/*    "gegl:color-temperature",*/
+/*    "gegl:color-temperature", elle removed*/
     "gegl:color-to-alpha",
     "gegl:component-extract",
     "gegl:convolution-matrix",
@@ -140,7 +140,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:dropshadow",
     "gegl:edge",
     "gegl:edge-laplace",
-    "gegl:edge-neon",
+/*    "gegl:edge-neon", elle removed*/
     "gegl:edge-sobel",
     "gegl:emboss",
     "gegl:engrave",
@@ -168,7 +168,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:motion-blur-linear",
     "gegl:motion-blur-zoom",
     "gegl:noise-cie-lch",
-/*    "gegl:noise-hsv",*/
+/*    "gegl:noise-hsv", elle removed*/
     "gegl:noise-hurl",
     "gegl:noise-pick",
     "gegl:noise-reduction",
@@ -188,7 +188,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:rgb-clip",
     "gegl:ripple",
     "gegl:saturation",
-/*    "gegl:sepia",*/
+/*    "gegl:sepia", elle removed */
     "gegl:shift",
     "gegl:simplex-noise",
     "gegl:sinus",
@@ -199,7 +199,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
 /*    "gegl:stretch-contrast-hsv",*/
 /*    "gegl:supernova",*/
     "gegl:stress",
-    "gegl:supernova",
+/*    "gegl:supernova", elle removed, I think*/
     "gegl:texturize-canvas",
     "gegl:tile-glass",
     "gegl:tile-paper",

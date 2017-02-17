@@ -500,26 +500,6 @@ gimp_layer_mode_combo_box_fix_perceptual_store (GimpLayerModeComboBox *combo,
 }
 
 static void
-gimp_layer_mode_combo_box_fix_legacy_store (GimpLayerModeComboBox *combo,
-                                            GtkListStore          *store)
-{
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_DISSOLVE, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_ADDITION_LEGACY, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_BURN_LEGACY, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_HARDLIGHT_LEGACY, -1);
-
-  gimp_layer_mode_combo_box_insert_separator (store,
-                                              GIMP_LAYER_MODE_DIVIDE_LEGACY, -1);
-}
-
-static void
 gimp_layer_mode_combo_box_update_model (GimpLayerModeComboBox *combo,
                                         gboolean               change_mode)
 {
@@ -543,10 +523,6 @@ gimp_layer_mode_combo_box_update_model (GimpLayerModeComboBox *combo,
 
     case GIMP_LAYER_MODE_GROUP_PERCEPTUAL:
       gimp_layer_mode_combo_box_fix_perceptual_store (combo, store);
-      break;
-
-    case GIMP_LAYER_MODE_GROUP_LEGACY:
-      gimp_layer_mode_combo_box_fix_legacy_store (combo, store);
       break;
 
     default:

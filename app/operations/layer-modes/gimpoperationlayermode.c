@@ -202,13 +202,13 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
-  _gimp_fish_rgba_to_perceptual = babl_fish ("RGBA float", "R'G'B'A float");
-  _gimp_fish_perceptual_to_rgba = babl_fish ("R'G'B'A float", "RGBA float");
-  _gimp_fish_perceptual_to_laba = babl_fish ("R'G'B'A float", "CIE Lab alpha float");
+  _gimp_fish_rgba_to_perceptual = babl_fish ("RGBA float", "RGBA float");
+  _gimp_fish_perceptual_to_rgba = babl_fish ("RGBA float", "RGBA float");
+  _gimp_fish_perceptual_to_laba = babl_fish ("RGBA float", "CIE Lab alpha float");
 
   _gimp_fish_rgba_to_laba       = babl_fish ("RGBA float", "CIE Lab alpha float");
   _gimp_fish_laba_to_rgba       = babl_fish ("CIE Lab alpha float", "RGBA float");
-  _gimp_fish_laba_to_perceptual = babl_fish ("CIE Lab alpha float", "R'G'B'A float");
+  _gimp_fish_laba_to_perceptual = babl_fish ("CIE Lab alpha float", "RGBA float");
 
 #if COMPILE_SSE2_INTRINISICS
   if (gimp_cpu_accel_get_support () & GIMP_CPU_ACCEL_X86_SSE2)
@@ -307,10 +307,10 @@ gimp_operation_layer_mode_prepare (GeglOperation *operation)
   GimpOperationLayerMode *self = GIMP_OPERATION_LAYER_MODE (operation);
   const Babl             *format;
 
-  if (self->linear)
+//  if (self->linear)
     format = babl_format ("RGBA float");
-  else
-    format = babl_format ("R'G'B'A float");
+//  else
+//    format = babl_format ("R'G'B'A float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);
@@ -1990,25 +1990,6 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_DISSOLVE:
     case GIMP_LAYER_MODE_BEHIND:
     case GIMP_LAYER_MODE_BEHIND_LINEAR:
-    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
-    case GIMP_LAYER_MODE_SCREEN_LEGACY:
-    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
-    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
-    case GIMP_LAYER_MODE_ADDITION_LEGACY:
-    case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
-    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
-    case GIMP_LAYER_MODE_HSV_COLOR_LEGACY:
-    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
-    case GIMP_LAYER_MODE_DIVIDE_LEGACY:
-    case GIMP_LAYER_MODE_DODGE_LEGACY:
-    case GIMP_LAYER_MODE_BURN_LEGACY:
-    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
     case GIMP_LAYER_MODE_COLOR_ERASE:
     case GIMP_LAYER_MODE_ERASE:
     case GIMP_LAYER_MODE_REPLACE:

@@ -634,7 +634,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             TRUE,
                             GIMP_PARAM_STATIC_STRINGS);
 
-  /*  only for backward compatibility:  */
+  /*  only for backward compatibility:  
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
                             "install-colormap",
                             NULL, NULL,
@@ -647,7 +647,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                         NULL, NULL,
                         27, 256, 144,
                         GIMP_PARAM_STATIC_STRINGS |
-                        GIMP_CONFIG_PARAM_IGNORE);
+                        GIMP_CONFIG_PARAM_IGNORE);*/
 }
 
 static void

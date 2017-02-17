@@ -281,7 +281,7 @@ run (const gchar      *name,
 
       if (shootvals.profile_policy == SCREENSHOT_PROFILE_POLICY_SRGB)
         {
-          GimpColorProfile *srgb_profile = gimp_color_profile_new_rgb_srgb ();
+          GimpColorProfile *srgb_profile = gimp_color_profile_new_rgb_built_in ();
 
           gimp_image_convert_color_profile (image_ID,
                                             srgb_profile,

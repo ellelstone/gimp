@@ -280,15 +280,14 @@ file_open_image (Gimp                *gimp,
       gimp_image_undo_disable (image);
 
       if (run_mode == GIMP_RUN_INTERACTIVE                 &&
-          gimp_image_get_base_type (image) != GIMP_INDEXED &&
           gimp->config->import_promote_float               &&
           file_open_file_proc_is_import (file_proc))
         {
           GimpPrecision old_precision = gimp_image_get_precision (image);
 
-          if (old_precision != GIMP_PRECISION_FLOAT_LINEAR)
+          if (old_precision != GIMP_PRECISION_FLOAT_GAMMA)
             {
-              gimp_image_convert_precision (image, GIMP_PRECISION_FLOAT_LINEAR,
+              gimp_image_convert_precision (image, GIMP_PRECISION_FLOAT_GAMMA,
                                             GEGL_DITHER_NONE,
                                             GEGL_DITHER_NONE,
                                             GEGL_DITHER_NONE,
