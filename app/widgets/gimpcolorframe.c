@@ -799,4 +799,4 @@ gimp_color_frame_destroy_transform (GimpColorFrame *frame)
     }
 
   gimp_color_frame_update (frame);
-}/* */
+}

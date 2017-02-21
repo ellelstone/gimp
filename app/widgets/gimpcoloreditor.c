@@ -351,7 +351,7 @@ gimp_color_editor_get_preview (GimpDocked  *docked,
   GtkWidget   *preview;
   gint         width;
   gint         height;
-//printf("app/widgets/gimpcolorgeditor.c gimp_color_editor_get_preview\n");
+
   preview = gimp_fg_bg_view_new (context);
 
   if (gtk_icon_size_lookup_for_settings (settings, size, &width, &height))

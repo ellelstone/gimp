@@ -410,10 +410,6 @@ gimp_color_scales_scale_update (GtkAdjustment   *adjustment,
       babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
     }
 
-//      selector->rgb.r = CLAMP (selector->rgb.r, 0.0, 1.0);
-//      selector->rgb.g = CLAMP (selector->rgb.g, 0.0, 1.0);
-//      selector->rgb.b = CLAMP (selector->rgb.b, 0.0, 1.0);
-
   gimp_color_scales_update_scales (scales, i);
 
   gimp_color_selector_color_changed (selector);
