@@ -1737,27 +1737,38 @@ blendfun_lch_lightness (const float *dest,
     }
 }
 
-static inline void /* elle: this is just a placeholder function that sets out=src */
+static inline void
 blendfun_luminance (const float *dest,
                     const float *src,
                     float       *out,
                     int          samples)
 {
+  gfloat layer_Y[samples], *layer;
+  gfloat in_Y[samples], *in;
+
+  babl_process (babl_fish ("RGBA float", "Y float"), src, layer_Y, samples);
+  babl_process (babl_fish ("RGBA float", "Y float"), dest, in_Y, samples);
+
+  layer = &layer_Y[0];
+  in = &in_Y[0];
+
   while (samples--)
     {
-      if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
+      if (src[ALPHA] != 0.0f && dest[ALPHA] != 0.0f)
         {
-          gint c;
-
-          for (c = 0; c < 3; c++)
-               out[c] = src[c];
+          gfloat ratio = layer[0] / MAX(in[0], 0.0000000000000000001);
+          int c;
+          for (c = 0; c < 3; c ++)
+            out[c] = dest[c] * ratio;
         }
 
       out[ALPHA] = src[ALPHA];
 
-      out  += 4;
-      src  += 4;
-      dest += 4;
+      out   += 4;
+      dest  += 4;
+      src   += 4;
+      in    ++;
+      layer ++;
     }
 }
 

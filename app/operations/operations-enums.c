@@ -130,7 +130,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LCH_CHROMA, NC_("layer-mode", "Chroma (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_COLOR, NC_("layer-mode", "Color (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_LIGHTNESS, NC_("layer-mode", "Lightness (LCH)"), NULL },
-    { GIMP_LAYER_MODE_LUMINANCE, NC_("layer-mode", "Luminance - NOT YET FUNCTIONAL!"), NULL },
+    { GIMP_LAYER_MODE_LUMINANCE, NC_("layer-mode", "Luminance"), NULL },
     { GIMP_LAYER_MODE_MULTIPLY, NC_("layer-mode", "Multiply"), NULL },
     { GIMP_LAYER_MODE_SCREEN, NC_("layer-mode", "Screen"), NULL },
     { GIMP_LAYER_MODE_DIFFERENCE, NC_("layer-mode", "Difference"), NULL },

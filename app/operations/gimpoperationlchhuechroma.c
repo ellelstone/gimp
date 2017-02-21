@@ -18,9 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* All references and functions in the code below that refer to "saturation"
- * actually use "LCH chroma" rather than "HSL saturation".
- * The UI says "chroma".
+/* 
  * The code that allows to modify a range of colors has been disabled.
  * */
 
@@ -66,7 +64,7 @@ gimp_operation_hue_chroma_class_init (GimpOperationHueChromaClass *klass)
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gimp:hue-chroma",
                                  "categories",  "color",
-                                 "description", "GIMP Hue-Saturation operation",
+                                 "description", "GIMP Hue-Chroma operation",
                                  NULL);
 
   point_class->process = gimp_operation_hue_chroma_process;
@@ -125,7 +123,7 @@ gimp_operation_hue_chroma_process (GeglOperation       *operation,
                                        gint                 level)
 {
   GimpOperationPointFilter *point  = GIMP_OPERATION_POINT_FILTER (operation);
-  GimpHueChromaConfig  *config = GIMP_HUE_CHROMA_CONFIG (point->config);
+  GimpHueChromaConfig      *config = GIMP_HUE_CHROMA_CONFIG (point->config);
   gfloat                   *src    = in_buf;
   gfloat                   *dest   = out_buf;
 
@@ -144,10 +142,9 @@ gimp_operation_hue_chroma_process (GeglOperation       *operation,
 
       babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
 
-          lch.l = map_lightness  (config, 0, lch.l);
-          lch.c = map_chroma (config, 0, lch.c);
-          lch.h = map_hue        (config, 0, lch.h);
-
+      lch.l = map_lightness (config, 0, lch.l);
+      lch.c = map_chroma    (config, 0, lch.c);
+      lch.h = map_hue       (config, 0, lch.h);
 
       babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, &rgb, 1);
 
@@ -168,9 +165,9 @@ gimp_operation_hue_chroma_process (GeglOperation       *operation,
 
 void
 gimp_operation_hue_chroma_map (GimpHueChromaConfig *config,
-                               const GimpRGB           *color,
-                               GimpHueRange             range,
-                               GimpRGB                 *result)
+                               const GimpRGB       *color,
+                               GimpHueRange         range,
+                               GimpRGB             *result)
 {
   GimpLch lch;
 
@@ -181,7 +178,7 @@ gimp_operation_hue_chroma_map (GimpHueChromaConfig *config,
   babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), color, &lch, 1);
 
   lch.l = map_lightness  (config, range, lch.l);
-  lch.c = map_chroma (config, range, lch.c);
+  lch.c = map_chroma     (config, range, lch.c);
   lch.h = map_hue        (config, range, lch.h);
 
   babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, result, 1);
