@@ -18,11 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* All references and functions in the code below that refer to "saturation"
- * actually use "LCH chroma" rather than "HSL saturation".
- * The UI says "chroma".
+/*
  * The code that allows to modify a range of colors has been disabled.
- * */
+ */
 
 #include "config.h"
 
@@ -280,7 +278,7 @@ gimp_hue_chroma_config_deserialize (GimpConfig *config,
 
 static gboolean
 gimp_hue_chroma_config_equal (GimpConfig *a,
-                                  GimpConfig *b)
+                              GimpConfig *b)
 {
   GimpHueChromaConfig *config_a = GIMP_HUE_CHROMA_CONFIG (a);
   GimpHueChromaConfig *config_b = GIMP_HUE_CHROMA_CONFIG (b);

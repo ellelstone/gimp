@@ -50,9 +50,9 @@ struct _GimpOperationHueChromaClass
 GType   gimp_operation_hue_chroma_get_type (void) G_GNUC_CONST;
 
 void    gimp_operation_hue_chroma_map      (GimpHueChromaConfig *config,
-                                                const GimpRGB           *color,
-                                                GimpHueRange             range,
-                                                GimpRGB                 *result);
+                                            const GimpRGB           *color,
+                                            GimpHueRange             range,
+                                            GimpRGB                 *result);
 
 
 #endif /* __GIMP_OPERATION_HUE_CHROMA_H__ */

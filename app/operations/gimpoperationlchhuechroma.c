@@ -36,6 +36,15 @@
 #include "gimplchhuechromaconfig.h"
 #include "gimpoperationlchhuechroma.h"
 
+static void     gimp_operation_hue_chroma_prepare      (GeglOperation *operation);
+
+static void
+gimp_operation_hue_chroma_prepare (GeglOperation *operation)
+{
+  gegl_operation_set_format (operation, "input", babl_format ("CIE LCH(ab) alpha float"));
+  gegl_operation_set_format (operation, "output", babl_format ("CIE LCH(ab) alpha float"));
+}
+
 
 static gboolean gimp_operation_hue_chroma_process (GeglOperation       *operation,
                                                        void                *in_buf,
@@ -61,6 +70,8 @@ gimp_operation_hue_chroma_class_init (GimpOperationHueChromaClass *klass)
   object_class->set_property   = gimp_operation_point_filter_set_property;
   object_class->get_property   = gimp_operation_point_filter_get_property;
 
+  operation_class->prepare     = gimp_operation_hue_chroma_prepare;
+  
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gimp:hue-chroma",
                                  "categories",  "color",
@@ -84,34 +95,34 @@ gimp_operation_hue_chroma_init (GimpOperationHueChroma *self)
 {
 }
 
-static inline gdouble
+static inline gfloat
 map_lightness (GimpHueChromaConfig *config,
-               GimpHueRange             range,
-               gdouble                  value)
+               GimpHueRange         range,
+               gfloat               value)
 {
   value += config->lightness[GIMP_HUE_RANGE_ALL];
 
-    return value;
+  return value;
 }
 
-static inline gdouble
+static inline gfloat
 map_chroma (GimpHueChromaConfig *config,
             GimpHueRange         range,
-            gdouble              value)
+            gfloat              value)
 {
   value += config->chroma[GIMP_HUE_RANGE_ALL];
 
   return CLAMP (value, 0.0, 200.0);
 }
 
-static inline gdouble
+static inline gfloat
 map_hue (GimpHueChromaConfig *config,
-         GimpHueRange             range,
-         gdouble                  value)
+         GimpHueRange         range,
+         gfloat               value)
 {
   value += config->hue[GIMP_HUE_RANGE_ALL];
 
-    return value;
+  return value;
 }
 
 static gboolean
@@ -132,26 +143,11 @@ gimp_operation_hue_chroma_process (GeglOperation       *operation,
 
   while (samples--)
     {
-      GimpRGB  rgb;
-      GimpLch  lch;
 
-      rgb.r = src[RED];
-      rgb.g = src[GREEN];
-      rgb.b = src[BLUE];
-      rgb.a = src[ALPHA];
-
-      babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
-
-      lch.l = map_lightness (config, 0, lch.l);
-      lch.c = map_chroma    (config, 0, lch.c);
-      lch.h = map_hue       (config, 0, lch.h);
-
-      babl_process (babl_fish ("CIE LCH(ab) alpha double", "RGBA double"), &lch, &rgb, 1);
-
-      dest[RED]   = rgb.r;
-      dest[GREEN] = rgb.g;
-      dest[BLUE]  = rgb.b;
-      dest[ALPHA] = rgb.a;
+      dest[0] = map_lightness (config, 0, src[0]);
+      dest[1] = map_chroma    (config, 0, src[1]);
+      dest[2] = map_hue       (config, 0, src[2]);
+      dest[ALPHA] = src[ALPHA];
 
       src  += 4;
       dest += 4;
