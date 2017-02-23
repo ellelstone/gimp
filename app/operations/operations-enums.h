@@ -25,12 +25,12 @@
 
 GType gimp_layer_color_space_get_type (void) G_GNUC_CONST;
 
-typedef enum  /*< pdb-skip >*/
+typedef enum
 {
   GIMP_LAYER_COLOR_SPACE_AUTO,           /*< desc="Auto"             >*/
   GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,     /*< desc="RGB (linear)"     >*/
   GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL, /*< desc="RGB (perceptual)" >*/
-  GIMP_LAYER_COLOR_SPACE_LAB,            /*< desc="LAB"              >*/
+  GIMP_LAYER_COLOR_SPACE_LAB,            /*< desc="LAB", pdb-skip    >*/
 } GimpLayerColorSpace;
 
 
@@ -66,7 +66,6 @@ typedef enum
   GIMP_LAYER_MODE_LCH_CHROMA,            /*< desc="Chroma (LCH)"             >*/
   GIMP_LAYER_MODE_LCH_COLOR,             /*< desc="Color (LCH)"              >*/
   GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
-  GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
 
   /*  Since 2.10  */
   GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
@@ -76,6 +75,10 @@ typedef enum
   GIMP_LAYER_MODE_SUBTRACT,              /*< desc="Subtract"                 >*/
   GIMP_LAYER_MODE_DARKEN_ONLY,           /*< desc="Darken only"              >*/
   GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
+  GIMP_LAYER_MODE_HSV_HUE,               /*< desc="Hue (HSV)"                >*/
+  GIMP_LAYER_MODE_HSV_SATURATION,        /*< desc="Saturation (HSV)"         >*/
+  GIMP_LAYER_MODE_HSV_COLOR,             /*< desc="Color (HSV)"              >*/
+  GIMP_LAYER_MODE_HSV_VALUE,             /*< desc="Value (HSV)"              >*/
   GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
   GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/
   GIMP_LAYER_MODE_BURN,                  /*< desc="Burn"                     >*/
@@ -89,13 +92,17 @@ typedef enum
   GIMP_LAYER_MODE_HARD_MIX,              /*< desc="Hard mix"                 >*/
   GIMP_LAYER_MODE_EXCLUSION,             /*< desc="Exclusion"                >*/
   GIMP_LAYER_MODE_LINEAR_BURN,           /*< desc="Linear burn"              >*/
-  GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,      /*< desc="Lum darken only"         >*/
-  GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,     /*< desc="Lum lighten only"        >*/
+  GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,   /*< desc="Luma/Luminance darken only"  >*/
+  GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,  /*< desc="Luma/Luminance lighten only" >*/
+  GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
 
   /*  Internal modes, not available to the PDB, must be kept at the end  */
   GIMP_LAYER_MODE_ERASE,                 /*< pdb-skip, desc="Erase"          >*/
   GIMP_LAYER_MODE_REPLACE,               /*< pdb-skip, desc="Replace"        >*/
-  GIMP_LAYER_MODE_ANTI_ERASE             /*< pdb-skip, desc="Anti erase"     >*/
+  GIMP_LAYER_MODE_ANTI_ERASE,            /*< pdb-skip, desc="Anti erase"     >*/
+
+  /*  Layer mode menu separator  */
+  GIMP_LAYER_MODE_SEPARATOR = -1         /*< pdb-skip, skip                  >*/
 } GimpLayerMode;
 
 
@@ -105,8 +112,27 @@ GType gimp_layer_mode_group_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-  GIMP_LAYER_MODE_GROUP_PERCEPTUAL,  /*< desc="Perceptual"   >*/
+  GIMP_LAYER_MODE_GROUP_DEFAULT,     /*< desc="Default"      >*/
+/*  GIMP_LAYER_MODE_GROUP_LEGACY,      < desc="Legacy"       >*/
 } GimpLayerModeGroup;
+
+
+#define GIMP_TYPE_LAYER_MODE_CONTEXT (gimp_layer_mode_context_get_type ())
+
+GType gimp_layer_mode_context_get_type (void) G_GNUC_CONST;
+
+typedef enum  /*< pdb-skip >*/
+{
+  GIMP_LAYER_MODE_CONTEXT_LAYER = 1 << 0,
+  GIMP_LAYER_MODE_CONTEXT_GROUP = 1 << 1,
+  GIMP_LAYER_MODE_CONTEXT_PAINT = 1 << 2,
+  GIMP_LAYER_MODE_CONTEXT_FADE  = 1 << 3,
+
+  GIMP_LAYER_MODE_CONTEXT_ALL = (GIMP_LAYER_MODE_CONTEXT_LAYER |
+                                 GIMP_LAYER_MODE_CONTEXT_GROUP |
+                                 GIMP_LAYER_MODE_CONTEXT_PAINT |
+                                 GIMP_LAYER_MODE_CONTEXT_FADE)
+} GimpLayerModeContext;
 
 
 /*
@@ -122,11 +148,10 @@ typedef enum  /*< pdb-skip, skip >*/
 
 typedef enum  /*< pdb-skip, skip >*/
 {
-//  GIMP_LAYER_MODE_FLAG_LEGACY                    =  1 << 0,
-  GIMP_LAYER_MODE_FLAG_WANTS_LINEAR_DATA         =  1 << 1,
-  GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     =  1 << 2,
-  GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE =  1 << 3,
-  GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE  =  1 << 4,
+  GIMP_LAYER_MODE_FLAG_LEGACY                    =  1 << 0,
+  GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     =  1 << 1,
+  GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE =  1 << 2,
+  GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE  =  1 << 3,
 } GimpLayerModeFlags;
 
 

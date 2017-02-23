@@ -60,7 +60,7 @@ typedef void     (* PNMLoaderFunc)  (PNMScanner    *scanner,
                                      PNMInfo       *info,
                                      GeglBuffer    *buffer);
 typedef gboolean (* PNMSaverowFunc) (PNMRowInfo    *info,
-                                     const guchar  *data,
+                                     guchar        *data,
                                      GError       **error);
 
 struct _PNMScanner
@@ -78,7 +78,7 @@ struct _PNMInfo
 {
   gint          xres, yres;     /* The size of the image */
   gboolean      float_format;   /* Whether it is a floating point format */
-  gint          maxval;         /* For ascii image files, the max value
+  gint          maxval;         /* For integer format image files, the max value
                                  * which we need to normalize to */
   gfloat        scale_factor;   /* PFM files have a scale factor */
   gint          np;             /* Number of image planes (0 for pbm) */
@@ -95,6 +95,7 @@ struct _PNMRowInfo
   gchar         *rowbuf;        /* Buffer for writing out rows */
   gint           xres;          /* X resolution                */
   gint           np;            /* Number of planes            */
+  gint           bpc;           /* Bytes per color             */
   guchar        *red;           /* Colormap red                */
   guchar        *grn;           /* Colormap green              */
   guchar        *blu;           /* Colormap blue               */
@@ -146,22 +147,22 @@ static void       pnm_load_rawpfm          (PNMScanner    *scan,
                                             GeglBuffer    *buffer);
 
 static gboolean   pnmsaverow_ascii         (PNMRowInfo    *ri,
-                                            const guchar  *data,
+                                            guchar        *data,
                                             GError       **error);
 static gboolean   pnmsaverow_raw           (PNMRowInfo    *ri,
-                                            const guchar  *data,
+                                            guchar        *data,
                                             GError       **error);
 static gboolean   pnmsaverow_raw_pbm       (PNMRowInfo    *ri,
-                                            const guchar  *data,
+                                            guchar        *data,
                                             GError       **error);
 static gboolean   pnmsaverow_ascii_pbm     (PNMRowInfo    *ri,
-                                            const guchar  *data,
+                                            guchar        *data,
                                             GError       **error);
 /*static gboolean   pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
-                                            const guchar  *data,
-                                            GError       **error);*/
-/*static gboolean   pnmsaverow_raw_indexed   (PNMRowInfo    *ri,
-                                            const guchar  *data,
+                                            guchar        *data,
+                                            GError       **error);
+static gboolean   pnmsaverow_raw_indexed   (PNMRowInfo    *ri,
+                                            guchar        *data,
                                             GError       **error);*/
 
 static void       pnmscanner_destroy       (PNMScanner    *s);
@@ -560,6 +561,7 @@ load_image (GFile   *file,
   PNMInfo         *pnminfo;
   PNMScanner      *volatile scan;
   int             ctr;
+  GimpPrecision   precision;
 
   gimp_progress_init_printf (_("Opening '%s'"),
                              g_file_get_parse_name (file));
@@ -646,6 +648,7 @@ load_image (GFile   *file,
                        pnminfo->jmpbuf, _("Bogus scale factor."));
       CHECK_FOR_ERROR (!isnormal (pnminfo->scale_factor),
                        pnminfo->jmpbuf, _("Unsupported scale factor."));
+      precision = GIMP_PRECISION_FLOAT_LINEAR;
     }
   else if (pnminfo->np != 0)         /* pbm's don't have a maxval field */
     {
@@ -656,6 +659,18 @@ load_image (GFile   *file,
       pnminfo->maxval = g_ascii_isdigit (*buf) ? atoi (buf) : 0;
       CHECK_FOR_ERROR (((pnminfo->maxval<=0) || (pnminfo->maxval>65535)),
                        pnminfo->jmpbuf, _("Unsupported maximum value."));
+      if (pnminfo->maxval < 256)
+        {
+          precision = GIMP_PRECISION_U8_GAMMA;
+        }
+      else
+        {
+          precision = GIMP_PRECISION_U16_GAMMA;
+        }
+    }
+  else
+    {
+      precision = GIMP_PRECISION_U8_GAMMA;
     }
 
   /* Create a new image of the proper size and associate the filename
@@ -663,8 +678,12 @@ load_image (GFile   *file,
   image_ID = gimp_image_new_with_precision
     (pnminfo->xres, pnminfo->yres,
      (pnminfo->np >= 3) ? GIMP_RGB : GIMP_GRAY,
+<<<<<<< HEAD
      (pnminfo->float_format ?
       GIMP_PRECISION_FLOAT_GAMMA : GIMP_PRECISION_U8_GAMMA));
+=======
+     precision);
+>>>>>>> upstream/master
 
   gimp_image_set_filename (image_ID, g_file_get_uri (file));
 
@@ -694,7 +713,9 @@ pnm_load_ascii (PNMScanner *scan,
                 PNMInfo    *info,
                 GeglBuffer *buffer)
 {
+  gint      bpc;
   guchar   *data, *d;
+  gushort  *s;
   gint      x, y, i, b;
   gint      start, end, scanlines;
   gint      np;
@@ -702,8 +723,14 @@ pnm_load_ascii (PNMScanner *scan,
   gboolean  aborted = FALSE;
 
   np = (info->np) ? (info->np) : 1;
-  /* No overflow as long as gimp_tile_height() < 2730 = 2^(31 - 18) / 3 */
-  data = g_new (guchar, gimp_tile_height () * info->xres * np);
+
+  if (info->maxval > 255)
+    bpc = 2;
+  else
+    bpc = 1;
+
+  /* No overflow as long as gimp_tile_height() < 1365 = 2^(31 - 18) / 6 */
+  data = g_new (guchar, gimp_tile_height () * info->xres * np * bpc);
 
   /* Buffer reads to increase performance */
   pnmscanner_createbuffer (scan, 4096);
@@ -717,6 +744,7 @@ pnm_load_ascii (PNMScanner *scan,
       scanlines = end - start;
 
       d = data;
+      s = (gushort *)d;
 
       for (i = 0; i < scanlines; i++)
         for (x = 0; x < info->xres; x++)
@@ -745,27 +773,35 @@ pnm_load_ascii (PNMScanner *scan,
                 else
                   pnmscanner_getsmalltoken (scan, buf);
 
-                switch (info->maxval)
+                if (info->maxval == 1)
                   {
-                  case 255:
-                    d[b] = g_ascii_isdigit (*buf) ? atoi (buf) : 0;
-                    break;
-
-                  case 1:
                     if (info->np)
                       d[b] = (*buf == '0') ? 0x00 : 0xff;
                     else
                       d[b] = (*buf == '0') ? 0xff : 0x00; /* invert for PBM */
-                    break;
-
-                  default:
+                  }
+                else if (bpc > 1)
+                  {
+                    s[b] = (65535.0 * (((gdouble) (g_ascii_isdigit (*buf) ?
+                                                   atoi (buf) : 0))
+                                       / (gdouble) (info->maxval)));
+                  }
+                else
+                  {
                     d[b] = (255.0 * (((gdouble) (g_ascii_isdigit (*buf) ?
                                                  atoi (buf) : 0))
                                      / (gdouble) (info->maxval)));
                   }
               }
 
-            d += np;
+            if (bpc > 1)
+              {
+                s += np;
+              }
+            else
+              {
+                d += np;
+              }
           }
 
       gegl_buffer_set (buffer, GEGL_RECTANGLE (0, y, info->xres, scanlines), 0,
@@ -786,7 +822,8 @@ pnm_load_raw (PNMScanner *scan,
 {
   GInputStream *input;
   gint          bpc;
-  guchar       *data, *bdata, *d, *b;
+  guchar       *data, *d;
+  gushort      *s;
   gint          x, y, i;
   gint          start, end, scanlines;
 
@@ -795,11 +832,8 @@ pnm_load_raw (PNMScanner *scan,
   else
     bpc = 1;
 
+  /* No overflow as long as gimp_tile_height() < 1365 = 2^(31 - 18) / 6 */
   data = g_new (guchar, gimp_tile_height () * info->xres * info->np * bpc);
-
-  bdata = NULL;
-  if (bpc > 1)
-    bdata = g_new (guchar, gimp_tile_height () * info->xres * info->np);
 
   input = pnmscanner_input (scan);
 
@@ -810,7 +844,7 @@ pnm_load_raw (PNMScanner *scan,
       end = MIN (end, info->yres);
       scanlines = end - start;
       d = data;
-      b = bdata;
+      s = (gushort *)data;
 
       for (i = 0; i < scanlines; i++)
         {
@@ -838,10 +872,10 @@ pnm_load_raw (PNMScanner *scan,
                   v = *d++ << 8;
                   v += *d++;
 
-                  b[x] = MIN (v, info->maxval); /* guard against overflow */
-                  b[x] = 255.0 * (gdouble) v / (gdouble) info->maxval;
+                  s[x] = MIN (v, info->maxval); /* guard against overflow */
+                  s[x] = 65535.0 * (gdouble) v / (gdouble) info->maxval;
                 }
-              b += info->xres * info->np;
+              s += info->xres * info->np;
             }
           else
             {
@@ -858,24 +892,14 @@ pnm_load_raw (PNMScanner *scan,
             }
         }
 
-      if (bpc > 1)
-        {
-          gegl_buffer_set (buffer,
-                           GEGL_RECTANGLE (0, y, info->xres, scanlines), 0,
-                           NULL, bdata, GEGL_AUTO_ROWSTRIDE);
-        }
-      else
-        {
-          gegl_buffer_set (buffer,
-                           GEGL_RECTANGLE (0, y, info->xres, scanlines), 0,
-                           NULL, data, GEGL_AUTO_ROWSTRIDE);
-        }
+      gegl_buffer_set (buffer,
+                       GEGL_RECTANGLE (0, y, info->xres, scanlines), 0,
+                       NULL, data, GEGL_AUTO_ROWSTRIDE);
 
       gimp_progress_update ((double) y / (double) info->yres);
     }
 
   g_free (data);
-  g_free (bdata);
 
   gimp_progress_update (1.0);
 }
@@ -1028,7 +1052,7 @@ output_write (GOutputStream *output,
 /* Writes out mono raw rows */
 static gboolean
 pnmsaverow_raw_pbm (PNMRowInfo    *ri,
-                    const guchar  *data,
+                    guchar        *data,
                     GError       **error)
 {
   gint    b, p  = 0;
@@ -1059,7 +1083,7 @@ pnmsaverow_raw_pbm (PNMRowInfo    *ri,
 /* Writes out mono ascii rows */
 static gboolean
 pnmsaverow_ascii_pbm (PNMRowInfo    *ri,
-                      const guchar  *data,
+                      guchar        *data,
                       GError       **error)
 {
   static gint  line_len = 0;  /* ascii pbm lines must be <= 70 chars long */
@@ -1094,10 +1118,20 @@ pnmsaverow_ascii_pbm (PNMRowInfo    *ri,
 /* Writes out RGB and grayscale raw rows */
 static gboolean
 pnmsaverow_raw (PNMRowInfo    *ri,
-                const guchar  *data,
+                guchar        *data,
                 GError       **error)
 {
-  return output_write (ri->output, data, ri->xres * ri->np, error);
+  gint i;
+  if (ri->bpc == 2)
+    {
+      gushort *d = (gushort *)data;
+      for  (i = 0; i < ri->xres * ri->np; i++)
+        {
+          *d = g_htons(*d);
+          d++;
+        }
+    }
+  return output_write (ri->output, data, ri->xres * ri->np * ri->bpc, error);
 }
 
 /* Writes out RGB and grayscale float rows */
@@ -1114,7 +1148,7 @@ pnmsaverow_float (PNMRowInfo    *ri,
 /* Writes out indexed raw rows 
 static gboolean
 pnmsaverow_raw_indexed (PNMRowInfo    *ri,
-                        const guchar  *data,
+                        guchar        *data,
                         GError       **error)
 {
   gint   i;
@@ -1133,26 +1167,34 @@ pnmsaverow_raw_indexed (PNMRowInfo    *ri,
 /* Writes out RGB and grayscale ascii rows */
 static gboolean
 pnmsaverow_ascii (PNMRowInfo    *ri,
-                  const guchar  *data,
+                  guchar        *data,
                   GError       **error)
 {
   gint   i;
   gchar *rbcur = ri->rowbuf;
+  gushort *sdata = (gushort *)data;
 
   for (i = 0; i < ri->xres * ri->np; i++)
     {
-      sprintf ((gchar *) rbcur,"%d\n", 0xff & *(data++));
+      if (ri->bpc == 2)
+        {
+          sprintf ((gchar *) rbcur,"%d\n", 0xffff & *(sdata++));
+        }
+      else
+        {
+          sprintf ((gchar *) rbcur,"%d\n", 0xff & *(data++));
+        }
       rbcur += strlen (rbcur);
     }
 
-  return output_write (ri->output, ri->rowbuf, strlen ((gchar *) ri->rowbuf),
+  return output_write (ri->output, ri->rowbuf, rbcur - ri->rowbuf,
                        error);
 }
 
 /* Writes out RGB and grayscale ascii rows */
 /*static gboolean
 pnmsaverow_ascii_indexed (PNMRowInfo    *ri,
-                          const guchar  *data,
+                          guchar        *data,
                           GError       **error)
 {
   gint   i;
@@ -1222,6 +1264,17 @@ save_image (GFile     *file,
 
   drawable_type = gimp_drawable_type (drawable_ID);
 
+  switch (gimp_image_get_precision (image_ID))
+    {
+    case GIMP_PRECISION_U8_LINEAR:
+    case GIMP_PRECISION_U8_GAMMA:
+      rowinfo.bpc = 1;
+      break;
+    default:
+      rowinfo.bpc = 2;
+      break;
+    }
+
   /* write out magic number */
   if (!float_format && !psvals.raw)
     {
@@ -1239,17 +1292,33 @@ save_image (GFile     *file,
             {
             case GIMP_GRAY_IMAGE:
               header_string = "P2\n";
-              format = babl_format ("Y u8");
+              if (rowinfo.bpc == 1)
+                {
+                  format = babl_format ("Y' u8");
+                  rowbufsize = xres * 4;
+                }
+              else
+                {
+                  format = babl_format ("Y' u16");
+                  rowbufsize = xres * 6;
+                }
               np = 1;
-              rowbufsize = xres * 4;
               saverow = pnmsaverow_ascii;
               break;
 
             case GIMP_RGB_IMAGE:
               header_string = "P3\n";
-              format = babl_format ("RGB u8");
+              if (rowinfo.bpc == 1)
+                {
+                  format = babl_format ("R'G'B' u8");
+                  rowbufsize = xres * 12;
+                }
+              else
+                {
+                  format = babl_format ("R'G'B' u16");
+                  rowbufsize = xres * 18;
+                }
               np = 3;
-              rowbufsize = xres * 12;
               saverow = pnmsaverow_ascii;
               break;
 
@@ -1283,17 +1352,33 @@ save_image (GFile     *file,
             {
             case GIMP_GRAY_IMAGE:
               header_string = "P5\n";
-              format = babl_format ("Y u8");
+              if (rowinfo.bpc == 1)
+                {
+                  format = babl_format ("Y' u8");
+                  rowbufsize = xres;
+                }
+              else
+                {
+                  format = babl_format ("Y' u16");
+                  rowbufsize = xres * 2;
+                }
               np = 1;
-              rowbufsize = xres;
               saverow = pnmsaverow_raw;
               break;
 
             case GIMP_RGB_IMAGE:
               header_string = "P6\n";
-              format = babl_format ("RGB u8");
+              if (rowinfo.bpc == 1)
+                {
+                  format = babl_format ("R'G'B' u8");
+                  rowbufsize = xres * 3;
+                }
+              else
+                {
+                  format = babl_format ("R'G'B' u16");
+                  rowbufsize = xres * 6;
+                }
               np = 3;
-              rowbufsize = xres * 3;
               saverow = pnmsaverow_raw;
               break;
 
@@ -1402,7 +1487,8 @@ save_image (GFile     *file,
   if (pbm)
     g_snprintf (buf, sizeof (buf), "%d %d\n", xres, yres);
   else if (!float_format)
-    g_snprintf (buf, sizeof (buf), "%d %d\n255\n", xres, yres);
+    g_snprintf (buf, sizeof (buf), "%d %d\n%d\n", xres, yres,
+                rowinfo.bpc == 1 ? 255 : 65535);
   else
     g_snprintf (buf, sizeof (buf), "%d %d\n%f\n", xres, yres,
                 G_BYTE_ORDER == G_BIG_ENDIAN ? 1.0f : -1.0f);
@@ -1453,7 +1539,7 @@ save_image (GFile     *file,
               goto out;
             }
 
-          d += xres * (np ? np : 1);
+          d += xres * (np ? np : 1) * rowinfo.bpc;
 
           if (ypos % 32 == 0)
             gimp_progress_update ((double) ypos / (double) yres);

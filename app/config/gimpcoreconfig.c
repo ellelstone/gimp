@@ -108,6 +108,7 @@ enum
   PROP_QUICK_MASK_COLOR,
   PROP_IMPORT_PROMOTE_FLOAT,
   PROP_IMPORT_PROMOTE_DITHER,
+  PROP_IMPORT_ADD_ALPHA,
 
   /* ignored, only for backward compatibility: */
   PROP_INSTALL_COLORMAP,
@@ -635,6 +636,15 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             GIMP_PARAM_STATIC_STRINGS);
 
   /*  only for backward compatibility:  
+  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_IMPORT_ADD_ALPHA,
+                            "import-add-alpha",
+                            "Import add alpha",
+                            IMPORT_ADD_ALPHA_BLURB,
+                            FALSE,
+                            GIMP_PARAM_STATIC_STRINGS);
+
+  /*  only for backward compatibility:  */
+
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
                             "install-colormap",
                             NULL, NULL,
@@ -924,6 +934,9 @@ gimp_core_config_set_property (GObject      *object,
     case PROP_IMPORT_PROMOTE_DITHER:
       core_config->import_promote_dither = g_value_get_boolean (value);
       break;
+    case PROP_IMPORT_ADD_ALPHA:
+      core_config->import_add_alpha = g_value_get_boolean (value);
+      break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -1099,6 +1112,9 @@ gimp_core_config_get_property (GObject    *object,
       break;
     case PROP_IMPORT_PROMOTE_DITHER:
       g_value_set_boolean (value, core_config->import_promote_dither);
+      break;
+    case PROP_IMPORT_ADD_ALPHA:
+      g_value_set_boolean (value, core_config->import_add_alpha);
       break;
 
     default:

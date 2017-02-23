@@ -24,11 +24,8 @@
 #include <gegl.h>
 
 #include "libgimpbase/gimpbase.h"
-#include "libgimpconfig/gimpconfig.h"
 
 #include "core/core-types.h"
-
-#include "config/gimpcoreconfig.h"
 
 #include "gegl/gimp-babl.h"
 
@@ -36,8 +33,6 @@
 #include "core/gimpcontext.h"
 #include "core/gimpdocumentlist.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-color-profile.h"
-#include "core/gimpimage-convert-precision.h"
 #include "core/gimpimage-merge.h"
 #include "core/gimpimage-undo.h"
 #include "core/gimpimagefile.h"
@@ -50,6 +45,7 @@
 #include "plug-in/gimppluginmanager-file.h"
 #include "plug-in/gimppluginprocedure.h"
 
+#include "file-import.h"
 #include "file-open.h"
 #include "file-remote.h"
 #include "gimp-file.h"
@@ -307,11 +303,9 @@ file_open_image (Gimp                *gimp,
 
       if (file_open_file_proc_is_import (file_proc))
         {
-          /* Remember the import source */
-          gimp_image_set_imported_file (image, file);
-
-          /* We shall treat this file as an Untitled file */
-          gimp_image_set_file (image, NULL);
+          file_import_image (image, context, file,
+                             run_mode == GIMP_RUN_INTERACTIVE,
+                             progress);
         }
 
       /* Enables undo again */

@@ -91,6 +91,8 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LCH_COLOR, "GIMP_LAYER_MODE_LCH_COLOR", "lch-color" },
     { GIMP_LAYER_MODE_LCH_LIGHTNESS, "GIMP_LAYER_MODE_LCH_LIGHTNESS", "lch-lightness" },
     { GIMP_LAYER_MODE_LUMINANCE, "GIMP_LAYER_MODE_LUMINANCE", "luminance" },
+    { GIMP_LAYER_MODE_NORMAL_LINEAR, "GIMP_LAYER_MODE_NORMAL_LINEAR", "normal-linear" },
+    { GIMP_LAYER_MODE_BEHIND, "GIMP_LAYER_MODE_BEHIND", "behind" },
     { GIMP_LAYER_MODE_MULTIPLY, "GIMP_LAYER_MODE_MULTIPLY", "multiply" },
     { GIMP_LAYER_MODE_SCREEN, "GIMP_LAYER_MODE_SCREEN", "screen" },
     { GIMP_LAYER_MODE_DIFFERENCE, "GIMP_LAYER_MODE_DIFFERENCE", "difference" },
@@ -98,6 +100,10 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_SUBTRACT, "GIMP_LAYER_MODE_SUBTRACT", "subtract" },
     { GIMP_LAYER_MODE_DARKEN_ONLY, "GIMP_LAYER_MODE_DARKEN_ONLY", "darken-only" },
     { GIMP_LAYER_MODE_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LIGHTEN_ONLY", "lighten-only" },
+    { GIMP_LAYER_MODE_HSV_HUE, "GIMP_LAYER_MODE_HSV_HUE", "hsv-hue" },
+    { GIMP_LAYER_MODE_HSV_SATURATION, "GIMP_LAYER_MODE_HSV_SATURATION", "hsv-saturation" },
+    { GIMP_LAYER_MODE_HSV_COLOR, "GIMP_LAYER_MODE_HSV_COLOR", "hsv-color" },
+    { GIMP_LAYER_MODE_HSV_VALUE, "GIMP_LAYER_MODE_HSV_VALUE", "hsv-value" },
     { GIMP_LAYER_MODE_DIVIDE, "GIMP_LAYER_MODE_DIVIDE", "divide" },
     { GIMP_LAYER_MODE_DODGE, "GIMP_LAYER_MODE_DODGE", "dodge" },
     { GIMP_LAYER_MODE_BURN, "GIMP_LAYER_MODE_BURN", "burn" },
@@ -113,6 +119,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LINEAR_BURN, "GIMP_LAYER_MODE_LINEAR_BURN", "linear-burn" },
     { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, "GIMP_LAYER_MODE_LUMA_DARKEN_ONLY", "luma-darken-only" },
     { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY", "luma-lighten-only" },
+    { GIMP_LAYER_MODE_LUMINANCE, "GIMP_LAYER_MODE_LUMINANCE", "luminance" },
     { GIMP_LAYER_MODE_ERASE, "GIMP_LAYER_MODE_ERASE", "erase" },
     { GIMP_LAYER_MODE_REPLACE, "GIMP_LAYER_MODE_REPLACE", "replace" },
     { GIMP_LAYER_MODE_ANTI_ERASE, "GIMP_LAYER_MODE_ANTI_ERASE", "anti-erase" },
@@ -131,6 +138,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LCH_COLOR, NC_("layer-mode", "Color (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_LIGHTNESS, NC_("layer-mode", "Lightness (LCH)"), NULL },
     { GIMP_LAYER_MODE_LUMINANCE, NC_("layer-mode", "Luminance"), NULL },
+    { GIMP_LAYER_MODE_BEHIND, NC_("layer-mode", "Behind"), NULL },
     { GIMP_LAYER_MODE_MULTIPLY, NC_("layer-mode", "Multiply"), NULL },
     { GIMP_LAYER_MODE_SCREEN, NC_("layer-mode", "Screen"), NULL },
     { GIMP_LAYER_MODE_DIFFERENCE, NC_("layer-mode", "Difference"), NULL },
@@ -138,6 +146,10 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_SUBTRACT, NC_("layer-mode", "Subtract"), NULL },
     { GIMP_LAYER_MODE_DARKEN_ONLY, NC_("layer-mode", "Darken only"), NULL },
     { GIMP_LAYER_MODE_LIGHTEN_ONLY, NC_("layer-mode", "Lighten only"), NULL },
+    { GIMP_LAYER_MODE_HSV_HUE, NC_("layer-mode", "Hue (HSV)"), NULL },
+    { GIMP_LAYER_MODE_HSV_SATURATION, NC_("layer-mode", "Saturation (HSV)"), NULL },
+    { GIMP_LAYER_MODE_HSV_COLOR, NC_("layer-mode", "Color (HSV)"), NULL },
+    { GIMP_LAYER_MODE_HSV_VALUE, NC_("layer-mode", "Value (HSV)"), NULL },
     { GIMP_LAYER_MODE_DIVIDE, NC_("layer-mode", "Divide"), NULL },
     { GIMP_LAYER_MODE_DODGE, NC_("layer-mode", "Dodge"), NULL },
     { GIMP_LAYER_MODE_BURN, NC_("layer-mode", "Burn"), NULL },
@@ -151,8 +163,9 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_HARD_MIX, NC_("layer-mode", "Hard mix"), NULL },
     { GIMP_LAYER_MODE_EXCLUSION, NC_("layer-mode", "Exclusion"), NULL },
     { GIMP_LAYER_MODE_LINEAR_BURN, NC_("layer-mode", "Linear burn"), NULL },
-    { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, NC_("layer-mode", "Lum darken only"), NULL },
-    { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, NC_("layer-mode", "Lum lighten only"), NULL },
+    { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, NC_("layer-mode", "Luma/Luminance darken only"), NULL },
+    { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, NC_("layer-mode", "Luma/Luminance lighten only"), NULL },
+    { GIMP_LAYER_MODE_LUMINANCE, NC_("layer-mode", "Luminance"), NULL },
     { GIMP_LAYER_MODE_ERASE, NC_("layer-mode", "Erase"), NULL },
     { GIMP_LAYER_MODE_REPLACE, NC_("layer-mode", "Replace"), NULL },
     { GIMP_LAYER_MODE_ANTI_ERASE, NC_("layer-mode", "Anti erase"), NULL },
@@ -176,13 +189,15 @@ gimp_layer_mode_group_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, "GIMP_LAYER_MODE_GROUP_PERCEPTUAL", "perceptual" },
+    { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", "default" },
+    { GIMP_LAYER_MODE_GROUP_LEGACY, "GIMP_LAYER_MODE_GROUP_LEGACY", "legacy" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_LAYER_MODE_GROUP_PERCEPTUAL, NC_("layer-mode-group", "Perceptual"), NULL },
+    { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
+    { GIMP_LAYER_MODE_GROUP_LEGACY, NC_("layer-mode-group", "Legacy"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -193,6 +208,41 @@ gimp_layer_mode_group_get_type (void)
       type = g_enum_register_static ("GimpLayerModeGroup", values);
       gimp_type_set_translation_context (type, "layer-mode-group");
       gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_layer_mode_context_get_type (void)
+{
+  static const GFlagsValue values[] =
+  {
+    { GIMP_LAYER_MODE_CONTEXT_LAYER, "GIMP_LAYER_MODE_CONTEXT_LAYER", "layer" },
+    { GIMP_LAYER_MODE_CONTEXT_GROUP, "GIMP_LAYER_MODE_CONTEXT_GROUP", "group" },
+    { GIMP_LAYER_MODE_CONTEXT_PAINT, "GIMP_LAYER_MODE_CONTEXT_PAINT", "paint" },
+    { GIMP_LAYER_MODE_CONTEXT_FADE, "GIMP_LAYER_MODE_CONTEXT_FADE", "fade" },
+    { GIMP_LAYER_MODE_CONTEXT_ALL, "GIMP_LAYER_MODE_CONTEXT_ALL", "all" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpFlagsDesc descs[] =
+  {
+    { GIMP_LAYER_MODE_CONTEXT_LAYER, "GIMP_LAYER_MODE_CONTEXT_LAYER", NULL },
+    { GIMP_LAYER_MODE_CONTEXT_GROUP, "GIMP_LAYER_MODE_CONTEXT_GROUP", NULL },
+    { GIMP_LAYER_MODE_CONTEXT_PAINT, "GIMP_LAYER_MODE_CONTEXT_PAINT", NULL },
+    { GIMP_LAYER_MODE_CONTEXT_FADE, "GIMP_LAYER_MODE_CONTEXT_FADE", NULL },
+    { GIMP_LAYER_MODE_CONTEXT_ALL, "GIMP_LAYER_MODE_CONTEXT_ALL", NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_flags_register_static ("GimpLayerModeContext", values);
+      gimp_type_set_translation_context (type, "layer-mode-context");
+      gimp_flags_set_value_descriptions (type, descs);
     }
 
   return type;
