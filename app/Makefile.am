@@ -133,8 +133,7 @@ AM_LDFLAGS = \
 	-Wl,-u,$(SYMPREFIX)xcf_init				\
 	-Wl,-u,$(SYMPREFIX)internal_procs_init			\
 	-Wl,-u,$(SYMPREFIX)gimp_plug_in_manager_restore		\
-	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec		\
-	-Wl,-u,$(SYMPREFIX)gimp_layer_mode_is_legacy
+	-Wl,-u,$(SYMPREFIX)gimp_pdb_compat_param_spec
 
 gimpconsoleldadd = \
 	xcf/libappxcf.a						\
@@ -147,7 +146,6 @@ gimpconsoleldadd = \
 	text/libapptext.a					\
 	paint/libapppaint.a					\
 	operations/layer-modes/libapplayermodes.a		\
-	operations/layer-modes-legacy/libapplayermodeslegacy.a	\
 	operations/libappoperations.a				\
 	gegl/libappgegl.a					\
 	config/libappconfig.a					\

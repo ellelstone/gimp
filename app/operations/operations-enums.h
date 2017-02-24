@@ -56,26 +56,6 @@ typedef enum
   /*  Modes that exist since ancient times  */
   GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
   GIMP_LAYER_MODE_DISSOLVE,              /*< desc="Dissolve"                 >*/
-  GIMP_LAYER_MODE_BEHIND_LEGACY,         /*< desc="Behind (legacy)"          >*/
-  GIMP_LAYER_MODE_MULTIPLY_LEGACY,       /*< desc="Multiply (legacy)"        >*/
-  GIMP_LAYER_MODE_SCREEN_LEGACY,         /*< desc="Screen (legacy)"          >*/
-  GIMP_LAYER_MODE_OVERLAY_LEGACY,        /*< desc="Old broken Overlay"       >*/
-  GIMP_LAYER_MODE_DIFFERENCE_LEGACY,     /*< desc="Difference (legacy)"      >*/
-  GIMP_LAYER_MODE_ADDITION_LEGACY,       /*< desc="Addition (legacy)"        >*/
-  GIMP_LAYER_MODE_SUBTRACT_LEGACY,       /*< desc="Subtract (legacy)"        >*/
-  GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,    /*< desc="Darken only (legacy)"     >*/
-  GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,   /*< desc="Lighten only (legacy)"    >*/
-  GIMP_LAYER_MODE_HSV_HUE_LEGACY,        /*< desc="Hue (HSV) (legacy)"       >*/
-  GIMP_LAYER_MODE_HSV_SATURATION_LEGACY, /*< desc="Saturation (HSV) (legacy)">*/
-  GIMP_LAYER_MODE_HSV_COLOR_LEGACY,      /*< desc="Color (HSV) (legacy)"     >*/
-  GIMP_LAYER_MODE_HSV_VALUE_LEGACY,      /*< desc="Value (HSV) (legacy)"     >*/
-  GIMP_LAYER_MODE_DIVIDE_LEGACY,         /*< desc="Divide (legacy)"          >*/
-  GIMP_LAYER_MODE_DODGE_LEGACY,          /*< desc="Dodge (legacy)"           >*/
-  GIMP_LAYER_MODE_BURN_LEGACY,           /*< desc="Burn (legacy)"            >*/
-  GIMP_LAYER_MODE_HARDLIGHT_LEGACY,      /*< desc="Hard light (legacy)"      >*/
-  GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,      /*< desc="Soft light (legacy)"      >*/
-  GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,  /*< desc="Grain extract (legacy)"   >*/
-  GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,    /*< desc="Grain merge (legacy)"     >*/
   GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
 
   /*  Since 2.8  */
@@ -86,7 +66,6 @@ typedef enum
   GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
 
   /*  Since 2.10  */
-  GIMP_LAYER_MODE_NORMAL_LINEAR,         /*< desc="Normal (linear)"          >*/
   GIMP_LAYER_MODE_BEHIND,                /*< desc="Behind"                   >*/
   GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
   GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/

@@ -1887,7 +1887,6 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_ADDITION:       return blendfun_addition;
     case GIMP_LAYER_MODE_SUBTRACT:       return blendfun_subtract;
     case GIMP_LAYER_MODE_MULTIPLY:       return blendfun_multiply;
-    case GIMP_LAYER_MODE_NORMAL_LINEAR:
     case GIMP_LAYER_MODE_NORMAL:         return blendfun_normal;
     case GIMP_LAYER_MODE_BURN:           return blendfun_burn;
     case GIMP_LAYER_MODE_GRAIN_MERGE:    return blendfun_grain_merge;
@@ -1919,27 +1918,7 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_LINEAR_BURN:    return blendfun_linear_burn;
 
     case GIMP_LAYER_MODE_DISSOLVE:
-    case GIMP_LAYER_MODE_BEHIND_LEGACY:
     case GIMP_LAYER_MODE_BEHIND:
-    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
-    case GIMP_LAYER_MODE_SCREEN_LEGACY:
-    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
-    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
-    case GIMP_LAYER_MODE_ADDITION_LEGACY:
-    case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
-    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
-    case GIMP_LAYER_MODE_HSV_COLOR_LEGACY:
-    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
-    case GIMP_LAYER_MODE_DIVIDE_LEGACY:
-    case GIMP_LAYER_MODE_DODGE_LEGACY:
-    case GIMP_LAYER_MODE_BURN_LEGACY:
-    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
     case GIMP_LAYER_MODE_COLOR_ERASE:
     case GIMP_LAYER_MODE_ERASE:
     case GIMP_LAYER_MODE_REPLACE:
