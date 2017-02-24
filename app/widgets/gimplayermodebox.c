@@ -155,7 +155,7 @@ gimp_layer_mode_box_constructed (GObject *object)
   gtk_widget_show (group_combo);
 
   gimp_help_set_help_data (group_combo,
-                           _("Nonfunctional UI element - please ignore!"),
+                           _("Switch to another group of modes"),
                            NULL);
 
   layout = GTK_CELL_LAYOUT (gtk_bin_get_child (GTK_BIN (group_combo)));
