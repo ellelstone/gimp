@@ -54,11 +54,11 @@ static const GimpActionEntry layers_actions[] =
 
   { "layers-blend-space-menu", NULL,
     NC_("layers-action", "Blend Space"), NULL, NULL, NULL,
-    NULL },/**/
+    NULL },
 
   { "layers-composite-space-menu", NULL,
     NC_("layers-action", "Composite Space"), NULL, NULL, NULL,
-    NULL },/**/
+    NULL },
 
   { "layers-composite-mode-menu", NULL,
     NC_("layers-action", "Composite Mode"), NULL, NULL, NULL,

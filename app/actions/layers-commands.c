@@ -84,17 +84,6 @@
 #include "gimp-intl.h"
 
 
-static const GimpLayerMode layer_modes[] =
-{
-  GIMP_LAYER_MODE_NORMAL,
-  GIMP_LAYER_MODE_DISSOLVE,
-  GIMP_LAYER_MODE_LCH_HUE,
-  GIMP_LAYER_MODE_LCH_CHROMA,
-  GIMP_LAYER_MODE_LCH_COLOR,
-  GIMP_LAYER_MODE_LCH_LIGHTNESS
-};
-
-
 /*  local function prototypes  */
 
 static void   layers_new_callback             (GtkWidget             *dialog,

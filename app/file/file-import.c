@@ -57,16 +57,16 @@ file_import_image (GimpImage    *image,
 
   config = image->gimp->config;
 
-  if (interactive && gimp_image_get_base_type (image) != GIMP_INDEXED)
+  if (interactive /*&& gimp_image_get_base_type (image) != GIMP_INDEXED*/)
     {
       if (config->import_promote_float)
         {
           GimpPrecision old_precision = gimp_image_get_precision (image);
 
-          if (old_precision != GIMP_PRECISION_FLOAT_LINEAR)
+          if (old_precision != GIMP_PRECISION_FLOAT_GAMMA)
             {
               gimp_image_convert_precision (image,
-                                            GIMP_PRECISION_FLOAT_LINEAR,
+                                            GIMP_PRECISION_FLOAT_GAMMA,
                                             GEGL_DITHER_NONE,
                                             GEGL_DITHER_NONE,
                                             GEGL_DITHER_NONE,

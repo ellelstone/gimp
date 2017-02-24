@@ -1294,12 +1294,12 @@ save_image (GFile     *file,
               header_string = "P2\n";
               if (rowinfo.bpc == 1)
                 {
-                  format = babl_format ("Y' u8");
+                  format = babl_format ("Y u8");
                   rowbufsize = xres * 4;
                 }
               else
                 {
-                  format = babl_format ("Y' u16");
+                  format = babl_format ("Y u16");
                   rowbufsize = xres * 6;
                 }
               np = 1;
@@ -1310,12 +1310,12 @@ save_image (GFile     *file,
               header_string = "P3\n";
               if (rowinfo.bpc == 1)
                 {
-                  format = babl_format ("R'G'B' u8");
+                  format = babl_format ("RGB u8");
                   rowbufsize = xres * 12;
                 }
               else
                 {
-                  format = babl_format ("R'G'B' u16");
+                  format = babl_format ("RGB u16");
                   rowbufsize = xres * 18;
                 }
               np = 3;
@@ -1354,12 +1354,12 @@ save_image (GFile     *file,
               header_string = "P5\n";
               if (rowinfo.bpc == 1)
                 {
-                  format = babl_format ("Y' u8");
+                  format = babl_format ("Y u8");
                   rowbufsize = xres;
                 }
               else
                 {
-                  format = babl_format ("Y' u16");
+                  format = babl_format ("Y u16");
                   rowbufsize = xres * 2;
                 }
               np = 1;
@@ -1370,12 +1370,12 @@ save_image (GFile     *file,
               header_string = "P6\n";
               if (rowinfo.bpc == 1)
                 {
-                  format = babl_format ("R'G'B' u8");
+                  format = babl_format ("RGB u8");
                   rowbufsize = xres * 3;
                 }
               else
                 {
-                  format = babl_format ("R'G'B' u16");
+                  format = babl_format ("RGB u16");
                   rowbufsize = xres * 6;
                 }
               np = 3;

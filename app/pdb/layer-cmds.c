@@ -724,8 +724,8 @@ layer_add_mask_invoker (GimpProcedure         *procedure,
     {
       if (gimp_pdb_item_is_floating (GIMP_ITEM (mask),
                                      gimp_item_get_image (GIMP_ITEM (layer)),
-                                     error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error))
+                                     error))/* &&
+          gimp_pdb_item_is_not_group (GIMP_ITEM (layer), error)) */
         success = (gimp_layer_add_mask (layer, mask, TRUE, error) == mask);
       else
         success = FALSE;
@@ -1129,9 +1129,6 @@ layer_set_mode_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-        mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
-
       if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)) == NULL)
         {
           if (! (gimp_layer_mode_get_context (mode) & GIMP_LAYER_MODE_CONTEXT_LAYER))
@@ -1534,7 +1531,7 @@ register_layer_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-layer-add-alpha",
                                      "Add an alpha channel to the layer if it doesn't already have one.",
-                                     "This procedure adds an additional component to the specified layer if it does not already possess an alpha channel. An alpha channel makes it possible to clear and erase to transparency, instead of the background color. This transforms layers of type RGB to RGBA, GRAY to GRAYA, and INDEXED to INDEXEDA.",
+                                     "This procedure adds an additional component to the specified layer if it does not already possess an alpha channel. An alpha channel makes it possible to clear and erase to transparency, instead of the background color. This transforms layers of type RGB to RGBA and GRAY to GRAYA.",
                                      "Spencer Kimball & Peter Mattis",
                                      "Spencer Kimball & Peter Mattis",
                                      "1995-1996",
@@ -1557,7 +1554,7 @@ register_layer_procs (GimpPDB *pdb)
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-layer-flatten",
                                      "Remove the alpha channel from the layer if it has one.",
-                                     "This procedure removes the alpha channel from a layer, blending all (partially) transparent pixels in the layer against the background color. This transforms layers of type RGBA to RGB, GRAYA to GRAY, and INDEXEDA to INDEXED.",
+                                     "This procedure removes the alpha channel from a layer, blending all (partially) transparent pixels in the layer against the background color. This transforms layers of type RGBA to RGB and GRAYA to GRAY.",
                                      "Michael Natterer <mitch@gimp.org>",
                                      "Michael Natterer",
                                      "2007",

@@ -806,12 +806,18 @@ gimp_filter_tool_options_notify (GimpTool         *tool,
       gimp_drawable_filter_set_region (filter_tool->filter,
                                        filter_options->region);
     }
-/* elle: remove gamma hack functions */ //else if (! strcmp (pspec->name, "gamma-hack") &&
-//           filter_tool->filter)
-//    {
-//      gimp_drawable_filter_set_gamma_hack (filter_tool->filter,
-//                                           FALSE /*filter_options->gamma_hack*/);
-//    }
+/*  else if (! strcmp (pspec->name, "color-managed") &&
+           filter_tool->filter)
+    {
+      gimp_drawable_filter_set_color_managed (filter_tool->filter,
+                                              filter_options->color_managed);
+    }
+  else if (! strcmp (pspec->name, "gamma-hack") &&
+           filter_tool->filter)
+    {
+      gimp_drawable_filter_set_gamma_hack (filter_tool->filter,
+                                           filter_options->gamma_hack);
+    }*/
 }
 
 static gboolean
@@ -991,10 +997,10 @@ gimp_filter_tool_create_filter (GimpFilterTool *filter_tool)
 
   gimp_drawable_filter_set_region        (filter_tool->filter,
                                           options->region);
-  gimp_drawable_filter_set_color_managed (filter_tool->filter,
-                                          options->color_managed);
-  gimp_drawable_filter_set_gamma_hack    (filter_tool->filter,
-                                          options->gamma_hack);
+//  gimp_drawable_filter_set_color_managed (filter_tool->filter,
+//                                          options->color_managed);
+//  gimp_drawable_filter_set_gamma_hack    (filter_tool->filter,
+//                                          options->gamma_hack);
 
   g_signal_connect (filter_tool->filter, "flush",
                     G_CALLBACK (gimp_filter_tool_flush),

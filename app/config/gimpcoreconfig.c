@@ -635,7 +635,6 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             TRUE,
                             GIMP_PARAM_STATIC_STRINGS);
 
-  /*  only for backward compatibility:  
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_IMPORT_ADD_ALPHA,
                             "import-add-alpha",
                             "Import add alpha",
@@ -643,8 +642,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             FALSE,
                             GIMP_PARAM_STATIC_STRINGS);
 
-  /*  only for backward compatibility:  */
-
+  /*  only for backward compatibility:  
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
                             "install-colormap",
                             NULL, NULL,

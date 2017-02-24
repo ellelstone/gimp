@@ -49,6 +49,7 @@
 #include "gimpidtable.h"
 #include "gimpimage.h"
 #include "gimpimage-color-profile.h"
+//#include "gimpimage-colormap.h"
 #include "gimpimage-guides.h"
 #include "gimpimage-item-list.h"
 #include "gimpimage-metadata.h"
@@ -117,6 +118,7 @@ enum
   SAMPLE_POINT_MOVED,
   PARASITE_ATTACHED,
   PARASITE_DETACHED,
+//  COLORMAP_CHANGED,
   UNDO_EVENT,
   LAST_SIGNAL
 };
@@ -175,6 +177,8 @@ static void     gimp_image_real_size_changed_detailed
                                                   gint               previous_width,
                                                   gint               previous_height);
 static void     gimp_image_real_unit_changed     (GimpImage         *image);
+//static void     gimp_image_real_colormap_changed (GimpImage         *image,
+//                                                  gint               color_index);
 
 static const guint8 *
         gimp_image_color_managed_get_icc_profile (GimpColorManaged  *managed,
@@ -200,11 +204,11 @@ static gboolean     gimp_image_get_pixel_at      (GimpPickable      *pickable,
 static gdouble      gimp_image_get_opacity_at    (GimpPickable      *pickable,
                                                   gint               x,
                                                   gint               y);
-static void         gimp_image_pixel_to_rgb      (GimpPickable      *pickable,
+static void         gimp_image_pixel_to_rgb     (GimpPickable      *pickable,
                                                   const Babl        *format,
                                                   gpointer           pixel,
                                                   GimpRGB           *color);
-static void         gimp_image_rgb_to_pixel      (GimpPickable      *pickable,
+static void         gimp_image_rgb_to_pixel     (GimpPickable      *pickable,
                                                   const GimpRGB     *color,
                                                   const Babl        *format,
                                                   gpointer           pixel);
@@ -519,6 +523,16 @@ gimp_image_class_init (GimpImageClass *klass)
                   G_TYPE_NONE, 1,
                   G_TYPE_STRING);
 
+//  gimp_image_signals[COLORMAP_CHANGED] =
+//    g_signal_new ("colormap-changed",
+//                  G_TYPE_FROM_CLASS (klass),
+//                  G_SIGNAL_RUN_FIRST,
+//                  G_STRUCT_OFFSET (GimpImageClass, colormap_changed),
+//                  NULL, NULL,
+//                  gimp_marshal_VOID__INT,
+//                  G_TYPE_NONE, 1,
+//                  G_TYPE_INT);
+
   gimp_image_signals[UNDO_EVENT] =
     g_signal_new ("undo-event",
                   G_TYPE_FROM_CLASS (klass),
@@ -576,6 +590,7 @@ gimp_image_class_init (GimpImageClass *klass)
   klass->sample_point_moved           = NULL;
   klass->parasite_attached            = NULL;
   klass->parasite_detached            = NULL;
+//  klass->colormap_changed             = gimp_image_real_colormap_changed;
   klass->undo_event                   = NULL;
 
   g_object_class_install_property (object_class, PROP_GIMP,
@@ -684,8 +699,11 @@ gimp_image_init (GimpImage *image)
   private->base_type           = GIMP_RGB;
   private->precision           = GIMP_PRECISION_U8_GAMMA;
 
+//  private->colormap            = NULL;
 //  private->n_colors            = 0;
 //  private->palette             = NULL;
+//
+//  private->is_color_managed    = TRUE;
 
   private->metadata            = NULL;
 
@@ -812,6 +830,9 @@ gimp_image_constructed (GObject *object)
 
   private->quick_mask_color = config->quick_mask_color;
 
+//  if (private->base_type == GIMP_INDEXED)
+//    gimp_image_colormap_init (image);
+//
   selection = gimp_selection_new (image,
                                   gimp_image_get_width  (image),
                                   gimp_image_get_height (image));
@@ -960,6 +981,9 @@ gimp_image_dispose (GObject *object)
 {
   GimpImage        *image   = GIMP_IMAGE (object);
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+//
+//  if (private->colormap)
+//    gimp_image_colormap_dispose (image);
 
   gimp_image_undo_free (image);
 
@@ -1015,6 +1039,9 @@ gimp_image_finalize (GObject *object)
       private->visible_mask = NULL;
     }
 
+//  if (private->colormap)
+//    gimp_image_colormap_free (image);
+//
   if (private->color_profile)
     _gimp_image_free_color_profile (image);
 
@@ -1194,6 +1221,12 @@ gimp_image_get_memsize (GimpObject *object,
   GimpImage        *image   = GIMP_IMAGE (object);
   GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
   gint64            memsize = 0;
+//
+//  if (gimp_image_get_colormap (image))
+//    memsize += GIMP_IMAGE_COLORMAP_SIZE;
+//
+//  memsize += gimp_object_get_memsize (GIMP_OBJECT (private->palette),
+//                                      gui_size);
 
   memsize += gimp_object_get_memsize (GIMP_OBJECT (private->projection),
                                       gui_size);
@@ -1382,6 +1415,38 @@ gimp_image_real_unit_changed (GimpImage *image)
     }
 }
 
+/*static void
+gimp_image_real_colormap_changed (GimpImage *image,
+                                  gint       color_index)
+{
+  GimpImagePrivate *private = GIMP_IMAGE_GET_PRIVATE (image);
+
+  if (private->colormap && private->n_colors > 0)
+    {
+      babl_palette_set_palette (private->babl_palette_rgb,
+                                gimp_babl_format (GIMP_RGB,
+                                                  private->precision, FALSE),
+                                private->colormap,
+                                private->n_colors);
+      babl_palette_set_palette (private->babl_palette_rgba,
+                                gimp_babl_format (GIMP_RGB,
+                                                  private->precision, FALSE),
+                                private->colormap,
+                                private->n_colors);
+    }
+
+  if (gimp_image_get_base_type (image) == GIMP_INDEXED)
+    {
+      // A colormap alteration affects the whole image
+      gimp_image_invalidate (image,
+                             0, 0,
+                             gimp_image_get_width  (image),
+                             gimp_image_get_height (image));
+
+      gimp_item_stack_invalidate_previews (GIMP_ITEM_STACK (private->layers->container));
+    }
+}
+*/
 static const guint8 *
 gimp_image_color_managed_get_icc_profile (GimpColorManaged *managed,
                                           gsize            *len)
@@ -1395,7 +1460,8 @@ gimp_image_color_managed_get_color_profile (GimpColorManaged *managed)
   GimpImage        *image   = GIMP_IMAGE (managed);
   GimpColorProfile *profile = NULL;
 
-  profile = gimp_image_get_color_profile (image);
+//  if (gimp_image_get_is_color_managed (image))
+    profile = gimp_image_get_color_profile (image);
 
   if (! profile)
     profile = gimp_image_get_builtin_color_profile (image);//needs built-in RGB profile
@@ -1462,6 +1528,7 @@ gimp_image_get_proj_format (GimpProjectable *projectable)
   switch (private->base_type)
     {
     case GIMP_RGB:
+//    case GIMP_INDEXED:
       return gimp_image_get_format (image, GIMP_RGB,
                                     gimp_image_get_precision (image), TRUE);
 
@@ -1707,6 +1774,8 @@ gimp_image_new (Gimp              *gimp,
                 GimpPrecision      precision)
 {
   g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+//  g_return_val_if_fail (base_type != GIMP_INDEXED ||
+//                        precision == GIMP_PRECISION_U8_GAMMA, NULL);
 
   return g_object_new (GIMP_TYPE_IMAGE,
                        "gimp",      gimp,
@@ -1830,6 +1899,14 @@ gimp_image_get_format (GimpImage         *image,
     case GIMP_GRAY:
       return gimp_babl_format (base_type, precision, with_alpha);
 
+//    case GIMP_INDEXED:
+//      if (precision == GIMP_PRECISION_U8_GAMMA)
+//        {
+//          if (with_alpha)
+//            return gimp_image_colormap_get_rgba_format (image);
+//          else
+//            return gimp_image_colormap_get_rgb_format (image);
+//        }
     }
 
   g_return_val_if_reached (NULL);
@@ -2304,6 +2381,10 @@ gimp_image_get_xcf_version (GimpImage    *image,
   GList *list;
   gint   version = 0;  /* default to oldest */
 
+  /* need version 1 for colormaps 
+  if (gimp_image_get_colormap (image))
+    version = 1;*/
+
   layers = gimp_image_get_layer_list (image);
 
   for (list = layers; list; list = g_list_next (list))
@@ -2312,18 +2393,50 @@ gimp_image_get_xcf_version (GimpImage    *image,
 
       switch (gimp_layer_get_mode (layer))
         {
-          /* new layer modes not supported by gimp-1.2 */
-        case GIMP_LAYER_MODE_SOFTLIGHT:
-        case GIMP_LAYER_MODE_GRAIN_EXTRACT:
-        case GIMP_LAYER_MODE_GRAIN_MERGE:
-        case GIMP_LAYER_MODE_COLOR_ERASE:
           /*  Modes that exist since ancient times  */
         case GIMP_LAYER_MODE_NORMAL:
         case GIMP_LAYER_MODE_DISSOLVE:
+        case GIMP_LAYER_MODE_BEHIND_LEGACY:
+        case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
+        case GIMP_LAYER_MODE_SCREEN_LEGACY:
+        case GIMP_LAYER_MODE_OVERLAY_LEGACY:
+        case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
+        case GIMP_LAYER_MODE_ADDITION_LEGACY:
+        case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
+        case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
+        case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
+        case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
+        case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
+        case GIMP_LAYER_MODE_HSV_COLOR_LEGACY:
+        case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
+        case GIMP_LAYER_MODE_DIVIDE_LEGACY:
+        case GIMP_LAYER_MODE_DODGE_LEGACY:
+        case GIMP_LAYER_MODE_BURN_LEGACY:
+        case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
+          break;
+
+          /*  Since 2.8  */
+        case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
+        case GIMP_LAYER_MODE_COLOR_ERASE:
+          version = MAX (2, version);
+          break;
+
+          /*  Since 2.10  */
+        case GIMP_LAYER_MODE_OVERLAY:
+        case GIMP_LAYER_MODE_LCH_HUE:
+        case GIMP_LAYER_MODE_LCH_CHROMA:
+        case GIMP_LAYER_MODE_LCH_COLOR:
+        case GIMP_LAYER_MODE_LCH_LIGHTNESS:
+          version = MAX (9, version);
+          break;
+
+          /*  Since 2.10  */
+        case GIMP_LAYER_MODE_NORMAL_LINEAR:
         case GIMP_LAYER_MODE_BEHIND:
         case GIMP_LAYER_MODE_MULTIPLY:
         case GIMP_LAYER_MODE_SCREEN:
-        case GIMP_LAYER_MODE_OVERLAY:
         case GIMP_LAYER_MODE_DIFFERENCE:
         case GIMP_LAYER_MODE_ADDITION:
         case GIMP_LAYER_MODE_SUBTRACT:
@@ -2337,20 +2450,9 @@ gimp_image_get_xcf_version (GimpImage    *image,
         case GIMP_LAYER_MODE_DODGE:
         case GIMP_LAYER_MODE_BURN:
         case GIMP_LAYER_MODE_HARDLIGHT:
-          version = MAX (2, version);
-          break;
-
-          /*  Since 2.10  */
-        case GIMP_LAYER_MODE_OVERLAY:
-        case GIMP_LAYER_MODE_LCH_HUE:
-        case GIMP_LAYER_MODE_LCH_CHROMA:
-        case GIMP_LAYER_MODE_LCH_COLOR:
-        case GIMP_LAYER_MODE_LCH_LIGHTNESS:
-        case GIMP_LAYER_MODE_LUMINANCE:
-          version = MAX (9, version);
-          break;
-
-          /*  Since 2.10  */
+        case GIMP_LAYER_MODE_SOFTLIGHT:
+        case GIMP_LAYER_MODE_GRAIN_EXTRACT:
+        case GIMP_LAYER_MODE_GRAIN_MERGE:
         case GIMP_LAYER_MODE_VIVID_LIGHT:
         case GIMP_LAYER_MODE_PIN_LIGHT:
         case GIMP_LAYER_MODE_LINEAR_LIGHT:
@@ -3042,6 +3144,18 @@ gimp_image_size_changed_detailed (GimpImage *image,
                  previous_width,
                  previous_height);
 }
+/*
+void
+gimp_image_colormap_changed (GimpImage *image,
+                             gint       color_index)
+{
+  g_return_if_fail (GIMP_IS_IMAGE (image));
+  g_return_if_fail (color_index >= -1 &&
+                    color_index < GIMP_IMAGE_GET_PRIVATE (image)->n_colors);
+
+  g_signal_emit (image, gimp_image_signals[COLORMAP_CHANGED], 0,
+                 color_index);
+}*/
 
 void
 gimp_image_selection_invalidate (GimpImage *image)

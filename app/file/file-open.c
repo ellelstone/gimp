@@ -275,32 +275,6 @@ file_open_image (Gimp                *gimp,
     {
       gimp_image_undo_disable (image);
 
-      if (run_mode == GIMP_RUN_INTERACTIVE                 &&
-          gimp->config->import_promote_float               &&
-          file_open_file_proc_is_import (file_proc))
-        {
-          GimpPrecision old_precision = gimp_image_get_precision (image);
-
-          if (old_precision != GIMP_PRECISION_FLOAT_GAMMA)
-            {
-              gimp_image_convert_precision (image, GIMP_PRECISION_FLOAT_GAMMA,
-                                            GEGL_DITHER_NONE,
-                                            GEGL_DITHER_NONE,
-                                            GEGL_DITHER_NONE,
-                                            progress);
-
-              if (gimp->config->import_promote_dither &&
-                  old_precision == GIMP_PRECISION_U8_GAMMA)
-                {
-                  gimp_image_convert_dither_u8 (image, progress);
-                }
-            }
-        }
-
-      gimp_image_import_color_profile (image, context, progress,
-                                       run_mode == GIMP_RUN_INTERACTIVE ?
-                                       TRUE : FALSE);
-
       if (file_open_file_proc_is_import (file_proc))
         {
           file_import_image (image, context, file,

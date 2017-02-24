@@ -104,6 +104,7 @@ test_config_LDADD = \
 	../paint/libapppaint.a						\
 	../gegl/libappgegl.a						\
 	../operations/layer-modes/libapplayermodes.a			\
+	../operations/layer-modes-legacy/libapplayermodeslegacy.a	\
 	../operations/libappoperations.a				\
 	libappconfig.a							\
 	../gimp-debug.o							\

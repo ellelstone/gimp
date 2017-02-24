@@ -169,7 +169,7 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
                                    g_param_spec_enum ("blend-space",
                                                       NULL, NULL,
                                                       GIMP_TYPE_LAYER_COLOR_SPACE,
-                                                      GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
+                                                      GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -178,7 +178,7 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
                                    g_param_spec_enum ("composite-space",
                                                       NULL, NULL,
                                                       GIMP_TYPE_LAYER_COLOR_SPACE,
-                                                      GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
+                                                      GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -191,31 +191,31 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
                                                       G_PARAM_CONSTRUCT));
 
   gimp_layer_color_space_fish
-    /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_LINEAR     - 1]
+    /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL     - 1]
     /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL - 1] =
-      babl_fish ("RGBA float", "R'G'B'A float");
+      babl_fish ("RGBA float", "RGBA float");
   gimp_layer_color_space_fish
-    /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_LINEAR     - 1]
+    /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL     - 1]
     /* to   */ [GIMP_LAYER_COLOR_SPACE_LAB            - 1] =
       babl_fish ("RGBA float", "CIE Lab alpha float");
 
   gimp_layer_color_space_fish
     /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL - 1]
-    /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_LINEAR     - 1] =
-      babl_fish ("R'G'B'A float", "RGBA float");
+    /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL     - 1] =
+      babl_fish ("RGBA float", "RGBA float");
   gimp_layer_color_space_fish
     /* from */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL - 1]
     /* to   */ [GIMP_LAYER_COLOR_SPACE_LAB            - 1] =
-      babl_fish ("R'G'B'A float", "CIE Lab alpha float");
+      babl_fish ("RGBA float", "CIE Lab alpha float");
 
   gimp_layer_color_space_fish
     /* from */ [GIMP_LAYER_COLOR_SPACE_LAB            - 1]
-    /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_LINEAR     - 1] =
+    /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL     - 1] =
       babl_fish ("CIE Lab alpha float", "RGBA float");
   gimp_layer_color_space_fish
     /* from */ [GIMP_LAYER_COLOR_SPACE_LAB            - 1]
     /* to   */ [GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL - 1] =
-      babl_fish ("CIE Lab alpha float", "R'G'B'A float");
+      babl_fish ("CIE Lab alpha float", "RGBA float");
 
 #if COMPILE_SSE2_INTRINISICS
   if (gimp_cpu_accel_get_support () & GIMP_CPU_ACCEL_X86_SSE2)
@@ -1036,7 +1036,7 @@ blendfun_darken_only (const float *dest,
     }
 }
 
-static inline void /* elle: same function is called for luma_lighten-only */
+static inline void
 blendfun_luminance_lighten_only (const float *dest,
                                  const float *src,
                                  float       *out,
@@ -1068,7 +1068,7 @@ blendfun_luminance_lighten_only (const float *dest,
     }
 }
 
-static inline void /* elle: same function is called for luma_darken-only */
+static inline void
 blendfun_luminance_darken_only (const float *dest,
                                 const float *src,
                                 float       *out,
@@ -1167,26 +1167,16 @@ blendfun_divide (const float *dest,
 
           for (c = 0; c < 3; c++)
             {
-              /* code from upstream:
-               
-               * make infinities(or NaN) correspond to a high number,
+              gfloat comp = dest[c] / src[c];
+
+              /* make infinities(or NaN) correspond to a high number,
                * to get more predictable math, ideally higher than 5.0
                * but it seems like some babl conversions might be
                * acting up then
-               * 
-              gfloat comp = dest[c] / src[c];
+               */
               if (!(comp > -42949672.0f && comp < 5.0f))
-              comp = 5.0f;*/
+                comp = 5.0f;
 
-              /* possible alternative code 
-              gfloat comp = dest[c] / src[c];
-              gfloat comp = (4294967296.0 / 4294967295.0 * dest[c]) / (1.0 / 4294967295.0 + src[c]);
-              * or perhaps
-              gfloat comp = (1.0000000002328300 * dest[c]) / (1.0000000002328306 + src[c]);*/
-
-              gfloat comp =   (1.0000000001 * dest[c]) / 
-                              (0.0000000001 + src[c]);
-              comp = CLAMP (comp, 0.0, 4294967296.0);
               out[c] = comp;
             }
         }
@@ -1887,6 +1877,7 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_ADDITION:       return blendfun_addition;
     case GIMP_LAYER_MODE_SUBTRACT:       return blendfun_subtract;
     case GIMP_LAYER_MODE_MULTIPLY:       return blendfun_multiply;
+    case GIMP_LAYER_MODE_NORMAL_LINEAR:
     case GIMP_LAYER_MODE_NORMAL:         return blendfun_normal;
     case GIMP_LAYER_MODE_BURN:           return blendfun_burn;
     case GIMP_LAYER_MODE_GRAIN_MERGE:    return blendfun_grain_merge;
@@ -1917,7 +1908,7 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_EXCLUSION:      return blendfun_exclusion;
     case GIMP_LAYER_MODE_LINEAR_BURN:    return blendfun_linear_burn;
 
-/*    case GIMP_LAYER_MODE_DISSOLVE:
+    case GIMP_LAYER_MODE_DISSOLVE:
     case GIMP_LAYER_MODE_BEHIND_LEGACY:
     case GIMP_LAYER_MODE_BEHIND:
     case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
@@ -1938,7 +1929,7 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
     case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
     case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:*/
+    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
     case GIMP_LAYER_MODE_COLOR_ERASE:
     case GIMP_LAYER_MODE_ERASE:
     case GIMP_LAYER_MODE_REPLACE:

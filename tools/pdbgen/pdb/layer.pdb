@@ -1177,9 +1177,6 @@ sub layer_set_mode {
     %invoke = (
 	code => <<'CODE'
 {
-  if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-    mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
-
   if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)) == NULL)
     {
       if (! (gimp_layer_mode_get_context (mode) & GIMP_LAYER_MODE_CONTEXT_LAYER))
