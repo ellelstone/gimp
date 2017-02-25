@@ -933,7 +933,7 @@ layers_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("layers-composite-mode-src-in",   layer && cm_mutable);
   SET_SENSITIVE ("layers-composite-mode-dst-atop", layer && cm_mutable);
 
-  SET_SENSITIVE ("layers-mask-add",             layer && !fs && !ac && !mask && !children);
+  SET_SENSITIVE ("layers-mask-add",             layer && !fs && !ac && !mask);
   SET_SENSITIVE ("layers-mask-add-button",      layer && !fs && !ac && !children);
   SET_SENSITIVE ("layers-mask-add-last-values", layer && !fs && !ac && !mask && !children);
 
