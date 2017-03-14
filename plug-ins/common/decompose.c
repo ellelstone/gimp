@@ -273,7 +273,7 @@ query (void)
                           G_N_ELEMENTS (return_vals),
                           args, return_vals);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC_REG, "<Image>/Colors/Components");
+  gimp_plugin_menu_register (PLUG_IN_PROC_REG, "<Image>/Colors");
 
   g_string_free (type_desc, TRUE);
 }

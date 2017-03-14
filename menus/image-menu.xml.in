@@ -565,6 +565,13 @@
         <menuitem action="filters-posterize" />
         <menuitem action="tools-gegl" />
       <separator />
+      <menu action="colors-tone-mapping-menu" name="Tone Mapping">
+	<menuitem action="filters-fattal-2002" />
+	<menuitem action="filters-mantiuk-2006" />
+	<menuitem action="filters-reinhard-2005" />
+	<menuitem action="filters-stress" />
+  </menu>
+        <separator />
 <!--  <menuitem action="filters-c2g" /> removed but should be put somewhere in Filters-->
 <!--  <menuitem action="tools-color-balance" /> uses HSL, possibly recode to use LCH-->
 <!--  <menuitem action="tools-colorize" /> uses HSL, possibly recode to use LCH-->
