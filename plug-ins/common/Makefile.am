@@ -50,6 +50,9 @@ AM_CPPFLAGS = \
 
 libexec_PROGRAMS = \
 	align-layers \
+	compose \
+	crop-zealous \
+	decompose \
 	file-compressor \
 	file-dicom \
 	file-gbr \
@@ -98,6 +101,58 @@ align_layers_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(align_layers_RC)
+
+compose_SOURCES = \
+	compose.c
+
+compose_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(compose_RC)
+
+crop_zealous_SOURCES = \
+	crop-zealous.c
+
+crop_zealous_LDADD = \
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(CAIRO_LIBS)		\
+	$(GDK_PIXBUF_LIBS)	\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(crop_zealous_RC)
+
+decompose_SOURCES = \
+	decompose.c
+
+decompose_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(decompose_RC)
 
 file_compressor_CFLAGS = $(LZMA_CFLAGS)
 
