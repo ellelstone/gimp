@@ -349,7 +349,7 @@ query (void)
   drw_args[6].description = type_desc->str;
 
   gimp_install_procedure (COMPOSE_PROC,
-                          N_("Create an image using multiple gray images as color channels"),
+                          N_("Create an image using multiple gray images as color channels - hard-coded to use sRGB XYZ values when composing from LAB/LCH!"),
                           "This function creates a new image from "
                           "multiple gray images",
                           "Peter Kirchgessner",
@@ -365,7 +365,7 @@ query (void)
   gimp_plugin_menu_register (COMPOSE_PROC, "<Image>/Colors");
 
   gimp_install_procedure (DRAWABLE_COMPOSE_PROC,
-                          "Compose an image from multiple drawables of gray images",
+                          "Compose an image from multiple drawables of gray images - hard-coded to use sRGB XYZ values when composing from LAB/LCH!",
                           "This function creates a new image from "
                           "multiple drawables of gray images",
                           "Peter Kirchgessner",
@@ -379,7 +379,7 @@ query (void)
                           drw_args, drw_return_vals);
 
   gimp_install_procedure (RECOMPOSE_PROC,
-                          N_("Recompose an image that was previously decomposed"),
+                          N_("Recompose an image that was previously decomposed - hard-coded to use sRGB XYZ values when recomposing from LAB/LCH!"),
                           "This function recombines the grayscale layers produced "
                           "by Decompose into a single RGB or RGBA layer, and "
                           "replaces the originally decomposed layer with the "
@@ -779,7 +779,7 @@ compose (const gchar  *compose_type,
   GeglBuffer    *buffer_src[MAX_COMPOSE_IMAGES];
   GeglBuffer    *buffer_dst;
   GimpPrecision  precision;
-  GimpColorProfile *profile;
+//  GimpColorProfile *profile;
 
   /* Search type of composing */
   compose_idx = -1;
@@ -918,7 +918,7 @@ compose (const gchar  *compose_type,
       image_ID_dst = gimp_item_get_image (layer_ID_dst);
       buffer_dst = gimp_drawable_get_shadow_buffer (layer_ID_dst);
       
-      profile = gimp_image_get_color_profile (image_ID_dst);
+//      profile = gimp_image_get_color_profile (image_ID_dst);
 //      gimp_color_profile_get_colorants (profile);
     }
   else

@@ -242,7 +242,7 @@ query (void)
   args[3].description = type_desc->str;
 
   gimp_install_procedure (PLUG_IN_PROC,
-                          N_("Decompose an image into separate colorspace components"),
+                          N_("Decompose an image into separate colorspace components - hard-coded to use sRGB XYZ values when decomposing to LAB/LCH!"),
                           "This function creates new gray images with "
                           "different channel information in each of them",
                           "Peter Kirchgessner",
@@ -256,7 +256,7 @@ query (void)
                           args, return_vals);
 
   gimp_install_procedure (PLUG_IN_PROC_REG,
-                          N_("Decompose an image into separate colorspace components"),
+                          N_("Decompose an image into separate colorspace components - hard-coded to use sRGB XYZ values when decomposing to LAB/LCH!"),
                           "This function creates new gray images with "
                           "different channel information in each of them. "
                           "Pixels in the foreground color will appear black "
