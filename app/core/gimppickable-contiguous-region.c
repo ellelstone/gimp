@@ -264,7 +264,9 @@ choose_format (GeglBuffer          *buffer,
   switch (select_criterion)
     {
     case GIMP_SELECT_CRITERION_COMPOSITE:
-
+/*      if (babl_format_is_palette (format))
+        format = babl_format ("RGBA float");
+      else*/
         format = gimp_babl_format (gimp_babl_format_get_base_type (format),
                                    GIMP_PRECISION_FLOAT_GAMMA,
                                    *has_alpha);
@@ -277,10 +279,19 @@ choose_format (GeglBuffer          *buffer,
       format = babl_format ("RGBA float");
       break;
 
-    case GIMP_SELECT_CRITERION_L:
-    case GIMP_SELECT_CRITERION_C:
     case GIMP_SELECT_CRITERION_H:
-      format = babl_format ("CIE LCH(ab) float");
+    case GIMP_SELECT_CRITERION_S:
+    case GIMP_SELECT_CRITERION_V:
+      format = babl_format ("HSVA float");
+      break;
+
+    case GIMP_SELECT_CRITERION_LCH_L:
+      format = babl_format ("CIE L alpha float");
+      break;
+
+    case GIMP_SELECT_CRITERION_LCH_C:
+    case GIMP_SELECT_CRITERION_LCH_H:
+      format = babl_format ("CIE LCH(ab) alpha float");
       break;
 
     default:
@@ -349,28 +360,29 @@ pixel_difference (const gfloat        *col1,
           break;
 
         case GIMP_SELECT_CRITERION_H:
-          {
-            /* wrap around candidates for the actual distance */
-            gfloat dist1 = fabs (col1[2] - col2[2]);
-            gfloat dist2 = fabs (col1[2] - 1.0 - col2[2]);
-            gfloat dist3 = fabs (col1[2] - col2[2] + 1.0);
-
-            max = MIN (dist1, dist2);
-            if (max > dist3)
-              max = dist3;
-            max = max / 100.0;
-            //divisor based on trial and error
-          }
+          max = fabs (col1[0] - col2[0]);
+          max = MIN (max, 1.0 - max);
           break;
 
-        case GIMP_SELECT_CRITERION_C:
-          max = (fabs (col1[1] - col2[1])) / 25.0;
-          //divisor based on trial and error
+        case GIMP_SELECT_CRITERION_S:
+          max = fabs (col1[1] - col2[1]);
           break;
 
-        case GIMP_SELECT_CRITERION_L:
-          max = (fabs (col1[0] - col2[0])) / 50.0;
-          //divisor based on trial and error
+        case GIMP_SELECT_CRITERION_V:
+          max = fabs (col1[2] - col2[2]);
+          break;
+
+        case GIMP_SELECT_CRITERION_LCH_L:
+          max = fabs (col1[0] - col2[0]) / 100.0;
+          break;
+
+        case GIMP_SELECT_CRITERION_LCH_C:
+          max = fabs (col1[1] - col2[1]) / 100.0;
+          break;
+
+        case GIMP_SELECT_CRITERION_LCH_H:
+          max = fabs (col1[2] - col2[2]) / 360.0;
+          max = MIN (max, 1.0 - max);
           break;
         }
     }

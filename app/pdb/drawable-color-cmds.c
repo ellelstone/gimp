@@ -354,60 +354,6 @@ drawable_histogram_invoker (GimpProcedure         *procedure,
 }
 
 static GimpValueArray *
-drawable_hue_chroma_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
-                             GError               **error)
-{
-  gboolean success = TRUE;
-  GimpDrawable *drawable;
-  gint32 hue_range;
-  gdouble hue_offset;
-  gdouble lightness;
-  gdouble chroma;
-  gdouble overlap;
-
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  hue_range = g_value_get_enum (gimp_value_array_index (args, 1));
-  hue_offset = g_value_get_double (gimp_value_array_index (args, 2));
-  lightness = g_value_get_double (gimp_value_array_index (args, 3));
-  chroma = g_value_get_double (gimp_value_array_index (args, 4));
-  overlap = g_value_get_double (gimp_value_array_index (args, 5));
-
-  if (success)
-    {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        {
-          GObject *config = g_object_new (GIMP_TYPE_HUE_CHROMA_CONFIG,
-                                          "range", hue_range,
-                                          NULL);
-
-           g_object_set (config,
-                         "hue",       hue_offset / 180.0,
-                         "chroma",    chroma / 100.0,
-                         "lightness", lightness  / 100.0,
-                         "overlap",   overlap / 100.0,
-                         NULL);
-
-          gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 C_("undo-type", "Hue-Chroma"),
-                                                 "gimp:hue-chroma",
-                                                 config);
-          g_object_unref (config);
-        }
-      else
-        success = FALSE;
-    }
-
-  return gimp_procedure_get_return_values (procedure, success,
-                                           error ? *error : NULL);
-}
-
-static GimpValueArray *
 drawable_invert_invoker (GimpProcedure         *procedure,
                          Gimp                  *gimp,
                          GimpContext           *context,
@@ -871,60 +817,6 @@ register_drawable_color_procs (GimpPDB *pdb)
                                                         "Percentile that range falls under",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-drawable-hue-chroma
-   */
-  procedure = gimp_procedure_new (drawable_hue_chroma_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-hue-chroma");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-hue-chroma",
-                                     "Modify LCH Hue, Lightness, and Chroma in the specified drawable.",
-                                     "This procedure allows the LCH Hue, Lightness, and Chroma in the specified drawable to be modified. The 'hue-range' parameter provides the capability to limit range of affected hues. The 'overlap' parameter provides blending into neighboring hue channels when rendering.",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1995-1996",
-                                     NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_enum ("hue-range",
-                                                  "hue range",
-                                                  "Range of affected hues",
-                                                  GIMP_TYPE_HUE_RANGE,
-                                                  GIMP_HUE_RANGE_ALL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("hue-offset",
-                                                    "hue offset",
-                                                    "Hue offset in degrees",
-                                                    -180, 180, -180,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("lightness",
-                                                    "lightness",
-                                                    "Lightness modification",
-                                                    -100, 100, -100,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("chroma",
-                                                    "chroma",
-                                                    "Chroma modification",
-                                                    -100, 100, -100,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("overlap",
-                                                    "overlap",
-                                                    "Overlap other hue channels",
-                                                    0, 100, 0,
-                                                    GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 

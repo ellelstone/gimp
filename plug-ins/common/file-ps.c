@@ -1915,7 +1915,7 @@ create_new_image (const gchar        *filename,
   tmp = g_strdup_printf (_("Page %d"), pagenum);
   *layer_ID = gimp_layer_new (image_ID, tmp, width, height,
                               gdtype,
-                              100, GIMP_LAYER_MODE_NORMAL);
+                              100, GIMP_LAYER_MODE_NORMAL_LEGACY);
   g_free (tmp);
 
   gimp_image_insert_layer (image_ID, *layer_ID, -1, 0);
@@ -2154,7 +2154,7 @@ save_ps_header (GOutputStream  *output,
     goto fail;
 
   if (! print (output, error,
-               "%%%%Creator: GIMP PostScript file plugin V %4.2f "
+               "%%%%Creator: GIMP PostScript file plug-in V %4.2f "
                "by Peter Kirchgessner\n", VERSIO))
     goto fail;
 

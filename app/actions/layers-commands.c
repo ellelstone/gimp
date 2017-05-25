@@ -176,7 +176,27 @@ static GimpInterpolationType  layer_scale_interp  = -1;
 /*  public functions  */
 
 void
-layers_text_tool_cmd_callback (GtkAction *action,
+layers_edit_cmd_callback (GtkAction *action,
+                          gpointer   data)
+{
+  GimpImage *image;
+  GimpLayer *layer;
+  GtkWidget *widget;
+  return_if_no_layer (image, layer, data);
+  return_if_no_widget (widget, data);
+
+  if (gimp_item_is_text_layer (GIMP_ITEM (layer)))
+    {
+      layers_edit_text_cmd_callback (action, data);
+    }
+  else
+    {
+      layers_edit_attributes_cmd_callback (action, data);
+    }
+}
+
+void
+layers_edit_text_cmd_callback (GtkAction *action,
                                gpointer   data)
 {
   GimpImage *image;
@@ -186,11 +206,7 @@ layers_text_tool_cmd_callback (GtkAction *action,
   return_if_no_layer (image, layer, data);
   return_if_no_widget (widget, data);
 
-  if (! gimp_item_is_text_layer (GIMP_ITEM (layer)))
-    {
-      layers_edit_attributes_cmd_callback (action, data);
-      return;
-    }
+  g_return_if_fail (gimp_item_is_text_layer (GIMP_ITEM (layer)));
 
   active_tool = tool_manager_get_active (image->gimp);
 
@@ -207,7 +223,14 @@ layers_text_tool_cmd_callback (GtkAction *action,
     }
 
   if (GIMP_IS_TEXT_TOOL (active_tool))
-    gimp_text_tool_set_layer (GIMP_TEXT_TOOL (active_tool), layer);
+    {
+      GimpDisplayShell *shell;
+
+      gimp_text_tool_set_layer (GIMP_TEXT_TOOL (active_tool), layer);
+
+      shell = gimp_display_get_shell (active_tool->display);
+      gtk_widget_grab_focus (shell->canvas);
+    }
 }
 
 void
@@ -235,7 +258,7 @@ layers_edit_attributes_cmd_callback (GtkAction *action,
                                          widget,
                                          _("Layer Attributes"),
                                          "gimp-layer-edit",
-                                         "gtk-edit",
+                                         GIMP_ICON_EDIT,
                                          _("Edit Layer Attributes"),
                                          GIMP_HELP_LAYER_EDIT,
                                          gimp_object_get_name (layer),
@@ -304,7 +327,7 @@ layers_new_cmd_callback (GtkAction *action,
                                          widget,
                                          _("New Layer"),
                                          "gimp-layer-new",
-                                         GIMP_STOCK_LAYER,
+                                         GIMP_ICON_LAYER,
                                          _("Create a New Layer"),
                                          GIMP_HELP_LAYER_NEW,
                                          config->layer_new_name,
@@ -373,7 +396,7 @@ layers_new_last_vals_cmd_callback (GtkAction *action,
       off_x   = 0;
       off_y   = 0;
       opacity = 1.0;
-      mode    = GIMP_LAYER_MODE_NORMAL;
+      mode    = GIMP_LAYER_MODE_NORMAL_LEGACY;
     }
 
   gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
@@ -419,7 +442,7 @@ layers_new_from_visible_cmd_callback (GtkAction *action,
                                                                         TRUE),
                                            _("Visible"),
                                            GIMP_OPACITY_OPAQUE,
-                                           GIMP_LAYER_MODE_NORMAL,
+                                           GIMP_LAYER_MODE_NORMAL_LEGACY,
                                            profile);
 
   gimp_image_add_layer (image, layer, GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);

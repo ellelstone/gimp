@@ -1051,7 +1051,7 @@ load_image (const gchar  *filename,
 
   layer = gimp_layer_new (image, _("Background"), width, height,
                           layer_type,
-                          100, GIMP_LAYER_MODE_NORMAL);
+                          100, GIMP_LAYER_MODE_NORMAL_LEGACY);
   gimp_image_insert_layer (image, layer, -1, 0);
 
   file_format = gimp_drawable_get_format (layer);
@@ -1396,7 +1396,7 @@ offsets_dialog (gint offset_x,
                       hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  image = gtk_image_new_from_icon_name (GIMP_STOCK_QUESTION,
+  image = gtk_image_new_from_icon_name (GIMP_ICON_DIALOG_QUESTION,
                                         GTK_ICON_SIZE_DIALOG);
   gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0.0);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);

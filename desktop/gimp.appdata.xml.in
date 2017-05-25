@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 1995-2017 Spencer Kimball, Peter Mattis, and others -->
 <component type="desktop">
   <id>gimp.desktop</id>
 
@@ -40,8 +41,12 @@
   <url type="homepage">http://www.gimp.org/</url>
   <screenshots>
     <screenshot type="default">
-      <image>http://www.gimp.org/screenshots/linux_mixer.jpg</image>
-      <_caption>Screenshot showing channel mixing and layer editor</_caption>
+      <image>https://www.gimp.org/screenshots/Screenshot-gimp-2.10-painting.jpg</image>
+      <_caption>Painting in GIMP</_caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://www.gimp.org/screenshots/Screenshot-gimp-2.10-photo-editing.jpg</image>
+      <_caption>Photo editing in GIMP</_caption>
     </screenshot>
   </screenshots>
   <update_contact>gimp-developer-list_at_gnome.org</update_contact>

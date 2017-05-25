@@ -40,7 +40,7 @@
 
 static void   gimp_color_selector_palette_set_color  (GimpColorSelector *selector,
                                                       const GimpRGB     *rgb,
-                                                      const GimpLch     *lch);
+                                                      const GimpHSV     *hsv);
 static void   gimp_color_selector_palette_set_config (GimpColorSelector *selector,
                                                       GimpColorConfig   *config);
 
@@ -58,7 +58,7 @@ gimp_color_selector_palette_class_init (GimpColorSelectorPaletteClass *klass)
 
   selector_class->name       = _("Palette");
   selector_class->help_id    = "gimp-colorselector-palette";
-  selector_class->icon_name  = GIMP_STOCK_PALETTE;
+  selector_class->icon_name  = GIMP_ICON_PALETTE;
   selector_class->set_color  = gimp_color_selector_palette_set_color;
   selector_class->set_config = gimp_color_selector_palette_set_config;
 }
@@ -71,7 +71,7 @@ gimp_color_selector_palette_init (GimpColorSelectorPalette *select)
 static void
 gimp_color_selector_palette_set_color (GimpColorSelector *selector,
                                        const GimpRGB     *rgb,
-                                       const GimpLch     *lch)
+                                       const GimpHSV     *hsv)
 {
   GimpColorSelectorPalette *select = GIMP_COLOR_SELECTOR_PALETTE (selector);
 
@@ -108,7 +108,7 @@ gimp_color_selector_palette_entry_clicked (GimpPaletteView   *view,
                                            GimpColorSelector *selector)
 {
   selector->rgb = entry->color;
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
   gimp_color_selector_color_changed (selector);
 }

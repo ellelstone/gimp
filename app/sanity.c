@@ -453,7 +453,7 @@ sanity_check_babl (void)
 
 #define BABL_REQUIRED_MAJOR 0
 #define BABL_REQUIRED_MINOR 1
-#define BABL_REQUIRED_MICRO 24
+#define BABL_REQUIRED_MICRO 27
 
   babl_get_version (&babl_major_version,
                     &babl_minor_version,
@@ -491,7 +491,7 @@ sanity_check_gegl (void)
 
 #define GEGL_REQUIRED_MAJOR 0
 #define GEGL_REQUIRED_MINOR 3
-#define GEGL_REQUIRED_MICRO 12
+#define GEGL_REQUIRED_MICRO 15
 
   gegl_get_version (&gegl_major_version,
                     &gegl_minor_version,
@@ -566,6 +566,7 @@ sanity_check_gegl_ops (void)
     "gegl:gegl",
     "gegl:grid",
     "gegl:high-pass",
+    "gegl:hue-chroma",
     "gegl:illusion",
     "gegl:image-gradient",
     "gegl:introspect",

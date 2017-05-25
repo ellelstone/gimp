@@ -29,16 +29,18 @@ libapplayermodes_generic_a_sources = \
 	gimpoperationantierase.h	\
 	gimpoperationbehind.c		\
 	gimpoperationbehind.h		\
-	gimpoperationcolorerase.c	\
-	gimpoperationcolorerase.h	\
 	gimpoperationdissolve.c		\
 	gimpoperationdissolve.h		\
 	gimpoperationerase.c		\
 	gimpoperationerase.h		\
+	gimpoperationmerge.c		\
+	gimpoperationmerge.h		\
 	gimpoperationnormal.c		\
 	gimpoperationnormal.h		\
 	gimpoperationreplace.c		\
-	gimpoperationreplace.h
+	gimpoperationreplace.h		\
+	gimpoperationsplit.c		\
+	gimpoperationsplit.h
 
 libapplayermodes_sse2_a_sources = \
 	gimpoperationnormal-sse2.c

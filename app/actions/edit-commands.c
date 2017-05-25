@@ -36,8 +36,6 @@
 #include "core/gimplayer.h"
 #include "core/gimplayer-new.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-duplicate.h"
-#include "core/gimpimage-new.h"
 #include "core/gimpimage-undo.h"
 
 #include "vectors/gimpvectors-import.h"
@@ -151,7 +149,8 @@ edit_undo_clear_cmd_callback (GtkAction *action,
   return_if_no_image (image, data);
   return_if_no_widget (widget, data);
 
-  dialog = gimp_message_dialog_new (_("Clear Undo History"), GIMP_STOCK_WARNING,
+  dialog = gimp_message_dialog_new (_("Clear Undo History"),
+                                    GIMP_ICON_DIALOG_WARNING,
                                     widget,
                                     GTK_DIALOG_MODAL |
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -377,17 +376,7 @@ edit_paste_as_new_image_cmd_callback (GtkAction *action,
 
   if (paste)
     {
-      if (GIMP_IS_IMAGE (paste))
-        {
-          image = gimp_image_duplicate (GIMP_IMAGE (paste));
-        }
-      else if (GIMP_IS_BUFFER (paste))
-        {
-          image = gimp_image_new_from_buffer (gimp,
-                                              action_data_get_image (data),
-                                              GIMP_BUFFER (paste));
-        }
-
+      image = gimp_edit_paste_as_new_image (gimp, paste);
       g_object_unref (paste);
     }
 

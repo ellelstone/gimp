@@ -46,8 +46,6 @@
 #include "gimpbycolorselecttool.h"
 #include "gimpcagetool.h"
 #include "gimpclonetool.h"
-//#include "gimpcolorbalancetool.h"
-//#include "gimpcolorizetool.h"
 #include "gimpcolorpickertool.h"
 #include "gimpconvolvetool.h"
 #include "gimpcroptool.h"
@@ -64,7 +62,6 @@
 #include "gimphealtool.h"
 #include "gimpinktool.h"
 #include "gimpiscissorstool.h"
-#include "gimplchhuechromatool.h"
 #include "gimplevelstool.h"
 #include "gimpoperationtool.h"
 #include "gimpmagnifytool.h"
@@ -177,9 +174,6 @@ gimp_tools_init (Gimp *gimp)
 
     /*  color tools  */
 
-//    gimp_color_balance_tool_register,
-    gimp_hue_chroma_tool_register,
-//    gimp_colorize_tool_register,
     gimp_brightness_contrast_tool_register,
     gimp_threshold_tool_register,
     gimp_levels_tool_register,

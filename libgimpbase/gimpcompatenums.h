@@ -93,6 +93,33 @@ typedef enum
 } GimpCloneTypeCompat;
 
 
+#define GIMP_TYPE_CONVERT_DITHER_TYPE_COMPAT (gimp_convert_dither_type_compat_get_type ())
+
+GType gimp_convert_dither_type_compat_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  GIMP_NO_DITHER,
+  GIMP_FS_DITHER,
+  GIMP_FSLOWBLEED_DITHER,
+  GIMP_FIXED_DITHER
+} GimpConvertDitherTypeCompat;
+
+
+#define GIMP_TYPE_CONVERT_PALETTE_TYPE_COMPAT (gimp_convert_palette_type_compat_get_type ())
+
+GType gimp_convert_palette_type_compat_get_type (void) G_GNUC_CONST;
+
+typedef enum
+{
+  GIMP_MAKE_PALETTE,
+  GIMP_REUSE_PALETTE,
+  GIMP_WEB_PALETTE,
+  GIMP_MONO_PALETTE,
+  GIMP_CUSTOM_PALETTE
+} GimpConvertPaletteTypeCompat;
+
+
 #define GIMP_TYPE_CONVOLVE_TYPE_COMPAT (gimp_convolve_type_compat_get_type ())
 
 GType gimp_convolve_type_compat_get_type (void) G_GNUC_CONST;

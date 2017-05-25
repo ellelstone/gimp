@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include "libgimpcolor/gimpcolor.h"
+#include "libgimpconfig/gimpconfig.h"
 #include "libgimpwidgets/gimpwidgets.h"
 
 #include "widgets-types.h"
@@ -101,7 +102,7 @@ static void     gimp_fg_bg_editor_create_transform  (GimpFgBgEditor   *editor);
 static void     gimp_fg_bg_editor_destroy_transform (GimpFgBgEditor   *editor);
 
 
-G_DEFINE_TYPE (GimpFgBgEditor, gimp_fg_bg_editor, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE (GimpFgBgEditor, gimp_fg_bg_editor, GTK_TYPE_EVENT_BOX)
 
 #define parent_class gimp_fg_bg_editor_parent_class
 
@@ -152,6 +153,8 @@ static void
 gimp_fg_bg_editor_init (GimpFgBgEditor *editor)
 {
   editor->active_color = GIMP_ACTIVE_COLOR_FOREGROUND;
+
+  gtk_event_box_set_visible_window (GTK_EVENT_BOX (editor), FALSE);
 
   gtk_widget_add_events (GTK_WIDGET (editor),
                          GDK_BUTTON_PRESS_MASK |
@@ -269,12 +272,12 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   gint            swap_w, swap_h;
   gint            rect_w, rect_h;
   GimpRGB         color;
+  GimpRGB         transformed_color;
 
   if (! gtk_widget_is_drawable (widget))
     return FALSE;
 
   cr = gdk_cairo_create (eevent->window);
-
   gdk_cairo_region (cr, eevent->region);
   cairo_clip (cr);
 
@@ -283,10 +286,12 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   width  = allocation.width;
   height = allocation.height;
 
+  cairo_translate (cr, allocation.x, allocation.y);
+
   /*  draw the default colors pixbuf  */
   if (! editor->default_icon)
     editor->default_icon = gimp_widget_load_icon (widget,
-                                                  GIMP_STOCK_DEFAULT_COLORS, 12);
+                                                  GIMP_ICON_COLORS_DEFAULT, 12);
 
   default_w = gdk_pixbuf_get_width  (editor->default_icon);
   default_h = gdk_pixbuf_get_height (editor->default_icon);
@@ -305,7 +310,7 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
   /*  draw the swap colors pixbuf  */
   if (! editor->swap_icon)
     editor->swap_icon = gimp_widget_load_icon (widget,
-                                               GIMP_STOCK_SWAP_COLORS, 12);
+                                               GIMP_ICON_COLORS_SWAP, 12);
 
   swap_w = gdk_pixbuf_get_width  (editor->swap_icon);
   swap_h = gdk_pixbuf_get_height (editor->swap_icon);
@@ -347,10 +352,12 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
                                              babl_format ("RGBA double"),
                                              &color,
                                              babl_format ("RGBA double"),
-                                             &color,
+                                             &transformed_color,
                                              1);
+      else
+        transformed_color = color;
 
-      gimp_cairo_set_source_rgb (cr, &color);
+      gimp_cairo_set_source_rgb (cr, &transformed_color);
 
       cairo_rectangle (cr,
                        width - rect_w,
@@ -358,14 +365,31 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
                        rect_w,
                        rect_h);
       cairo_fill (cr);
+
+      if (editor->color_config &&
+          (color.r < 0.0 || color.r > 1.0 ||
+           color.g < 0.0 || color.g > 1.0 ||
+           color.b < 0.0 || color.b > 1.0))
+        {
+          gint side = MIN (rect_w, rect_h) * 2 / 3;
+
+          cairo_move_to (cr, width, height);
+          cairo_line_to (cr, width - side, height);
+          cairo_line_to (cr, width, height - side);
+          cairo_line_to (cr, width, height);
+
+          gimp_cairo_set_source_rgb (cr,
+                                     &editor->color_config->out_of_gamut_color);
+          cairo_fill (cr);
+        }
     }
 
   gtk_paint_shadow (style, window, GTK_STATE_NORMAL,
                     editor->active_color == GIMP_ACTIVE_COLOR_FOREGROUND ?
                     GTK_SHADOW_OUT : GTK_SHADOW_IN,
                     NULL, widget, NULL,
-                    (width - rect_w),
-                    (height - rect_h),
+                    allocation.x + (width - rect_w),
+                    allocation.y + (height - rect_h),
                     rect_w, rect_h);
 
 
@@ -380,22 +404,42 @@ gimp_fg_bg_editor_expose (GtkWidget      *widget,
                                              babl_format ("RGBA double"),
                                              &color,
                                              babl_format ("RGBA double"),
-                                             &color,
+                                             &transformed_color,
                                              1);
+      else
+        transformed_color = color;
 
-      gimp_cairo_set_source_rgb (cr, &color);
+      gimp_cairo_set_source_rgb (cr, &transformed_color);
 
       cairo_rectangle (cr,
                        0, 0,
                        rect_w, rect_h);
       cairo_fill (cr);
+
+      if (editor->color_config &&
+          (color.r < 0.0 || color.r > 1.0 ||
+           color.g < 0.0 || color.g > 1.0 ||
+           color.b < 0.0 || color.b > 1.0))
+        {
+          gint side = MIN (rect_w, rect_h) * 2 / 3;
+
+          cairo_move_to (cr, 0, 0);
+          cairo_line_to (cr, 0, side);
+          cairo_line_to (cr, side, 0);
+          cairo_line_to (cr, 0, 0);
+
+          gimp_cairo_set_source_rgb (cr,
+                                     &editor->color_config->out_of_gamut_color);
+          cairo_fill (cr);
+        }
     }
 
   gtk_paint_shadow (style, window, GTK_STATE_NORMAL,
                     editor->active_color == GIMP_ACTIVE_COLOR_BACKGROUND ?
                     GTK_SHADOW_OUT : GTK_SHADOW_IN,
                     NULL, widget, NULL,
-                    0, 0,
+                    allocation.x,
+                    allocation.y,
                     rect_w, rect_h);
 
   cairo_destroy (cr);

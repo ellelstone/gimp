@@ -223,7 +223,7 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                          "Default palette type for indexed conversion",
                          IMAGE_CONVERT_INDEXED_PALETTE_TYPE_BLURB,
                          GIMP_TYPE_CONVERT_PALETTE_TYPE,
-                         GIMP_MAKE_PALETTE,
+                         GIMP_CONVERT_PALETTE_GENERATE,
                          GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_INT (object_class,
@@ -248,7 +248,7 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                          "Default dither type for indexed conversion",
                          IMAGE_CONVERT_INDEXED_DITHER_TYPE_BLURB,
                          GIMP_TYPE_CONVERT_DITHER_TYPE,
-                         GIMP_NO_DITHER,
+                         GIMP_CONVERT_DITHER_NONE,
                          GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class,
@@ -302,7 +302,7 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                          "Default new layer mode",
                          LAYER_NEW_MODE_BLURB,
                          GIMP_TYPE_LAYER_MODE,
-                         GIMP_LAYER_MODE_NORMAL,
+                         GIMP_LAYER_MODE_NORMAL_LEGACY,
                          GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_ENUM (object_class, PROP_LAYER_NEW_BLEND_SPACE,

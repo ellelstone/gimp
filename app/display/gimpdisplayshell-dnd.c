@@ -30,10 +30,8 @@
 #include "core/gimp.h"
 #include "core/gimp-edit.h"
 #include "core/gimpbuffer.h"
-#include "core/gimpcontainer.h"
 #include "core/gimpfilloptions.h"
 #include "core/gimpimage.h"
-#include "core/gimpimage-merge.h"
 #include "core/gimpimage-new.h"
 #include "core/gimpimage-undo.h"
 #include "core/gimplayer.h"
@@ -458,7 +456,7 @@ gimp_display_shell_drop_buffer (GtkWidget    *widget,
 
   if (! image)
     {
-      image = gimp_image_new_from_buffer (shell->display->gimp, NULL,
+      image = gimp_image_new_from_buffer (shell->display->gimp,
                                           GIMP_BUFFER (viewable));
       gimp_create_display (image->gimp, image, GIMP_UNIT_PIXEL, 1.0,
                            G_OBJECT (gtk_widget_get_screen (widget)),
@@ -725,7 +723,7 @@ gimp_display_shell_drop_pixbuf (GtkWidget *widget,
                                 gimp_image_get_layer_format (image, has_alpha),
                                 _("Dropped Buffer"),
                                 GIMP_OPACITY_OPAQUE,
-                                GIMP_LAYER_MODE_NORMAL);
+                                GIMP_LAYER_MODE_NORMAL_LEGACY);
 
   if (new_layer)
     {

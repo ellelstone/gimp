@@ -43,6 +43,7 @@ struct _GimpGuiConfig
 
   gboolean             move_tool_changes_active;
   gint                 filter_tool_max_recent;
+  gboolean             filter_tool_show_color_options;
   gboolean             trust_dirty_flag;
   gboolean             save_device_status;
   gboolean             devices_share_tool;
@@ -65,6 +66,7 @@ struct _GimpGuiConfig
   gchar               *theme;
   gchar               *icon_theme_path;
   gchar               *icon_theme;
+  GimpIconSize         icon_size;
   gboolean             use_help;
   gboolean             show_help_button;
   gchar               *help_locales;
@@ -91,10 +93,13 @@ struct _GimpGuiConfig
 struct _GimpGuiConfigClass
 {
   GimpDisplayConfigClass  parent_class;
+
+  void (* size_changed) (GimpGuiConfig *config);
 };
 
 
 GType  gimp_gui_config_get_type (void) G_GNUC_CONST;
 
+GimpIconSize gimp_gui_config_detect_icon_size (GimpGuiConfig *config);
 
 #endif /* GIMP_GUI_CONFIG_H__ */

@@ -33,7 +33,14 @@
 
 #include "file-formats.h"
 
-#define LOAD_THUMB_PROC "file-raw-load-thumb"
+#ifdef GDK_WINDOWING_QUARTZ
+#include <CoreServices/CoreServices.h>
+#endif
+
+#define LOAD_THUMB_PROC "file-darktable-load-thumb"
+
+static gchar   *get_executable_path  (const gchar      *suffix,
+                                      gboolean         *search_path);
 
 static void     query                (void);
 static void     run                  (const gchar      *name,
@@ -61,6 +68,62 @@ const GimpPlugInInfo PLUG_IN_INFO =
 
 MAIN ()
 
+static gchar *
+get_executable_path (const gchar *suffix,
+                     gboolean    *search_path)
+{
+  /* TODO: allow setting the location of the executable in preferences
+   */
+
+#ifdef GDK_WINDOWING_QUARTZ
+  OSStatus status;
+  CFURLRef bundle_url = NULL;
+
+  /* For macOS, attempt searching for a darktable app bundle first. */
+  status = LSFindApplicationForInfo (kLSUnknownCreator,
+                                     CFSTR ("org.darktable"),
+                                     NULL, NULL, &bundle_url);
+
+  if (status >= 0)
+    {
+      CFBundleRef bundle;
+      CFURLRef exec_url, absolute_url;
+      CFStringRef path;
+      gchar *ret;
+      CFIndex len;
+
+      bundle = CFBundleCreate (kCFAllocatorDefault, bundle_url);
+      CFRelease (bundle_url);
+
+      exec_url = CFBundleCopyExecutableURL (bundle);
+      absolute_url = CFURLCopyAbsoluteURL (exec_url);
+      path = CFURLCopyFileSystemPath (absolute_url, kCFURLPOSIXPathStyle);
+
+      /* This gets us the length in UTF16 characters, we multiply by 2
+       * to make sure we have a buffer big enough to fit the UTF8 string.
+       */
+      len = CFStringGetLength (path);
+      ret = g_malloc0 (len * 2 * sizeof (gchar));
+      if (!CFStringGetCString (path, ret, 2 * len * sizeof (gchar),
+                               kCFStringEncodingUTF8))
+        ret = NULL;
+
+      CFRelease (path);
+      CFRelease (absolute_url);
+      CFRelease (exec_url);
+      CFRelease (bundle);
+
+      if (ret)
+        return ret;
+    }
+  /* else, app bundle was not found, try path search as last resort. */
+#endif
+
+  *search_path = TRUE;
+  if (suffix)
+    return g_strconcat ("darktable", suffix, NULL);
+  return g_strdup ("darktable");
+}
 
 static void
 query (void)
@@ -91,9 +154,10 @@ query (void)
   };
 
   /* check if darktable is installed
-   * TODO: allow setting the location of the executable in preferences
    */
-  gchar    *argv[]           = { "darktable", "--version", NULL };
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = get_executable_path (NULL, &search_path);
+  gchar    *argv[]           = { exec_path, "--version", NULL };
   gchar    *darktable_stdout = NULL;
   gboolean  have_darktable   = FALSE;
   gint      i;
@@ -102,7 +166,7 @@ query (void)
                     argv,
                     NULL,
                     G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
                     &darktable_stdout,
@@ -128,6 +192,8 @@ query (void)
 
       g_free (darktable_stdout);
     }
+
+  g_free (exec_path);
 
   if (! have_darktable)
     return;
@@ -164,6 +230,7 @@ query (void)
 
       gimp_register_file_handler_mime (format->load_proc,
                                        format->mime_type);
+      gimp_register_file_handler_raw (format->load_proc);
       gimp_register_magic_load_handler (format->load_proc,
                                         format->extensions,
                                         "",
@@ -284,9 +351,11 @@ load_image (const gchar  *filename,
   gchar *darktable_stdout = NULL;
 
   /* linear sRGB for now as GIMP uses that internally in many places anyway */
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = get_executable_path (NULL, &search_path);
   gchar *argv[] =
     {
-      "darktable",
+      exec_path,
       "--library", ":memory:",
       "--luacmd",  lua_cmd,
       "--conf",    "plugins/lighttable/export/icctype=3",
@@ -307,7 +376,7 @@ load_image (const gchar  *filename,
                     NULL,
 //                     G_SPAWN_STDOUT_TO_DEV_NULL |
                     G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
                     &darktable_stdout,
@@ -327,6 +396,7 @@ load_image (const gchar  *filename,
   g_free (lua_cmd);
   g_free (filename_out);
   g_free (export_filename);
+  g_free (exec_path);
 
   gimp_progress_update (1.0);
 
@@ -351,9 +421,11 @@ load_thumbnail_image (const gchar   *filename,
   gchar  *lua_cmd          = g_strdup_printf ("dofile(%s)", lua_quoted);
   gchar  *darktable_stdout = NULL;
 
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = get_executable_path ("-cli", &search_path);
   gchar *argv[] =
     {
-      "darktable-cli",
+      exec_path,
       (gchar *) filename, filename_out,
       "--width",          size,
       "--height",         size,
@@ -377,7 +449,7 @@ load_thumbnail_image (const gchar   *filename,
                     argv,
                     NULL,
                     G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
                     &darktable_stdout,
@@ -413,6 +485,7 @@ load_thumbnail_image (const gchar   *filename,
   g_free (size);
   g_free (lua_cmd);
   g_free (darktable_stdout);
+  g_free (exec_path);
 
   return image_ID;
 }

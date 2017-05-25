@@ -34,6 +34,7 @@
 #include "gimpwidgetstypes.h"
 
 #include "gimpcolorselector.h"
+#include "gimpicons.h"
 #include "gimpwidgetsmarshal.h"
 
 
@@ -96,7 +97,7 @@ gimp_color_selector_class_init (GimpColorSelectorClass *klass)
 
   klass->name                  = "Unnamed";
   klass->help_id               = NULL;
-  klass->icon_name             = "gtk-select-color";
+  klass->icon_name             = GIMP_ICON_PALETTE;
 
   klass->set_toggles_visible   = NULL;
   klass->set_toggles_sensitive = NULL;
@@ -119,7 +120,7 @@ gimp_color_selector_init (GimpColorSelector *selector)
                                   GTK_ORIENTATION_VERTICAL);
 
   gimp_rgba_set (&selector->rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selector->rgb, &selector->lch, 1);
+  gimp_rgb_to_hsv (&selector->rgb, &selector->hsv);
 
   selector->channel = GIMP_COLOR_SELECTOR_HUE;
 }
@@ -135,7 +136,7 @@ gimp_color_selector_dispose (GObject *object)
 GtkWidget *
 gimp_color_selector_new (GType                     selector_type,
                          const GimpRGB            *rgb,
-                         const GimpLch            *lch,
+                         const GimpHSV            *hsv,
                          GimpColorSelectorChannel  channel)
 {
   GimpColorSelector *selector;
@@ -143,11 +144,11 @@ gimp_color_selector_new (GType                     selector_type,
   g_return_val_if_fail (g_type_is_a (selector_type, GIMP_TYPE_COLOR_SELECTOR),
                         NULL);
   g_return_val_if_fail (rgb != NULL, NULL);
-  g_return_val_if_fail (lch != NULL, NULL);
+  g_return_val_if_fail (hsv != NULL, NULL);
 
   selector = g_object_new (selector_type, NULL);
 
-  gimp_color_selector_set_color (selector, rgb, lch);
+  gimp_color_selector_set_color (selector, rgb, hsv);
   gimp_color_selector_set_channel (selector, channel);
 
   return GTK_WIDGET (selector);
@@ -213,21 +214,21 @@ gimp_color_selector_set_show_alpha (GimpColorSelector *selector,
 void
 gimp_color_selector_set_color (GimpColorSelector *selector,
                                const GimpRGB     *rgb,
-                               const GimpLch     *lch)
+                               const GimpHSV     *hsv)
 {
   GimpColorSelectorClass *selector_class;
 
   g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
   g_return_if_fail (rgb != NULL);
-  g_return_if_fail (lch != NULL);
+  g_return_if_fail (hsv != NULL);
 
   selector->rgb = *rgb;
-  selector->lch = *lch;
+  selector->hsv = *hsv;
 
   selector_class = GIMP_COLOR_SELECTOR_GET_CLASS (selector);
 
   if (selector_class->set_color)
-    selector_class->set_color (selector, rgb, lch);
+    selector_class->set_color (selector, rgb, hsv);
 
   gimp_color_selector_color_changed (selector);
 }
@@ -259,7 +260,7 @@ gimp_color_selector_color_changed (GimpColorSelector *selector)
   g_return_if_fail (GIMP_IS_COLOR_SELECTOR (selector));
 
   g_signal_emit (selector, selector_signals[COLOR_CHANGED], 0,
-                 &selector->rgb, &selector->lch);
+                 &selector->rgb, &selector->hsv);
 }
 
 void

@@ -7,7 +7,7 @@
 #include "gimpbasetypes.h"
 #include "libgimp/libgimp-intl.h"
 
-/* enumerations from "./gimpbaseenums.h" */
+/* enumerations from "gimpbaseenums.h" */
 GType
 gimp_add_mask_type_get_type (void)
 {
@@ -435,19 +435,19 @@ gimp_convert_palette_type_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_MAKE_PALETTE, "GIMP_MAKE_PALETTE", "make-palette" },
-    { GIMP_WEB_PALETTE, "GIMP_WEB_PALETTE", "web-palette" },
-    { GIMP_MONO_PALETTE, "GIMP_MONO_PALETTE", "mono-palette" },
-    { GIMP_CUSTOM_PALETTE, "GIMP_CUSTOM_PALETTE", "custom-palette" },
+    { GIMP_CONVERT_PALETTE_GENERATE, "GIMP_CONVERT_PALETTE_GENERATE", "generate" },
+    { GIMP_CONVERT_PALETTE_WEB, "GIMP_CONVERT_PALETTE_WEB", "web" },
+    { GIMP_CONVERT_PALETTE_MONO, "GIMP_CONVERT_PALETTE_MONO", "mono" },
+    { GIMP_CONVERT_PALETTE_CUSTOM, "GIMP_CONVERT_PALETTE_CUSTOM", "custom" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_MAKE_PALETTE, NC_("convert-palette-type", "Generate optimum palette"), NULL },
-    { GIMP_WEB_PALETTE, NC_("convert-palette-type", "Use web-optimized palette"), NULL },
-    { GIMP_MONO_PALETTE, NC_("convert-palette-type", "Use black and white (1-bit) palette"), NULL },
-    { GIMP_CUSTOM_PALETTE, NC_("convert-palette-type", "Use custom palette"), NULL },
+    { GIMP_CONVERT_PALETTE_GENERATE, NC_("convert-palette-type", "Generate optimum palette"), NULL },
+    { GIMP_CONVERT_PALETTE_WEB, NC_("convert-palette-type", "Use web-optimized palette"), NULL },
+    { GIMP_CONVERT_PALETTE_MONO, NC_("convert-palette-type", "Use black and white (1-bit) palette"), NULL },
+    { GIMP_CONVERT_PALETTE_CUSTOM, NC_("convert-palette-type", "Use custom palette"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -502,14 +502,16 @@ gimp_desaturate_mode_get_type (void)
     { GIMP_DESATURATE_LIGHTNESS, "GIMP_DESATURATE_LIGHTNESS", "lightness" },
     { GIMP_DESATURATE_AVERAGE, "GIMP_DESATURATE_AVERAGE", "average" },
     { GIMP_DESATURATE_LUMINANCE, "GIMP_DESATURATE_LUMINANCE", "luminance" },
+    { GIMP_DESATURATE_VALUE, "GIMP_DESATURATE_VALUE", "value" },
     { 0, NULL, NULL }
   };
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_DESATURATE_LIGHTNESS, NC_("desaturate-mode", "Lightness"), NULL },
-    { GIMP_DESATURATE_AVERAGE, NC_("desaturate-mode", "Average"), NULL },
+    { GIMP_DESATURATE_LIGHTNESS, NC_("desaturate-mode", "Lightness (HSL)"), NULL },
+    { GIMP_DESATURATE_AVERAGE, NC_("desaturate-mode", "Average (HSI Intensity)"), NULL },
     { GIMP_DESATURATE_LUMINANCE, NC_("desaturate-mode", "Luminance"), NULL },
+    { GIMP_DESATURATE_VALUE, NC_("desaturate-mode", "Value (HSV)"), NULL },
     { 0, NULL, NULL }
   };
 
@@ -1554,9 +1556,12 @@ gimp_select_criterion_get_type (void)
     { GIMP_SELECT_CRITERION_G, "GIMP_SELECT_CRITERION_G", "g" },
     { GIMP_SELECT_CRITERION_B, "GIMP_SELECT_CRITERION_B", "b" },
     { GIMP_SELECT_CRITERION_H, "GIMP_SELECT_CRITERION_H", "h" },
-    { GIMP_SELECT_CRITERION_C, "GIMP_SELECT_CRITERION_C", "c" },
-    { GIMP_SELECT_CRITERION_L, "GIMP_SELECT_CRITERION_L", "l" },
+    { GIMP_SELECT_CRITERION_S, "GIMP_SELECT_CRITERION_S", "s" },
+    { GIMP_SELECT_CRITERION_V, "GIMP_SELECT_CRITERION_V", "v" },
     { GIMP_SELECT_CRITERION_A, "GIMP_SELECT_CRITERION_A", "a" },
+    { GIMP_SELECT_CRITERION_LCH_L, "GIMP_SELECT_CRITERION_LCH_L", "lch-l" },
+    { GIMP_SELECT_CRITERION_LCH_C, "GIMP_SELECT_CRITERION_LCH_C", "lch-c" },
+    { GIMP_SELECT_CRITERION_LCH_H, "GIMP_SELECT_CRITERION_LCH_H", "lch-h" },
     { 0, NULL, NULL }
   };
 
@@ -1566,10 +1571,13 @@ gimp_select_criterion_get_type (void)
     { GIMP_SELECT_CRITERION_R, NC_("select-criterion", "Red"), NULL },
     { GIMP_SELECT_CRITERION_G, NC_("select-criterion", "Green"), NULL },
     { GIMP_SELECT_CRITERION_B, NC_("select-criterion", "Blue"), NULL },
-    { GIMP_SELECT_CRITERION_H, NC_("select-criterion", "LCH Hue"), NULL },
-    { GIMP_SELECT_CRITERION_C, NC_("select-criterion", "LCH Chroma"), NULL },
-    { GIMP_SELECT_CRITERION_L, NC_("select-criterion", "LCH Lightness"), NULL },
+    { GIMP_SELECT_CRITERION_H, NC_("select-criterion", "Hue (HSV)"), NULL },
+    { GIMP_SELECT_CRITERION_S, NC_("select-criterion", "Saturation (HSV)"), NULL },
+    { GIMP_SELECT_CRITERION_V, NC_("select-criterion", "Value (HSV)"), NULL },
     { GIMP_SELECT_CRITERION_A, NC_("select-criterion", "Alpha"), NULL },
+    { GIMP_SELECT_CRITERION_LCH_L, NC_("select-criterion", "Lightness (LCH)"), NULL },
+    { GIMP_SELECT_CRITERION_LCH_C, NC_("select-criterion", "Chroma (LCH)"), NULL },
+    { GIMP_SELECT_CRITERION_LCH_H, NC_("select-criterion", "Hue (LCH)"), NULL },
     { 0, NULL, NULL }
   };
 

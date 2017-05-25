@@ -20,9 +20,9 @@
  * processing. It uses drawable filters that allow for non-destructive
  * manupulation of drawable data, with live preview on screen.
  *
- * To create a tool that uses this, see /tools/gimpimagemaptool.c for
- * the interface and /tools/gimpcolorbalancetool.c for an example of
- * using that interface.
+ * To create a tool that uses this, see app/tools/gimpfiltertool.c for
+ * the interface and e.g. app/tools/gimpcolorbalancetool.c for an
+ * example of using that interface.
  */
 
 #include "config.h"
@@ -388,6 +388,7 @@ gimp_drawable_filter_set_gamma_hack (GimpDrawableFilter *filter,
       filter->gamma_hack = gamma_hack;
 
       gimp_drawable_filter_sync_gamma_hack (filter);
+      gimp_drawable_filter_sync_transform (filter);
 
       if (gimp_drawable_filter_is_filtering (filter))
         gimp_drawable_filter_update_drawable (filter, NULL);
@@ -652,52 +653,87 @@ gimp_drawable_filter_sync_mask (GimpDrawableFilter *filter)
                             &filter->filter_area.height);
 }
 
-/*static void //elle: remove stupid color-managed option 
+/*static void //elle: remove stupid color-managed option
 gimp_drawable_filter_sync_transform (GimpDrawableFilter *filter)
 {
   GimpColorManaged *managed = GIMP_COLOR_MANAGED (filter->drawable);
 
   if (filter->color_managed)
     {
+      gboolean          has_input;
+      const Babl       *drawable_format;
       const Babl       *input_format;
       const Babl       *output_format;
+      GimpColorProfile *drawable_profile;
       GimpColorProfile *input_profile;
       GimpColorProfile *output_profile;
-      GimpColorProfile *drawable_profile;
+      guint32           dummy;
 
-      input_format  = gimp_gegl_node_get_format (filter->operation, "input");
-      output_format = gimp_gegl_node_get_format (filter->operation, "output");
+      has_input = gegl_node_has_pad (filter->operation, "input");
 
-      g_printerr ("format before filter: %s\n",
-                  babl_get_name (gimp_gegl_node_get_format (filter->cast_before,
-                                                            "output")));
-      g_printerr ("filter input format: %s\n", babl_get_name (input_format));
+      drawable_format = gimp_drawable_get_format (filter->drawable);
+      if (has_input)
+        input_format  = gimp_gegl_node_get_format (filter->operation, "input");
+      output_format   = gimp_gegl_node_get_format (filter->operation, "output");
+
+      g_printerr ("drawable format:      %s\n", babl_get_name (drawable_format));
+      if (has_input)
+        g_printerr ("filter input format:  %s\n", babl_get_name (input_format));
       g_printerr ("filter output format: %s\n", babl_get_name (output_format));
-      g_printerr ("format after filter: %s\n",
-                  babl_get_name (gimp_gegl_node_get_format (filter->cast_after,
-                                                            "input")));
 
-      input_profile    = gimp_babl_format_get_color_profile (input_format);
-      output_profile   = gimp_babl_format_get_color_profile (output_format);
+//convert the drawable format to float, so we get a precise color transform
+
+      drawable_format =
+        gimp_babl_format (gimp_babl_format_get_base_type (drawable_format),
+                          gimp_babl_precision (GIMP_COMPONENT_TYPE_FLOAT,
+                                               gimp_babl_format_get_linear (drawable_format)),
+                          babl_format_has_alpha (drawable_format));
+
+//convert the filter input/output formats to something we have
+//built-in color profiles for (see the get_color_profile()
+//calls below)
+
+      if (has_input)
+        input_format = gimp_color_profile_get_format (input_format,  &dummy);
+      output_format  = gimp_color_profile_get_format (output_format, &dummy);
+
+      g_printerr ("profile transform drawable format: %s\n",
+                  babl_get_name (drawable_format));
+      if (has_input)
+        g_printerr ("profile transform input format:    %s\n",
+                    babl_get_name (input_format));
+      g_printerr ("profile transform output format:   %s\n",
+                  babl_get_name (output_format));
+
       drawable_profile = gimp_color_managed_get_color_profile (managed);
+      if (has_input)
+        input_profile  = gimp_babl_format_get_color_profile (input_format);
+      output_profile   = gimp_babl_format_get_color_profile (output_format);
 
-      if (! gimp_color_transform_can_gegl_copy (drawable_profile,
-                                                input_profile) ||
+      if ((has_input && ! gimp_color_transform_can_gegl_copy (drawable_profile,
+                                                              input_profile)) ||
           ! gimp_color_transform_can_gegl_copy (output_profile,
                                                 drawable_profile))
         {
           g_printerr ("using gimp:profile-transform\n");
 
-          gegl_node_set (filter->transform_before,
-                         "operation",    "gimp:profile-transform",
-                         "src-profile",  drawable_profile,
-                         "dest-profile", input_profile,
-                         NULL);
+          if (has_input)
+            {
+              gegl_node_set (filter->transform_before,
+                             "operation",    "gimp:profile-transform",
+                             "src-profile",  drawable_profile,
+                             "src-format",   drawable_format,
+                             "dest-profile", input_profile,
+                             "dest-format",  input_format,
+                             NULL);
+            }
 
           gegl_node_set (filter->transform_after,
                          "operation",    "gimp:profile-transform",
                          "src-profile",  output_profile,
+                         "src-format",   output_format,
                          "dest-profile", drawable_profile,
+                         "dest-format",  drawable_format,
                          NULL);
 
           return;

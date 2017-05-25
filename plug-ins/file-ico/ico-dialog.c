@@ -92,7 +92,7 @@ ico_dialog_new (IcoSaveInfo *info)
   gtk_widget_show (vbox);
 
   warning = g_object_new (GIMP_TYPE_HINT_BOX,
-                          "stock-id", GIMP_STOCK_WARNING,
+                          "icon-name", GIMP_ICON_DIALOG_WARNING,
                           "hint",
                           _("Large icons and compression are not supported "
                             "by all programs. Older applications may not "
@@ -288,7 +288,7 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
 
       tmp_layer = gimp_layer_new (tmp_image, "temporary", w, h,
                                   gimp_drawable_type (layer),
-                                  100, GIMP_LAYER_MODE_NORMAL);
+                                  100, GIMP_LAYER_MODE_NORMAL_LEGACY);
       gimp_image_insert_layer (tmp_image, tmp_layer, -1, 0);
 
       buffer = gimp_drawable_get_buffer (layer);
@@ -309,7 +309,8 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
         gimp_image_convert_rgb (tmp_image);
 
       gimp_image_convert_indexed (tmp_image,
-                                  GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+                                  GIMP_CONVERT_DITHER_FS,
+                                  GIMP_CONVERT_PALETTE_GENERATE,
                                   1 << bpp, TRUE, FALSE, "dummy");
 
       cmap = gimp_image_get_colormap (tmp_image, &num_colors);
@@ -346,7 +347,8 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
             gimp_image_convert_rgb (tmp_image);
 
           gimp_image_convert_indexed (tmp_image,
-                                      GIMP_FS_DITHER, GIMP_MAKE_PALETTE,
+                                      GIMP_CONVERT_DITHER_FS,
+                                      GIMP_CONVERT_PALETTE_GENERATE,
                                       (1 << bpp) - 1, TRUE, FALSE, "dummy");
         }
 
@@ -386,7 +388,7 @@ ico_dialog_update_icon_preview (GtkWidget *dialog,
 
       tmp_layer = gimp_layer_new (tmp_image, "temporary", w, h,
                                   gimp_drawable_type (layer),
-                                  100, GIMP_LAYER_MODE_NORMAL);
+                                  100, GIMP_LAYER_MODE_NORMAL_LEGACY);
       gimp_image_insert_layer (tmp_image, tmp_layer, -1, 0);
 
       buffer = gimp_drawable_get_buffer (layer);

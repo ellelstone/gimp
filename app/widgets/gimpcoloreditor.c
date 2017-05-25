@@ -85,7 +85,7 @@ static void   gimp_color_editor_bg_changed      (GimpContext       *context,
                                                  GimpColorEditor   *editor);
 static void   gimp_color_editor_color_changed   (GimpColorSelector *selector,
                                                  const GimpRGB     *rgb,
-                                                 const GimpLch     *lch,
+                                                 const GimpHSV     *hsv,
                                                  GimpColorEditor   *editor);
 static void   gimp_color_editor_tab_toggled     (GtkWidget         *widget,
                                                  GimpColorEditor   *editor);
@@ -157,7 +157,7 @@ gimp_color_editor_init (GimpColorEditor *editor)
   gint         button_spacing;
   GtkIconSize  button_icon_size;
   GimpRGB      rgb;
-  GimpLch      lch;
+  GimpHSV      hsv;
   GList       *list;
   GSList      *group;
 
@@ -165,7 +165,7 @@ gimp_color_editor_init (GimpColorEditor *editor)
   editor->edit_bg = FALSE;
 
   gimp_rgba_set (&rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &rgb, &lch, 1);
+  gimp_rgb_to_hsv (&rgb, &hsv);
 
   gtk_widget_style_get (GTK_WIDGET (editor),
                         "content-spacing",  &content_spacing,
@@ -179,7 +179,7 @@ gimp_color_editor_init (GimpColorEditor *editor)
   gtk_widget_show (editor->hbox);
 
   editor->notebook = gimp_color_selector_new (GIMP_TYPE_COLOR_NOTEBOOK,
-                                              &rgb, &lch,
+                                              &rgb, &hsv,
                                               GIMP_COLOR_SELECTOR_HUE);
   gimp_color_selector_set_show_alpha (GIMP_COLOR_SELECTOR (editor->notebook),
                                       FALSE);
@@ -510,16 +510,16 @@ static void
 gimp_color_editor_set_color (GimpColorEditor *editor,
                              const GimpRGB   *rgb)
 {
-  GimpLch lch;
+  GimpHSV hsv;
 
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), rgb, &lch, 1);
+  gimp_rgb_to_hsv (rgb, &hsv);
 
   g_signal_handlers_block_by_func (editor->notebook,
                                    gimp_color_editor_color_changed,
                                    editor);
 
   gimp_color_selector_set_color (GIMP_COLOR_SELECTOR (editor->notebook),
-                                 rgb, &lch);
+                                 rgb, &hsv);
 
   g_signal_handlers_unblock_by_func (editor->notebook,
                                      gimp_color_editor_color_changed,
@@ -558,7 +558,7 @@ gimp_color_editor_bg_changed (GimpContext     *context,
 static void
 gimp_color_editor_color_changed (GimpColorSelector *selector,
                                  const GimpRGB     *rgb,
-                                 const GimpLch     *lch,
+                                 const GimpHSV     *hsv,
                                  GimpColorEditor   *editor)
 {
   if (editor->context)

@@ -42,8 +42,8 @@ typedef enum
   GIMP_LAYER_COMPOSITE_AUTO,      /*< desc="Auto"             >*/
   GIMP_LAYER_COMPOSITE_SRC_OVER,  /*< desc="Source over"      >*/
   GIMP_LAYER_COMPOSITE_SRC_ATOP,  /*< desc="Source atop"      >*/
-  GIMP_LAYER_COMPOSITE_SRC_IN,    /*< desc="Source in"        >*/
-  GIMP_LAYER_COMPOSITE_DST_ATOP   /*< desc="Destination atop" >*/
+  GIMP_LAYER_COMPOSITE_DST_ATOP,  /*< desc="Destination atop" >*/
+  GIMP_LAYER_COMPOSITE_SRC_IN     /*< desc="Source in"        >*/
 } GimpLayerCompositeMode;
 
 
@@ -54,18 +54,41 @@ GType gimp_layer_mode_get_type (void) G_GNUC_CONST;
 typedef enum
 {
   /*  Modes that exist since ancient times  */
-  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
+  GIMP_LAYER_MODE_NORMAL_LEGACY,         /*< desc="Normal (legacy)"          >*/
   GIMP_LAYER_MODE_DISSOLVE,              /*< desc="Dissolve"                 >*/
-  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
+  GIMP_LAYER_MODE_BEHIND_LEGACY,         /*< desc="Behind (legacy)"          >*/
+  GIMP_LAYER_MODE_MULTIPLY_LEGACY,       /*< desc="Multiply (legacy)"        >*/
+  GIMP_LAYER_MODE_SCREEN_LEGACY,         /*< desc="Screen (legacy)"          >*/
+  GIMP_LAYER_MODE_OVERLAY_LEGACY,        /*< desc="Old broken Overlay"       >*/
+  GIMP_LAYER_MODE_DIFFERENCE_LEGACY,     /*< desc="Difference (legacy)"      >*/
+  GIMP_LAYER_MODE_ADDITION_LEGACY,       /*< desc="Addition (legacy)"        >*/
+  GIMP_LAYER_MODE_SUBTRACT_LEGACY,       /*< desc="Subtract (legacy)"        >*/
+  GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,    /*< desc="Darken only (legacy)"     >*/
+  GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,   /*< desc="Lighten only (legacy)"    >*/
+  GIMP_LAYER_MODE_HSV_HUE_LEGACY,        /*< desc="Hue (HSV) (legacy)"       >*/
+  GIMP_LAYER_MODE_HSV_SATURATION_LEGACY, /*< desc="Saturation (HSV) (legacy)">*/
+  GIMP_LAYER_MODE_HSL_COLOR_LEGACY,      /*< desc="Color (HSL) (legacy)"     >*/
+  GIMP_LAYER_MODE_HSV_VALUE_LEGACY,      /*< desc="Value (HSV) (legacy)"     >*/
+  GIMP_LAYER_MODE_DIVIDE_LEGACY,         /*< desc="Divide (legacy)"          >*/
+  GIMP_LAYER_MODE_DODGE_LEGACY,          /*< desc="Dodge (legacy)"           >*/
+  GIMP_LAYER_MODE_BURN_LEGACY,           /*< desc="Burn (legacy)"            >*/
+  GIMP_LAYER_MODE_HARDLIGHT_LEGACY,      /*< desc="Hard light (legacy)"      >*/
 
-  /*  Since 2.8  */
+  /*  Since 2.8 (XCF version 2)  */
+  GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,      /*< desc="Soft light (legacy)"      >*/
+  GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,  /*< desc="Grain extract (legacy)"   >*/
+  GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,    /*< desc="Grain merge (legacy)"     >*/
+  GIMP_LAYER_MODE_COLOR_ERASE_LEGACY,    /*< desc="Color erase (legacy)"     >*/
+
+  /*  Since 2.10 (XCF version 9) */
   GIMP_LAYER_MODE_OVERLAY,               /*< desc="Overlay"                  >*/
   GIMP_LAYER_MODE_LCH_HUE,               /*< desc="Hue (LCH)"                >*/
   GIMP_LAYER_MODE_LCH_CHROMA,            /*< desc="Chroma (LCH)"             >*/
   GIMP_LAYER_MODE_LCH_COLOR,             /*< desc="Color (LCH)"              >*/
   GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
 
-  /*  Since 2.10  */
+  /*  Since 2.10 (XCF version 10)  */
+  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
   GIMP_LAYER_MODE_BEHIND,                /*< desc="Behind"                   >*/
   GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
   GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/
@@ -76,7 +99,7 @@ typedef enum
   GIMP_LAYER_MODE_LIGHTEN_ONLY,          /*< desc="Lighten only"             >*/
   GIMP_LAYER_MODE_HSV_HUE,               /*< desc="Hue (HSV)"                >*/
   GIMP_LAYER_MODE_HSV_SATURATION,        /*< desc="Saturation (HSV)"         >*/
-  GIMP_LAYER_MODE_HSV_COLOR,             /*< desc="Color (HSV)"              >*/
+  GIMP_LAYER_MODE_HSL_COLOR,             /*< desc="Color (HSL)"              >*/
   GIMP_LAYER_MODE_HSV_VALUE,             /*< desc="Value (HSV)"              >*/
   GIMP_LAYER_MODE_DIVIDE,                /*< desc="Divide"                   >*/
   GIMP_LAYER_MODE_DODGE,                 /*< desc="Dodge"                    >*/
@@ -94,9 +117,12 @@ typedef enum
   GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,   /*< desc="Luma/Luminance darken only"  >*/
   GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,  /*< desc="Luma/Luminance lighten only" >*/
   GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
+  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
+  GIMP_LAYER_MODE_ERASE,                 /*< desc="Erase"                    >*/
+  GIMP_LAYER_MODE_MERGE,                 /*< desc="Merge"                    >*/
+  GIMP_LAYER_MODE_SPLIT,                 /*< desc="Split"                    >*/
 
   /*  Internal modes, not available to the PDB, must be kept at the end  */
-  GIMP_LAYER_MODE_ERASE,                 /*< pdb-skip, desc="Erase"          >*/
   GIMP_LAYER_MODE_REPLACE,               /*< pdb-skip, desc="Replace"        >*/
   GIMP_LAYER_MODE_ANTI_ERASE,            /*< pdb-skip, desc="Anti erase"     >*/
 
@@ -140,10 +166,12 @@ typedef enum  /*< pdb-skip >*/
 
 typedef enum  /*< pdb-skip, skip >*/
 {
-  GIMP_LAYER_MODE_AFFECT_NONE = 0,
-  GIMP_LAYER_MODE_AFFECT_DST  = 1 << 0,
-  GIMP_LAYER_MODE_AFFECT_SRC  = 1 << 1
-} GimpLayerModeAffectMask;
+  GIMP_LAYER_COMPOSITE_REGION_INTERSECTION = 0,
+  GIMP_LAYER_COMPOSITE_REGION_DESTINATION  = 1 << 0,
+  GIMP_LAYER_COMPOSITE_REGION_SOURCE       = 1 << 1,
+  GIMP_LAYER_COMPOSITE_REGION_UNION        = (GIMP_LAYER_COMPOSITE_REGION_DESTINATION |
+                                              GIMP_LAYER_COMPOSITE_REGION_SOURCE),
+} GimpLayerCompositeRegion;
 
 typedef enum  /*< pdb-skip, skip >*/
 {
@@ -151,6 +179,7 @@ typedef enum  /*< pdb-skip, skip >*/
   GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     =  1 << 1,
   GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE =  1 << 2,
   GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE  =  1 << 3,
+  GIMP_LAYER_MODE_FLAG_SUBTRACTIVE               =  1 << 4
 } GimpLayerModeFlags;
 
 

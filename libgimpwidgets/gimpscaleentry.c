@@ -31,93 +31,78 @@
 #include "gimpwidgets.h"
 
 
-static void gimp_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
-                                                                GtkAdjustment *other_adj);
-static void gimp_scale_entry_exp_adjustment_callback           (GtkAdjustment *adjustment,
-                                                                GtkAdjustment *other_adj);
-static void gimp_scale_entry_log_adjustment_callback           (GtkAdjustment *adjustment,
-                                                                GtkAdjustment *other_adj);
+static gboolean        gimp_scale_entry_linear_to_log (GBinding     *binding,
+                                                       const GValue *from_value,
+                                                       GValue       *to_value,
+                                                       gpointer      user_data);
+static gboolean        gimp_scale_entry_log_to_linear (GBinding     *binding,
+                                                       const GValue *from_value,
+                                                       GValue       *to_value,
+                                                       gpointer      user_data);
 
-static GtkObject * gimp_scale_entry_new_internal               (gboolean       color_scale,
-                                                                GtkTable      *table,
-                                                                gint           column,
-                                                                gint           row,
-                                                                const gchar   *text,
-                                                                gint           scale_width,
-                                                                gint           spinbutton_width,
-                                                                gdouble        value,
-                                                                gdouble        lower,
-                                                                gdouble        upper,
-                                                                gdouble        step_increment,
-                                                                gdouble        page_increment,
-                                                                guint          digits,
-                                                                gboolean       constrain,
-                                                                gdouble        unconstrained_lower,
-                                                                gdouble        unconstrained_upper,
-                                                                const gchar   *tooltip,
-                                                                const gchar   *help_id);
+static GtkAdjustment * gimp_scale_entry_new_internal  (gboolean      color_scale,
+                                                       GtkTable     *table,
+                                                       gint          column,
+                                                       gint          row,
+                                                       const gchar  *text,
+                                                       gint          scale_width,
+                                                       gint          spinbutton_width,
+                                                       gdouble       value,
+                                                       gdouble       lower,
+                                                       gdouble       upper,
+                                                       gdouble       step_increment,
+                                                       gdouble       page_increment,
+                                                       guint         digits,
+                                                       gboolean      constrain,
+                                                       gdouble       unconstrained_lower,
+                                                       gdouble       unconstrained_upper,
+                                                       const gchar  *tooltip,
+                                                       const gchar  *help_id);
 
 
-static void
-gimp_scale_entry_unconstrained_adjustment_callback (GtkAdjustment *adjustment,
-                                                    GtkAdjustment *other_adj)
+static gboolean
+gimp_scale_entry_linear_to_log (GBinding     *binding,
+                                const GValue *from_value,
+                                GValue       *to_value,
+                                gpointer      user_data)
 {
-  g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_unconstrained_adjustment_callback,
-                                   adjustment);
+  GtkAdjustment *spin_adjustment;
+  gdouble        value = g_value_get_double (from_value);
 
-  gtk_adjustment_set_value (other_adj, gtk_adjustment_get_value (adjustment));
+  spin_adjustment = GTK_ADJUSTMENT (g_binding_get_source (binding));
 
-  g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_unconstrained_adjustment_callback,
-                                     adjustment);
-}
-
-static void
-gimp_scale_entry_log_adjustment_callback (GtkAdjustment *adjustment,
-                                          GtkAdjustment *other_adj)
-{
-  gdouble value;
-
-  g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_exp_adjustment_callback,
-                                   adjustment);
-
-  if (gtk_adjustment_get_lower (adjustment) <= 0.0)
-    value = log (gtk_adjustment_get_value (adjustment) -
-                 gtk_adjustment_get_lower (adjustment) + 0.1);
+  if (gtk_adjustment_get_lower (spin_adjustment) <= 0.0)
+    value = log (value - gtk_adjustment_get_lower (spin_adjustment) + 0.1);
   else
-    value = log (gtk_adjustment_get_value (adjustment));
+    value = log (value);
 
-  gtk_adjustment_set_value (other_adj, value);
+  g_value_set_double (to_value, value);
 
-  g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_exp_adjustment_callback,
-                                     adjustment);
+  return TRUE;
 }
 
-static void
-gimp_scale_entry_exp_adjustment_callback (GtkAdjustment *adjustment,
-                                          GtkAdjustment *other_adj)
+static gboolean
+gimp_scale_entry_log_to_linear (GBinding     *binding,
+                                const GValue *from_value,
+                                GValue       *to_value,
+                                gpointer      user_data)
 {
-  gdouble value;
+  GtkAdjustment *spin_adjustment;
+  gdouble        value = g_value_get_double (from_value);
 
-  g_signal_handlers_block_by_func (other_adj,
-                                   gimp_scale_entry_log_adjustment_callback,
-                                   adjustment);
+  spin_adjustment = GTK_ADJUSTMENT (g_binding_get_target (binding));
 
-  value = exp (gtk_adjustment_get_value (adjustment));
-  if (gtk_adjustment_get_lower (other_adj) <= 0.0)
-    value += gtk_adjustment_get_lower (other_adj) - 0.1;
+  value = exp (value);
 
-  gtk_adjustment_set_value (other_adj, value);
+  if (gtk_adjustment_get_lower (spin_adjustment) <= 0.0)
+    value += gtk_adjustment_get_lower (spin_adjustment) - 0.1;
 
-  g_signal_handlers_unblock_by_func (other_adj,
-                                     gimp_scale_entry_log_adjustment_callback,
-                                     adjustment);
+  g_value_set_double (to_value, value);
+
+  return TRUE;
 }
 
-static GtkObject *
+static GtkAdjustment *
 gimp_scale_entry_new_internal (gboolean     color_scale,
                                GtkTable    *table,
                                gint         column,
@@ -140,59 +125,43 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
   GtkWidget     *label;
   GtkWidget     *scale;
   GtkWidget     *spinbutton;
-  GtkAdjustment *adjustment;
-  GtkAdjustment *return_adj;
+  GtkAdjustment *scale_adjustment;
+  GtkAdjustment *spin_adjustment;
+  GBinding      *binding;
 
   label = gtk_label_new_with_mnemonic (text);
   gtk_label_set_xalign (GTK_LABEL (label), 0.0);
-  gtk_table_attach (GTK_TABLE (table), label,
-                    column, column + 1, row, row + 1,
-                    GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
+
+  scale_adjustment = (GtkAdjustment *)
+    gtk_adjustment_new (value, lower, upper,
+                        step_increment, page_increment, 0.0);
 
   if (! constrain &&
       unconstrained_lower <= lower &&
       unconstrained_upper >= upper)
     {
-      GtkAdjustment *constrained_adj;
-
-      constrained_adj = (GtkAdjustment *)
-        gtk_adjustment_new (value, lower, upper,
-                            step_increment, page_increment,
-                            0.0);
-
-      adjustment = (GtkAdjustment *)
+      spin_adjustment = (GtkAdjustment *)
         gtk_adjustment_new (value,
                             unconstrained_lower,
                             unconstrained_upper,
                             step_increment, page_increment, 0.0);
-      spinbutton = gtk_spin_button_new (adjustment, step_increment, digits);
-      gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spinbutton), TRUE);
-
-      g_signal_connect
-        (constrained_adj, "value-changed",
-         G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
-         adjustment);
-
-      g_signal_connect
-        (adjustment, "value-changed",
-         G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
-         constrained_adj);
-
-      return_adj = adjustment;
-
-      adjustment = constrained_adj;
     }
   else
     {
-      adjustment = (GtkAdjustment *)
+      spin_adjustment = (GtkAdjustment *)
         gtk_adjustment_new (value, lower, upper,
                             step_increment, page_increment, 0.0);
-      spinbutton = gtk_spin_button_new (adjustment, step_increment, digits);
-      gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spinbutton), TRUE);
-
-      return_adj = adjustment;
     }
+
+  binding = g_object_bind_property (G_OBJECT (spin_adjustment),  "value",
+                                    G_OBJECT (scale_adjustment), "value",
+                                    G_BINDING_BIDIRECTIONAL |
+                                    G_BINDING_SYNC_CREATE);
+
+  spinbutton = gtk_spin_button_new (spin_adjustment, step_increment, digits);
+  gtk_spin_button_set_numeric (GTK_SPIN_BUTTON (spinbutton), TRUE);
+  gtk_widget_show (spinbutton);
 
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), spinbutton);
 
@@ -207,28 +176,32 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
   if (color_scale)
     {
       scale = gimp_color_scale_new (GTK_ORIENTATION_HORIZONTAL,
-                                    GIMP_COLOR_SELECTOR_LIGHTNESS);
+                                    GIMP_COLOR_SELECTOR_VALUE);
 
-      gtk_range_set_adjustment (GTK_RANGE (scale), adjustment);
+      gtk_range_set_adjustment (GTK_RANGE (scale), scale_adjustment);
     }
   else
     {
-      scale = gtk_scale_new (GTK_ORIENTATION_HORIZONTAL, adjustment);
+      scale = gtk_scale_new (GTK_ORIENTATION_HORIZONTAL, scale_adjustment);
     }
 
   if (scale_width > 0)
     gtk_widget_set_size_request (scale, scale_width, -1);
   gtk_scale_set_digits (GTK_SCALE (scale), digits);
   gtk_scale_set_draw_value (GTK_SCALE (scale), FALSE);
+  gtk_widget_show (scale);
+
+  gtk_table_attach (GTK_TABLE (table), label,
+                    column, column + 1, row, row + 1,
+                    GTK_FILL, GTK_FILL, 0, 0);
+
   gtk_table_attach (GTK_TABLE (table), scale,
                     column + 1, column + 2, row, row + 1,
                     GTK_FILL | GTK_EXPAND, GTK_FILL, 0, 0);
-  gtk_widget_show (scale);
 
   gtk_table_attach (GTK_TABLE (table), spinbutton,
                     column + 2, column + 3, row, row + 1,
                     GTK_FILL | GTK_SHRINK, GTK_SHRINK, 0, 0);
-  gtk_widget_show (spinbutton);
 
   if (tooltip || help_id)
     {
@@ -237,11 +210,12 @@ gimp_scale_entry_new_internal (gboolean     color_scale,
       gimp_help_set_help_data (spinbutton, tooltip, help_id);
     }
 
-  g_object_set_data (G_OBJECT (return_adj), "label",      label);
-  g_object_set_data (G_OBJECT (return_adj), "scale",      scale);
-  g_object_set_data (G_OBJECT (return_adj), "spinbutton", spinbutton);
+  g_object_set_data (G_OBJECT (spin_adjustment), "label",      label);
+  g_object_set_data (G_OBJECT (spin_adjustment), "scale",      scale);
+  g_object_set_data (G_OBJECT (spin_adjustment), "spinbutton", spinbutton);
+  g_object_set_data (G_OBJECT (spin_adjustment), "binding",    binding);
 
-  return GTK_OBJECT (return_adj);
+  return spin_adjustment;
 }
 
 /**
@@ -292,16 +266,17 @@ gimp_scale_entry_new (GtkTable    *table,
                       const gchar *tooltip,
                       const gchar *help_id)
 {
-  return gimp_scale_entry_new_internal (FALSE,
-                                        table, column, row,
-                                        text, scale_width, spinbutton_width,
-                                        value, lower, upper,
-                                        step_increment, page_increment,
-                                        digits,
-                                        constrain,
-                                        unconstrained_lower,
-                                        unconstrained_upper,
-                                        tooltip, help_id);
+  return (GtkObject *)
+    gimp_scale_entry_new_internal (FALSE,
+                                   table, column, row,
+                                   text, scale_width, spinbutton_width,
+                                   value, lower, upper,
+                                   step_increment, page_increment,
+                                   digits,
+                                   constrain,
+                                   unconstrained_lower,
+                                   unconstrained_upper,
+                                   tooltip, help_id);
 }
 
 /**
@@ -343,14 +318,15 @@ gimp_color_scale_entry_new (GtkTable    *table,
                             const gchar *tooltip,
                             const gchar *help_id)
 {
-  return gimp_scale_entry_new_internal (TRUE,
-                                        table, column, row,
-                                        text, scale_width, spinbutton_width,
-                                        value, lower, upper,
-                                        step_increment, page_increment,
-                                        digits,
-                                        TRUE, 0.0, 0.0,
-                                        tooltip, help_id);
+  return (GtkObject *)
+    gimp_scale_entry_new_internal (TRUE,
+                                   table, column, row,
+                                   text, scale_width, spinbutton_width,
+                                   value, lower, upper,
+                                   step_increment, page_increment,
+                                   digits,
+                                   TRUE, 0.0, 0.0,
+                                   tooltip, help_id);
 }
 
 /**
@@ -370,16 +346,25 @@ void
 gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
                                   gboolean   logarithmic)
 {
-  GtkAdjustment *adj;
+  GtkAdjustment *spin_adj;
   GtkAdjustment *scale_adj;
+  GBinding      *binding;
 
   g_return_if_fail (GTK_IS_ADJUSTMENT (adjustment));
 
-  adj       = GTK_ADJUSTMENT (adjustment);
+  spin_adj  = GTK_ADJUSTMENT (adjustment);
   scale_adj = GIMP_SCALE_ENTRY_SCALE_ADJ (adjustment);
+  binding   = g_object_get_data (G_OBJECT (adjustment), "binding");
+
+  g_return_if_fail (GTK_IS_ADJUSTMENT (scale_adj));
+  g_return_if_fail (G_IS_BINDING (binding));
+
+  logarithmic = logarithmic ? TRUE : FALSE;
 
   if (logarithmic == gimp_scale_entry_get_logarithmic (adjustment))
     return;
+
+  g_object_unref (binding);
 
   if (logarithmic)
     {
@@ -402,86 +387,48 @@ gimp_scale_entry_set_logarithmic (GtkObject *adjustment,
                                     gtk_adjustment_get_lower (scale_adj)) /
                                    gtk_adjustment_get_page_increment (scale_adj));
 
-      if (scale_adj == adj)
-        {
-          GtkObject *new_adj;
-
-          new_adj = gtk_adjustment_new (gtk_adjustment_get_value (scale_adj),
-                                        gtk_adjustment_get_lower (scale_adj),
-                                        gtk_adjustment_get_upper (scale_adj),
-                                        gtk_adjustment_get_step_increment (scale_adj),
-                                        gtk_adjustment_get_page_increment (scale_adj),
-                                        0.0);
-          gtk_range_set_adjustment (GTK_RANGE (GIMP_SCALE_ENTRY_SCALE (adj)),
-                                    GTK_ADJUSTMENT (new_adj));
-
-          scale_adj = (GtkAdjustment *) new_adj;
-        }
-      else
-        {
-          g_signal_handlers_disconnect_by_func (adj,
-                                                gimp_scale_entry_unconstrained_adjustment_callback,
-                                                scale_adj);
-
-          g_signal_handlers_disconnect_by_func (scale_adj,
-                                                gimp_scale_entry_unconstrained_adjustment_callback,
-                                                adj);
-        }
-
       gtk_adjustment_configure (scale_adj,
                                 log_value, log_lower, log_upper,
                                 log_step_increment, log_page_increment, 0.0);
 
-      g_signal_connect (scale_adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_exp_adjustment_callback),
-                        adj);
-
-      g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_log_adjustment_callback),
-                        scale_adj);
-
-      g_object_set_data (G_OBJECT (adjustment),
-                         "logarithmic", GINT_TO_POINTER (TRUE));
+      binding = g_object_bind_property_full (G_OBJECT (spin_adj),  "value",
+                                             G_OBJECT (scale_adj), "value",
+                                             G_BINDING_BIDIRECTIONAL |
+                                             G_BINDING_SYNC_CREATE,
+                                             gimp_scale_entry_linear_to_log,
+                                             gimp_scale_entry_log_to_linear,
+                                             NULL, NULL);
     }
   else
     {
       gdouble lower, upper;
 
-      g_signal_handlers_disconnect_by_func (adj,
-                                            gimp_scale_entry_log_adjustment_callback,
-                                            scale_adj);
-
-      g_signal_handlers_disconnect_by_func (scale_adj,
-                                            gimp_scale_entry_exp_adjustment_callback,
-                                            adj);
-
       lower = exp (gtk_adjustment_get_lower (scale_adj));
       upper = exp (gtk_adjustment_get_upper (scale_adj));
 
-      if (gtk_adjustment_get_lower (adj) <= 0.0)
+      if (gtk_adjustment_get_lower (spin_adj) <= 0.0)
         {
-          lower += - 0.1 + gtk_adjustment_get_lower (adj);
-          upper += - 0.1 + gtk_adjustment_get_lower (adj);
+          lower += - 0.1 + gtk_adjustment_get_lower (spin_adj);
+          upper += - 0.1 + gtk_adjustment_get_lower (spin_adj);
         }
 
       gtk_adjustment_configure (scale_adj,
-                                gtk_adjustment_get_value (adj),
+                                gtk_adjustment_get_value (spin_adj),
                                 lower, upper,
-                                gtk_adjustment_get_step_increment (adj),
-                                gtk_adjustment_get_page_increment (adj),
+                                gtk_adjustment_get_step_increment (spin_adj),
+                                gtk_adjustment_get_page_increment (spin_adj),
                                 0.0);
 
-      g_signal_connect (scale_adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
-                        adj);
-
-      g_signal_connect (adj, "value-changed",
-                        G_CALLBACK (gimp_scale_entry_unconstrained_adjustment_callback),
-                        scale_adj);
-
-      g_object_set_data (G_OBJECT (adjustment),
-                         "logarithmic", GINT_TO_POINTER (FALSE));
+      binding = g_object_bind_property (G_OBJECT (spin_adj),  "value",
+                                        G_OBJECT (scale_adj), "value",
+                                        G_BINDING_BIDIRECTIONAL |
+                                        G_BINDING_SYNC_CREATE);
     }
+
+  g_object_set_data (G_OBJECT (spin_adj), "binding", binding);
+
+  g_object_set_data (G_OBJECT (adjustment), "logarithmic",
+                     GINT_TO_POINTER (logarithmic));
 }
 
 /**

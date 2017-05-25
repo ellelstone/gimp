@@ -73,7 +73,7 @@ gimp_gegl_tool_register (GimpToolRegisterCallback  callback,
                 _("GEGL Tool: Use an arbitrary GEGL operation"),
                 N_("_GEGL Operation..."), NULL,
                 NULL, GIMP_HELP_TOOL_GEGL,
-                GIMP_STOCK_GEGL,
+                GIMP_ICON_GEGL,
                 data);
 }
 
@@ -152,6 +152,7 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
     "gegl:gegl",
     "gegl:grid",
     "gegl:high-pass",
+    "gegl:hue-chroma",
     "gegl:illusion",
     "gegl:image-gradient",
     "gegl:invert-linear",
@@ -253,6 +254,10 @@ gimp_gegl_tool_operation_blacklisted (const gchar *name,
   /* Operations with no name are abstract base classes */
   if (! name)
     return TRUE;
+
+  /* use this flag to include all ops for testing */
+  if (g_getenv ("GIMP_TESTING_NO_GEGL_BLACKLIST"))
+    return FALSE;
 
   if (g_str_has_prefix (name, "gimp"))
     return TRUE;
@@ -387,7 +392,7 @@ gimp_gegl_tool_dialog (GimpFilterTool *filter_tool)
       gchar              *label;
 
       if (g_str_has_prefix (opclass->name, "gegl:"))
-        icon_name = GIMP_STOCK_GEGL;
+        icon_name = GIMP_ICON_GEGL;
 
       if (g_str_has_prefix (op_name, "gegl:"))
         op_name += strlen ("gegl:");
@@ -491,7 +496,7 @@ gimp_gegl_tool_operation_changed (GtkWidget    *widget,
                                          _("GEGL Operation"),
                                          _("GEGL Operation"),
                                          NULL,
-                                         GIMP_STOCK_GEGL,
+                                         GIMP_ICON_GEGL,
                                          GIMP_HELP_TOOL_GEGL);
       g_free (operation);
     }

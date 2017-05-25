@@ -251,11 +251,15 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
   GimpContainer *container;
   GimpTool      *active_tool;
 
-  settings = gimp_operation_config_new (procedure->original_name,
+  settings = gimp_operation_config_new (gimp,
+                                        procedure->original_name,
                                         gimp_viewable_get_icon_name (GIMP_VIEWABLE (procedure)),
                                         GIMP_TYPE_SETTINGS);
 
-  container = gimp_operation_config_get_container (G_TYPE_FROM_INSTANCE (settings));
+  container =
+    gimp_operation_config_get_container (gimp,
+                                         G_TYPE_FROM_INSTANCE (settings),
+                                         (GCompareFunc) gimp_settings_compare);
 
   g_object_unref (settings);
 
@@ -263,10 +267,15 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
   settings = gimp_container_get_child_by_index (container, 0);
 
   /*  only use the settings if they are automatically created "last used"
-   *  values, not if they were saved explicitly and have a zero timestamp
+   *  values, not if they were saved explicitly and have a zero timestamp;
+   *  and if they are not a separator.
    */
-  if (settings && GIMP_SETTINGS (settings)->time == 0)
-    settings = NULL;
+  if (settings &&
+      (GIMP_SETTINGS (settings)->time == 0 ||
+       ! gimp_object_get_name (settings)))
+    {
+      settings = NULL;
+    }
 
   if (run_mode == GIMP_RUN_WITH_LAST_VALS)
     {
@@ -347,15 +356,8 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
       tool_manager_initialize_active (gimp, GIMP_DISPLAY (display));
 
       if (settings)
-        {
-          GObject *tool_config = GIMP_FILTER_TOOL (active_tool)->config;
-
-          gimp_config_copy (GIMP_CONFIG (settings),
-                            GIMP_CONFIG (tool_config), 0);
-
-          /* see comment in gimp_settings_box_setting_selected() */
-          g_object_set (tool_config, "time", 0, NULL);
-        }
+        gimp_filter_tool_set_config (GIMP_FILTER_TOOL (active_tool),
+                                     GIMP_CONFIG (settings));
     }
 }
 

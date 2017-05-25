@@ -210,7 +210,7 @@ gimp_layer_tree_view_class_init (GimpLayerTreeViewClass *klass)
   item_view_class->new_item        = gimp_layer_tree_view_item_new;
 
   item_view_class->action_group          = "layers";
-  item_view_class->activate_action       = "layers-text-tool";
+  item_view_class->activate_action       = "layers-edit";
   item_view_class->new_action            = "layers-new";
   item_view_class->new_default_action    = "layers-new-last-values";
   item_view_class->raise_action          = "layers-raise";
@@ -314,7 +314,7 @@ gimp_layer_tree_view_init (GimpLayerTreeView *view)
                         "button-icon-size", &icon_size,
                         NULL);
 
-  image = gtk_image_new_from_icon_name (GIMP_STOCK_TRANSPARENCY, icon_size);
+  image = gtk_image_new_from_icon_name (GIMP_ICON_TRANSPARENCY, icon_size);
   gtk_container_add (GTK_CONTAINER (view->priv->lock_alpha_toggle), image);
   gtk_widget_show (image);
 
@@ -809,7 +809,7 @@ gimp_layer_tree_view_drop_pixbuf (GimpContainerTreeView   *tree_view,
                                 gimp_image_get_layer_format (image, TRUE),
                                 _("Dropped Buffer"),
                                 GIMP_OPACITY_OPAQUE,
-                                GIMP_LAYER_MODE_NORMAL);
+                                GIMP_LAYER_MODE_NORMAL_LEGACY);
 
   gimp_image_add_layer (image, new_layer, parent, index, TRUE);
 
@@ -851,7 +851,7 @@ gimp_layer_tree_view_item_new (GimpImage *image)
                               gimp_image_get_layer_format (image, TRUE),
                               NULL,
                               GIMP_OPACITY_OPAQUE,
-                              GIMP_LAYER_MODE_NORMAL);
+                              GIMP_LAYER_MODE_NORMAL_LEGACY);
 
   gimp_image_add_layer (image, new_layer,
                         GIMP_IMAGE_ACTIVE_PARENT, -1, TRUE);

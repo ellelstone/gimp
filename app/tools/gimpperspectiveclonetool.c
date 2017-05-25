@@ -135,7 +135,7 @@ gimp_perspective_clone_tool_register (GimpToolRegisterCallback  callback,
                   "after applying a perspective transformation"),
                 N_("_Perspective Clone"), NULL,
                 NULL, GIMP_HELP_TOOL_PERSPECTIVE_CLONE,
-                GIMP_STOCK_TOOL_PERSPECTIVE_CLONE,
+                GIMP_ICON_TOOL_PERSPECTIVE_CLONE,
                 data);
 }
 
@@ -367,8 +367,8 @@ gimp_perspective_clone_tool_button_press (GimpTool            *tool,
                                                  coords->x, coords->y,
                                                  &nnx, &nny);
 
-        clone_tool->src_x = nnx;
-        clone_tool->src_y = nny;
+        clone_tool->src_x = floor (nnx);
+        clone_tool->src_y = floor (nny);
 
         gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
       }
@@ -510,8 +510,8 @@ gimp_perspective_clone_tool_motion (GimpTool         *tool,
                                                coords->x, coords->y,
                                                &nnx, &nny);
 
-      clone_tool->src_x = nnx;
-      clone_tool->src_y = nny;
+      clone_tool->src_x = floor (nnx);
+      clone_tool->src_y = floor (nny);
 
       gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
     }
@@ -694,8 +694,8 @@ gimp_perspective_clone_tool_oper_update (GimpTool         *tool,
                                                                coords->y,
                                                                &nnx, &nny);
 
-                      clone_tool->src_x = nnx;
-                      clone_tool->src_y = nny;
+                      clone_tool->src_x = floor (nnx);
+                      clone_tool->src_y = floor (nny);
                     }
                 }
 

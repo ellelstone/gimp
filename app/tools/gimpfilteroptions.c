@@ -78,7 +78,7 @@ gimp_filter_options_class_init (GimpFilterOptionsClass *klass)
 
   g_object_class_install_property (object_class, PROP_PREVIEW_SPLIT,
                                    g_param_spec_boolean ("preview-split",
-                                                         _("_Split view"),
+                                                         _("Split _view"),
                                                          NULL,
                                                          FALSE,
                                                          GIMP_PARAM_READWRITE |
@@ -247,4 +247,63 @@ gimp_filter_options_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
+}
+
+
+/*  public functions  */
+
+void
+gimp_filter_options_switch_preview_side (GimpFilterOptions *options)
+{
+  GimpAlignmentType alignment;
+
+  g_return_if_fail (GIMP_IS_FILTER_OPTIONS (options));
+
+  switch (options->preview_alignment)
+    {
+    case GIMP_ALIGN_LEFT:   alignment = GIMP_ALIGN_RIGHT;  break;
+    case GIMP_ALIGN_RIGHT:  alignment = GIMP_ALIGN_LEFT;   break;
+    case GIMP_ALIGN_TOP:    alignment = GIMP_ALIGN_BOTTOM; break;
+    case GIMP_ALIGN_BOTTOM: alignment = GIMP_ALIGN_TOP;    break;
+    default:
+      g_return_if_reached ();
+    }
+
+  g_object_set (options, "preview-alignment", alignment, NULL);
+}
+
+void
+gimp_filter_options_switch_preview_orientation (GimpFilterOptions *options,
+                                                gdouble            position_x,
+                                                gdouble            position_y)
+{
+  GimpAlignmentType alignment;
+  gdouble           position;
+
+  g_return_if_fail (GIMP_IS_FILTER_OPTIONS (options));
+
+  switch (options->preview_alignment)
+    {
+    case GIMP_ALIGN_LEFT:   alignment = GIMP_ALIGN_TOP;    break;
+    case GIMP_ALIGN_RIGHT:  alignment = GIMP_ALIGN_BOTTOM; break;
+    case GIMP_ALIGN_TOP:    alignment = GIMP_ALIGN_LEFT;   break;
+    case GIMP_ALIGN_BOTTOM: alignment = GIMP_ALIGN_RIGHT;  break;
+    default:
+      g_return_if_reached ();
+    }
+
+  if (alignment == GIMP_ALIGN_LEFT ||
+      alignment == GIMP_ALIGN_RIGHT)
+    {
+      position = position_x;
+    }
+  else
+    {
+      position = position_y;
+    }
+
+  g_object_set (options,
+                "preview-alignment", alignment,
+                "preview-position",  CLAMP (position, 0.0, 1.0),
+                NULL);
 }

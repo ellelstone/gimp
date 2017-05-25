@@ -136,7 +136,7 @@ query (void)
                           load_args, load_return_vals);
 
   gimp_plugin_icon_register (LOAD_PROC, GIMP_ICON_TYPE_ICON_NAME,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
+                             (const guint8 *) GIMP_ICON_BRUSH);
   gimp_register_file_handler_mime (LOAD_PROC, "image/x-gimp-gbr");
   gimp_register_file_handler_uri (LOAD_PROC);
   gimp_register_magic_load_handler (LOAD_PROC,
@@ -157,7 +157,7 @@ query (void)
                           save_args, NULL);
 
   gimp_plugin_icon_register (SAVE_PROC, GIMP_ICON_TYPE_ICON_NAME,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
+                             (const guint8 *) GIMP_ICON_BRUSH);
   gimp_register_file_handler_mime (SAVE_PROC, "image/x-gimp-gbr");
   gimp_register_file_handler_uri (SAVE_PROC);
   gimp_register_save_handler (SAVE_PROC, "gbr", "");
@@ -477,7 +477,7 @@ load_image (GFile   *file,
 
   /* Now there's just raw data left. */
 
-  size = bh.width * bh.height * bh.bytes;
+  size = (gsize) bh.width * bh.height * bh.bytes;
   brush_buf = g_malloc (size);
 
   if (! g_input_stream_read_all (input, brush_buf, size,
@@ -527,7 +527,7 @@ load_image (GFile   *file,
                 gint    i;
 
                 bh.bytes = 4;
-                brush_buf = g_malloc (4 * bh.width * bh.height);
+                brush_buf = g_malloc ((gsize) bh.width * bh.height * 4);
 
                 for (i = 0; i < ph.width * ph.height; i++)
                   {
@@ -621,7 +621,7 @@ load_image (GFile   *file,
 
   layer_ID = gimp_layer_new (image_ID, name, bh.width, bh.height,
                              image_type,
-                             100, GIMP_LAYER_MODE_NORMAL);
+                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
   gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
 
   g_free (name);

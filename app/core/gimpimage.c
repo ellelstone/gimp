@@ -64,6 +64,7 @@
 #include "gimplayer.h"
 #include "gimplayer-floating-selection.h"
 #include "gimplayermask.h"
+#include "gimplayerstack.h"
 #include "gimpmarshal.h"
 #include "gimpparasitelist.h"
 #include "gimppickable.h"
@@ -728,7 +729,7 @@ gimp_image_init (GimpImage *image)
   private->sample_points       = NULL;
 
   private->layers              = gimp_item_tree_new (image,
-                                                     GIMP_TYPE_DRAWABLE_STACK,
+                                                     GIMP_TYPE_LAYER_STACK,
                                                      GIMP_TYPE_LAYER);
   private->channels            = gimp_item_tree_new (image,
                                                      GIMP_TYPE_DRAWABLE_STACK,
@@ -2394,36 +2395,37 @@ gimp_image_get_xcf_version (GimpImage    *image,
       switch (gimp_layer_get_mode (layer))
         {
           /*  Modes that exist since ancient times  */
-        case GIMP_LAYER_MODE_NORMAL:
+        case GIMP_LAYER_MODE_NORMAL_LEGACY:
         case GIMP_LAYER_MODE_DISSOLVE:
-        case GIMP_LAYER_MODE_BEHIND:
-        case GIMP_LAYER_MODE_MULTIPLY:
-        case GIMP_LAYER_MODE_SCREEN:
-        case GIMP_LAYER_MODE_OVERLAY:
-        case GIMP_LAYER_MODE_DIFFERENCE:
-        case GIMP_LAYER_MODE_ADDITION:
-        case GIMP_LAYER_MODE_SUBTRACT:
-        case GIMP_LAYER_MODE_DARKEN_ONLY:
-        case GIMP_LAYER_MODE_LIGHTEN_ONLY:
-        case GIMP_LAYER_MODE_HSV_HUE:
-        case GIMP_LAYER_MODE_HSV_SATURATION:
-        case GIMP_LAYER_MODE_HSV_COLOR:
-        case GIMP_LAYER_MODE_HSV_VALUE:
-        case GIMP_LAYER_MODE_DIVIDE:
-        case GIMP_LAYER_MODE_DODGE:
-        case GIMP_LAYER_MODE_BURN:
-        case GIMP_LAYER_MODE_HARDLIGHT:
+        case GIMP_LAYER_MODE_BEHIND_LEGACY:
+        case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
+        case GIMP_LAYER_MODE_SCREEN_LEGACY:
+        case GIMP_LAYER_MODE_OVERLAY_LEGACY:
+        case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
+        case GIMP_LAYER_MODE_ADDITION_LEGACY:
+        case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
+        case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
+        case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
+        case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
+        case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
+        case GIMP_LAYER_MODE_HSL_COLOR_LEGACY:
+        case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
+        case GIMP_LAYER_MODE_DIVIDE_LEGACY:
+        case GIMP_LAYER_MODE_DODGE_LEGACY:
+        case GIMP_LAYER_MODE_BURN_LEGACY:
+        case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
           break;
 
           /*  Since 2.8  */
-        case GIMP_LAYER_MODE_SOFTLIGHT:
-        case GIMP_LAYER_MODE_GRAIN_EXTRACT:
-        case GIMP_LAYER_MODE_GRAIN_MERGE:
-        case GIMP_LAYER_MODE_COLOR_ERASE:
+        case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
+        case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
+        case GIMP_LAYER_MODE_COLOR_ERASE_LEGACY:
           version = MAX (2, version);
           break;
 
           /*  Since 2.10  */
+        case GIMP_LAYER_MODE_OVERLAY:
         case GIMP_LAYER_MODE_LCH_HUE:
         case GIMP_LAYER_MODE_LCH_CHROMA:
         case GIMP_LAYER_MODE_LCH_COLOR:
@@ -2432,6 +2434,26 @@ gimp_image_get_xcf_version (GimpImage    *image,
           break;
 
           /*  Since 2.10  */
+        case GIMP_LAYER_MODE_NORMAL:
+        case GIMP_LAYER_MODE_BEHIND:
+        case GIMP_LAYER_MODE_MULTIPLY:
+        case GIMP_LAYER_MODE_SCREEN:
+        case GIMP_LAYER_MODE_DIFFERENCE:
+        case GIMP_LAYER_MODE_ADDITION:
+        case GIMP_LAYER_MODE_SUBTRACT:
+        case GIMP_LAYER_MODE_DARKEN_ONLY:
+        case GIMP_LAYER_MODE_LIGHTEN_ONLY:
+        case GIMP_LAYER_MODE_HSV_HUE:
+        case GIMP_LAYER_MODE_HSV_SATURATION:
+        case GIMP_LAYER_MODE_HSL_COLOR:
+        case GIMP_LAYER_MODE_HSV_VALUE:
+        case GIMP_LAYER_MODE_DIVIDE:
+        case GIMP_LAYER_MODE_DODGE:
+        case GIMP_LAYER_MODE_BURN:
+        case GIMP_LAYER_MODE_HARDLIGHT:
+        case GIMP_LAYER_MODE_SOFTLIGHT:
+        case GIMP_LAYER_MODE_GRAIN_EXTRACT:
+        case GIMP_LAYER_MODE_GRAIN_MERGE:
         case GIMP_LAYER_MODE_VIVID_LIGHT:
         case GIMP_LAYER_MODE_PIN_LIGHT:
         case GIMP_LAYER_MODE_LINEAR_LIGHT:
@@ -2441,11 +2463,14 @@ gimp_image_get_xcf_version (GimpImage    *image,
         case GIMP_LAYER_MODE_LUMA_DARKEN_ONLY:
         case GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY:
         case GIMP_LAYER_MODE_LUMINANCE:
+        case GIMP_LAYER_MODE_COLOR_ERASE:
+        case GIMP_LAYER_MODE_ERASE:
+        case GIMP_LAYER_MODE_MERGE:
+        case GIMP_LAYER_MODE_SPLIT:
           version = MAX (10, version);
           break;
 
           /*  Just here instead of default so we get compiler warnings  */
-        case GIMP_LAYER_MODE_ERASE:
         case GIMP_LAYER_MODE_REPLACE:
         case GIMP_LAYER_MODE_ANTI_ERASE:
         case GIMP_LAYER_MODE_SEPARATOR:
@@ -2471,6 +2496,19 @@ gimp_image_get_xcf_version (GimpImage    *image,
   if (zlib_compression)
     version = MAX (8, version);
 
+  /* if version is 10 (lots of new layer modes), go to version 11 with
+   * 64 bit offsets right away
+   */
+  if (version == 10)
+    version = 11;
+
+  /* use the image's in-memory size as an upper bound to estimate the
+   * need for 64 bit file offsets inside the XCF, this is a *very*
+   * conservative estimate and should never fail
+   */
+  if (gimp_object_get_memsize (GIMP_OBJECT (image), NULL) >= ((gint64) 1 << 32))
+    version = MAX (11, version);
+
   switch (version)
     {
     case 0:
@@ -2492,6 +2530,7 @@ gimp_image_get_xcf_version (GimpImage    *image,
     case 8:
     case 9:
     case 10:
+    case 11:
       if (gimp_version)   *gimp_version   = 210;
       if (version_string) *version_string = "GIMP 2.10";
       break;
@@ -2501,20 +2540,20 @@ gimp_image_get_xcf_version (GimpImage    *image,
 }
 
 void
-gimp_image_set_xcf_compat_mode (GimpImage *image,
-                                gboolean   compat_mode)
+gimp_image_set_xcf_compression (GimpImage *image,
+                                gboolean   compression)
 {
   g_return_if_fail (GIMP_IS_IMAGE (image));
 
-  GIMP_IMAGE_GET_PRIVATE (image)->xcf_compat_mode = compat_mode;
+  GIMP_IMAGE_GET_PRIVATE (image)->xcf_compression = compression;
 }
 
 gboolean
-gimp_image_get_xcf_compat_mode (GimpImage *image)
+gimp_image_get_xcf_compression (GimpImage *image)
 {
   g_return_val_if_fail (GIMP_IS_IMAGE (image), FALSE);
 
-  return GIMP_IMAGE_GET_PRIVATE (image)->xcf_compat_mode;
+  return GIMP_IMAGE_GET_PRIVATE (image)->xcf_compression;
 }
 
 void

@@ -47,7 +47,7 @@ struct _GimpColorScale
   /*< private >*/
   GimpColorSelectorChannel  channel;
   GimpRGB                   rgb;
-  GimpLch                   lch;
+  GimpHSV                   hsv;
 
   guchar                   *buf;
   guint                     width;
@@ -77,7 +77,7 @@ void        gimp_color_scale_set_channel      (GimpColorScale           *scale,
                                                GimpColorSelectorChannel  channel);
 void        gimp_color_scale_set_color        (GimpColorScale           *scale,
                                                const GimpRGB            *rgb,
-                                               const GimpLch            *lch);
+                                               const GimpHSV            *hsv);
 
 void        gimp_color_scale_set_color_config (GimpColorScale           *scale,
                                                GimpColorConfig          *config);

@@ -21,6 +21,9 @@
 
 #include "libgimpbase/gimpbase.h"
 
+#include "core/core-types.h"
+
+#include "xcf-private.h"
 #include "xcf-read.h"
 
 #include "gimp-intl.h"
@@ -30,15 +33,15 @@
 
 
 guint
-xcf_read_int32 (GInputStream *input,
-                guint32      *data,
-                gint          count)
+xcf_read_int32 (XcfInfo *info,
+                guint32 *data,
+                gint     count)
 {
   guint total = 0;
 
   if (count > 0)
     {
-      total += xcf_read_int8 (input, (guint8 *) data, count * 4);
+      total += xcf_read_int8 (info, (guint8 *) data, count * 4);
 
       while (count--)
         {
@@ -51,30 +54,69 @@ xcf_read_int32 (GInputStream *input,
 }
 
 guint
-xcf_read_float (GInputStream *input,
-                gfloat       *data,
-                gint          count)
+xcf_read_offset (XcfInfo *info,
+                 goffset *data,
+                 gint     count)
 {
-  return xcf_read_int32 (input, (guint32 *) ((void *) data), count);
+  guint total = 0;
+
+  if (count > 0)
+    {
+      if (info->bytes_per_offset == 4)
+        {
+          gint32 *int_offsets = g_alloca (count * sizeof (gint32));
+
+          total += xcf_read_int8 (info, (guint8 *) int_offsets, count * 4);
+
+          while (count--)
+            {
+              *data = g_ntohl (*int_offsets);
+              int_offsets++;
+              data++;
+            }
+        }
+      else
+        {
+          total += xcf_read_int8 (info, (guint8 *) data, count * 8);
+
+          while (count--)
+            {
+              *data = GINT64_FROM_BE (*data);
+              data++;
+            }
+        }
+    }
+
+  return total;
 }
 
 guint
-xcf_read_int8 (GInputStream *input,
-               guint8       *data,
-               gint          count)
+xcf_read_float (XcfInfo *info,
+                gfloat  *data,
+                gint     count)
+{
+  return xcf_read_int32 (info, (guint32 *) ((void *) data), count);
+}
+
+guint
+xcf_read_int8 (XcfInfo *info,
+               guint8  *data,
+               gint     count)
 {
   gsize bytes_read;
 
-  g_input_stream_read_all (input, data, count,
+  g_input_stream_read_all (info->input, data, count,
                            &bytes_read, NULL, NULL);
+
+  info->cp += bytes_read;
 
   return bytes_read;
 }
 
 guint
-xcf_read_string (GInputStream  *input,
-                 gchar        **data,
-                 gint           count)
+xcf_read_string (XcfInfo  *info,
+                 gchar   **data,
+                 gint      count)
 {
   guint total = 0;
   gint  i;
@@ -83,7 +125,7 @@ xcf_read_string (GInputStream  *input,
     {
       guint32 tmp;
 
-      total += xcf_read_int32 (input, &tmp, 1);
+      total += xcf_read_int32 (info, &tmp, 1);
 
       if (tmp > MAX_XCF_STRING_LEN)
         {
@@ -96,7 +138,7 @@ xcf_read_string (GInputStream  *input,
           gchar *str;
 
           str = g_new (gchar, tmp);
-          total += xcf_read_int8 (input, (guint8*) str, tmp);
+          total += xcf_read_int8 (info, (guint8*) str, tmp);
 
           if (str[tmp - 1] != '\0')
             str[tmp - 1] = '\0';

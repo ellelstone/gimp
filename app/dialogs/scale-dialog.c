@@ -129,7 +129,7 @@ scale_dialog_new (GimpViewable          *viewable,
   gimp_image_get_resolution (image, &xres, &yres);
 
   dialog = gimp_viewable_dialog_new (viewable, context,
-                                     title, role, GIMP_STOCK_SCALE, title,
+                                     title, role, GIMP_ICON_OBJECT_SCALE, title,
                                      parent,
                                      help_func, help_id,
 

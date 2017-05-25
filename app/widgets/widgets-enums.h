@@ -63,11 +63,13 @@ GType gimp_color_frame_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_COLOR_FRAME_MODE_PIXEL,       /*< desc="Pixel" >*/
-  GIMP_COLOR_FRAME_MODE_RGB_PERCENT, /*< desc="RGB (%)">*/
+  GIMP_COLOR_FRAME_MODE_PIXEL,       /*< desc="Pixel"        >*/
+  GIMP_COLOR_FRAME_MODE_RGB_PERCENT, /*< desc="RGB (%)"      >*/
   GIMP_COLOR_FRAME_MODE_RGB_U8,      /*< desc="RGB (0..255)" >*/
-  GIMP_COLOR_FRAME_MODE_LCH /*,*/    /*< desc="LCH" >*/
-/*  GIMP_COLOR_FRAME_MODE_CMYK    < desc="CMYK"  >*/
+  GIMP_COLOR_FRAME_MODE_HSV,         /*< desc="HSV"          >*/
+  GIMP_COLOR_FRAME_MODE_LCH,         /*< desc="CIE LCH"      >*/
+  GIMP_COLOR_FRAME_MODE_LAB,         /*< desc="CIE LAB"      >*/
+  GIMP_COLOR_FRAME_MODE_CMYK         /*< desc="CMYK"         >*/
 } GimpColorFrameMode;
 
 

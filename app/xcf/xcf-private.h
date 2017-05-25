@@ -60,7 +60,8 @@ typedef enum
   PROP_COLOR_TAG          = 34,
   PROP_COMPOSITE_MODE     = 35,
   PROP_COMPOSITE_SPACE    = 36,
-  PROP_BLEND_SPACE        = 37
+  PROP_BLEND_SPACE        = 37,
+  PROP_FLOAT_COLOR        = 38
 } PropType;
 
 typedef enum
@@ -97,14 +98,15 @@ struct _XcfInfo
   GInputStream       *input;
   GOutputStream      *output;
   GSeekable          *seekable;
-  guint               cp;
+  goffset             cp;
+  gint                bytes_per_offset;
   GFile              *file;
   GimpTattoo          tattoo_state;
   GimpLayer          *active_layer;
   GimpChannel        *active_channel;
   GimpDrawable       *floating_sel_drawable;
   GimpLayer          *floating_sel;
-  guint               floating_sel_offset;
+  goffset             floating_sel_offset;
   XcfCompressionType  compression;
   gint                file_version;
 };

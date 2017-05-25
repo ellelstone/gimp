@@ -109,6 +109,7 @@ enum
   PROP_IMPORT_PROMOTE_FLOAT,
   PROP_IMPORT_PROMOTE_DITHER,
   PROP_IMPORT_ADD_ALPHA,
+  PROP_IMPORT_RAW_PLUG_IN,
 
   /* ignored, only for backward compatibility: */
   PROP_INSTALL_COLORMAP,
@@ -183,7 +184,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
   path = gimp_config_build_plug_in_path ("plug-ins");
   GIMP_CONFIG_PROP_PATH (object_class, PROP_PLUG_IN_PATH,
                          "plug-in-path",
-                         "Plug-In path",
+                         "Plug-in path",
                          PLUG_IN_PATH_BLURB,
                          GIMP_CONFIG_PATH_DIR_LIST, path,
                          GIMP_PARAM_STATIC_STRINGS |
@@ -642,6 +643,15 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             FALSE,
                             GIMP_PARAM_STATIC_STRINGS);
 
+  GIMP_CONFIG_PROP_PATH (object_class, PROP_IMPORT_RAW_PLUG_IN,
+                         "import-raw-plug-in",
+                         "Import raw plug-in",
+                         IMPORT_RAW_PLUG_IN_BLURB,
+                         GIMP_CONFIG_PATH_FILE,
+                         NULL,
+                         GIMP_PARAM_STATIC_STRINGS |
+                         GIMP_CONFIG_PARAM_RESTART);
+
   /*  only for backward compatibility:  
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTALL_COLORMAP,
                             "install-colormap",
@@ -714,6 +724,7 @@ gimp_core_config_finalize (GObject *object)
   g_free (core_config->default_tool_preset);
   g_free (core_config->default_font);
   g_free (core_config->plug_in_rc_path);
+  g_free (core_config->import_raw_plug_in);
 
   if (core_config->default_image)
     g_object_unref (core_config->default_image);
@@ -935,6 +946,10 @@ gimp_core_config_set_property (GObject      *object,
     case PROP_IMPORT_ADD_ALPHA:
       core_config->import_add_alpha = g_value_get_boolean (value);
       break;
+    case PROP_IMPORT_RAW_PLUG_IN:
+      g_free (core_config->import_raw_plug_in);
+      core_config->import_raw_plug_in = g_value_dup_string (value);
+      break;
 
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -1113,6 +1128,9 @@ gimp_core_config_get_property (GObject    *object,
       break;
     case PROP_IMPORT_ADD_ALPHA:
       g_value_set_boolean (value, core_config->import_add_alpha);
+      break;
+    case PROP_IMPORT_RAW_PLUG_IN:
+      g_value_set_string (value, core_config->import_raw_plug_in);
       break;
 
     default:

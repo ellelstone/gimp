@@ -176,6 +176,8 @@ EXPORTS
 	gimp_convolve_default
 	gimp_curves_explicit
 	gimp_curves_spline
+	gimp_debug_timer_end
+	gimp_debug_timer_start
 	gimp_default_display
 	gimp_desaturate
 	gimp_desaturate_full
@@ -752,6 +754,7 @@ EXPORTS
 	gimp_read_expect_msg
 	gimp_rect_select
 	gimp_register_file_handler_mime
+	gimp_register_file_handler_raw
 	gimp_register_file_handler_uri
 	gimp_register_load_handler
 	gimp_register_magic_load_handler

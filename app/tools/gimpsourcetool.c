@@ -20,6 +20,8 @@
 #include <gegl.h>
 #include <gtk/gtk.h>
 
+#include "libgimpmath/gimpmath.h"
+
 #include "tools-types.h"
 
 #include "core/gimpchannel.h"
@@ -350,13 +352,13 @@ gimp_source_tool_oper_update (GimpTool         *tool,
               switch (options->align_mode)
                 {
                 case GIMP_SOURCE_ALIGN_YES:
-                  source_tool->src_x = coords->x + source->offset_x;
-                  source_tool->src_y = coords->y + source->offset_y;
+                  source_tool->src_x = floor (coords->x) + source->offset_x;
+                  source_tool->src_y = floor (coords->y) + source->offset_y;
                   break;
 
                 case GIMP_SOURCE_ALIGN_REGISTERED:
-                  source_tool->src_x = coords->x;
-                  source_tool->src_y = coords->y;
+                  source_tool->src_x = floor (coords->x);
+                  source_tool->src_y = floor (coords->y);
                   break;
 
                 default:
@@ -386,10 +388,15 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
       GimpDisplayShell *src_shell;
       gint              off_x;
       gint              off_y;
+      gdouble           src_x;
+      gdouble           src_y;
 
       src_shell = gimp_display_get_shell (source_tool->src_display);
 
       gimp_item_get_offset (GIMP_ITEM (source->src_drawable), &off_x, &off_y);
+
+      src_x = source_tool->src_x + off_x + 0.5;
+      src_y = source_tool->src_y + off_y + 0.5;
 
       if (source_tool->src_outline)
         {
@@ -403,8 +410,7 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
           source_tool->src_outline =
             gimp_brush_tool_create_outline (GIMP_BRUSH_TOOL (source_tool),
                                             source_tool->src_display,
-                                            source_tool->src_x + off_x,
-                                            source_tool->src_y + off_y);
+                                            src_x, src_y);
 
           if (source_tool->src_outline)
             {
@@ -431,8 +437,7 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
                 gimp_canvas_handle_new (src_shell,
                                         GIMP_HANDLE_CROSS,
                                         GIMP_HANDLE_ANCHOR_CENTER,
-                                        source_tool->src_x + off_x,
-                                        source_tool->src_y + off_y,
+                                        src_x, src_y,
                                         GIMP_TOOL_HANDLE_SIZE_CROSS,
                                         GIMP_TOOL_HANDLE_SIZE_CROSS);
               gimp_display_shell_add_tool_item (src_shell,
@@ -442,8 +447,7 @@ gimp_source_tool_draw (GimpDrawTool *draw_tool)
           else
             {
               gimp_canvas_handle_set_position (source_tool->src_handle,
-                                               source_tool->src_x + off_x,
-                                               source_tool->src_y + off_y);
+                                               src_x, src_y);
             }
         }
     }

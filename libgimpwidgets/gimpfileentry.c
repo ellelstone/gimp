@@ -139,7 +139,7 @@ gimp_file_entry_init (GimpFileEntry *entry)
 
   gtk_widget_set_sensitive (button, FALSE);
 
-  image = gtk_image_new_from_icon_name (GIMP_STOCK_FILE_MANAGER,
+  image = gtk_image_new_from_icon_name (GIMP_ICON_FILE_MANAGER,
                                         GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (button), image);
   gtk_widget_show (image);
@@ -156,7 +156,8 @@ gimp_file_entry_init (GimpFileEntry *entry)
   gtk_box_pack_end (GTK_BOX (entry), entry->browse_button, FALSE, FALSE, 0);
   gtk_widget_show (entry->browse_button);
 
-  image = gtk_image_new_from_icon_name ("document-open", GTK_ICON_SIZE_BUTTON);
+  image = gtk_image_new_from_icon_name (GIMP_ICON_DOCUMENT_OPEN,
+                                        GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (entry->browse_button), image);
   gtk_widget_show (image);
 

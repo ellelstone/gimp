@@ -95,7 +95,7 @@ export_merge (gint32  image_ID,
                                gimp_image_width (image_ID),
                                gimp_image_height (image_ID),
                                gimp_drawable_type (*drawable_ID) | 1,
-                               100.0, GIMP_LAYER_MODE_NORMAL);
+                               100.0, GIMP_LAYER_MODE_NORMAL_LEGACY);
       gimp_image_insert_layer (image_ID, transp, -1, 1);
       gimp_selection_none (image_ID);
       gimp_edit_clear (transp);
@@ -181,6 +181,39 @@ export_convert_grayscale (gint32  image_ID,
 {
   gimp_image_convert_grayscale (image_ID);
 }
+
+/*static void
+export_convert_indexed (gint32  image_ID,
+                        gint32 *drawable_ID)
+{
+  gint32 nlayers;
+
+  //check alpha
+  g_free (gimp_image_get_layers (image_ID, &nlayers));
+  if (nlayers > 1 || gimp_drawable_has_alpha (*drawable_ID))
+    gimp_image_convert_indexed (image_ID,
+                                GIMP_CONVERT_DITHER_NONE,
+                                GIMP_CONVERT_PALETTE_GENERATE,
+                                255, FALSE, FALSE, "");
+  else
+    gimp_image_convert_indexed (image_ID,
+                                GIMP_CONVERT_DITHER_NONE,
+                                GIMP_CONVERT_PALETTE_GENERATE,
+                                256, FALSE, FALSE, "");
+}*/
+
+/*static void
+export_convert_bitmap (gint32  image_ID,
+                       gint32 *drawable_ID)
+{
+  if (gimp_image_base_type (image_ID) == GIMP_INDEXED)
+    gimp_image_convert_rgb (image_ID);
+
+  gimp_image_convert_indexed (image_ID,
+                              GIMP_CONVERT_DITHER_FS,
+                              GIMP_CONVERT_PALETTE_GENERATE,
+                              2, FALSE, FALSE, "");
+}*/
 
 static void
 export_add_alpha (gint32  image_ID,

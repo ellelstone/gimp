@@ -172,6 +172,9 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
   switch (desaturate->mode)
     {
     case GIMP_DESATURATE_LIGHTNESS:
+      /* This is the formula for Lightness in the HSL "bi-hexcone"
+       * model: https://en.wikipedia.org/wiki/HSL_and_HSV
+       */
       while (samples--)
         {
           gfloat min, max, value;
@@ -210,9 +213,33 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
       break;
 
     case GIMP_DESATURATE_AVERAGE:
+      /* This is the formula for Intensity in the HSI model:
+       * https://en.wikipedia.org/wiki/HSL_and_HSV
+       */
       while (samples--)
         {
           gfloat value = (src[0] + src[1] + src[2]) / 3;
+
+          dest[0] = value;
+          dest[1] = value;
+          dest[2] = value;
+          dest[3] = src[3];
+
+          src  += 4;
+          dest += 4;
+        }
+      break;
+
+    case GIMP_DESATURATE_VALUE:
+      /* This is the formula for Value in the HSV model:
+       * https://en.wikipedia.org/wiki/HSL_and_HSV
+       */
+      while (samples--)
+        {
+          gfloat value;
+
+          value = MAX (src[0], src[1]);
+          value = MAX (value, src[2]);
 
           dest[0] = value;
           dest[1] = value;

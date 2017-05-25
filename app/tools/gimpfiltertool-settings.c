@@ -31,9 +31,12 @@
 
 #include "tools-types.h"
 
+#include "operations/gimp-operation-config.h"
+
 #include "core/gimp.h"
 #include "core/gimpcontext.h"
 #include "core/gimplist.h"
+#include "core/gimpsettings.h"
 #include "core/gimptoolinfo.h"
 
 #include "widgets/gimpsettingsbox.h"
@@ -49,63 +52,54 @@
 
 /*  local function prototypes  */
 
-static gboolean gimp_filter_tool_settings_import (GimpSettingsBox  *box,
-                                                  GFile            *file,
-                                                  GimpFilterTool   *filter_tool);
-static gboolean gimp_filter_tool_settings_export (GimpSettingsBox  *box,
-                                                  GFile            *file,
-                                                  GimpFilterTool   *filter_tool);
+static gboolean gimp_filter_tool_settings_import (GimpSettingsBox *box,
+                                                  GFile           *file,
+                                                  GimpFilterTool  *filter_tool);
+static gboolean gimp_filter_tool_settings_export (GimpSettingsBox *box,
+                                                  GFile           *file,
+                                                  GimpFilterTool  *filter_tool);
 
 
 /*  public functions  */
 
 GtkWidget *
-gimp_filter_tool_real_get_settings_ui (GimpFilterTool  *filter_tool,
-                                       GimpContainer   *settings,
-                                       GFile           *settings_file,
-                                       const gchar     *import_dialog_title,
-                                       const gchar     *export_dialog_title,
-                                       const gchar     *file_dialog_help_id,
-                                       GFile           *default_folder,
-                                       GtkWidget      **settings_box)
+gimp_filter_tool_get_settings_box (GimpFilterTool *filter_tool)
 {
-  GimpToolInfo *tool_info;
-  GtkWidget    *hbox;
+  GimpToolInfo *tool_info = GIMP_TOOL (filter_tool)->tool_info;
+  GtkWidget    *box;
   GtkWidget    *label;
-  GtkWidget    *settings_combo;
+  GtkWidget    *combo;
 
-  tool_info = GIMP_TOOL (filter_tool)->tool_info;
+  box = gimp_settings_box_new (tool_info->gimp,
+                               filter_tool->config,
+                               filter_tool->settings,
+                               filter_tool->import_dialog_title,
+                               filter_tool->export_dialog_title,
+                               filter_tool->help_id,
+                               filter_tool->settings_folder,
+                               NULL);
 
-  hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
-
-  label = gtk_label_new_with_mnemonic (_("Pre_sets:"));
-  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-  gtk_widget_show (label);
-
-  *settings_box = gimp_settings_box_new (tool_info->gimp,
-                                         filter_tool->config,
-                                         settings,
-                                         settings_file,
-                                         import_dialog_title,
-                                         export_dialog_title,
-                                         file_dialog_help_id,
-                                         default_folder,
-                                         NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), *settings_box, TRUE, TRUE, 0);
-  gtk_widget_show (*settings_box);
-
-  settings_combo = gimp_settings_box_get_combo (GIMP_SETTINGS_BOX (*settings_box));
-  gtk_label_set_mnemonic_widget (GTK_LABEL (label), settings_combo);
-
-  g_signal_connect (filter_tool->settings_box, "import",
+  g_signal_connect (box, "import",
                     G_CALLBACK (gimp_filter_tool_settings_import),
                     filter_tool);
 
-  g_signal_connect (filter_tool->settings_box, "export",
+  g_signal_connect (box, "export",
                     G_CALLBACK (gimp_filter_tool_settings_export),
                     filter_tool);
 
-  return hbox;
+  g_signal_connect_swapped (box, "selected",
+                            G_CALLBACK (gimp_filter_tool_set_config),
+                            filter_tool);
+
+  label = gtk_label_new_with_mnemonic (_("Pre_sets:"));
+  gtk_box_pack_start (GTK_BOX (box), label, FALSE, FALSE, 0);
+  gtk_box_reorder_child (GTK_BOX (box), label, 0);
+  gtk_widget_show (label);
+
+  combo = gimp_settings_box_get_combo (GIMP_SETTINGS_BOX (box));
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+
+  return box;
 }
 
 gboolean
@@ -123,13 +117,12 @@ gimp_filter_tool_real_settings_export (GimpFilterTool  *filter_tool,
                                        GOutputStream   *output,
                                        GError         **error)
 {
-  GimpFilterToolClass *klass = GIMP_FILTER_TOOL_GET_CLASS (filter_tool);
-  gchar               *header;
-  gchar               *footer;
-  gboolean             success;
+  gchar    *header;
+  gchar    *footer;
+  gboolean  success;
 
-  header = g_strdup_printf ("GIMP %s tool settings",   klass->settings_name);
-  footer = g_strdup_printf ("end of %s tool settings", klass->settings_name);
+  header = g_strdup_printf ("GIMP '%s' settings",   filter_tool->title);
+  footer = g_strdup_printf ("end of '%s' settings", filter_tool->title);
 
   success = gimp_config_serialize_to_stream (GIMP_CONFIG (filter_tool->config),
                                              output,

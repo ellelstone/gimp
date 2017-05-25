@@ -32,11 +32,11 @@
 #include "core/gimp-edit.h"
 #include "core/gimp-gradients.h"
 #include "core/gimp.h"
+#include "core/gimpbuffer.h"
 #include "core/gimpchannel.h"
 #include "core/gimpdrawable-blend.h"
 #include "core/gimpdrawable-bucket-fill.h"
 #include "core/gimpdrawable.h"
-#include "core/gimpimage-new.h"
 #include "core/gimpimage.h"
 #include "core/gimplayer.h"
 #include "core/gimpparamspecs.h"
@@ -203,15 +203,15 @@ edit_paste_invoker (GimpProcedure         *procedure,
 
   if (success)
     {
-      GimpBuffer *buffer = gimp_get_clipboard_buffer (gimp);
+      GimpObject *paste = gimp_get_clipboard_object (gimp);
 
-      if (buffer &&
+      if (paste &&
           gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                      GIMP_PDB_ITEM_CONTENT, error) &&
           gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
         {
           floating_sel = gimp_edit_paste (gimp_item_get_image (GIMP_ITEM (drawable)),
-                                          drawable, GIMP_OBJECT (buffer),
+                                          drawable, paste,
                                           paste_into ?
                                           GIMP_PASTE_TYPE_FLOATING_INTO :
                                           GIMP_PASTE_TYPE_FLOATING,
@@ -245,18 +245,14 @@ edit_paste_as_new_image_invoker (GimpProcedure         *procedure,
   GimpValueArray *return_vals;
   GimpImage *image = NULL;
 
-  GimpBuffer *buffer = gimp_get_clipboard_buffer (gimp);
+  GimpObject *paste = gimp_get_clipboard_object (gimp);
 
-  if (buffer)
+  if (paste)
     {
-      image = gimp_image_new_from_buffer (gimp, NULL, buffer);
+      image = gimp_edit_paste_as_new_image (gimp, paste);
 
       if (! image)
         success = FALSE;
-    }
-  else
-    {
-      image = NULL;
     }
 
   return_vals = gimp_procedure_get_return_values (procedure, success,
@@ -491,7 +487,7 @@ edit_named_paste_as_new_image_invoker (GimpProcedure         *procedure,
 
       if (buffer)
         {
-          image = gimp_image_new_from_buffer (gimp, NULL, buffer);
+          image = gimp_edit_paste_as_new_image (gimp, GIMP_OBJECT (buffer));
 
           if (! image)
             success = FALSE;
@@ -1337,7 +1333,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL,
+                                                  GIMP_LAYER_MODE_NORMAL_LEGACY,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
@@ -1404,7 +1400,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL,
+                                                  GIMP_LAYER_MODE_NORMAL_LEGACY,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_double ("opacity",
@@ -1484,7 +1480,7 @@ register_edit_procs (GimpPDB *pdb)
                                                   "paint mode",
                                                   "The paint application mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL,
+                                                  GIMP_LAYER_MODE_NORMAL_LEGACY,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
                                g_param_spec_enum ("gradient-type",

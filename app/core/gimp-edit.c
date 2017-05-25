@@ -39,6 +39,7 @@
 #include "gimpfilloptions.h"
 #include "gimpdrawableundo.h"
 #include "gimpimage.h"
+#include "gimpimage-duplicate.h"
 #include "gimpimage-new.h"
 #include "gimpimage-undo.h"
 #include "gimplayer.h"
@@ -420,7 +421,7 @@ gimp_edit_paste (GimpImage     *image,
                                           floating_format,
                                           _("Pasted Layer"),
                                           GIMP_OPACITY_OPAQUE,
-                                          GIMP_LAYER_MODE_NORMAL);
+                                          GIMP_LAYER_MODE_NORMAL_LEGACY);
     }
 
   if (! layer)
@@ -433,7 +434,7 @@ gimp_edit_paste (GimpImage     *image,
                               viewport_height,
                               &offset_x,
                               &offset_y);
-  gimp_item_set_offset (GIMP_ITEM (layer), offset_x, offset_y);
+  gimp_item_translate (GIMP_ITEM (layer), offset_x, offset_y, FALSE);
 
   gimp_image_undo_group_start (image, GIMP_UNDO_GROUP_EDIT_PASTE,
                                C_("undo-type", "Paste"));
@@ -476,6 +477,27 @@ gimp_edit_paste (GimpImage     *image,
   gimp_image_undo_group_end (image);
 
   return layer;
+}
+
+GimpImage *
+gimp_edit_paste_as_new_image (Gimp       *gimp,
+                              GimpObject *paste)
+{
+  GimpImage *image = NULL;
+
+  g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
+  g_return_val_if_fail (GIMP_IS_IMAGE (paste) || GIMP_IS_BUFFER (paste), NULL);
+
+  if (GIMP_IS_IMAGE (paste))
+    {
+      image = gimp_image_duplicate (GIMP_IMAGE (paste));
+    }
+  else if (GIMP_IS_BUFFER (paste))
+    {
+      image = gimp_image_new_from_buffer (gimp, GIMP_BUFFER (paste));
+    }
+
+  return image;
 }
 
 const gchar *
@@ -707,9 +729,17 @@ gimp_edit_extract (GimpImage     *image,
 
   if (buffer)
     {
-      GimpBuffer *gimp_buffer = gimp_buffer_new (buffer, _("Global Buffer"),
-                                                 offset_x, offset_y, FALSE);
+      GimpBuffer *gimp_buffer;
+      gdouble     res_x;
+      gdouble     res_y;
+
+      gimp_buffer = gimp_buffer_new (buffer, _("Global Buffer"),
+                                     offset_x, offset_y, FALSE);
       g_object_unref (buffer);
+
+      gimp_image_get_resolution (image, &res_x, &res_y);
+      gimp_buffer_set_resolution (gimp_buffer, res_x, res_y);
+      gimp_buffer_set_unit (gimp_buffer, gimp_image_get_unit (image));
 
       if (GIMP_IS_COLOR_MANAGED (pickable))
         {

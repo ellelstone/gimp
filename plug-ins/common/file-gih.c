@@ -194,7 +194,7 @@ query (void)
                           gih_load_args, gih_load_return_vals);
 
   gimp_plugin_icon_register (LOAD_PROC, GIMP_ICON_TYPE_ICON_NAME,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
+                             (const guint8 *) GIMP_ICON_BRUSH);
   gimp_register_file_handler_mime (LOAD_PROC, "image/x-gimp-gih");
   gimp_register_file_handler_uri (LOAD_PROC);
   gimp_register_magic_load_handler (LOAD_PROC, "gih", "", "");
@@ -217,7 +217,7 @@ query (void)
                           gih_save_args, NULL);
 
   gimp_plugin_icon_register (SAVE_PROC, GIMP_ICON_TYPE_ICON_NAME,
-                             (const guint8 *) GIMP_STOCK_BRUSH);
+                             (const guint8 *) GIMP_ICON_BRUSH);
   gimp_register_file_handler_mime (SAVE_PROC, "image/x-gimp-gih");
   gimp_register_file_handler_uri (SAVE_PROC);
   gimp_register_save_handler (SAVE_PROC, "gih", "");
@@ -454,7 +454,7 @@ gih_load_one_brush (GInputStream  *input,
   BrushHeader    bh;
   guchar        *brush_buf  = NULL;
   gint32         layer_ID;
-  gint           size;
+  gsize          size;
   GimpImageType  image_type;
   gint           width, height;
   gint           new_width, new_height;
@@ -475,6 +475,15 @@ gih_load_one_brush (GInputStream  *input,
   bh.bytes        = g_ntohl (bh.bytes);
   bh.magic_number = g_ntohl (bh.magic_number);
   bh.spacing      = g_ntohl (bh.spacing);
+
+  /* Sanitize values */
+  if ((bh.width  == 0) || (bh.width  > GIMP_MAX_IMAGE_SIZE) ||
+      (bh.height == 0) || (bh.height > GIMP_MAX_IMAGE_SIZE) ||
+      ((bh.bytes != 1) && (bh.bytes != 4)) ||
+      (G_MAXSIZE / bh.width / bh.height / bh.bytes < 1))
+    {
+      return FALSE;
+    }
 
   if ((bh.magic_number != GBRUSH_MAGIC || bh.version != 2) ||
       bh.header_size <= sizeof (bh))
@@ -501,7 +510,7 @@ gih_load_one_brush (GInputStream  *input,
 
   /* Now there's just raw data left. */
 
-  size = bh.width * bh.height * bh.bytes;
+  size = (gsize) bh.width * bh.height * bh.bytes;
   brush_buf = g_malloc (size);
 
   if (! g_input_stream_read_all (input, brush_buf, size,
@@ -548,7 +557,7 @@ gih_load_one_brush (GInputStream  *input,
               gint    i;
 
               bh.bytes = 4;
-              brush_buf = g_malloc (4 * bh.width * bh.height);
+              brush_buf = g_malloc ((gsize) bh.width * bh.height * 4);
 
               for (i = 0; i < ph.width * ph.height; i++)
                 {
@@ -619,7 +628,7 @@ gih_load_one_brush (GInputStream  *input,
   layer_ID = gimp_layer_new (image_ID, name,
                              bh.width, bh.height,
                              image_type,
-                             100, GIMP_LAYER_MODE_NORMAL);
+                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
   g_free (name);
 
   if (layer_ID != -1)

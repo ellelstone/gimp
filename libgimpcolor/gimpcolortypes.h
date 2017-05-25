@@ -42,23 +42,6 @@ typedef struct _GimpRGB  GimpRGB;
 typedef struct _GimpHSV  GimpHSV;
 typedef struct _GimpHSL  GimpHSL;
 typedef struct _GimpCMYK GimpCMYK;
-typedef struct _GimpLch  GimpLch;
-
-/**
- * GimpLch:
- * @l: the lightness component
- * @c: the chroma component
- * @h: the hue component
- * @a: the alpha component
- *
- * Used to keep Lch and LchA colors. All components are in a range of
- * [0.0..1.0].
- **/
-struct _GimpLch
-{
-  gdouble l, c, h, a;
-};
-
 
 /**
  * GimpRGB:

@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+#include "libgimpmath/gimpmath.h"
 #include "libgimpwidgets/gimpwidgets.h"
 
 #include "tools-types.h"
@@ -51,7 +52,8 @@
 #include "gimp-intl.h"
 
 
-#define STROKE_PERIOD 100
+#define STROKE_TIMER_MAX_FPS 20
+#define PREVIEW_SAMPLER      GEGL_SAMPLER_NEAREST
 
 
 static void       gimp_warp_tool_control            (GimpTool              *tool,
@@ -100,16 +102,26 @@ static void       gimp_warp_tool_options_notify     (GimpTool              *tool
 
 static void       gimp_warp_tool_draw               (GimpDrawTool          *draw_tool);
 
+static gboolean   gimp_warp_tool_can_stroke         (GimpWarpTool          *wt,
+                                                     GimpDisplay           *display,
+                                                     gboolean               show_message);
+
 static gboolean   gimp_warp_tool_start              (GimpWarpTool          *wt,
                                                      GimpDisplay           *display);
 static void       gimp_warp_tool_halt               (GimpWarpTool          *wt);
 static void       gimp_warp_tool_commit             (GimpWarpTool          *wt);
 
+static void       gimp_warp_tool_start_stroke_timer (GimpWarpTool          *wt);
+static void       gimp_warp_tool_stop_stroke_timer  (GimpWarpTool          *wt);
 static gboolean   gimp_warp_tool_stroke_timer       (GimpWarpTool          *wt);
 
 static void       gimp_warp_tool_create_graph       (GimpWarpTool          *wt);
 static void       gimp_warp_tool_create_filter      (GimpWarpTool          *wt,
                                                      GimpDrawable          *drawable);
+static void       gimp_warp_tool_set_sampler        (GimpWarpTool          *wt,
+                                                     gboolean               commit);
+static GeglRectangle
+                  gimp_warp_tool_get_stroke_bounds  (GeglNode              *node);
 static void       gimp_warp_tool_update_stroke      (GimpWarpTool          *wt,
                                                      GeglNode              *node);
 static void       gimp_warp_tool_stroke_changed     (GeglPath              *stroke,
@@ -121,6 +133,7 @@ static void       gimp_warp_tool_add_op             (GimpWarpTool          *wt,
                                                      GeglNode              *op);
 static void       gimp_warp_tool_remove_op          (GimpWarpTool          *wt,
                                                      GeglNode              *op);
+static void       gimp_warp_tool_free_op            (GeglNode              *op);
 
 static void       gimp_warp_tool_animate            (GimpWarpTool          *wt);
 
@@ -143,7 +156,7 @@ gimp_warp_tool_register (GimpToolRegisterCallback  callback,
                 _("Warp Transform: Deform with different tools"),
                 N_("_Warp Transform"), "W",
                 NULL, GIMP_HELP_TOOL_WARP,
-                GIMP_STOCK_TOOL_WARP,
+                GIMP_ICON_TOOL_WARP,
                 data);
 }
 
@@ -175,7 +188,6 @@ gimp_warp_tool_init (GimpWarpTool *self)
   GimpTool *tool = GIMP_TOOL (self);
 
   gimp_tool_control_set_preserve        (tool->control, FALSE);
-  gimp_tool_control_set_motion_mode     (tool->control, GIMP_MOTION_MODE_EXACT);
   gimp_tool_control_set_dirty_mask      (tool->control,
                                          GIMP_DIRTY_IMAGE           |
                                          GIMP_DIRTY_DRAWABLE        |
@@ -240,14 +252,18 @@ gimp_warp_tool_button_press (GimpTool            *tool,
         return;
     }
 
+  if (! gimp_warp_tool_can_stroke (wt, display, TRUE))
+    return;
+
   wt->current_stroke = gegl_path_new ();
 
   new_op = gegl_node_new_child (NULL,
                                 "operation", "gegl:warp",
                                 "behavior",  options->behavior,
-                                "strength",  options->effect_strength,
                                 "size",      options->effect_size,
-                                "hardness",  options->effect_hardness,
+                                "hardness",  options->effect_hardness / 100.0,
+                                "strength",  options->effect_strength,
+                                "spacing",   options->stroke_spacing / 100.0,
                                 "stroke",    wt->current_stroke,
                                 NULL);
 
@@ -263,9 +279,7 @@ gimp_warp_tool_button_press (GimpTool            *tool,
   gegl_path_append (wt->current_stroke,
                     'M', coords->x - off_x, coords->y - off_y);
 
-  wt->stroke_timer = g_timeout_add (STROKE_PERIOD,
-                                    (GSourceFunc) gimp_warp_tool_stroke_timer,
-                                    wt);
+  gimp_warp_tool_start_stroke_timer (wt);
 
   gimp_tool_control_activate (tool->control);
 }
@@ -284,8 +298,7 @@ gimp_warp_tool_button_release (GimpTool              *tool,
 
   gimp_tool_control_halt (tool->control);
 
-  g_source_remove (wt->stroke_timer);
-  wt->stroke_timer = 0;
+  gimp_warp_tool_stop_stroke_timer (wt);
 
   g_signal_handlers_disconnect_by_func (wt->current_stroke,
                                         gimp_warp_tool_stroke_changed,
@@ -303,7 +316,7 @@ gimp_warp_tool_button_release (GimpTool              *tool,
       gimp_warp_tool_undo (tool, display);
 
       /*  the just undone stroke has no business on the redo stack  */
-      g_object_unref (wt->redo_stack->data);
+      gimp_warp_tool_free_op (wt->redo_stack->data);
       wt->redo_stack = g_list_remove_link (wt->redo_stack, wt->redo_stack);
     }
   else
@@ -311,7 +324,8 @@ gimp_warp_tool_button_release (GimpTool              *tool,
       if (wt->redo_stack)
         {
           /*  the redo stack becomes invalid by actually doing a stroke  */
-          g_list_free_full (wt->redo_stack, (GDestroyNotify) g_object_unref);
+          g_list_free_full (wt->redo_stack,
+                            (GDestroyNotify) gimp_warp_tool_free_op);
           wt->redo_stack = NULL;
         }
 
@@ -332,12 +346,25 @@ gimp_warp_tool_motion (GimpTool         *tool,
                        GdkModifierType   state,
                        GimpDisplay      *display)
 {
-  GimpWarpTool *wt = GIMP_WARP_TOOL (tool);
+  GimpWarpTool    *wt = GIMP_WARP_TOOL (tool);
+  GimpWarpOptions *options = GIMP_WARP_TOOL_GET_OPTIONS (wt);
 
   gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
 
   wt->cursor_x = coords->x;
   wt->cursor_y = coords->y;
+
+  if (options->stroke_during_motion)
+    {
+      gint off_x, off_y;
+
+      gimp_item_get_offset (GIMP_ITEM (tool->drawable), &off_x, &off_y);
+
+      gegl_path_append (wt->current_stroke,
+                        'L', wt->cursor_x - off_x, wt->cursor_y - off_y);
+
+      gimp_warp_tool_start_stroke_timer (wt);
+    }
 
   gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
 }
@@ -406,10 +433,15 @@ gimp_warp_tool_cursor_update (GimpTool         *tool,
                               GdkModifierType   state,
                               GimpDisplay      *display)
 {
+  GimpWarpTool       *wt       = GIMP_WARP_TOOL (tool);
   GimpWarpOptions    *options  = GIMP_WARP_TOOL_GET_OPTIONS (tool);
   GimpCursorModifier  modifier = GIMP_CURSOR_MODIFIER_PLUS;
 
-  if (display == tool->display)
+  if (! gimp_warp_tool_can_stroke (wt, display, FALSE))
+    {
+      modifier = GIMP_CURSOR_MODIFIER_BAD;
+    }
+  else if (display == tool->display)
     {
       /* FIXME have better cursors  */
 
@@ -424,18 +456,6 @@ gimp_warp_tool_cursor_update (GimpTool         *tool,
         case GEGL_WARP_BEHAVIOR_SMOOTH:
           modifier = GIMP_CURSOR_MODIFIER_MOVE;
           break;
-        }
-    }
-  else
-    {
-      GimpImage    *image    = gimp_display_get_image (display);
-      GimpDrawable *drawable = gimp_image_get_active_drawable (image);
-
-      if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)) ||
-          gimp_item_is_content_locked (GIMP_ITEM (drawable))    ||
-          ! gimp_item_is_visible (GIMP_ITEM (drawable)))
-        {
-          modifier = GIMP_CURSOR_MODIFIER_BAD;
         }
     }
 
@@ -482,6 +502,7 @@ gimp_warp_tool_undo (GimpTool    *tool,
 {
   GimpWarpTool *wt = GIMP_WARP_TOOL (tool);
   GeglNode     *to_delete;
+  GeglNode     *prev_node;
   const gchar  *type;
 
   if (! wt->render_node)
@@ -493,11 +514,17 @@ gimp_warp_tool_undo (GimpTool    *tool,
   if (strcmp (type, "gegl:warp"))
     return FALSE;
 
-  wt->redo_stack = g_list_prepend (wt->redo_stack, g_object_ref (to_delete));
+  wt->redo_stack = g_list_prepend (wt->redo_stack, to_delete);
 
-  gimp_warp_tool_remove_op (wt, to_delete);
+  /* we connect render_node to the previous node, but keep the current node
+   * in the graph, connected to the previous node as well, so that it doesn't
+   * get invalidated and maintains its cache.  this way, redoing it doesn't
+   * require reprocessing.
+   */
+  prev_node = gegl_node_get_producer (to_delete, "input", NULL);
 
-  gegl_node_remove_child (wt->graph, to_delete);
+  gegl_node_connect_to (prev_node,       "output",
+                        wt->render_node, "aux");
 
   gimp_warp_tool_update_stroke (wt, to_delete);
 
@@ -516,8 +543,8 @@ gimp_warp_tool_redo (GimpTool    *tool,
 
   to_add = wt->redo_stack->data;
 
-  gimp_warp_tool_add_op (wt, to_add);
-  g_object_unref (to_add);
+  gegl_node_connect_to (to_add,          "output",
+                        wt->render_node, "aux");
 
   wt->redo_stack = g_list_remove_link (wt->redo_stack, wt->redo_stack);
 
@@ -531,12 +558,41 @@ gimp_warp_tool_options_notify (GimpTool         *tool,
                                GimpToolOptions  *options,
                                const GParamSpec *pspec)
 {
+  GimpWarpTool    *wt         = GIMP_WARP_TOOL (tool);
+  GimpWarpOptions *wt_options = GIMP_WARP_OPTIONS (options);
+
   GIMP_TOOL_CLASS (parent_class)->options_notify (tool, options, pspec);
 
   if (! strcmp (pspec->name, "effect-size"))
     {
       gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
       gimp_draw_tool_resume (GIMP_DRAW_TOOL (tool));
+    }
+  else if (! strcmp (pspec->name, "interpolation"))
+    {
+      if (wt_options->high_quality_preview)
+        {
+          gimp_warp_tool_set_sampler (wt, /* commit = */ FALSE);
+
+          gimp_warp_tool_update_stroke (wt, NULL);
+        }
+    }
+  else if (! strcmp (pspec->name, "abyss-policy"))
+    {
+      if (wt->render_node)
+        {
+          gegl_node_set (wt->render_node,
+                         "abyss-policy", wt_options->abyss_policy,
+                         NULL);
+
+          gimp_warp_tool_update_stroke (wt, NULL);
+        }
+    }
+  else if (! strcmp (pspec->name, "high-quality-preview"))
+    {
+      gimp_warp_tool_set_sampler (wt, /* commit = */ FALSE);
+
+      gimp_warp_tool_update_stroke (wt, NULL);
     }
 }
 
@@ -556,6 +612,64 @@ gimp_warp_tool_draw (GimpDrawTool *draw_tool)
 }
 
 static gboolean
+gimp_warp_tool_can_stroke (GimpWarpTool *wt,
+                           GimpDisplay  *display,
+                           gboolean      show_message)
+{
+  GimpTool        *tool     = GIMP_TOOL (wt);
+  GimpWarpOptions *options  = GIMP_WARP_TOOL_GET_OPTIONS (wt);
+  GimpImage       *image    = gimp_display_get_image (display);
+  GimpDrawable    *drawable = gimp_image_get_active_drawable (image);
+
+  if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
+    {
+      if (show_message)
+        {
+          gimp_tool_message_literal (tool, display,
+                                     _("Cannot warp layer groups."));
+        }
+
+      return FALSE;
+    }
+
+  if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
+    {
+      if (show_message)
+        {
+          gimp_tool_message_literal (tool, display,
+                                     _("The active layer's pixels are locked."));
+        }
+
+      return FALSE;
+    }
+
+  if (! gimp_item_is_visible (GIMP_ITEM (drawable)))
+    {
+      if (show_message)
+        {
+          gimp_tool_message_literal (tool, display,
+                                     _("The active layer is not visible."));
+        }
+
+      return FALSE;
+    }
+
+  if (! options->stroke_during_motion &&
+      ! options->stroke_periodically)
+    {
+      if (show_message)
+        {
+          gimp_tool_message_literal (tool, display,
+                                     _("No stroke events selected."));
+        }
+
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+static gboolean
 gimp_warp_tool_start (GimpWarpTool *wt,
                       GimpDisplay  *display)
 {
@@ -566,26 +680,8 @@ gimp_warp_tool_start (GimpWarpTool *wt,
   const Babl      *format;
   GeglRectangle    bbox;
 
-  if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)))
-    {
-      gimp_tool_message_literal (tool, display,
-                                 _("Cannot warp layer groups."));
-      return FALSE;
-    }
-
-  if (gimp_item_is_content_locked (GIMP_ITEM (drawable)))
-    {
-      gimp_tool_message_literal (tool, display,
-                                 _("The active layer's pixels are locked."));
-      return FALSE;
-    }
-
-  if (! gimp_item_is_visible (GIMP_ITEM (drawable)))
-    {
-      gimp_tool_message_literal (tool, display,
-                                 _("The active layer is not visible."));
-      return FALSE;
-    }
+  if (! gimp_warp_tool_can_stroke (wt, display, TRUE))
+    return FALSE;
 
   tool->display  = display;
   tool->drawable = drawable;
@@ -650,7 +746,7 @@ gimp_warp_tool_halt (GimpWarpTool *wt)
 
   if (wt->redo_stack)
     {
-      g_list_free_full (wt->redo_stack, (GDestroyNotify) g_object_unref);
+      g_list_free (wt->redo_stack);
       wt->redo_stack = NULL;
     }
 
@@ -679,6 +775,8 @@ gimp_warp_tool_commit (GimpWarpTool *wt)
     {
       gimp_tool_control_push_preserve (tool->control, TRUE);
 
+      gimp_warp_tool_set_sampler (wt, /* commit = */ TRUE);
+
       gimp_drawable_filter_commit (wt->filter, GIMP_PROGRESS (tool), FALSE);
       g_object_unref (wt->filter);
       wt->filter = NULL;
@@ -687,6 +785,37 @@ gimp_warp_tool_commit (GimpWarpTool *wt)
 
       gimp_image_flush (gimp_display_get_image (tool->display));
     }
+}
+
+static void
+gimp_warp_tool_start_stroke_timer (GimpWarpTool *wt)
+{
+  GimpWarpOptions *options = GIMP_WARP_TOOL_GET_OPTIONS (wt);
+
+  gimp_warp_tool_stop_stroke_timer (wt);
+
+  if (options->stroke_periodically                    &&
+      options->stroke_periodically_rate > 0.0         &&
+      ! (options->behavior == GIMP_WARP_BEHAVIOR_MOVE &&
+         options->stroke_during_motion))
+    {
+      gdouble fps;
+
+      fps = STROKE_TIMER_MAX_FPS * options->stroke_periodically_rate / 100.0;
+
+      wt->stroke_timer = g_timeout_add (1000.0 / fps,
+                                        (GSourceFunc) gimp_warp_tool_stroke_timer,
+                                        wt);
+    }
+}
+
+static void
+gimp_warp_tool_stop_stroke_timer (GimpWarpTool *wt)
+{
+  if (wt->stroke_timer)
+    g_source_remove (wt->stroke_timer);
+
+  wt->stroke_timer = 0;
 }
 
 static gboolean
@@ -706,9 +835,10 @@ gimp_warp_tool_stroke_timer (GimpWarpTool *wt)
 static void
 gimp_warp_tool_create_graph (GimpWarpTool *wt)
 {
-  GeglNode *graph;           /* Wraper to be returned */
-  GeglNode *input, *output;  /* Proxy nodes */
-  GeglNode *coords, *render; /* Render nodes */
+  GimpWarpOptions *options = GIMP_WARP_TOOL_GET_OPTIONS (wt);
+  GeglNode        *graph;           /* Wraper to be returned */
+  GeglNode        *input, *output;  /* Proxy nodes */
+  GeglNode        *coords, *render; /* Render nodes */
 
   /* render_node is not supposed to be recreated */
   g_return_if_fail (wt->graph == NULL);
@@ -724,8 +854,8 @@ gimp_warp_tool_create_graph (GimpWarpTool *wt)
                                NULL);
 
   render = gegl_node_new_child (graph,
-                                "operation", "gegl:map-relative",
-                                "sampler-type", GEGL_SAMPLER_LINEAR,
+                                "operation",    "gegl:map-relative",
+                                "abyss-policy", options->abyss_policy,
                                 NULL);
 
   gegl_node_connect_to (input,  "output",
@@ -748,10 +878,12 @@ gimp_warp_tool_create_filter (GimpWarpTool *wt,
   if (! wt->graph)
     gimp_warp_tool_create_graph (wt);
 
+  gimp_warp_tool_set_sampler (wt, /* commit = */ FALSE);
+
   wt->filter = gimp_drawable_filter_new (drawable,
                                          _("Warp transform"),
                                          wt->graph,
-                                         GIMP_STOCK_TOOL_WARP);
+                                         GIMP_ICON_TOOL_WARP);
 
   gimp_drawable_filter_set_region (wt->filter, GIMP_FILTER_REGION_DRAWABLE);
 
@@ -765,11 +897,39 @@ gimp_warp_tool_create_filter (GimpWarpTool *wt,
 }
 
 static void
-gimp_warp_tool_update_stroke (GimpWarpTool *wt,
-                              GeglNode     *node)
+gimp_warp_tool_set_sampler (GimpWarpTool *wt,
+                            gboolean      commit)
 {
-  GeglPath *stroke;
-  gdouble   size;
+  GimpWarpOptions *options = GIMP_WARP_TOOL_GET_OPTIONS (wt);
+  GeglSamplerType  sampler;
+  GeglSamplerType  old_sampler;
+
+  if (! wt->render_node)
+    return;
+
+  if (commit || options->high_quality_preview)
+    sampler = (GeglSamplerType) options->interpolation;
+  else
+    sampler = PREVIEW_SAMPLER;
+
+  gegl_node_get (wt->render_node,
+                 "sampler-type", &old_sampler,
+                 NULL);
+
+  if (sampler != old_sampler)
+    {
+      gegl_node_set (wt->render_node,
+                     "sampler-type", sampler,
+                     NULL);
+    }
+}
+
+static GeglRectangle
+gimp_warp_tool_get_stroke_bounds (GeglNode *node)
+{
+  GeglRectangle  bbox = {0, 0, 0, 0};
+  GeglPath      *stroke;
+  gdouble        size;
 
   gegl_node_get (node,
                  "stroke", &stroke,
@@ -782,16 +942,50 @@ gimp_warp_tool_update_stroke (GimpWarpTool *wt,
       gdouble        max_x;
       gdouble        min_y;
       gdouble        max_y;
-      GeglRectangle  bbox;
 
       gegl_path_get_bounds (stroke, &min_x, &max_x, &min_y, &max_y);
       g_object_unref (stroke);
 
-      bbox.x      = min_x - size * 0.5;
-      bbox.y      = min_y - size * 0.5;
-      bbox.width  = max_x - min_x + size;
-      bbox.height = max_y - min_y + size;
+      bbox.x      = floor (min_x - size * 0.5);
+      bbox.y      = floor (min_y - size * 0.5);
+      bbox.width  = ceil (max_x + size * 0.5) - bbox.x;
+      bbox.height = ceil (max_y + size * 0.5) - bbox.y;
+    }
 
+  return bbox;
+}
+
+static void
+gimp_warp_tool_update_stroke (GimpWarpTool *wt,
+                              GeglNode     *node)
+{
+  GeglRectangle bbox = {0, 0, 0, 0};
+
+  if (! wt->filter)
+    return;
+
+  if (node)
+    {
+      /* update just this stroke */
+      bbox = gimp_warp_tool_get_stroke_bounds (node);
+    }
+  else if (wt->render_node)
+    {
+      /* update all strokes */
+      for (node = gegl_node_get_producer (wt->render_node, "aux", NULL);
+           ! strcmp (gegl_node_get_operation (node), "gegl:warp");
+           node = gegl_node_get_producer (node, "input", NULL))
+        {
+          GeglRectangle node_bbox;
+
+          node_bbox = gimp_warp_tool_get_stroke_bounds (node);
+
+          gegl_rectangle_bounding_box (&bbox, &bbox, &node_bbox);
+        }
+    }
+
+  if (! gegl_rectangle_is_empty (&bbox))
+    {
 #ifdef WARP_DEBUG
   g_printerr ("update stroke: (%d,%d), %dx%d\n",
               bbox.x, bbox.y,
@@ -808,12 +1002,14 @@ gimp_warp_tool_stroke_changed (GeglPath            *path,
                                GimpWarpTool        *wt)
 {
   GimpWarpOptions *options       = GIMP_WARP_TOOL_GET_OPTIONS (wt);
-  GeglRectangle    update_region = *roi;
+  GeglRectangle    update_region;
 
-  update_region.x      -= options->effect_size * 0.5;
-  update_region.y      -= options->effect_size * 0.5;
-  update_region.width  += options->effect_size;
-  update_region.height += options->effect_size;
+  update_region.x      = floor (roi->x - options->effect_size * 0.5);
+  update_region.y      = floor (roi->y - options->effect_size * 0.5);
+  update_region.width  = ceil (roi->x + roi->width  +
+                               options->effect_size * 0.5) - update_region.x;
+  update_region.height = ceil (roi->y + roi->height +
+                               options->effect_size * 0.5) - update_region.y;
 
 #ifdef WARP_DEBUG
   g_printerr ("update rect: (%d,%d), %dx%d\n",
@@ -870,6 +1066,18 @@ gimp_warp_tool_remove_op (GimpWarpTool *wt,
 }
 
 static void
+gimp_warp_tool_free_op (GeglNode *op)
+{
+  GeglNode *parent;
+
+  parent = gegl_node_get_parent (op);
+
+  g_assert (parent != NULL);
+
+  gegl_node_remove_child (parent, op);
+}
+
+static void
 gimp_warp_tool_animate (GimpWarpTool *wt)
 {
   GimpTool        *tool    = GIMP_TOOL (wt);
@@ -898,6 +1106,8 @@ gimp_warp_tool_animate (GimpWarpTool *wt)
       wt->filter = NULL;
     }
 
+  gimp_warp_tool_set_sampler (wt, /* commit = */ TRUE);
+
   gimp_progress_start (GIMP_PROGRESS (tool), FALSE,
                        _("Rendering Frame %d"), 1);
 
@@ -918,7 +1128,7 @@ gimp_warp_tool_animate (GimpWarpTool *wt)
 
   gimp_item_set_offset (GIMP_ITEM (layer), 0, 0);
   gimp_item_set_visible (GIMP_ITEM (layer), TRUE, FALSE);
-  gimp_layer_set_mode (layer, GIMP_LAYER_MODE_NORMAL, FALSE);
+  gimp_layer_set_mode (layer, GIMP_LAYER_MODE_NORMAL_LEGACY, FALSE);
   gimp_layer_set_opacity (layer, GIMP_OPACITY_OPAQUE, FALSE);
   gimp_image_add_layer (image, layer, NULL, 0, FALSE);
 
@@ -968,7 +1178,7 @@ gimp_warp_tool_animate (GimpWarpTool *wt)
 
   /*  recreate the image map  */
   gimp_warp_tool_create_filter (wt, tool->drawable);
-  gimp_drawable_filter_apply (wt->filter, NULL);
+  gimp_warp_tool_update_stroke (wt, NULL);
 
   widget = GTK_WIDGET (gimp_display_get_shell (tool->display));
   gimp_create_display (orig_image->gimp, image, GIMP_UNIT_PIXEL, 1.0,

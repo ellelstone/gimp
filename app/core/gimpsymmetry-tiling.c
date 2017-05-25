@@ -134,6 +134,10 @@ gimp_tiling_class_init (GimpTilingClass *klass)
                            GIMP_PARAM_STATIC_STRINGS |
                            GIMP_SYMMETRY_PARAM_GUI);
 
+  pspec = g_object_class_find_property (object_class, "shift");
+  gegl_param_spec_set_property_key (pspec, "unit", "pixel-distance");
+  gegl_param_spec_set_property_key (pspec, "axis", "x");
+
   GIMP_CONFIG_PROP_INT (object_class, PROP_MAX_X,
                         "max-x",
                         _("Max strokes X"),
@@ -320,11 +324,11 @@ gimp_tiling_update_strokes (GimpSymmetry *sym,
   height = gimp_item_get_height (GIMP_ITEM (drawable));
 
   if (origin->x > 0 && tiling->max_x == 0)
-    startx = origin->x - tiling->interval_x * (gint) (origin->x / tiling->interval_x + 1);
+    startx -= tiling->interval_x * (gint) (origin->x / tiling->interval_x + 1);
 
   if (origin->y > 0 && tiling->max_y == 0)
     {
-      starty = origin->y - tiling->interval_y * (gint) (origin->y / tiling->interval_y + 1);
+      starty -= tiling->interval_y * (gint) (origin->y / tiling->interval_y + 1);
 
       if (tiling->shift > 0.0)
         startx -= tiling->shift * (gint) (origin->y / tiling->interval_y + 1);

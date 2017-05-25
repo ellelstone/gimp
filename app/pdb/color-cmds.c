@@ -39,7 +39,6 @@
 #include "core/gimpparamspecs.h"
 #include "operations/gimpbrightnesscontrastconfig.h"
 #include "operations/gimpcurvesconfig.h"
-#include "operations/gimplchhuechromaconfig.h"
 #include "operations/gimplevelsconfig.h"
 #include "plug-in/gimpplugin.h"
 #include "plug-in/gimppluginmanager.h"
@@ -276,7 +275,7 @@ desaturate_invoker (GimpProcedure         *procedure,
           GeglNode *node =
             gegl_node_new_child (NULL,
                                  "operation", "gimp:desaturate",
-                                 "mode",      GIMP_DESATURATE_LUMINANCE,
+                                 "mode",      GIMP_DESATURATE_LIGHTNESS,
                                  NULL);
 
           gimp_drawable_apply_operation (drawable, progress,
@@ -583,57 +582,6 @@ histogram_invoker (GimpProcedure         *procedure,
     }
 
   return return_vals;
-}
-
-static GimpValueArray *
-hue_chroma_invoker (GimpProcedure         *procedure,
-                    Gimp                  *gimp,
-                    GimpContext           *context,
-                    GimpProgress          *progress,
-                    const GimpValueArray  *args,
-                    GError               **error)
-{
-  gboolean success = TRUE;
-  GimpDrawable *drawable;
-  gint32 hue_range;
-  gdouble hue_offset;
-  gdouble lightness;
-  gdouble chroma;
-
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  hue_range = g_value_get_enum (gimp_value_array_index (args, 1));
-  hue_offset = g_value_get_double (gimp_value_array_index (args, 2));
-  lightness = g_value_get_double (gimp_value_array_index (args, 3));
-  chroma = g_value_get_double (gimp_value_array_index (args, 4));
-
-  if (success)
-    {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        {
-          GObject *config = g_object_new (GIMP_TYPE_HUE_CHROMA_CONFIG,
-                                          "range", hue_range,
-                                          NULL);
-
-           g_object_set (config,
-                         "hue",        hue_offset / 180.0,
-                         "chroma", chroma / 100.0,
-                         "lightness",  lightness  / 100.0,
-                         NULL);
-
-          gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 _("Hue-Chroma"),
-                                                 "gimp:hue-chroma",
-                                                 config);
-          g_object_unref (config);
-        }
-      else
-        success = FALSE;
-    }
-
-  return gimp_procedure_get_return_values (procedure, success,
-                                           error ? *error : NULL);
 }
 
 static GimpValueArray *
@@ -1116,89 +1064,6 @@ register_color_procs (GimpPDB *pdb)
                                                         "Percentile that range falls under",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                                                         GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-hue-chroma
-   */
-  procedure = gimp_procedure_new (hue_chroma_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-hue-chroma");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-hue-chroma",
-                                     "Deprecated: Use 'gimp-drawable-hue-chroma' instead.",
-                                     "Deprecated: Use 'gimp-drawable-hue-chroma' instead.",
-                                     "",
-                                     "",
-                                     "",
-                                     "gimp-drawable-hue-chroma");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_enum ("hue-range",
-                                                  "hue range",
-                                                  "Range of affected hues",
-                                                  GIMP_TYPE_HUE_RANGE,
-                                                  GIMP_HUE_RANGE_ALL,
-                                                  GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("hue-offset",
-                                                    "hue offset",
-                                                    "Hue offset in degrees",
-                                                    -180, 180, -180,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("lightness",
-                                                    "lightness",
-                                                    "Lightness modification",
-                                                    -100, 100, -100,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("chroma",
-                                                    "chroma",
-                                                    "Chroma modification",
-                                                    -100, 100, -100,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
-
-  /*
-   * gimp-threshold
-   */
-  procedure = gimp_procedure_new (threshold_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-threshold");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-threshold",
-                                     "Deprecated: Use 'gimp-drawable-threshold' instead.",
-                                     "Deprecated: Use 'gimp-drawable-threshold' instead.",
-                                     "",
-                                     "",
-                                     "",
-                                     "gimp-drawable-threshold");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("low-threshold",
-                                                      "low threshold",
-                                                      "The low threshold value",
-                                                      0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("high-threshold",
-                                                      "high threshold",
-                                                      "The high threshold value",
-                                                      0, 255, 0,
-                                                      GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

@@ -72,19 +72,19 @@ static const GimpActionEntry file_actions[] =
   { "file-create-menu",      NULL, NC_("file-action", "Crea_te")      },
   { "file-open-recent-menu", NULL, NC_("file-action", "Open _Recent") },
 
-  { "file-open", GIMP_STOCK_IMAGE_OPEN,
+  { "file-open", GIMP_ICON_IMAGE_OPEN,
     NC_("file-action", "_Open..."), "<primary>O",
     NC_("file-action", "Open an image file"),
     G_CALLBACK (file_open_cmd_callback),
     GIMP_HELP_FILE_OPEN },
 
-  { "file-open-as-layers", GIMP_STOCK_LAYER,
+  { "file-open-as-layers", GIMP_ICON_LAYER,
     NC_("file-action", "Op_en as Layers..."), "<primary><alt>O",
     NC_("file-action", "Open an image file as layers"),
     G_CALLBACK (file_open_as_layers_cmd_callback),
     GIMP_HELP_FILE_OPEN_AS_LAYER },
 
-  { "file-open-location", GIMP_STOCK_WEB,
+  { "file-open-location", GIMP_ICON_WEB,
     NC_("file-action", "Open _Location..."), NULL,
     NC_("file-action", "Open an image file from a specified location"),
     G_CALLBACK (file_open_location_cmd_callback),
@@ -96,31 +96,31 @@ static const GimpActionEntry file_actions[] =
     G_CALLBACK (file_create_template_cmd_callback),
     GIMP_HELP_FILE_CREATE_TEMPLATE },
 
-  { "file-revert", GIMP_STOCK_IMAGE_RELOAD,
+  { "file-revert", GIMP_ICON_IMAGE_RELOAD,
     NC_("file-action", "Re_vert"), NULL,
     NC_("file-action", "Reload the image file from disk"),
     G_CALLBACK (file_revert_cmd_callback),
     GIMP_HELP_FILE_REVERT },
 
-  { "file-close-all", GIMP_STOCK_CLOSE_ALL,
+  { "file-close-all", GIMP_ICON_CLOSE_ALL,
     NC_("file-action", "Close all"), "<primary><shift>W",
     NC_("file-action", "Close all opened images"),
     G_CALLBACK (file_close_all_cmd_callback),
     GIMP_HELP_FILE_CLOSE_ALL },
 
-  { "file-copy-location", "edit-copy",
+  { "file-copy-location", GIMP_ICON_EDIT_COPY,
     NC_("file-action", "Copy _Image Location"), NULL,
     NC_("file-action", "Copy image file location to clipboard"),
     G_CALLBACK (file_copy_location_cmd_callback),
     GIMP_HELP_FILE_COPY_LOCATION },
 
-  { "file-show-in-file-manager", GIMP_STOCK_FILE_MANAGER,
+  { "file-show-in-file-manager", GIMP_ICON_FILE_MANAGER,
     NC_("file-action", "Show in _File Manager"), "<primary><alt>F",
     NC_("file-action", "Show image file location in the file manager"),
     G_CALLBACK (file_show_in_file_manager_cmd_callback),
     GIMP_HELP_FILE_SHOW_IN_FILE_MANAGER },
 
-  { "file-quit", "application-exit",
+  { "file-quit", GIMP_ICON_APPLICATION_EXIT,
     NC_("file-action", "_Quit"), "<primary>Q",
     NC_("file-action", "Quit the GNU Image Manipulation Program"),
     G_CALLBACK (file_quit_cmd_callback),
@@ -129,13 +129,13 @@ static const GimpActionEntry file_actions[] =
 
 static const GimpEnumActionEntry file_save_actions[] =
 {
-  { "file-save", "document-save",
+  { "file-save", GIMP_ICON_DOCUMENT_SAVE,
     NC_("file-action", "_Save"), "<primary>S",
     NC_("file-action", "Save this image"),
     GIMP_SAVE_MODE_SAVE, FALSE,
     GIMP_HELP_FILE_SAVE },
 
-  { "file-save-as", "document-save-as",
+  { "file-save-as", GIMP_ICON_DOCUMENT_SAVE_AS,
     NC_("file-action", "Save _As..."), "<primary><shift>S",
     NC_("file-action", "Save this image with a different name"),
     GIMP_SAVE_MODE_SAVE_AS, FALSE,
@@ -198,7 +198,7 @@ file_actions_setup (GimpActionGroup *group)
     {
       entries[i].name           = g_strdup_printf ("file-open-recent-%02d",
                                                    i + 1);
-      entries[i].icon_name      = "document-open";
+      entries[i].icon_name      = GIMP_ICON_DOCUMENT_OPEN,
       entries[i].label          = entries[i].name;
       entries[i].tooltip        = NULL;
       entries[i].value          = i;

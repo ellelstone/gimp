@@ -93,11 +93,11 @@ static void   gimp_color_selection_switch_page       (GtkWidget          *widget
                                                       GimpColorSelection *selection);
 static void   gimp_color_selection_notebook_changed  (GimpColorSelector  *selector,
                                                       const GimpRGB      *rgb,
-                                                      const GimpLch      *lch,
+                                                      const GimpHSV      *hsv,
                                                       GimpColorSelection *selection);
 static void   gimp_color_selection_scales_changed    (GimpColorSelector  *selector,
                                                       const GimpRGB      *rgb,
-                                                      const GimpLch      *lch,
+                                                      const GimpHSV      *hsv,
                                                       GimpColorSelection *selection);
 static void   gimp_color_selection_color_picked      (GtkWidget          *widget,
                                                       const GimpRGB      *rgb,
@@ -166,7 +166,7 @@ gimp_color_selection_init (GimpColorSelection *selection)
                                   GTK_ORIENTATION_VERTICAL);
 
   gimp_rgba_set (&selection->rgb, 0.0, 0.0, 0.0, 1.0);
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selection->rgb, &selection->lch, 1);
+  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
   selection->channel = GIMP_COLOR_SELECTOR_HUE;
 
@@ -188,7 +188,7 @@ gimp_color_selection_init (GimpColorSelection *selection)
 
   selection->notebook = gimp_color_selector_new (GIMP_TYPE_COLOR_NOTEBOOK,
                                                  &selection->rgb,
-                                                 &selection->lch,
+                                                 &selection->hsv,
                                                  selection->channel);
 
   if (_gimp_ensure_modules_func)
@@ -279,7 +279,7 @@ gimp_color_selection_init (GimpColorSelection *selection)
 
   selection->scales = gimp_color_selector_new (GIMP_TYPE_COLOR_SCALES,
                                                &selection->rgb,
-                                               &selection->lch,
+                                               &selection->hsv,
                                                selection->channel);
   gimp_color_selector_set_toggles_visible
     (GIMP_COLOR_SELECTOR (selection->scales), TRUE);
@@ -428,7 +428,7 @@ gimp_color_selection_set_color (GimpColorSelection *selection,
   g_return_if_fail (color != NULL);
 
   selection->rgb = *color;
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selection->rgb, &selection->lch, 1);
+  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
   gimp_color_selection_update (selection, UPDATE_ALL);
 
@@ -564,10 +564,10 @@ gimp_color_selection_switch_page (GtkWidget          *widget,
 static void
 gimp_color_selection_notebook_changed (GimpColorSelector  *selector,
                                        const GimpRGB      *rgb,
-                                       const GimpLch      *lch,
+                                       const GimpHSV      *hsv,
                                        GimpColorSelection *selection)
 {
-  selection->lch = *lch;
+  selection->hsv = *hsv;
   selection->rgb = *rgb;
 
   gimp_color_selection_update (selection,
@@ -578,11 +578,11 @@ gimp_color_selection_notebook_changed (GimpColorSelector  *selector,
 static void
 gimp_color_selection_scales_changed (GimpColorSelector  *selector,
                                      const GimpRGB      *rgb,
-                                     const GimpLch      *lch,
+                                     const GimpHSV      *hsv,
                                      GimpColorSelection *selection)
 {
   selection->rgb = *rgb;
-  selection->lch = *lch;
+  selection->hsv = *hsv;
 
   gimp_color_selection_update (selection,
                                UPDATE_ENTRY | UPDATE_NOTEBOOK | UPDATE_COLOR);
@@ -603,7 +603,7 @@ gimp_color_selection_entry_changed (GimpColorHexEntry  *entry,
 {
   gimp_color_hex_entry_get_color (entry, &selection->rgb);
 
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selection->rgb, &selection->lch, 1);
+  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
   gimp_color_selection_update (selection,
                                UPDATE_NOTEBOOK | UPDATE_SCALES | UPDATE_COLOR);
@@ -626,7 +626,7 @@ gimp_color_selection_new_color_changed (GtkWidget          *widget,
                                         GimpColorSelection *selection)
 {
   gimp_color_area_get_color (GIMP_COLOR_AREA (widget), &selection->rgb);
-  babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &selection->rgb, &selection->lch, 1);
+  gimp_rgb_to_hsv (&selection->rgb, &selection->hsv);
 
   gimp_color_selection_update (selection,
                                UPDATE_NOTEBOOK | UPDATE_SCALES | UPDATE_ENTRY);
@@ -645,7 +645,7 @@ gimp_color_selection_update (GimpColorSelection *selection,
 
       gimp_color_selector_set_color (GIMP_COLOR_SELECTOR (selection->notebook),
                                      &selection->rgb,
-                                     &selection->lch);
+                                     &selection->hsv);
 
       g_signal_handlers_unblock_by_func (selection->notebook,
                                          gimp_color_selection_notebook_changed,
@@ -660,7 +660,7 @@ gimp_color_selection_update (GimpColorSelection *selection,
 
       gimp_color_selector_set_color (GIMP_COLOR_SELECTOR (selection->scales),
                                      &selection->rgb,
-                                     &selection->lch);
+                                     &selection->hsv);
 
       g_signal_handlers_unblock_by_func (selection->scales,
                                          gimp_color_selection_scales_changed,

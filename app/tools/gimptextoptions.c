@@ -142,7 +142,7 @@ gimp_text_options_class_init (GimpTextOptionsClass *klass)
                            "font-size",
                            _("Font size"),
                            _("Font size"),
-                           0.0, 8192.0, 18.0,
+                           0.0, 8192.0, 62.0,
                            GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_ANTIALIAS,
@@ -408,8 +408,8 @@ gimp_text_options_reset (GimpConfig *config)
   gimp_config_reset_property (object, "foreground");
 
   /* text options */
-  gimp_config_reset_property (object, "font-size-unit");
   gimp_config_reset_property (object, "font-size");
+  gimp_config_reset_property (object, "font-size-unit");
   gimp_config_reset_property (object, "antialias");
   gimp_config_reset_property (object, "hint-style");
   gimp_config_reset_property (object, "language");
@@ -602,7 +602,7 @@ gimp_text_options_gui (GimpToolOptions *tool_options)
                              button, 1, TRUE);
   gtk_size_group_add_widget (size_group, button);
 
-  box = gimp_prop_enum_icon_box_new (config, "justify", "gtk-justify", 0, 0);
+  box = gimp_prop_enum_icon_box_new (config, "justify", "format-justify", 0, 0);
   gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("Justify:"), 0.0, 0.5,
                              box, 2, TRUE);
@@ -612,18 +612,21 @@ gimp_text_options_gui (GimpToolOptions *tool_options)
   spinbutton = gimp_prop_spin_button_new (config, "indent", 1.0, 10.0, 1);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 5);
   gimp_table_attach_icon (GTK_TABLE (table), row++,
-                          "format-indent-more", spinbutton, 1, TRUE);
+                          GIMP_ICON_FORMAT_INDENT_MORE,
+                          spinbutton, 1, TRUE);
 
   spinbutton = gimp_prop_spin_button_new (config, "line-spacing", 1.0, 10.0, 1);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 5);
   gimp_table_attach_icon (GTK_TABLE (table), row++,
-                          GIMP_STOCK_LINE_SPACING, spinbutton, 1, TRUE);
+                          GIMP_ICON_FORMAT_TEXT_SPACING_LINE,
+                          spinbutton, 1, TRUE);
 
   spinbutton = gimp_prop_spin_button_new (config,
                                           "letter-spacing", 1.0, 10.0, 1);
   gtk_entry_set_width_chars (GTK_ENTRY (spinbutton), 5);
   gimp_table_attach_icon (GTK_TABLE (table), row++,
-                          GIMP_STOCK_LETTER_SPACING, spinbutton, 1, TRUE);
+                          GIMP_ICON_FORMAT_TEXT_SPACING_LETTER,
+                          spinbutton, 1, TRUE);
 
   combo = gimp_prop_enum_combo_box_new (config, "box-mode", 0, 0);
   gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,

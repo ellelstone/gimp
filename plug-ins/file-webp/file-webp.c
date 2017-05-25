@@ -120,7 +120,7 @@ query (void)
                           "(C) 2015-2016 Nathan Osman, (C) 2016 Ben Touchette",
                           "2015,2016",
                           N_("WebP image"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save_arguments),
                           0,
@@ -211,9 +211,7 @@ run (const gchar      *name,
           export = gimp_export_image (&image_ID, &drawable_ID, "WebP",
                                       GIMP_EXPORT_CAN_HANDLE_RGB     |
                                       GIMP_EXPORT_CAN_HANDLE_GRAY    |
-                                      GIMP_EXPORT_CAN_HANDLE_INDEXED |
-                                      GIMP_EXPORT_CAN_HANDLE_ALPHA   |
-                                      GIMP_EXPORT_CAN_HANDLE_LAYERS_AS_ANIMATION);
+                                      GIMP_EXPORT_CAN_HANDLE_ALPHA);
 
           if (export == GIMP_EXPORT_CANCEL)
             {

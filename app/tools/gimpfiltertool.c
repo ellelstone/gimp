@@ -19,12 +19,10 @@
  * preview for non destructive editing. The processing of the pixels can
  * be done either by a gegl op or by a C function (apply_func).
  *
- * For the core side of this, please see /app/core/gimpimagemap.c.
+ * For the core side of this, please see app/core/gimpdrawablefilter.c.
  */
 
 #include "config.h"
-
-#include <string.h>
 
 #include <gegl.h>
 #include <gtk/gtk.h>
@@ -110,6 +108,9 @@ static void      gimp_filter_tool_options_notify (GimpTool            *tool,
                                                   GimpToolOptions     *options,
                                                   const GParamSpec    *pspec);
 
+static gboolean  gimp_filter_tool_can_pick_color (GimpColorTool       *color_tool,
+                                                  const GimpCoords    *coords,
+                                                  GimpDisplay         *display);
 static gboolean  gimp_filter_tool_pick_color     (GimpColorTool       *color_tool,
                                                   gint                 x,
                                                   gint                 y,
@@ -125,6 +126,8 @@ static void      gimp_filter_tool_color_picked   (GimpColorTool       *color_too
                                                   const GimpRGB       *color);
 
 static void      gimp_filter_tool_real_reset     (GimpFilterTool      *filter_tool);
+static void     gimp_filter_tool_real_set_config (GimpFilterTool      *filter_tool,
+                                                  GimpConfig          *config);
 
 static void      gimp_filter_tool_halt           (GimpFilterTool      *filter_tool);
 static void      gimp_filter_tool_commit         (GimpFilterTool      *filter_tool);
@@ -133,6 +136,7 @@ static void      gimp_filter_tool_dialog         (GimpFilterTool      *filter_to
 static void      gimp_filter_tool_dialog_unmap   (GtkWidget           *dialog,
                                                   GimpFilterTool      *filter_tool);
 static void      gimp_filter_tool_reset          (GimpFilterTool      *filter_tool);
+
 static void      gimp_filter_tool_create_filter  (GimpFilterTool      *filter_tool);
 
 static void      gimp_filter_tool_flush          (GimpDrawableFilter  *filter,
@@ -178,17 +182,14 @@ gimp_filter_tool_class_init (GimpFilterToolClass *klass)
   tool_class->cursor_update  = gimp_filter_tool_cursor_update;
   tool_class->options_notify = gimp_filter_tool_options_notify;
 
+  color_tool_class->can_pick = gimp_filter_tool_can_pick_color;
   color_tool_class->pick     = gimp_filter_tool_pick_color;
   color_tool_class->picked   = gimp_filter_tool_color_picked;
-
-  klass->settings_name       = NULL;
-  klass->import_dialog_title = NULL;
-  klass->export_dialog_title = NULL;
 
   klass->get_operation       = NULL;
   klass->dialog              = NULL;
   klass->reset               = gimp_filter_tool_real_reset;
-  klass->get_settings_ui     = gimp_filter_tool_real_get_settings_ui;
+  klass->set_config          = gimp_filter_tool_real_set_config;
   klass->settings_import     = gimp_filter_tool_real_settings_import;
   klass->settings_export     = gimp_filter_tool_real_settings_export;
 }
@@ -240,6 +241,12 @@ gimp_filter_tool_finalize (GObject *object)
       filter_tool->default_config = NULL;
     }
 
+  if (filter_tool->settings)
+    {
+      g_object_unref (filter_tool->settings);
+      filter_tool->settings = NULL;
+    }
+
   if (filter_tool->title)
     {
       g_free (filter_tool->title);
@@ -270,11 +277,30 @@ gimp_filter_tool_finalize (GObject *object)
       filter_tool->help_id = NULL;
     }
 
+  if (filter_tool->settings_folder)
+    {
+      g_object_unref (filter_tool->settings_folder);
+      filter_tool->settings_folder = NULL;
+    }
+
+  if (filter_tool->import_dialog_title)
+    {
+      g_free (filter_tool->import_dialog_title);
+      filter_tool->import_dialog_title = NULL;
+    }
+
+  if (filter_tool->export_dialog_title)
+    {
+      g_free (filter_tool->export_dialog_title);
+      filter_tool->export_dialog_title = NULL;
+    }
+
   if (filter_tool->gui)
     {
       g_object_unref (filter_tool->gui);
       filter_tool->gui          = NULL;
       filter_tool->settings_box = NULL;
+      filter_tool->region_combo = NULL;
     }
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -329,15 +355,14 @@ gimp_filter_tool_initialize (GimpTool     *tool,
 
   if (! filter_tool->gui)
     {
-      GimpFilterToolClass *klass = GIMP_FILTER_TOOL_GET_CLASS (filter_tool);
-      GtkWidget           *vbox;
-      GtkWidget           *hbox;
-      GtkWidget           *toggle;
-//      GtkWidget           *expander;
-//      GtkWidget           *frame;
-//      GtkWidget           *vbox2;
-//      GtkWidget           *combo;
-      gchar               *operation_name;
+      GtkWidget *vbox;
+      GtkWidget *hbox;
+      GtkWidget *toggle;
+//      GtkWidget *expander;
+//      GtkWidget *frame;
+//      GtkWidget *vbox2;
+//      GtkWidget *combo;
+      gchar     *operation_name;
 
       /*  disabled for at least GIMP 2.8  */
       filter_tool->overlay = FALSE;
@@ -372,37 +397,15 @@ gimp_filter_tool_initialize (GimpTool     *tool,
                                G_CALLBACK (gimp_filter_tool_response),
                                G_OBJECT (filter_tool), 0);
 
-      if (filter_tool->config && klass->settings_name)
+      if (filter_tool->config)
         {
-          GType          type = G_TYPE_FROM_INSTANCE (filter_tool->config);
-          GimpContainer *settings;
-          GFile         *settings_file;
-          GFile         *default_folder;
-          GtkWidget     *settings_ui;
+          filter_tool->settings_box =
+            gimp_filter_tool_get_settings_box (filter_tool);
+          gtk_box_pack_start (GTK_BOX (vbox), filter_tool->settings_box,
+                              FALSE, FALSE, 0);
 
-          settings = gimp_operation_config_get_container (type);
-          if (! gimp_list_get_sort_func (GIMP_LIST (settings)))
-            gimp_list_set_sort_func (GIMP_LIST (settings),
-                                     (GCompareFunc) gimp_settings_compare);
-
-          settings_file = gimp_tool_info_get_options_file (tool_info,
-                                                           ".settings");
-          default_folder = gimp_directory_file (klass->settings_name, NULL);
-
-          settings_ui = klass->get_settings_ui (filter_tool,
-                                                settings,
-                                                settings_file,
-                                                klass->import_dialog_title,
-                                                klass->export_dialog_title,
-                                                filter_tool->help_id,
-                                                default_folder,
-                                                &filter_tool->settings_box);
-
-          g_object_unref (default_folder);
-          g_object_unref (settings_file);
-
-          gtk_box_pack_start (GTK_BOX (vbox), settings_ui, FALSE, FALSE, 0);
-          gtk_widget_show (settings_ui);
+          if (filter_tool->has_settings)
+            gtk_widget_show (filter_tool->settings_box);
         }
 
       /*  The preview and split view toggles  */
@@ -450,6 +453,36 @@ gimp_filter_tool_initialize (GimpTool     *tool,
 //                                           "gamma-hack", NULL);
 //      gtk_box_pack_start (GTK_BOX (vbox2), toggle, FALSE, FALSE, 0);
 //      gtk_widget_show (toggle);
+//      expander = gtk_expander_new (_("Advanced Color Options"));
+//      gtk_box_pack_end (GTK_BOX (vbox), expander, FALSE, FALSE, 0);
+
+//      g_object_bind_property (G_OBJECT (image->gimp->config),
+//                              "filter-tool-show-color-options",
+//                              G_OBJECT (expander), "visible",
+//                              G_BINDING_SYNC_CREATE);
+
+//      frame = gimp_frame_new (NULL);
+//      gtk_container_add (GTK_CONTAINER (expander), frame);
+//      gtk_widget_show (frame);
+
+//      vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+//      gtk_container_add (GTK_CONTAINER (frame), vbox2);
+//      gtk_widget_show (vbox2);
+
+      /*  The color managed combo
+      combo = gimp_prop_boolean_combo_box_new
+        (G_OBJECT (tool_info->tool_options), "color-managed",
+         _("Convert pixels to built-in sRGB to apply filter (slow)"),
+         _("Assume pixels are built-in sRGB (ignore actual image color space)"));
+      g_object_set (combo, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
+      gtk_box_pack_start (GTK_BOX (vbox2), combo, FALSE, FALSE, 0);
+      gtk_widget_show (combo);*/
+
+      /*  The gamma hack toggle
+      toggle = gimp_prop_check_button_new (G_OBJECT (tool_info->tool_options),
+                                           "gamma-hack", NULL);
+      gtk_box_pack_start (GTK_BOX (vbox2), toggle, FALSE, FALSE, 0);
+      gtk_widget_show (toggle);*/
 
       /*  The area combo  */
       gegl_node_get (filter_tool->operation,
@@ -539,59 +572,26 @@ gimp_filter_tool_button_press (GimpTool            *tool,
 
       if (state & gimp_get_extend_selection_mask ())
         {
-          GimpAlignmentType alignment;
-
-          /* switch side */
-          switch (options->preview_alignment)
-            {
-            case GIMP_ALIGN_LEFT:   alignment = GIMP_ALIGN_RIGHT;  break;
-            case GIMP_ALIGN_RIGHT:  alignment = GIMP_ALIGN_LEFT;   break;
-            case GIMP_ALIGN_TOP:    alignment = GIMP_ALIGN_BOTTOM; break;
-            case GIMP_ALIGN_BOTTOM: alignment = GIMP_ALIGN_TOP;    break;
-            default:
-              g_return_if_reached ();
-            }
-
-          g_object_set (options, "preview-alignment", alignment, NULL);
+          gimp_filter_options_switch_preview_side (options);
         }
       else if (state & gimp_get_toggle_behavior_mask ())
         {
-          GimpItem          *item = GIMP_ITEM (filter_tool->drawable);
-          GimpAlignmentType  alignment;
-          gdouble            position;
+          GimpItem *item = GIMP_ITEM (filter_tool->drawable);
+          gdouble   pos_x;
+          gdouble   pos_y;
 
-          /* switch orientation */
-          switch (options->preview_alignment)
-            {
-            case GIMP_ALIGN_LEFT:   alignment = GIMP_ALIGN_TOP;    break;
-            case GIMP_ALIGN_RIGHT:  alignment = GIMP_ALIGN_BOTTOM; break;
-            case GIMP_ALIGN_TOP:    alignment = GIMP_ALIGN_LEFT;   break;
-            case GIMP_ALIGN_BOTTOM: alignment = GIMP_ALIGN_RIGHT;  break;
-            default:
-              g_return_if_reached ();
-            }
+          pos_x = ((coords->x - gimp_item_get_offset_x (item)) /
+                   gimp_item_get_width (item));
+          pos_y = ((coords->y - gimp_item_get_offset_y (item)) /
+                   gimp_item_get_height (item));
 
-          if (alignment == GIMP_ALIGN_LEFT ||
-              alignment == GIMP_ALIGN_RIGHT)
-            {
-              position = ((coords->x - gimp_item_get_offset_x (item)) /
-                          gimp_item_get_width (item));
-            }
-          else
-            {
-              position = ((coords->y - gimp_item_get_offset_y (item)) /
-                          gimp_item_get_height (item));
-            }
-
-          g_object_set (options,
-                        "preview-alignment", alignment,
-                        "preview-position",  CLAMP (position, 0.0, 1.0),
-                        NULL);
+          gimp_filter_options_switch_preview_orientation (options,
+                                                          pos_x, pos_y);
         }
       else
         {
           gimp_guide_tool_start_edit (tool, display,
-                                      filter_tool->percent_guide);
+                                      filter_tool->preview_guide);
         }
     }
 }
@@ -821,6 +821,27 @@ gimp_filter_tool_options_notify (GimpTool         *tool,
 }
 
 static gboolean
+gimp_filter_tool_can_pick_color (GimpColorTool    *color_tool,
+                                 const GimpCoords *coords,
+                                 GimpDisplay      *display)
+{
+  GimpFilterTool *filter_tool = GIMP_FILTER_TOOL (color_tool);
+  GimpImage      *image       = gimp_display_get_image (display);
+  gboolean        pick_abyss;
+
+  if (gimp_image_get_active_drawable (image) != filter_tool->drawable)
+    return FALSE;
+
+  pick_abyss =
+    GPOINTER_TO_INT (g_object_get_data (G_OBJECT (filter_tool->active_picker),
+                     "picker-pick-abyss"));
+
+  return pick_abyss ||
+         GIMP_COLOR_TOOL_CLASS (parent_class)->can_pick (color_tool,
+                                                         coords, display);
+}
+
+static gboolean
 gimp_filter_tool_pick_color (GimpColorTool  *color_tool,
                              gint            x,
                              gint            y,
@@ -829,18 +850,36 @@ gimp_filter_tool_pick_color (GimpColorTool  *color_tool,
                              GimpRGB        *color)
 {
   GimpFilterTool *filter_tool = GIMP_FILTER_TOOL (color_tool);
+  gboolean        pick_abyss;
   gint            off_x, off_y;
+  gboolean        picked;
+
+  pick_abyss =
+    GPOINTER_TO_INT (g_object_get_data (G_OBJECT (filter_tool->active_picker),
+                     "picker-pick-abyss"));
 
   gimp_item_get_offset (GIMP_ITEM (filter_tool->drawable), &off_x, &off_y);
 
   *sample_format = gimp_drawable_get_format (filter_tool->drawable);
 
-  return gimp_pickable_pick_color (GIMP_PICKABLE (filter_tool->drawable),
-                                   x - off_x,
-                                   y - off_y,
-                                   color_tool->options->sample_average,
-                                   color_tool->options->average_radius,
-                                   pixel, color);
+  picked = gimp_pickable_pick_color (GIMP_PICKABLE (filter_tool->drawable),
+                                     x - off_x,
+                                     y - off_y,
+                                     color_tool->options->sample_average,
+                                     color_tool->options->average_radius,
+                                     pixel, color);
+
+  if (! picked && pick_abyss)
+    {
+      color->r = 0.0;
+      color->g = 0.0;
+      color->b = 0.0;
+      color->a = 0.0;
+
+      picked = TRUE;
+    }
+
+  return picked;
 }
 
 static void
@@ -883,6 +922,21 @@ gimp_filter_tool_real_reset (GimpFilterTool *filter_tool)
           gimp_config_reset (GIMP_CONFIG (filter_tool->config));
         }
     }
+}
+
+static void
+gimp_filter_tool_real_set_config (GimpFilterTool *filter_tool,
+                                  GimpConfig     *config)
+{
+  gimp_config_copy (GIMP_CONFIG (config),
+                    GIMP_CONFIG (filter_tool->config), 0);
+
+  /*  reset the "time" property, otherwise explicitly storing the
+   *  config as setting will also copy the time, and the stored object
+   *  will be considered to be among the automatically stored recently
+   *  used settings
+   */
+  g_object_set (filter_tool->config, "time", 0, NULL);
 }
 
 static void
@@ -933,7 +987,7 @@ gimp_filter_tool_commit (GimpFilterTool *filter_tool)
 
       gimp_image_flush (gimp_display_get_image (tool->display));
 
-      if (filter_tool->config && filter_tool->settings_box)
+      if (filter_tool->config && filter_tool->has_settings)
         {
           GimpGuiConfig *config = GIMP_GUI_CONFIG (tool->tool_info->gimp->config);
 
@@ -1044,7 +1098,7 @@ gimp_filter_tool_add_guide (GimpFilterTool *filter_tool)
   GimpOrientationType  orientation;
   gint                 position;
 
-  if (filter_tool->percent_guide)
+  if (filter_tool->preview_guide)
     return;
 
   item = GIMP_ITEM (filter_tool->drawable);
@@ -1068,17 +1122,17 @@ gimp_filter_tool_add_guide (GimpFilterTool *filter_tool)
                   options->preview_position);
     }
 
-  filter_tool->percent_guide =
+  filter_tool->preview_guide =
     gimp_guide_custom_new (orientation,
                            image->gimp->next_guide_ID++,
                            GIMP_GUIDE_STYLE_SPLIT_VIEW);
 
-  gimp_image_add_guide (image, filter_tool->percent_guide, position);
+  gimp_image_add_guide (image, filter_tool->preview_guide, position);
 
-  g_signal_connect (filter_tool->percent_guide, "removed",
+  g_signal_connect (filter_tool->preview_guide, "removed",
                     G_CALLBACK (gimp_filter_tool_guide_removed),
                     filter_tool);
-  g_signal_connect (filter_tool->percent_guide, "notify::position",
+  g_signal_connect (filter_tool->preview_guide, "notify::position",
                     G_CALLBACK (gimp_filter_tool_guide_moved),
                     filter_tool);
 }
@@ -1088,12 +1142,12 @@ gimp_filter_tool_remove_guide (GimpFilterTool *filter_tool)
 {
   GimpImage *image;
 
-  if (! filter_tool->percent_guide)
+  if (! filter_tool->preview_guide)
     return;
 
   image = gimp_item_get_image (GIMP_ITEM (filter_tool->drawable));
 
-  gimp_image_remove_guide (image, filter_tool->percent_guide, FALSE);
+  gimp_image_remove_guide (image, filter_tool->preview_guide, FALSE);
 }
 
 static void
@@ -1104,7 +1158,7 @@ gimp_filter_tool_move_guide (GimpFilterTool *filter_tool)
   GimpOrientationType  orientation;
   gint                 position;
 
-  if (! filter_tool->percent_guide)
+  if (! filter_tool->preview_guide)
     return;
 
   item = GIMP_ITEM (filter_tool->drawable);
@@ -1127,12 +1181,12 @@ gimp_filter_tool_move_guide (GimpFilterTool *filter_tool)
                   options->preview_position);
     }
 
-  if (orientation != gimp_guide_get_orientation (filter_tool->percent_guide) ||
-      position    != gimp_guide_get_position (filter_tool->percent_guide))
+  if (orientation != gimp_guide_get_orientation (filter_tool->preview_guide) ||
+      position    != gimp_guide_get_position (filter_tool->preview_guide))
     {
-      gimp_guide_set_orientation (filter_tool->percent_guide, orientation);
+      gimp_guide_set_orientation (filter_tool->preview_guide, orientation);
       gimp_image_move_guide (gimp_item_get_image (item),
-                             filter_tool->percent_guide, position, FALSE);
+                             filter_tool->preview_guide, position, FALSE);
     }
 }
 
@@ -1142,15 +1196,15 @@ gimp_filter_tool_guide_removed (GimpGuide      *guide,
 {
   GimpFilterOptions *options = GIMP_FILTER_TOOL_GET_OPTIONS (filter_tool);
 
-  g_signal_handlers_disconnect_by_func (G_OBJECT (filter_tool->percent_guide),
+  g_signal_handlers_disconnect_by_func (G_OBJECT (filter_tool->preview_guide),
                                         gimp_filter_tool_guide_removed,
                                         filter_tool);
-  g_signal_handlers_disconnect_by_func (G_OBJECT (filter_tool->percent_guide),
+  g_signal_handlers_disconnect_by_func (G_OBJECT (filter_tool->preview_guide),
                                         gimp_filter_tool_guide_moved,
                                         filter_tool);
 
-  g_object_unref (filter_tool->percent_guide);
-  filter_tool->percent_guide = NULL;
+  g_object_unref (filter_tool->preview_guide);
+  filter_tool->preview_guide = NULL;
 
   g_object_set (options,
                 "preview-split", FALSE,
@@ -1217,6 +1271,7 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
   GimpFilterToolClass *klass;
   GimpToolInfo        *tool_info;
   gchar               *operation_name;
+  gchar               *settings_folder = NULL;
 
   g_return_if_fail (GIMP_IS_FILTER_TOOL (filter_tool));
 
@@ -1253,6 +1308,12 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
       filter_tool->default_config = NULL;
     }
 
+  if (filter_tool->settings)
+    {
+      g_object_unref (filter_tool->settings);
+      filter_tool->settings = NULL;
+    }
+
   if (filter_tool->title)
     {
       g_free (filter_tool->title);
@@ -1283,12 +1344,34 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
       filter_tool->help_id = NULL;
     }
 
+  if (filter_tool->settings_folder)
+    {
+      g_object_unref (filter_tool->settings_folder);
+      filter_tool->settings_folder = NULL;
+    }
+
+  if (filter_tool->import_dialog_title)
+    {
+      g_free (filter_tool->import_dialog_title);
+      filter_tool->import_dialog_title = NULL;
+    }
+
+  if (filter_tool->export_dialog_title)
+    {
+      g_free (filter_tool->export_dialog_title);
+      filter_tool->export_dialog_title = NULL;
+    }
+
   operation_name = klass->get_operation (filter_tool,
                                          &filter_tool->title,
                                          &filter_tool->description,
                                          &filter_tool->undo_desc,
                                          &filter_tool->icon_name,
-                                         &filter_tool->help_id);
+                                         &filter_tool->help_id,
+                                         &filter_tool->has_settings,
+                                         &settings_folder,
+                                         &filter_tool->import_dialog_title,
+                                         &filter_tool->export_dialog_title);
 
   if (! operation_name)
     operation_name = g_strdup ("gegl:nop");
@@ -1309,11 +1392,20 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
   if (! filter_tool->help_id)
     filter_tool->help_id = g_strdup (tool_info->help_id);
 
+  if (settings_folder)
+    {
+      filter_tool->settings_folder = gimp_directory_file (settings_folder,
+                                                          NULL);
+      g_free (settings_folder);
+    }
+
   filter_tool->operation = gegl_node_new_child (NULL,
                                                 "operation", operation_name,
                                                 NULL);
+
   filter_tool->config =
-    G_OBJECT (gimp_operation_config_new (operation_name,
+    G_OBJECT (gimp_operation_config_new (tool_info->gimp,
+                                         operation_name,
                                          filter_tool->icon_name,
                                          GIMP_TYPE_SETTINGS));
 
@@ -1322,6 +1414,12 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
   gimp_operation_config_connect_node (GIMP_OBJECT (filter_tool->config),
                                       filter_tool->operation);
 
+  filter_tool->settings =
+    gimp_operation_config_get_container (tool_info->gimp,
+                                         G_TYPE_FROM_INSTANCE (filter_tool->config),
+                                         (GCompareFunc) gimp_settings_compare);
+  g_object_ref (filter_tool->settings);
+
   if (filter_tool->gui)
     {
       gimp_tool_gui_set_title       (filter_tool->gui, filter_tool->title);
@@ -1329,6 +1427,9 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
       gimp_tool_gui_set_icon_name   (filter_tool->gui, filter_tool->icon_name);
       gimp_tool_gui_set_help_id     (filter_tool->gui, filter_tool->help_id);
     }
+
+  gimp_filter_tool_set_has_settings (filter_tool,
+                                     filter_tool->has_settings);
 
   if (gegl_operation_get_key (operation_name, "position-dependent"))
     {
@@ -1352,13 +1453,65 @@ gimp_filter_tool_get_operation (GimpFilterTool *filter_tool)
                 "preview-position", 0.5,
                 NULL);
 
-  if (filter_tool->config)
-    g_signal_connect_object (filter_tool->config, "notify",
-                             G_CALLBACK (gimp_filter_tool_config_notify),
-                             G_OBJECT (filter_tool), 0);
+  g_signal_connect_object (filter_tool->config, "notify",
+                           G_CALLBACK (gimp_filter_tool_config_notify),
+                           G_OBJECT (filter_tool), 0);
 
   if (GIMP_TOOL (filter_tool)->drawable)
     gimp_filter_tool_create_filter (filter_tool);
+}
+
+/*  this function should better not exist, but we determine whether an
+ *  op has settings by checking if gimp_prop_gui_new() returns a
+ *  GtkLabel, which happens after get_operation() is called.
+ */
+void
+gimp_filter_tool_set_has_settings (GimpFilterTool *filter_tool,
+                                   gboolean        has_settings)
+{
+  g_return_if_fail (GIMP_IS_FILTER_TOOL (filter_tool));
+
+  filter_tool->has_settings = has_settings;
+
+  if (filter_tool->settings_box)
+    {
+      if (filter_tool->has_settings)
+        {
+          g_object_set (filter_tool->settings_box,
+                        "visible",        TRUE,
+                        "config",         filter_tool->config,
+                        "container",      filter_tool->settings,
+                        "help-id",        filter_tool->help_id,
+                        "import-title",   filter_tool->import_dialog_title,
+                        "export-title",   filter_tool->export_dialog_title,
+                        "default-folder", filter_tool->settings_folder,
+                        "last-file",      NULL,
+                        NULL);
+        }
+      else
+        {
+          g_object_set (filter_tool->settings_box,
+                        "visible",        FALSE,
+                        "config",         NULL,
+                        "container",      NULL,
+                        "help-id",        NULL,
+                        "import-title",   NULL,
+                        "export-title",   NULL,
+                        "default-folder", NULL,
+                        "last-file",      NULL,
+                        NULL);
+        }
+    }
+}
+
+void
+gimp_filter_tool_set_config (GimpFilterTool *filter_tool,
+                             GimpConfig     *config)
+{
+  g_return_if_fail (GIMP_IS_FILTER_TOOL (filter_tool));
+  g_return_if_fail (GIMP_IS_SETTINGS (config));
+
+  GIMP_FILTER_TOOL_GET_CLASS (filter_tool)->set_config (filter_tool, config);
 }
 
 void
@@ -1408,15 +1561,15 @@ gimp_filter_tool_on_guide (GimpFilterTool   *filter_tool,
   shell = gimp_display_get_shell (display);
 
   if (filter_tool->filter        &&
-      filter_tool->percent_guide &&
+      filter_tool->preview_guide &&
       gimp_display_shell_get_show_guides (shell))
     {
       const gint          snap_distance = display->config->snap_distance;
       GimpOrientationType orientation;
       gint                position;
 
-      orientation = gimp_guide_get_orientation (filter_tool->percent_guide);
-      position    = gimp_guide_get_position (filter_tool->percent_guide);
+      orientation = gimp_guide_get_orientation (filter_tool->preview_guide);
+      position    = gimp_guide_get_position (filter_tool->preview_guide);
 
       if (orientation == GIMP_ORIENTATION_HORIZONTAL)
         {
@@ -1470,7 +1623,8 @@ GtkWidget *
 gimp_filter_tool_add_color_picker (GimpFilterTool *filter_tool,
                                    gpointer        identifier,
                                    const gchar    *icon_name,
-                                   const gchar    *tooltip)
+                                   const gchar    *tooltip,
+                                   gboolean        pick_abyss)
 {
   GtkWidget *button;
   GtkWidget *image;
@@ -1490,7 +1644,10 @@ gimp_filter_tool_add_color_picker (GimpFilterTool *filter_tool,
   if (tooltip)
     gimp_help_set_help_data (button, tooltip, NULL);
 
-  g_object_set_data (G_OBJECT (button), "picker-identifier", identifier);
+  g_object_set_data (G_OBJECT (button),
+                     "picker-identifier", identifier);
+  g_object_set_data (G_OBJECT (button),
+                     "picker-pick-abyss", GINT_TO_POINTER (pick_abyss));
 
   g_signal_connect (button, "toggled",
                     G_CALLBACK (gimp_filter_tool_color_picker_toggled),

@@ -43,6 +43,7 @@ struct _GimpFilterTool
   GeglNode              *operation;
   GObject               *config;
   GObject               *default_config;
+  GimpContainer         *settings;
 
   gchar                 *title;
   gchar                 *description;
@@ -50,9 +51,14 @@ struct _GimpFilterTool
   gchar                 *icon_name;
   gchar                 *help_id;
 
+  gboolean               has_settings;
+  GFile                 *settings_folder;
+  gchar                 *import_dialog_title;
+  gchar                 *export_dialog_title;
+
   GimpDrawableFilter    *filter;
 
-  GimpGuide             *percent_guide;
+  GimpGuide             *preview_guide;
 
   /* dialog */
   gboolean               overlay;
@@ -66,28 +72,21 @@ struct _GimpFilterToolClass
 {
   GimpColorToolClass  parent_class;
 
-  const gchar        *settings_name;
-  const gchar        *import_dialog_title;
-  const gchar        *export_dialog_title;
-
   /* virtual functions */
   gchar     * (* get_operation)   (GimpFilterTool    *filter_tool,
                                    gchar            **title,
                                    gchar            **description,
                                    gchar            **undo_desc,
                                    gchar            **icon_name,
-                                   gchar            **help_id);
+                                   gchar            **help_id,
+                                   gboolean          *has_settings,
+                                   gchar            **settings_folder,
+                                   gchar            **import_dialog_title,
+                                   gchar            **export_dialog_title);
   void        (* dialog)          (GimpFilterTool    *filter_tool);
   void        (* reset)           (GimpFilterTool    *filter_tool);
-
-  GtkWidget * (* get_settings_ui) (GimpFilterTool    *filter_tool,
-                                   GimpContainer     *settings,
-                                   GFile             *settings_file,
-                                   const gchar       *import_dialog_title,
-                                   const gchar       *export_dialog_title,
-                                   const gchar       *file_dialog_help_id,
-                                   GFile             *default_folder,
-                                   GtkWidget        **settings_box);
+  void        (* set_config)      (GimpFilterTool    *filter_tool,
+                                   GimpConfig        *config);
 
   gboolean    (* settings_import) (GimpFilterTool    *filter_tool,
                                    GInputStream      *input,
@@ -109,6 +108,12 @@ GType       gimp_filter_tool_get_type         (void) G_GNUC_CONST;
 
 void        gimp_filter_tool_get_operation    (GimpFilterTool   *filter_tool);
 
+void        gimp_filter_tool_set_has_settings (GimpFilterTool   *filter_tool,
+                                               gboolean          has_settings);
+
+void        gimp_filter_tool_set_config       (GimpFilterTool   *filter_tool,
+                                               GimpConfig       *config);
+
 void        gimp_filter_tool_edit_as          (GimpFilterTool   *filter_tool,
                                                const gchar      *new_tool_id,
                                                GimpConfig       *config);
@@ -122,7 +127,8 @@ GtkWidget * gimp_filter_tool_dialog_get_vbox  (GimpFilterTool   *filter_tool);
 GtkWidget * gimp_filter_tool_add_color_picker (GimpFilterTool   *filter_tool,
                                                gpointer          identifier,
                                                const gchar      *icon_name,
-                                               const gchar      *tooltip);
+                                               const gchar      *tooltip,
+                                               gboolean          pick_abyss);
 
 
 #endif /* __GIMP_FILTER_TOOL_H__ */

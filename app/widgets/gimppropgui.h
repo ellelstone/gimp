@@ -27,7 +27,8 @@
 typedef GtkWidget * (* GimpCreatePickerFunc) (gpointer     creator,
                                               const gchar *property_name,
                                               const gchar *icon_name,
-                                              const gchar *tooltip);
+                                              const gchar *tooltip,
+                                              gboolean     pick_abyss);
 
 GtkWidget * gimp_prop_widget_new            (GObject              *config,
                                              const gchar          *property_name,
@@ -51,6 +52,12 @@ GtkWidget * gimp_prop_gui_new               (GObject              *config,
                                              GimpCreatePickerFunc  create_picker,
                                              gpointer              picker_creator);
 
+void        gimp_prop_gui_bind_container    (GtkWidget            *source,
+                                             GtkWidget            *target);
+void        gimp_prop_gui_bind_label        (GtkWidget            *source,
+                                             GtkWidget            *target);
+void        gimp_prop_gui_bind_tooltip      (GtkWidget            *source,
+                                             GtkWidget            *target);
 
 
 #endif /* __GIMP_PROP_GUI_H__ */

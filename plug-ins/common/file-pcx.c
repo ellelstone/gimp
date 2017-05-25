@@ -397,19 +397,19 @@ load_image (const gchar  *filename,
   resolution_x = GUINT16_FROM_LE (pcx_header.hdpi);
   resolution_y = GUINT16_FROM_LE (pcx_header.vdpi);
 
-  if ((width < 0) || (width > GIMP_MAX_IMAGE_SIZE))
+  if ((width <= 0) || (width > GIMP_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image width: %d"), width);
       fclose (fd);
       return -1;
     }
-  if ((height < 0) || (height > GIMP_MAX_IMAGE_SIZE))
+  if ((height <= 0) || (height > GIMP_MAX_IMAGE_SIZE))
     {
       g_message (_("Unsupported or invalid image height: %d"), height);
       fclose (fd);
       return -1;
     }
-  if (bytesperline < (width * pcx_header.bpp) / 8)
+  if (bytesperline < ((width * pcx_header.bpp + 7) / 8))
     {
       g_message (_("Invalid number of bytes per line in PCX header"));
       fclose (fd);
@@ -436,14 +436,14 @@ load_image (const gchar  *filename,
       image= gimp_image_new (width, height, GIMP_RGB);
       layer= gimp_layer_new (image, _("Background"), width, height,
                              GIMP_RGB_IMAGE,
-                             100, GIMP_LAYER_MODE_NORMAL);
+                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
     }
   else
     {
       image= gimp_image_new (width, height, GIMP_INDEXED);
       layer= gimp_layer_new (image, _("Background"), width, height,
                              GIMP_INDEXED_IMAGE,
-                             100, GIMP_LAYER_MODE_NORMAL);
+                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
     }
 
   gimp_image_set_filename (image, filename);

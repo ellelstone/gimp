@@ -148,6 +148,7 @@ static GimpConfig * gimp_paint_options_duplicate         (GimpConfig   *config);
 static gboolean     gimp_paint_options_copy              (GimpConfig   *src,
                                                           GimpConfig   *dest,
                                                           GParamFlags   flags);
+static void         gimp_paint_options_reset             (GimpConfig   *config);
 
 
 G_DEFINE_TYPE_WITH_CODE (GimpPaintOptions, gimp_paint_options,
@@ -425,6 +426,7 @@ gimp_paint_options_config_iface_init (GimpConfigInterface *config_iface)
 
   config_iface->duplicate = gimp_paint_options_duplicate;
   config_iface->copy      = gimp_paint_options_copy;
+  config_iface->reset     = gimp_paint_options_reset;
 }
 
 static void
@@ -799,6 +801,28 @@ gimp_paint_options_copy (GimpConfig  *src,
   return parent_config_iface->copy (src, dest, flags);
 }
 
+static void
+gimp_paint_options_reset (GimpConfig *config)
+{
+  GimpBrush *brush = gimp_context_get_brush (GIMP_CONTEXT (config));
+
+  parent_config_iface->reset (config);
+
+  if (brush)
+    {
+      gimp_paint_options_set_default_brush_size (GIMP_PAINT_OPTIONS (config),
+                                                 brush);
+      gimp_paint_options_set_default_brush_hardness (GIMP_PAINT_OPTIONS (config),
+                                                     brush);
+      gimp_paint_options_set_default_brush_aspect_ratio (GIMP_PAINT_OPTIONS (config),
+                                                         brush);
+      gimp_paint_options_set_default_brush_angle (GIMP_PAINT_OPTIONS (config),
+                                                  brush);
+      gimp_paint_options_set_default_brush_spacing (GIMP_PAINT_OPTIONS (config),
+                                                    brush);
+    }
+}
+
 GimpPaintOptions *
 gimp_paint_options_new (GimpPaintInfo *paint_info)
 {
@@ -951,7 +975,7 @@ gimp_paint_options_get_brush_mode (GimpPaintOptions *paint_options)
   dynamic_force = gimp_dynamics_is_output_enabled (dynamics,
                                                    GIMP_DYNAMICS_OUTPUT_FORCE);
 
-  if (dynamic_force || (paint_options->brush_force > 0.0))
+  if (dynamic_force || (paint_options->brush_force != 0.5))
     return GIMP_BRUSH_PRESSURE;
 
   return GIMP_BRUSH_SOFT;

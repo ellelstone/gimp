@@ -86,6 +86,8 @@ static void   layer_options_dialog_callback       (GtkWidget          *dialog,
                                                    gboolean            item_lock_content,
                                                    gboolean            item_lock_position,
                                                    gpointer            user_data);
+static void
+     layer_options_dialog_update_mode_sensitivity (LayerOptionsDialog *private);
 static void   layer_options_dialog_mode_notify    (GtkWidget          *widget,
                                                    const GParamSpec   *pspec,
                                                    LayerOptionsDialog *private);
@@ -162,7 +164,7 @@ layer_options_dialog_new (GimpImage                *image,
                                     parent, title, role,
                                     icon_name, desc, help_id,
                                     _("Layer _name:"),
-                                    GIMP_STOCK_TOOL_PAINTBRUSH,
+                                    GIMP_ICON_TOOL_PAINTBRUSH,
                                     _("Lock _pixels"),
                                     _("Lock position and _size"),
                                     layer_name,
@@ -229,7 +231,7 @@ layer_options_dialog_new (GimpImage                *image,
                               &private->composite_mode);
 
   /*  set the sensitivity of above 3 menus  */
-  layer_options_dialog_mode_notify (private->mode_box, NULL, private);
+  layer_options_dialog_update_mode_sensitivity (private);
 
   adjustment = GTK_ADJUSTMENT (gtk_adjustment_new (private->opacity, 0.0, 100.0,
                                                    1.0, 10.0, 0.0));
@@ -432,7 +434,7 @@ layer_options_dialog_new (GimpImage                *image,
                           G_BINDING_INVERT_BOOLEAN);
 
   button = item_options_dialog_add_switch (dialog,
-                                           GIMP_STOCK_TRANSPARENCY,
+                                           GIMP_ICON_TRANSPARENCY,
                                            _("Lock _alpha"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button),
                                 private->lock_alpha);
@@ -444,7 +446,7 @@ layer_options_dialog_new (GimpImage                *image,
   if (layer && gimp_item_is_text_layer (GIMP_ITEM (layer)))
     {
       button = item_options_dialog_add_switch (dialog,
-                                               GIMP_STOCK_TOOL_TEXT,
+                                               GIMP_ICON_TOOL_TEXT,
                                                _("Set name from _text"));
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button),
                                     private->rename_text_layers);
@@ -531,28 +533,35 @@ layer_options_dialog_callback (GtkWidget    *dialog,
 }
 
 static void
+layer_options_dialog_update_mode_sensitivity (LayerOptionsDialog *private)
+{
+  gboolean mutable;
+
+  mutable = gimp_layer_mode_is_blend_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->blend_space_combo, mutable);
+
+  mutable = gimp_layer_mode_is_composite_space_mutable (private->mode);
+  gtk_widget_set_sensitive (private->composite_space_combo, mutable);
+
+  mutable = gimp_layer_mode_is_composite_mode_mutable (private->mode);
+  gtk_widget_set_sensitive (private->composite_mode_combo, mutable);
+}
+
+static void
 layer_options_dialog_mode_notify (GtkWidget          *widget,
                                   const GParamSpec   *pspec,
                                   LayerOptionsDialog *private)
 {
-  gboolean mutable;
-
   private->mode = gimp_layer_mode_box_get_mode (GIMP_LAYER_MODE_BOX (widget));
 
   gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->blend_space_combo),
                                  GIMP_LAYER_COLOR_SPACE_AUTO);
-  mutable = gimp_layer_mode_is_blend_space_mutable (private->mode);
-  gtk_widget_set_sensitive (private->blend_space_combo, mutable);
-
   gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_space_combo),
                                  GIMP_LAYER_COLOR_SPACE_AUTO);
-  mutable = gimp_layer_mode_is_composite_space_mutable (private->mode);
-  gtk_widget_set_sensitive (private->composite_space_combo, mutable);
-
   gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (private->composite_mode_combo),
                                  GIMP_LAYER_COMPOSITE_AUTO);
-  mutable = gimp_layer_mode_is_composite_mode_mutable (private->mode);
-  gtk_widget_set_sensitive (private->composite_mode_combo, mutable);
+
+  layer_options_dialog_update_mode_sensitivity (private);
 }
 
 static void

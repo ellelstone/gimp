@@ -502,9 +502,10 @@ gimp_prop_enum_combo_box_new (GObject     *config,
                               gint         minimum,
                               gint         maximum)
 {
-  GParamSpec *param_spec;
-  GtkWidget  *combo_box;
-  gint        value;
+  GParamSpec   *param_spec;
+  GtkListStore *store = NULL;
+  GtkWidget    *combo_box;
+  gint          value;
 
   g_return_val_if_fail (G_IS_OBJECT (config), NULL);
   g_return_val_if_fail (property_name != NULL, NULL);
@@ -520,15 +521,44 @@ gimp_prop_enum_combo_box_new (GObject     *config,
 
   if (minimum != maximum)
     {
-      GtkListStore *store;
-
       store = gimp_enum_store_new_with_range (param_spec->value_type,
                                               minimum, maximum);
+    }
+  else if (param_spec->value_type == GIMP_TYPE_DESATURATE_MODE)
+    {
+      /* this is a bad hack, if we get more of those, we should probably
+       * think of something less ugly
+       */
+      store = gimp_enum_store_new_with_values (param_spec->value_type,
+                                               5,
+                                               GIMP_DESATURATE_LUMINANCE,
+                                               GIMP_DESATURATE_LIGHTNESS,
+                                               GIMP_DESATURATE_AVERAGE,
+                                               GIMP_DESATURATE_VALUE);
+    }
+  else if (param_spec->value_type == GIMP_TYPE_SELECT_CRITERION)
+    {
+      /* ditto */
+      store = gimp_enum_store_new_with_values (param_spec->value_type,
+                                               11,
+                                               GIMP_SELECT_CRITERION_COMPOSITE,
+                                               GIMP_SELECT_CRITERION_R,
+                                               GIMP_SELECT_CRITERION_G,
+                                               GIMP_SELECT_CRITERION_B,
+                                               GIMP_SELECT_CRITERION_A,
+                                               GIMP_SELECT_CRITERION_H,
+                                               GIMP_SELECT_CRITERION_S,
+                                               GIMP_SELECT_CRITERION_V,
+                                               GIMP_SELECT_CRITERION_LCH_L,
+                                               GIMP_SELECT_CRITERION_LCH_C,
+                                               GIMP_SELECT_CRITERION_LCH_H);
+    }
 
+  if (store)
+    {
       combo_box = g_object_new (GIMP_TYPE_ENUM_COMBO_BOX,
                                 "model", store,
                                 NULL);
-
       g_object_unref (store);
     }
   else
@@ -639,11 +669,11 @@ gimp_prop_pointer_combo_box_notify (GObject    *config,
 /*  boolean combo box   */
 /************************/
 
-static void   gimp_prop_boolean_combo_box_callback (GtkWidget   *widget,
+static void   gimp_prop_boolean_combo_box_callback (GtkWidget   *combo,
                                                     GObject     *config);
 static void   gimp_prop_boolean_combo_box_notify   (GObject     *config,
                                                     GParamSpec  *param_spec,
-                                                    GtkWidget   *widget);
+                                                    GtkWidget   *combo);
 
 
 /**
@@ -669,7 +699,7 @@ gimp_prop_boolean_combo_box_new (GObject     *config,
                                  const gchar *false_text)
 {
   GParamSpec *param_spec;
-  GtkWidget  *combo_box;
+  GtkWidget  *combo;
   gboolean    value;
 
   g_return_val_if_fail (G_IS_OBJECT (config), NULL);
@@ -684,62 +714,62 @@ gimp_prop_boolean_combo_box_new (GObject     *config,
                 property_name, &value,
                 NULL);
 
-  combo_box = gtk_combo_box_text_new ();
+  combo = gimp_int_combo_box_new (true_text,  TRUE,
+                                  false_text, FALSE,
+                                  NULL);
 
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_box), true_text);
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo_box), false_text);
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), value);
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (combo_box), value ? 0 : 1);
-
-  g_signal_connect (combo_box, "changed",
+  g_signal_connect (combo, "changed",
                     G_CALLBACK (gimp_prop_boolean_combo_box_callback),
                     config);
 
-  set_param_spec (G_OBJECT (combo_box), combo_box, param_spec);
+  set_param_spec (G_OBJECT (combo), combo, param_spec);
 
   connect_notify (config, property_name,
                   G_CALLBACK (gimp_prop_boolean_combo_box_notify),
-                  combo_box);
+                  combo);
 
-  return combo_box;
+  return combo;
 }
 
 static void
-gimp_prop_boolean_combo_box_callback (GtkWidget *widget,
+gimp_prop_boolean_combo_box_callback (GtkWidget *combo,
                                       GObject   *config)
 {
   GParamSpec  *param_spec;
   gint         value;
 
-  param_spec = get_param_spec (G_OBJECT (widget));
+  param_spec = get_param_spec (G_OBJECT (combo));
   if (! param_spec)
     return;
 
-  value = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
-
-  g_object_set (config,
-                param_spec->name, value ? FALSE : TRUE,
-                NULL);
+  if (gimp_int_combo_box_get_active (GIMP_INT_COMBO_BOX (combo), &value))
+    {
+      g_object_set (config,
+                    param_spec->name, value,
+                    NULL);
+    }
 }
 
 static void
 gimp_prop_boolean_combo_box_notify (GObject    *config,
                                     GParamSpec *param_spec,
-                                    GtkWidget  *combo_box)
+                                    GtkWidget  *combo)
 {
-  gint value;
+  gboolean value;
 
   g_object_get (config,
                 param_spec->name, &value,
                 NULL);
 
-  g_signal_handlers_block_by_func (combo_box,
+  g_signal_handlers_block_by_func (combo,
                                    gimp_prop_boolean_combo_box_callback,
                                    config);
 
-  gtk_combo_box_set_active (GTK_COMBO_BOX (combo_box), value ? 0 : 1);
+  gimp_int_combo_box_set_active (GIMP_INT_COMBO_BOX (combo), value);
 
-  g_signal_handlers_unblock_by_func (combo_box,
+  g_signal_handlers_unblock_by_func (combo,
                                      gimp_prop_boolean_combo_box_callback,
                                      config);
 }
@@ -1265,12 +1295,12 @@ gimp_prop_hscale_new (GObject     *config,
                       gdouble      page_increment,
                       gint         digits)
 {
-  GParamSpec *param_spec;
-  GtkWidget  *scale;
-  GtkObject  *adjustment;
-  gdouble     value;
-  gdouble     lower;
-  gdouble     upper;
+  GParamSpec    *param_spec;
+  GtkWidget     *scale;
+  GtkAdjustment *adjustment;
+  gdouble        value;
+  gdouble        lower;
+  gdouble        upper;
 
   param_spec = find_param_spec (config, property_name, G_STRFUNC);
   if (! param_spec)
@@ -1283,8 +1313,9 @@ gimp_prop_hscale_new (GObject     *config,
   if (! G_IS_PARAM_SPEC_DOUBLE (param_spec))
     digits = 0;
 
-  adjustment = gtk_adjustment_new (value, lower, upper,
-                                   step_increment, page_increment, 0.0);
+  adjustment = (GtkAdjustment *)
+    gtk_adjustment_new (value, lower, upper,
+                        step_increment, page_increment, 0.0);
 
   scale = g_object_new (GTK_TYPE_SCALE,
                         "orientation", GTK_ORIENTATION_HORIZONTAL,
@@ -2835,7 +2866,8 @@ gimp_prop_size_entry_new (GObject                   *config,
 
   entry = gimp_size_entry_new (1, unit_value, unit_format,
                                show_pixels, show_percent, FALSE,
-                               gimp_prop_size_entry_num_chars (lower, upper),
+                               gimp_prop_size_entry_num_chars (lower, upper) + 1 +
+                               gimp_unit_get_scaled_digits (unit_value, resolution),
                                update_policy);
   gtk_table_set_col_spacing (GTK_TABLE (entry), 1, 2);
 

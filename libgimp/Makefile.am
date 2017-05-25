@@ -89,6 +89,7 @@ PDB_WRAPPERS_C = \
 	gimpchannel_pdb.c		\
 	gimpcolor_pdb.c			\
 	gimpcontext_pdb.c		\
+	gimpdebug_pdb.c			\
 	gimpdisplay_pdb.c		\
 	gimpdrawable_pdb.c		\
 	gimpdrawablecolor_pdb.c		\
@@ -146,6 +147,7 @@ PDB_WRAPPERS_H = \
 	gimpchannel_pdb.h		\
 	gimpcolor_pdb.h			\
 	gimpcontext_pdb.h		\
+	gimpdebug_pdb.h			\
 	gimpdisplay_pdb.h		\
 	gimpdrawable_pdb.h		\
 	gimpdrawablecolor_pdb.h		\
@@ -441,8 +443,8 @@ uninstall-local: uninstall-ms-lib uninstall-libtool-import-lib
 gen_sources = xgen-cec xgen-umh xgen-umc
 CLEANFILES = $(gen_sources)
 
-gimpenums.c: $(srcdir)/gimpenums.h $(srcdir)/gimpenums.c.tail $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
+gimpenums.c: $(srcdir)/gimpenums.h $(srcdir)/gimpenums.c.tail $(GIMP_MKENUMS) Makefile.am
+	$(AM_V_GEN) $(GIMP_MKENUMS) \
 		--fhead "#include \"config.h\"\n#include <gio/gio.h>\n#undef GIMP_DISABLE_DEPRECATED\n#include \"libgimpbase/gimpbase.h\"\n#include \"libgimpconfig/gimpconfigenums.h\"\n#include \"gimpenums.h\"" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
@@ -451,7 +453,7 @@ gimpenums.c: $(srcdir)/gimpenums.h $(srcdir)/gimpenums.c.tail $(GIMP_MKENUMS)
 		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
 		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpenums.h > xgen-cec \
+		$< > xgen-cec \
 	&& cat $(srcdir)/gimpenums.c.tail >> xgen-cec \
 	&& cp xgen-cec $(@F) \
 	&& rm -f xgen-cec

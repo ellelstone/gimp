@@ -115,7 +115,7 @@ colorsel_cmyk_class_init (ColorselCmykClass *klass)
 
   selector_class->name       = _("CMYK");
   selector_class->help_id    = "gimp-colorselector-cmyk";
-  selector_class->icon_name  = GIMP_STOCK_COLOR_CMYK;
+  selector_class->icon_name  = GIMP_ICON_COLOR_SELECTOR_CMYK;
   selector_class->set_color  = colorsel_cmyk_set_color;
   selector_class->set_config = colorsel_cmyk_set_config;
 }
@@ -334,7 +334,7 @@ colorsel_cmyk_adj_update (GtkAdjustment *adj,
       cmyk_values[2] = module->cmyk.y * 100.0;
       cmyk_values[3] = module->cmyk.k * 100.0;
 
-      gimp_color_transform_process_pixels (module->rgb2cmyk,
+      gimp_color_transform_process_pixels (module->cmyk2rgb,
                                            babl_format ("CMYK double"),
                                            cmyk_values,
                                            babl_format ("RGB double"),

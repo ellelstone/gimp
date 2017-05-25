@@ -42,7 +42,8 @@ enum
   PROP_MODE,
   PROP_HAS_NUMBER,
   PROP_NUMBER,
-  PROP_HAS_COLOR_AREA
+  PROP_HAS_COLOR_AREA,
+  PROP_HAS_COORDS
 };
 
 
@@ -68,7 +69,7 @@ static void       gimp_color_frame_menu_callback     (GtkWidget      *widget,
                                                       GimpColorFrame *frame);
 static void       gimp_color_frame_update            (GimpColorFrame *frame);
 
-//static void       gimp_color_frame_create_transform  (GimpColorFrame *frame);
+static void       gimp_color_frame_create_transform  (GimpColorFrame *frame);
 static void       gimp_color_frame_destroy_transform (GimpColorFrame *frame);
 
 
@@ -115,6 +116,12 @@ gimp_color_frame_class_init (GimpColorFrameClass *klass)
                                                          NULL, NULL,
                                                          FALSE,
                                                          GIMP_PARAM_READWRITE));
+
+  g_object_class_install_property (object_class, PROP_HAS_COORDS,
+                                   g_param_spec_boolean ("has-coords",
+                                                         NULL, NULL,
+                                                         FALSE,
+                                                         GIMP_PARAM_READWRITE));
 }
 
 static void
@@ -122,6 +129,7 @@ gimp_color_frame_init (GimpColorFrame *frame)
 {
   GtkWidget *vbox;
   GtkWidget *vbox2;
+  GtkWidget *label;
   gint       i;
 
   frame->sample_valid  = FALSE;
@@ -177,6 +185,19 @@ gimp_color_frame_init (GimpColorFrame *frame)
                         FALSE, FALSE, 0);
       gtk_widget_show (frame->value_labels[i]);
     }
+
+  frame->coords_box = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 6);
+  gtk_box_pack_start (GTK_BOX (vbox), frame->coords_box, FALSE, FALSE, 0);
+
+  label = gtk_label_new (_("X,Y:"));
+  gtk_box_pack_start (GTK_BOX (frame->coords_box), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
+
+  frame->coords_label = gtk_label_new (" ");
+  gtk_label_set_selectable (GTK_LABEL (frame->coords_label), TRUE);
+  gtk_box_pack_end (GTK_BOX (frame->coords_box), frame->coords_label,
+                    FALSE, FALSE, 0);
+  gtk_widget_show (frame->coords_label);
 }
 
 static void
@@ -229,6 +250,10 @@ gimp_color_frame_get_property (GObject    *object,
       g_value_set_boolean (value, frame->has_color_area);
       break;
 
+    case PROP_HAS_COORDS:
+      g_value_set_boolean (value, frame->has_coords);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -259,6 +284,10 @@ gimp_color_frame_set_property (GObject      *object,
 
     case PROP_HAS_COLOR_AREA:
       gimp_color_frame_set_has_color_area (frame, g_value_get_boolean (value));
+      break;
+
+    case PROP_HAS_COORDS:
+      gimp_color_frame_set_has_coords (frame, g_value_get_boolean (value));
       break;
 
     default:
@@ -294,6 +323,7 @@ gimp_color_frame_expose (GtkWidget      *widget,
       GtkAllocation  allocation;
       GtkAllocation  menu_allocation;
       GtkAllocation  color_area_allocation;
+      GtkAllocation  coords_box_allocation;
       cairo_t       *cr;
       gchar          buf[8];
       gint           w, h;
@@ -302,6 +332,7 @@ gimp_color_frame_expose (GtkWidget      *widget,
       gtk_widget_get_allocation (widget, &allocation);
       gtk_widget_get_allocation (frame->menu, &menu_allocation);
       gtk_widget_get_allocation (frame->color_area, &color_area_allocation);
+      gtk_widget_get_allocation (frame->coords_box, &coords_box_allocation);
 
       cr = gdk_cairo_create (gtk_widget_get_window (widget));
       gdk_cairo_region (cr, eevent->region);
@@ -321,7 +352,8 @@ gimp_color_frame_expose (GtkWidget      *widget,
 
       scale = ((gdouble) (allocation.height -
                           menu_allocation.height -
-                          color_area_allocation.height) /
+                          color_area_allocation.height -
+                          coords_box_allocation.height) /
                (gdouble) h);
 
       cairo_scale (cr, scale, scale);
@@ -330,7 +362,8 @@ gimp_color_frame_expose (GtkWidget      *widget,
                      (allocation.width / 2.0) / scale - w / 2.0,
                      (allocation.height / 2.0 +
                       menu_allocation.height / 2.0 +
-                      color_area_allocation.height / 2.0) / scale - h / 2.0);
+                      color_area_allocation.height / 2.0 +
+                      coords_box_allocation.height / 2.0) / scale - h / 2.0);
       pango_cairo_show_layout (cr, frame->number_layout);
 
       cairo_destroy (cr);
@@ -423,6 +456,22 @@ gimp_color_frame_set_has_color_area (GimpColorFrame *frame,
     }
 }
 
+void
+gimp_color_frame_set_has_coords (GimpColorFrame *frame,
+                                 gboolean        has_coords)
+{
+  g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
+
+  if (has_coords != frame->has_coords)
+    {
+      frame->has_coords = has_coords ? TRUE : FALSE;
+
+      g_object_set (frame->coords_box, "visible", frame->has_coords, NULL);
+
+      g_object_notify (G_OBJECT (frame), "has-coords");
+    }
+}
+
 /**
  * gimp_color_frame_set_color:
  * @frame:          The #GimpColorFrame.
@@ -431,6 +480,8 @@ gimp_color_frame_set_has_color_area (GimpColorFrame *frame,
  *                  was picked from.
  * @pixel:          The raw pixel in @sample_format.
  * @color:          The @color to set.
+ * @x:              X position where the color was picked.
+ * @y:              Y position where the color was picked.
  *
  * Sets the color sample to display in the #GimpColorFrame. if
  * @sample_average is %TRUE, @pixel represents the sample at the
@@ -441,14 +492,18 @@ gimp_color_frame_set_color (GimpColorFrame *frame,
                             gboolean        sample_average,
                             const Babl     *sample_format,
                             gpointer        pixel,
-                            const GimpRGB  *color)
+                            const GimpRGB  *color,
+                            gint            x,
+                            gint            y)
 {
   g_return_if_fail (GIMP_IS_COLOR_FRAME (frame));
   g_return_if_fail (color != NULL);
 
   if (frame->sample_valid                     &&
       frame->sample_average == sample_average &&
-      frame->sample_format == sample_format   &&
+      frame->sample_format  == sample_format  &&
+      frame->x              == x              &&
+      frame->y              == y              &&
       gimp_rgba_distance (&frame->color, color) < 0.0001)
     {
       frame->color = *color;
@@ -459,6 +514,8 @@ gimp_color_frame_set_color (GimpColorFrame *frame,
   frame->sample_average = sample_average;
   frame->sample_format  = sample_format;
   frame->color          = *color;
+  frame->x              = x;
+  frame->y              = y;
 
   memcpy (frame->pixel, pixel, babl_format_get_bytes_per_pixel (sample_format));
 
@@ -551,8 +608,17 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
   if (frame->sample_valid)
     {
+      gchar str[16];
+
       gimp_color_area_set_color (GIMP_COLOR_AREA (frame->color_area),
                                  &frame->color);
+
+      g_snprintf (str, sizeof (str), "%d, %d", frame->x, frame->y);
+      gtk_label_set_text (GTK_LABEL (frame->coords_label), str);
+    }
+  else
+    {
+      gtk_label_set_text (GTK_LABEL (frame->coords_label), _("n/a"));
     }
 
   switch (frame->frame_mode)
@@ -570,6 +636,16 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
             switch (gimp_babl_format_get_precision (frame->sample_format))
               {
+              /* case GIMP_PRECISION_U8_GAMMA:
+                if (babl_format_is_palette (frame->sample_format))
+                  {
+                    print_format = gimp_babl_format (GIMP_RGB,
+                                                     GIMP_PRECISION_U8_GAMMA,
+                                                     has_alpha);
+                    break;
+                  }
+                else fall thru */
+
               case GIMP_PRECISION_U8_GAMMA:
               case GIMP_PRECISION_U16_GAMMA:
               case GIMP_PRECISION_U32_GAMMA:
@@ -660,31 +736,87 @@ gimp_color_frame_update (GimpColorFrame *frame)
         }
       break;
 
-    case GIMP_COLOR_FRAME_MODE_LCH:
-      names[2] = _("Lightness:");
-      names[1] = _("Chroma:");
+    case GIMP_COLOR_FRAME_MODE_HSV:
       names[0] = _("Hue:");
+      names[1] = _("Sat.:");
+      names[2] = _("Value:");
 
       if (has_alpha)
         names[3] = _("Alpha:");
 
       if (frame->sample_valid)
         {
-          GimpLch lch;
+          GimpHSV hsv;
 
-          babl_process (babl_fish ("RGBA double", "CIE LCH(ab) alpha double"), &frame->color, &lch, 1);
-          lch.a = frame->color.a;
+          gimp_rgb_to_hsv (&frame->color, &hsv);
+          hsv.a = frame->color.a;
 
           values = g_new0 (gchar *, 5);
 
-          values[2] = g_strdup_printf ("%d  ",       ROUND (lch.l /* * 100.0 */));
-          values[1] = g_strdup_printf ("%d  ",       ROUND (lch.c /* * 100.0 */));
-          values[0] = g_strdup_printf ("%d \302\260", ROUND (lch.h /* * 360.0 */));
-          values[3] = g_strdup_printf ("%d %%",       ROUND (lch.a /* * 100.0 */));
+          values[0] = g_strdup_printf ("%.01f \302\260", hsv.h * 360.0);
+          values[1] = g_strdup_printf ("%.01f %%",       hsv.s * 100.0);
+          values[2] = g_strdup_printf ("%.01f %%",       hsv.v * 100.0);
+          values[3] = g_strdup_printf ("%.01f %%",       hsv.a * 100.0);
         }
       break;
 
-/*    case GIMP_COLOR_FRAME_MODE_CMYK:
+    case GIMP_COLOR_FRAME_MODE_LCH:
+      names[0] = _("Light.:");
+      names[1] = _("Chr.:");
+      names[2] = _("Hue:");
+
+      if (has_alpha)
+        names[3] = _("Alpha:");
+
+      if (frame->sample_valid)
+        {
+          static const Babl *fish = NULL;
+          gfloat             lch[4];
+
+          if (G_UNLIKELY (! fish))
+            fish = babl_fish (babl_format ("RGBA double"),
+                              babl_format ("CIE LCH(ab) alpha float"));
+
+          babl_process (fish, &frame->color, lch, 1);
+
+          values = g_new0 (gchar *, 5);
+
+          values[0] = g_strdup_printf ("%.01f  ",        lch[0]);
+          values[1] = g_strdup_printf ("%.01f  ",        lch[1]);
+          values[2] = g_strdup_printf ("%.01f \302\260", lch[2]);
+          values[3] = g_strdup_printf ("%.01f %%",       lch[3] * 100.0);
+        }
+      break;
+
+    case GIMP_COLOR_FRAME_MODE_LAB:
+      names[0] = _("Lab_L*:");
+      names[1] = _("Lab_a*:");
+      names[2] = _("Lab_b*:");
+
+      if (has_alpha)
+        names[3] = _("Alpha:");
+
+      if (frame->sample_valid)
+        {
+          static const Babl *fish = NULL;
+          gfloat             lab[4];
+
+          if (G_UNLIKELY (! fish))
+            fish = babl_fish (babl_format ("RGBA double"),
+                              babl_format ("CIE Lab alpha float"));
+
+          babl_process (fish, &frame->color, lab, 1);
+
+          values = g_new0 (gchar *, 5);
+
+          values[0] = g_strdup_printf ("%.01f  ",        lab[0]);
+          values[1] = g_strdup_printf ("%.01f  ",        lab[1]);
+          values[2] = g_strdup_printf ("%.01f  ",        lab[2]);
+          values[3] = g_strdup_printf ("%.01f %%",       lab[3] * 100.0);
+        }
+      break;
+
+    case GIMP_COLOR_FRAME_MODE_CMYK:
       names[0] = _("Cyan:");
       names[1] = _("Magenta:");
       names[2] = _("Yellow:");
@@ -736,7 +868,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           values[3] = g_strdup_printf ("%.01f %%", cmyk.k * 100.0);
           values[4] = g_strdup_printf ("%.01f %%", cmyk.a * 100.0);
         }
-      break;*/
+      break;
     }
 
   for (i = 0; i < GIMP_COLOR_FRAME_ROWS; i++)
@@ -760,7 +892,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
   g_strfreev (values);
 }
 
-/*static void
+static void
 gimp_color_frame_create_transform (GimpColorFrame *frame)
 {
   if (frame->config)
@@ -787,7 +919,7 @@ gimp_color_frame_create_transform (GimpColorFrame *frame)
                                       GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION);
         }
     }
-}*/
+}
 
 static void
 gimp_color_frame_destroy_transform (GimpColorFrame *frame)

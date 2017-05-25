@@ -119,6 +119,8 @@ _gimp_prop_gui_new_generic (GObject              *config,
           gtk_box_pack_start (GTK_BOX (main_vbox), hbox, FALSE, FALSE, 0);
           gtk_widget_show (hbox);
 
+          gimp_prop_gui_bind_container (widget_x, hbox);
+
           vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
           gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
           gtk_widget_show (vbox);
@@ -167,8 +169,9 @@ _gimp_prop_gui_new_generic (GObject              *config,
 
               button = create_picker_func (picker_creator,
                                            pspec_name,
-                                           GIMP_STOCK_CURSOR,
-                                           _("Pick coordinates from the image"));
+                                           GIMP_ICON_CURSOR,
+                                           _("Pick coordinates from the image"),
+                                           /* pick_abyss = */ TRUE);
               gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
               gtk_widget_show (button);
 
@@ -199,6 +202,8 @@ _gimp_prop_gui_new_generic (GObject              *config,
               gtk_label_set_xalign (GTK_LABEL (l), 0.0);
               gtk_widget_show (l);
 
+              gimp_prop_gui_bind_label (widget, l);
+
               if (GTK_IS_SCROLLED_WINDOW (widget))
                 {
                   GtkWidget *frame;
@@ -212,6 +217,8 @@ _gimp_prop_gui_new_generic (GObject              *config,
 
                   gtk_container_add (GTK_CONTAINER (frame), widget);
                   gtk_widget_show (widget);
+
+                  gimp_prop_gui_bind_container (widget, frame);
                 }
               else
                 {
@@ -227,6 +234,8 @@ _gimp_prop_gui_new_generic (GObject              *config,
 
                   gtk_box_pack_start (GTK_BOX (hbox), widget, TRUE, TRUE, 0);
                   gtk_widget_show (widget);
+
+                  gimp_prop_gui_bind_container (widget, hbox);
                 }
             }
           else if (widget)
@@ -622,25 +631,25 @@ _gimp_prop_gui_new_convolution_matrix (GObject              *config,
     const ButtonInfo buttons[] = {
       {
         .tooltip   = _("Rotate matrix 90° counter-clockwise"),
-        .icon_name = GIMP_STOCK_ROTATE_270,
+        .icon_name = GIMP_ICON_OBJECT_ROTATE_270,
         .rotate    = 1,
         .flip      = 0
       },
       {
         .tooltip   = _("Rotate matrix 90° clockwise"),
-        .icon_name = GIMP_STOCK_ROTATE_90,
+        .icon_name = GIMP_ICON_OBJECT_ROTATE_90,
         .rotate    = 3,
         .flip      = 0
       },
       {
         .tooltip   = _("Flip matrix horizontally"),
-        .icon_name = GIMP_STOCK_FLIP_HORIZONTAL,
+        .icon_name = GIMP_ICON_OBJECT_FLIP_HORIZONTAL,
         .rotate    = 0,
         .flip      = 1
       },
       {
         .tooltip   = _("Flip matrix vertically"),
-        .icon_name = GIMP_STOCK_FLIP_VERTICAL,
+        .icon_name = GIMP_ICON_OBJECT_FLIP_VERTICAL,
         .rotate    = 2,
         .flip      = 1
       }};

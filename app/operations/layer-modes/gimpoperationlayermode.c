@@ -35,6 +35,20 @@
 #include "gimpoperationlayermode.h"
 
 
+/* the maximum number of samples to process in one go.  used to limit
+ * the size of the buffers we allocate on the stack.
+ */
+#define GIMP_COMPOSITE_BLEND_MAX_SAMPLES ((1 << 19) /* 0.5 MiB */  /      \
+                                          16 /* bytes per pixel */ /      \
+                                          2  /* max number of buffers */)
+
+/* number of consecutive unblended samples (whose source or destination alpha
+ * is zero) above which to split the blending process, in order to avoid
+ * performing too many unnecessary conversions.
+ */
+#define GIMP_COMPOSITE_BLEND_SPLIT_THRESHOLD 32
+
+
 enum
 {
   PROP_0,
@@ -70,46 +84,75 @@ static gboolean gimp_operation_layer_mode_process      (GeglOperation          *
                                                         const GeglRectangle    *result,
                                                         gint                    level);
 
-static GimpLayerModeAffectMask
-        gimp_operation_layer_mode_real_get_affect_mask (GimpOperationLayerMode *layer_mode);
+static GimpLayerCompositeRegion
+    gimp_operation_layer_mode_real_get_affected_region (GimpOperationLayerMode *layer_mode);
 
-static inline void composite_func_src_atop_core (gfloat *in,
-                                                 gfloat *layer,
-                                                 gfloat *comp,
-                                                 gfloat *mask,
-                                                 gfloat  opacity,
-                                                 gfloat *out,
-                                                 gint    samples);
-static inline void composite_func_dst_atop_core (gfloat *in,
-                                                 gfloat *layer,
-                                                 gfloat *comp,
-                                                 gfloat *mask,
-                                                 gfloat  opacity,
-                                                 gfloat *out,
-                                                 gint    samples);
-static inline void composite_func_src_in_core   (gfloat *in,
-                                                 gfloat *layer,
-                                                 gfloat *comp,
-                                                 gfloat *mask,
-                                                 gfloat  opacity,
-                                                 gfloat *out,
-                                                 gint    samples);
-static inline void composite_func_src_over_core (gfloat *in,
-                                                 gfloat *layer,
-                                                 gfloat *comp,
-                                                 gfloat *mask,
-                                                 gfloat  opacity,
-                                                 gfloat *out,
-                                                 gint    samples);
+static inline void composite_func_src_atop_core     (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_dst_atop_core     (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_src_in_core       (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_src_over_core     (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+
+static inline void composite_func_src_atop_sub_core (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_dst_atop_sub_core (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_src_in_sub_core   (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
+static inline void composite_func_src_over_sub_core (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
 
 #if COMPILE_SSE2_INTRINISICS
-static inline void composite_func_src_atop_sse2 (gfloat *in,
-                                                 gfloat *layer,
-                                                 gfloat *comp,
-                                                 gfloat *mask,
-                                                 gfloat  opacity,
-                                                 gfloat *out,
-                                                 gint    samples);
+static inline void composite_func_src_atop_sse2     (gfloat *in,
+                                                     gfloat *layer,
+                                                     gfloat *comp,
+                                                     gfloat *mask,
+                                                     gfloat  opacity,
+                                                     gfloat *out,
+                                                     gint    samples);
 #endif
 
 
@@ -121,10 +164,15 @@ G_DEFINE_TYPE (GimpOperationLayerMode, gimp_operation_layer_mode,
 
 static const Babl *gimp_layer_color_space_fish[3 /* from */][3 /* to */];
 
-static CompositeFunc composite_func_src_atop = composite_func_src_atop_core;
-static CompositeFunc composite_func_dst_atop = composite_func_dst_atop_core;
-static CompositeFunc composite_func_src_in   = composite_func_src_in_core;
-static CompositeFunc composite_func_src_over = composite_func_src_over_core;
+static CompositeFunc composite_func_src_atop     = composite_func_src_atop_core;
+static CompositeFunc composite_func_dst_atop     = composite_func_dst_atop_core;
+static CompositeFunc composite_func_src_in       = composite_func_src_in_core;
+static CompositeFunc composite_func_src_over     = composite_func_src_over_core;
+
+static CompositeFunc composite_func_src_atop_sub = composite_func_src_atop_sub_core;
+static CompositeFunc composite_func_dst_atop_sub = composite_func_dst_atop_sub_core;
+static CompositeFunc composite_func_src_in_sub   = composite_func_src_in_sub_core;
+static CompositeFunc composite_func_src_over_sub = composite_func_src_over_sub_core;
 
 
 static void
@@ -148,13 +196,13 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
   operation_class->process       = gimp_operation_layer_mode_process;
   point_composer3_class->process = gimp_operation_layer_mode_process_pixels;
 
-  klass->get_affect_mask = gimp_operation_layer_mode_real_get_affect_mask;
+  klass->get_affected_region     = gimp_operation_layer_mode_real_get_affected_region;
 
   g_object_class_install_property (object_class, PROP_LAYER_MODE,
                                    g_param_spec_enum ("layer-mode",
                                                       NULL, NULL,
                                                       GIMP_TYPE_LAYER_MODE,
-                                                      GIMP_LAYER_MODE_NORMAL,
+                                                      GIMP_LAYER_MODE_NORMAL_LEGACY,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -327,11 +375,12 @@ gimp_operation_layer_mode_process (GeglOperation        *operation,
                                    const GeglRectangle  *result,
                                    gint                  level)
 {
-  GimpOperationLayerMode *point = GIMP_OPERATION_LAYER_MODE (operation);
-  GObject                *input;
-  GObject                *aux;
-  gboolean                has_input;
-  gboolean                has_aux;
+  GimpOperationLayerMode   *point = GIMP_OPERATION_LAYER_MODE (operation);
+  GObject                  *input;
+  GObject                  *aux;
+  gboolean                  has_input;
+  gboolean                  has_aux;
+  GimpLayerCompositeRegion  included_region;
 
   /* get the raw values.  this does not increase the reference count. */
   input = gegl_operation_context_get_object (context, "input");
@@ -354,22 +403,24 @@ gimp_operation_layer_mode_process (GeglOperation        *operation,
                               gegl_buffer_get_extent (GEGL_BUFFER (aux)),
                               result);
 
+  included_region = gimp_layer_mode_get_included_region (point->layer_mode,
+                                                         point->composite_mode);
+
   /* if there's no 'input' ... */
   if (! has_input)
     {
       /* ... and there's 'aux', and the composite mode includes it ... */
-      if (has_aux &&
-          (point->composite_mode == GIMP_LAYER_COMPOSITE_SRC_OVER ||
-           point->composite_mode == GIMP_LAYER_COMPOSITE_DST_ATOP))
+      if (has_aux && (included_region & GIMP_LAYER_COMPOSITE_REGION_SOURCE))
         {
-          GimpLayerModeAffectMask affect_mask;
+          GimpLayerCompositeRegion affected_region;
 
-          affect_mask = gimp_operation_layer_mode_get_affect_mask (point);
+          affected_region =
+            gimp_operation_layer_mode_get_affected_region (point);
 
           /* ... and the op doesn't otherwise affect 'aux', or changes its
            * alpha ...
            */
-          if (! (affect_mask & GIMP_LAYER_MODE_AFFECT_SRC) &&
+          if (! (affected_region & GIMP_LAYER_COMPOSITE_REGION_SOURCE) &&
               point->opacity == 1.0                        &&
               ! gegl_operation_context_get_object (context, "aux2"))
             {
@@ -396,15 +447,15 @@ gimp_operation_layer_mode_process (GeglOperation        *operation,
   else if (! has_aux)
     {
       /* ... and the composite mode includes 'input' ... */
-      if (point->composite_mode == GIMP_LAYER_COMPOSITE_SRC_OVER ||
-          point->composite_mode == GIMP_LAYER_COMPOSITE_SRC_ATOP)
+      if (included_region & GIMP_LAYER_COMPOSITE_REGION_DESTINATION)
         {
-          GimpLayerModeAffectMask affect_mask;
+          GimpLayerCompositeRegion affected_region;
 
-          affect_mask = gimp_operation_layer_mode_get_affect_mask (point);
+          affected_region =
+            gimp_operation_layer_mode_get_affected_region (point);
 
           /* ... and the op doesn't otherwise affect 'input' ... */
-          if (! (affect_mask & GIMP_LAYER_MODE_AFFECT_DST))
+          if (! (affected_region & GIMP_LAYER_COMPOSITE_REGION_DESTINATION))
             {
               /* pass 'input' directly as output; */
               gegl_operation_context_set_object (context, "output", input);
@@ -446,23 +497,23 @@ gimp_operation_layer_mode_process (GeglOperation        *operation,
                                                        level);
 }
 
-static GimpLayerModeAffectMask
-gimp_operation_layer_mode_real_get_affect_mask (GimpOperationLayerMode *layer_mode)
+static GimpLayerCompositeRegion
+gimp_operation_layer_mode_real_get_affected_region (GimpOperationLayerMode *layer_mode)
 {
   /* most modes only affect the overlapping regions. */
-  return GIMP_LAYER_MODE_AFFECT_NONE;
+  return GIMP_LAYER_COMPOSITE_REGION_INTERSECTION;
 }
 
 
 /* public functions */
 
-GimpLayerModeAffectMask
-gimp_operation_layer_mode_get_affect_mask (GimpOperationLayerMode *layer_mode)
+GimpLayerCompositeRegion
+gimp_operation_layer_mode_get_affected_region (GimpOperationLayerMode *layer_mode)
 {
   g_return_val_if_fail (GIMP_IS_OPERATION_LAYER_MODE (layer_mode),
-                        GIMP_LAYER_MODE_AFFECT_NONE);
+                        GIMP_LAYER_COMPOSITE_REGION_INTERSECTION);
 
-  return GIMP_OPERATION_LAYER_MODE_GET_CLASS (layer_mode)->get_affect_mask (layer_mode);
+  return GIMP_OPERATION_LAYER_MODE_GET_CLASS (layer_mode)->get_affected_region (layer_mode);
 }
 
 
@@ -498,6 +549,12 @@ gimp_operation_layer_mode_process_pixels (GeglOperation       *operation,
 }
 
 
+/*  non-subtractive compositing functions.  these functions expect comp[ALPHA]
+ *  to be the same as layer[ALPHA].  when in[ALPHA] or layer[ALPHA] are zero,
+ *  the value of comp[RED..BLUE] is unconstrained (in particular, it may be
+ *  NaN).
+ */
+
 static inline void
 composite_func_src_atop_core (gfloat *in,
                               gfloat *layer,
@@ -509,7 +566,7 @@ composite_func_src_atop_core (gfloat *in,
 {
   while (samples--)
     {
-      gfloat layer_alpha = layer[ALPHA] * opacity;
+      gfloat layer_alpha = comp[ALPHA] * opacity;
 
       if (mask)
         layer_alpha *= *mask;
@@ -525,20 +582,19 @@ composite_func_src_atop_core (gfloat *in,
           gint b;
 
           for (b = RED; b < ALPHA; b++)
-            out[b] = layer[b] * layer_alpha + in[b] * (1.0f - layer_alpha);
+            out[b] = comp[b] * layer_alpha + in[b] * (1.0f - layer_alpha);
         }
 
       out[ALPHA] = in[ALPHA];
 
-      in    += 4;
-      out   += 4;
-      layer += 4;
+      in   += 4;
+      comp += 4;
+      out  += 4;
 
       if (mask)
         mask++;
     }
 }
-
 
 static inline void
 composite_func_src_over_core (gfloat *in,
@@ -652,7 +708,7 @@ composite_func_src_in_core (gfloat *in,
 {
   while (samples--)
     {
-      gfloat new_alpha = in[ALPHA] * layer[ALPHA] * opacity;
+      gfloat new_alpha = in[ALPHA] * comp[ALPHA] * opacity;
 
       if (mask)
         new_alpha *= *mask;
@@ -665,16 +721,229 @@ composite_func_src_in_core (gfloat *in,
         }
       else
         {
+          out[RED]   = comp[RED];
+          out[GREEN] = comp[GREEN];
+          out[BLUE]  = comp[BLUE];
+        }
+
+      out[ALPHA] = new_alpha;
+
+      in   += 4;
+      comp += 4;
+      out  += 4;
+
+      if (mask)
+        mask++;
+    }
+}
+
+/*  subtractive compositing functions.  these functions expect comp[ALPHA] to
+ *  specify the modified alpha of the overlapping content, as a fraction of the
+ *  original overlapping content (i.e., an alpha of 1.0 specifies that no
+ *  content is subtracted.)  when in[ALPHA] or layer[ALPHA] are zero, the value
+ *  of comp[RED..BLUE] is unconstrained (in particular, it may be NaN).
+ */
+
+static inline void
+composite_func_src_atop_sub_core (gfloat *in,
+                                  gfloat *layer,
+                                  gfloat *comp,
+                                  gfloat *mask,
+                                  gfloat  opacity,
+                                  gfloat *out,
+                                  gint    samples)
+{
+  while (samples--)
+    {
+      gfloat layer_alpha = layer[ALPHA] * opacity;
+      gfloat comp_alpha  = comp[ALPHA];
+      gfloat new_alpha;
+
+      if (mask)
+        layer_alpha *= *mask;
+
+      comp_alpha *= layer_alpha;
+
+      new_alpha = 1.0f - layer_alpha + comp_alpha;
+
+      if (in[ALPHA] == 0.0f || comp_alpha == 0.0f)
+        {
+          out[RED]   = in[RED];
+          out[GREEN] = in[GREEN];
+          out[BLUE]  = in[BLUE];
+        }
+      else
+        {
+          gfloat ratio = comp_alpha / new_alpha;
+          gint   b;
+
+          for (b = RED; b < ALPHA; b++)
+            out[b] = comp[b] * ratio + in[b] * (1.0f - ratio);
+        }
+
+      new_alpha *= in[ALPHA];
+
+      out[ALPHA] = new_alpha;
+
+      in    += 4;
+      layer += 4;
+      comp  += 4;
+      out   += 4;
+
+      if (mask)
+        mask++;
+    }
+}
+
+static inline void
+composite_func_src_over_sub_core (gfloat *in,
+                                  gfloat *layer,
+                                  gfloat *comp,
+                                  gfloat *mask,
+                                  gfloat  opacity,
+                                  gfloat *out,
+                                  gint    samples)
+{
+  while (samples--)
+    {
+      gfloat in_alpha    = in[ALPHA];
+      gfloat layer_alpha = layer[ALPHA] * opacity;
+      gfloat comp_alpha  = comp[ALPHA];
+      gfloat new_alpha;
+
+      if (mask)
+        layer_alpha *= *mask;
+
+      new_alpha = in_alpha + layer_alpha -
+                  (2.0f - comp_alpha) * in_alpha * layer_alpha;
+
+      if (layer_alpha == 0.0f || new_alpha == 0.0f)
+        {
+          out[RED]   = in[RED];
+          out[GREEN] = in[GREEN];
+          out[BLUE]  = in[BLUE];
+        }
+      else if (in_alpha == 0.0f)
+        {
           out[RED]   = layer[RED];
           out[GREEN] = layer[GREEN];
           out[BLUE]  = layer[BLUE];
+        }
+      else
+        {
+          gfloat ratio       = in_alpha / new_alpha;
+          gfloat layer_coeff = 1.0f / in_alpha - 1.0f;
+          gint   b;
+
+          for (b = RED; b < ALPHA; b++)
+            out[b] = ratio * (layer_alpha * (comp_alpha * comp[b] + layer_coeff * layer[b] - in[b]) + in[b]);
         }
 
       out[ALPHA] = new_alpha;
 
       in    += 4;
-      out   += 4;
       layer += 4;
+      comp  += 4;
+      out   += 4;
+
+      if (mask)
+        mask++;
+    }
+}
+
+static inline void
+composite_func_dst_atop_sub_core (gfloat *in,
+                                  gfloat *layer,
+                                  gfloat *comp,
+                                  gfloat *mask,
+                                  gfloat  opacity,
+                                  gfloat *out,
+                                  gint    samples)
+{
+  while (samples--)
+    {
+      gfloat in_alpha    = in[ALPHA];
+      gfloat layer_alpha = layer[ALPHA] * opacity;
+      gfloat comp_alpha  = comp[ALPHA];
+      gfloat new_alpha;
+
+      if (mask)
+        layer_alpha *= *mask;
+
+      comp_alpha *= in_alpha;
+
+      new_alpha = 1.0f - in_alpha + comp_alpha;
+
+      if (layer_alpha == 0.0f)
+        {
+          out[RED]   = in[RED];
+          out[GREEN] = in[GREEN];
+          out[BLUE]  = in[BLUE];
+        }
+      else if (in_alpha == 0.0f)
+        {
+          out[RED]   = layer[RED];
+          out[GREEN] = layer[GREEN];
+          out[BLUE]  = layer[BLUE];
+        }
+      else
+        {
+          gfloat ratio = comp_alpha / new_alpha;
+          gint   b;
+
+          for (b = RED; b < ALPHA; b++)
+            out[b] = comp[b] * ratio + layer[b] * (1.0f - ratio);
+        }
+
+      new_alpha *= layer_alpha;
+
+      out[ALPHA] = new_alpha;
+
+      in    += 4;
+      layer += 4;
+      comp  += 4;
+      out   += 4;
+
+      if (mask)
+        mask++;
+    }
+}
+
+static inline void
+composite_func_src_in_sub_core (gfloat *in,
+                                gfloat *layer,
+                                gfloat *comp,
+                                gfloat *mask,
+                                gfloat  opacity,
+                                gfloat *out,
+                                gint    samples)
+{
+  while (samples--)
+    {
+      gfloat new_alpha = in[ALPHA] * layer[ALPHA] * comp[ALPHA] * opacity;
+
+      if (mask)
+        new_alpha *= *mask;
+
+      if (new_alpha == 0.0f)
+        {
+          out[RED]   = in[RED];
+          out[GREEN] = in[GREEN];
+          out[BLUE]  = in[BLUE];
+        }
+      else
+        {
+          out[RED]   = comp[RED];
+          out[GREEN] = comp[GREEN];
+          out[BLUE]  = comp[BLUE];
+        }
+
+      out[ALPHA] = new_alpha;
+
+      in    += 4;
+      layer += 4;
+      comp  += 4;
+      out   += 4;
 
       if (mask)
         mask++;
@@ -694,10 +963,9 @@ composite_func_src_atop_sse2 (gfloat *in,
                               gfloat *out,
                               gint    samples)
 {
-  if ((((uintptr_t)in)    | /* alignment check */
-       ((uintptr_t)comp)  |
-       ((uintptr_t)layer) |
-       ((uintptr_t)out)    ) & 0x0F)
+  if ((((uintptr_t)in)   | /* alignment check */
+       ((uintptr_t)comp) |
+       ((uintptr_t)out)   ) & 0x0F)
     {
       return composite_func_src_atop_core (in, layer, comp, mask, opacity,
                                            out, samples);
@@ -705,19 +973,19 @@ composite_func_src_atop_sse2 (gfloat *in,
   else
     {
       const __v4sf *v_in      = (const __v4sf*) in;
-      const __v4sf *v_layer   = (const __v4sf*) layer;
+      const __v4sf *v_comp    = (const __v4sf*) comp;
             __v4sf *v_out     = (__v4sf*) out;
       const __v4sf  v_one     =  _mm_set1_ps (1.0f);
       const __v4sf  v_opacity =  _mm_set1_ps (opacity);
 
       while (samples--)
       {
-        __v4sf  alpha, rgba_in, rgba_layer;
+        __v4sf alpha, rgba_in, rgba_comp;
 
-        rgba_in    = *v_in ++;
-        rgba_layer = *v_layer++;
+        rgba_in   = *v_in ++;
+        rgba_comp = *v_comp++;
 
-        alpha = (__v4sf)_mm_shuffle_epi32((__m128i)rgba_layer,_MM_SHUFFLE(3,3,3,3)) * v_opacity;
+        alpha = (__v4sf)_mm_shuffle_epi32((__m128i)rgba_comp,_MM_SHUFFLE(3,3,3,3)) * v_opacity;
 
         if (mask)
           {
@@ -729,7 +997,7 @@ composite_func_src_atop_sse2 (gfloat *in,
             __v4sf out_pixel, out_pixel_rbaa, out_alpha;
 
             out_alpha      = (__v4sf)_mm_shuffle_epi32((__m128i)rgba_in,_MM_SHUFFLE(3,3,3,3));
-            out_pixel      = rgba_layer * alpha + rgba_in * (v_one - alpha);
+            out_pixel      = rgba_comp * alpha + rgba_in * (v_one - alpha);
             out_pixel_rbaa = _mm_shuffle_ps (out_pixel, out_alpha, _MM_SHUFFLE (3, 3, 2, 0));
             out_pixel      = _mm_shuffle_ps (out_pixel, out_pixel_rbaa, _MM_SHUFFLE (2, 1, 1, 0));
 
@@ -759,9 +1027,9 @@ gimp_composite_blend (GimpOperationLayerMode *layer_mode,
   GimpLayerColorSpace    composite_space = layer_mode->composite_space;
   GimpLayerCompositeMode composite_mode  = layer_mode->composite_mode;
 
-  gfloat *blend_in    = in;
-  gfloat *blend_layer = layer;
-  gfloat *blend_out   = out;
+  gfloat *blend_in;
+  gfloat *blend_layer;
+  gfloat *blend_out;
 
   gboolean composite_needs_in_color =
     composite_mode == GIMP_LAYER_COMPOSITE_SRC_OVER ||
@@ -769,6 +1037,31 @@ gimp_composite_blend (GimpOperationLayerMode *layer_mode,
 
   const Babl *composite_to_blend_fish = NULL;
   const Babl *blend_to_composite_fish = NULL;
+
+  /* make sure we don't process more than GIMP_COMPOSITE_BLEND_MAX_SAMPLES
+   * at a time, so that we don't overflow the stack if we allocate buffers
+   * on it.  note that this has to be done with a nested function call,
+   * because alloca'd buffers remain for the duration of the stack frame.
+   */
+  while (samples > GIMP_COMPOSITE_BLEND_MAX_SAMPLES)
+    {
+      gimp_composite_blend (layer_mode,
+                            in, layer, mask, out,
+                            GIMP_COMPOSITE_BLEND_MAX_SAMPLES,
+                            blend_func);
+
+      in      += 4 * GIMP_COMPOSITE_BLEND_MAX_SAMPLES;
+      layer   += 4 * GIMP_COMPOSITE_BLEND_MAX_SAMPLES;
+      if (mask)
+        mask  +=     GIMP_COMPOSITE_BLEND_MAX_SAMPLES;
+      out     += 4 * GIMP_COMPOSITE_BLEND_MAX_SAMPLES;
+
+      samples -= GIMP_COMPOSITE_BLEND_MAX_SAMPLES;
+    }
+
+  blend_in    = in;
+  blend_layer = layer;
+  blend_out   = out;
 
   if (blend_space != GIMP_LAYER_COLOR_SPACE_AUTO)
     {
@@ -782,12 +1075,14 @@ gimp_composite_blend (GimpOperationLayerMode *layer_mode,
                                                             [composite_space - 1];
     }
 
-  if (in == out) /* in-place detected, avoid clobbering since we need to
-                    read it for the compositing stage  */
-    blend_out = g_alloca (sizeof (gfloat) * 4 * samples);
-
+  /* if we need to convert the samples between the composite and blend
+   * spaces...
+   */
   if (composite_to_blend_fish)
     {
+      gint i;
+      gint end;
+
       if (in != out || composite_needs_in_color)
         {
           /* don't convert input in-place if we're not doing in-place output,
@@ -797,43 +1092,164 @@ gimp_composite_blend (GimpOperationLayerMode *layer_mode,
         }
       blend_layer  = g_alloca (sizeof (gfloat) * 4 * samples);
 
-      babl_process (composite_to_blend_fish, in,    blend_in,    samples);
-      babl_process (composite_to_blend_fish, layer, blend_layer, samples);
+      if (in == out) /* in-place detected, avoid clobbering since we need to
+                        read 'in' for the compositing stage  */
+        {
+          if (blend_layer != layer)
+            blend_out = blend_layer;
+          else
+            blend_out = g_alloca (sizeof (gfloat) * 4 * samples);
+        }
+
+      /* samples whose the source or destination alpha is zero are not blended,
+       * and therefore do not need to be converted.  while it's generally
+       * desirable to perform conversion and blending in bulk, when we have
+       * more than a certain number of consecutive unblended samples, the cost
+       * of converting them outweighs the cost of splitting the process around
+       * them to avoid the conversion.
+       */
+
+      i   = ALPHA;
+      end = 4 * samples + ALPHA;
+
+      while (TRUE)
+        {
+          gint first;
+          gint last;
+          gint count;
+
+          /* skip any unblended samples.  the color values of `blend_out` for
+           * these samples are unconstrained, in particular, they may be NaN,
+           * but the alpha values should generally be finite, and specifically
+           * 0 when the source alpha is 0.
+           */
+          while (i < end && (in[i] == 0.0f || layer[i] == 0.0f))
+            {
+              blend_out[i] = 0.0f;
+              i += 4;
+            }
+
+          /* stop if there are no more samples */
+          if (i == end)
+            break;
+
+          /* otherwise, keep scanning the samples until we find
+           * GIMP_COMPOSITE_BLEND_SPLIT_THRESHOLD consecutive unblended
+           * samples.
+           */
+
+          first  = i;
+          i     += 4;
+          last   = i;
+
+          while (i < end && i - last < 4 * GIMP_COMPOSITE_BLEND_SPLIT_THRESHOLD)
+            {
+              gboolean blended;
+
+              blended = (in[i] != 0.0f && layer[i] != 0.0f);
+
+              i += 4;
+              if (blended)
+                last = i;
+            }
+
+          /* convert and blend the samples in the range [first, last) */
+
+          count  = (last - first) / 4;
+          first -= ALPHA;
+
+          babl_process (composite_to_blend_fish,
+                        in + first, blend_in + first, count);
+          babl_process (composite_to_blend_fish,
+                        layer + first, blend_layer + first, count);
+
+          blend_func (blend_in + first, blend_layer + first,
+                      blend_out + first, count);
+
+          babl_process (blend_to_composite_fish,
+                        blend_out + first, blend_out + first, count);
+
+          /* make sure the alpha values of `blend_out` are valid for the
+           * trailing unblended samples.
+           */
+          for (; last < i; last += 4)
+            blend_out[last] = 0.0f;
+        }
+    }
+  else
+    {
+      /* if both blending and compositing use the same color space, things are
+       * much simpler.
+       */
+
+      if (in == out) /* in-place detected, avoid clobbering since we need to
+                        read 'in' for the compositing stage  */
+        {
+          blend_out = g_alloca (sizeof (gfloat) * 4 * samples);
+        }
+
+      blend_func (blend_in, blend_layer, blend_out, samples);
     }
 
-  blend_func (blend_in, blend_layer, blend_out, samples);
-
-  if (blend_to_composite_fish)
+  if (! gimp_layer_mode_is_subtractive (layer_mode->layer_mode))
     {
-      babl_process (blend_to_composite_fish, blend_out, blend_out, samples);
+      switch (composite_mode)
+        {
+        case GIMP_LAYER_COMPOSITE_SRC_ATOP:
+        default:
+          composite_func_src_atop (in, layer, blend_out,
+                                   mask, opacity,
+                                   out, samples);
+          break;
+
+        case GIMP_LAYER_COMPOSITE_SRC_OVER:
+          composite_func_src_over (in, layer, blend_out,
+                                   mask, opacity,
+                                   out, samples);
+          break;
+
+        case GIMP_LAYER_COMPOSITE_DST_ATOP:
+          composite_func_dst_atop (in, layer, blend_out,
+                                   mask, opacity,
+                                   out, samples);
+          break;
+
+        case GIMP_LAYER_COMPOSITE_SRC_IN:
+          composite_func_src_in (in, layer, blend_out,
+                                 mask, opacity,
+                                 out, samples);
+          break;
+        }
     }
-
-  switch (composite_mode)
+  else
     {
-    case GIMP_LAYER_COMPOSITE_SRC_ATOP:
-    default:
-      composite_func_src_atop (in, blend_out, NULL,
-                               mask, opacity,
-                               out, samples);
-      break;
+      switch (composite_mode)
+        {
+        case GIMP_LAYER_COMPOSITE_SRC_ATOP:
+        default:
+          composite_func_src_atop_sub (in, layer, blend_out,
+                                       mask, opacity,
+                                       out, samples);
+          break;
 
-    case GIMP_LAYER_COMPOSITE_SRC_OVER:
-      composite_func_src_over (in, layer, blend_out,
-                               mask, opacity,
-                               out, samples);
-      break;
+        case GIMP_LAYER_COMPOSITE_SRC_OVER:
+          composite_func_src_over_sub (in, layer, blend_out,
+                                       mask, opacity,
+                                       out, samples);
+          break;
 
-    case GIMP_LAYER_COMPOSITE_DST_ATOP:
-      composite_func_dst_atop (in, layer, blend_out,
-                               mask, opacity,
-                               out, samples);
-      break;
+        case GIMP_LAYER_COMPOSITE_DST_ATOP:
+          composite_func_dst_atop_sub (in, layer, blend_out,
+                                       mask, opacity,
+                                       out, samples);
+          break;
 
-    case GIMP_LAYER_COMPOSITE_SRC_IN:
-      composite_func_src_in (in, blend_out, NULL,
-                             mask, opacity,
-                             out, samples);
-      break;
+        case GIMP_LAYER_COMPOSITE_SRC_IN:
+          composite_func_src_in_sub (in, layer, blend_out,
+                                     mask, opacity,
+                                     out, samples);
+          break;
+        }
     }
 }
 
@@ -1381,7 +1797,7 @@ blendfun_overlay (const float *dest,
 }
 
 static inline void
-blendfun_hsv_color (const float *dest,
+blendfun_hsl_color (const float *dest,
                     const float *src,
                     float       *out,
                     int          samples)
@@ -1390,21 +1806,50 @@ blendfun_hsv_color (const float *dest,
     {
       if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
         {
-          GimpRGB dest_rgb = { dest[0], dest[1], dest[2] };
-          GimpRGB src_rgb  = { src[0], src[1], src[2] };
-          GimpHSL src_hsl, dest_hsl;
+          gfloat dest_min, dest_max, dest_l;
+          gfloat src_min,  src_max,  src_l;
 
-          gimp_rgb_to_hsl (&dest_rgb, &dest_hsl);
-          gimp_rgb_to_hsl (&src_rgb, &src_hsl);
+          dest_min = MIN (dest[0],  dest[1]);
+          dest_min = MIN (dest_min, dest[2]);
+          dest_max = MAX (dest[0],  dest[1]);
+          dest_max = MAX (dest_max, dest[2]);
+          dest_l   = (dest_min + dest_max) / 2.0f;
 
-          dest_hsl.h = src_hsl.h;
-          dest_hsl.s = src_hsl.s;
+          src_min  = MIN (src[0],  src[1]);
+          src_min  = MIN (src_min, src[2]);
+          src_max  = MAX (src[0],  src[1]);
+          src_max  = MAX (src_max, src[2]);
+          src_l    = (src_min + src_max) / 2.0f;
 
-          gimp_hsl_to_rgb (&dest_hsl, &dest_rgb);
+          if (src_l != 0.0f && src_l != 1.0f)
+            {
+              gboolean dest_high;
+              gboolean src_high;
+              gfloat   ratio;
+              gfloat   offset;
+              gint     c;
 
-          out[RED]   = dest_rgb.r;
-          out[GREEN] = dest_rgb.g;
-          out[BLUE]  = dest_rgb.b;
+              dest_high = dest_l > 0.5f;
+              src_high  = src_l  > 0.5f;
+
+              dest_l = MIN (dest_l, 1.0f - dest_l);
+              src_l  = MIN (src_l,  1.0f - src_l);
+
+              ratio                  = dest_l / src_l;
+
+              offset                 = 0.0f;
+              if (dest_high) offset += 1.0f - 2.0f * dest_l;
+              if (src_high)  offset += 2.0f * dest_l - ratio;
+
+              for (c = 0; c < 3; c++)
+                out[c] = src[c] * ratio + offset;
+            }
+          else
+            {
+              out[RED]   = dest_l;
+              out[GREEN] = dest_l;
+              out[BLUE]  = dest_l;
+            }
         }
 
       out[ALPHA] = src[ALPHA];
@@ -1425,19 +1870,41 @@ blendfun_hsv_hue (const float *dest,
     {
       if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
         {
-          GimpRGB dest_rgb = { dest[0], dest[1], dest[2] };
-          GimpRGB src_rgb  = { src[0],  src[1],  src[2] };
-          GimpHSV src_hsv, dest_hsv;
+          gfloat src_min,  src_max,  src_delta;
+          gfloat dest_min, dest_max, dest_delta, dest_s;
 
-          gimp_rgb_to_hsv (&dest_rgb, &dest_hsv);
-          gimp_rgb_to_hsv (&src_rgb, &src_hsv);
+          src_min   = MIN (src[0], src[1]);
+          src_min   = MIN (src_min, src[2]);
+          src_max   = MAX (src[0], src[1]);
+          src_max   = MAX (src_max, src[2]);
+          src_delta = src_max - src_min;
 
-          dest_hsv.h = src_hsv.h;
-          gimp_hsv_to_rgb (&dest_hsv, &dest_rgb);
+          if (src_delta != 0.0f)
+            {
+              gfloat ratio;
+              gfloat offset;
+              gint   c;
 
-          out[RED]   = dest_rgb.r;
-          out[GREEN] = dest_rgb.g;
-          out[BLUE]  = dest_rgb.b;
+              dest_min   = MIN (dest[0], dest[1]);
+              dest_min   = MIN (dest_min, dest[2]);
+              dest_max   = MAX (dest[0], dest[1]);
+              dest_max   = MAX (dest_max, dest[2]);
+              dest_delta = dest_max - dest_min;
+              dest_s     = dest_max ? dest_delta / dest_max : 0.0f;
+
+              ratio  = dest_s * dest_max / src_delta;
+              offset = dest_max - src_max * ratio;
+
+              for (c = 0; c < 3; c++)
+                out[c] = src[c] * ratio + offset;
+            }
+          else
+            {
+              gint c;
+
+              for (c = 0; c < 3; c++)
+                out[c] = dest[c];
+            }
         }
 
       out[ALPHA] = src[ALPHA];
@@ -1458,19 +1925,40 @@ blendfun_hsv_saturation (const float *dest,
     {
       if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
         {
-          GimpRGB dest_rgb = { dest[0], dest[1], dest[2] };
-          GimpRGB src_rgb  = { src[0], src[1], src[2] };
-          GimpHSV src_hsv, dest_hsv;
+          gfloat src_min,  src_max,  src_delta, src_s;
+          gfloat dest_min, dest_max, dest_delta;
 
-          gimp_rgb_to_hsv (&dest_rgb, &dest_hsv);
-          gimp_rgb_to_hsv (&src_rgb, &src_hsv);
+          dest_min   = MIN (dest[0], dest[1]);
+          dest_min   = MIN (dest_min, dest[2]);
+          dest_max   = MAX (dest[0], dest[1]);
+          dest_max   = MAX (dest_max, dest[2]);
+          dest_delta = dest_max - dest_min;
 
-          dest_hsv.s = src_hsv.s;
-          gimp_hsv_to_rgb (&dest_hsv, &dest_rgb);
+          if (dest_delta != 0.0f)
+            {
+              gfloat ratio;
+              gfloat offset;
+              gint   c;
 
-          out[RED]   = dest_rgb.r;
-          out[GREEN] = dest_rgb.g;
-          out[BLUE]  = dest_rgb.b;
+              src_min   = MIN (src[0], src[1]);
+              src_min   = MIN (src_min, src[2]);
+              src_max   = MAX (src[0], src[1]);
+              src_max   = MAX (src_max, src[2]);
+              src_delta = src_max - src_min;
+              src_s     = src_max ? src_delta / src_max : 0.0f;
+
+              ratio  = src_s * dest_max / dest_delta;
+              offset = (1.0f - ratio) * dest_max;
+
+              for (c = 0; c < 3; c++)
+                out[c] = dest[c] * ratio + offset;
+            }
+          else
+            {
+              out[RED]   = dest_max;
+              out[GREEN] = dest_max;
+              out[BLUE]  = dest_max;
+            }
         }
 
       out[ALPHA] = src[ALPHA];
@@ -1491,19 +1979,29 @@ blendfun_hsv_value (const float *dest,
     {
       if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
         {
-          GimpRGB dest_rgb = { dest[0], dest[1], dest[2] };
-          GimpRGB src_rgb  = { src[0], src[1], src[2] };
-          GimpHSV src_hsv, dest_hsv;
+          gfloat dest_v;
+          gfloat src_v;
 
-          gimp_rgb_to_hsv (&dest_rgb, &dest_hsv);
-          gimp_rgb_to_hsv (&src_rgb, &src_hsv);
+          dest_v = MAX (dest[0], dest[1]);
+          dest_v = MAX (dest_v, dest[2]);
 
-          dest_hsv.v = src_hsv.v;
-          gimp_hsv_to_rgb (&dest_hsv, &dest_rgb);
+          src_v  = MAX (src[0], src[1]);
+          src_v  = MAX (src_v, src[2]);
 
-          out[RED]   = dest_rgb.r;
-          out[GREEN] = dest_rgb.g;
-          out[BLUE]  = dest_rgb.b;
+          if (dest_v != 0.0f)
+            {
+              gfloat ratio = src_v / dest_v;
+              gint   c;
+
+              for (c = 0; c < 3; c++)
+                out[c] = dest[c] * ratio;
+            }
+          else
+            {
+              out[RED]   = src_v;
+              out[GREEN] = src_v;
+              out[BLUE]  = src_v;
+            }
         }
 
       out[ALPHA] = src[ALPHA];
@@ -1871,6 +2369,64 @@ blendfun_exclusion (const float *dest,
 }
 
 static inline void
+blendfun_color_erase (const float *dest,
+                      const float *src,
+                      float       *out,
+                      int          samples)
+{
+  while (samples--)
+    {
+      if (dest[ALPHA] != 0.0f && src[ALPHA] != 0.0f)
+        {
+          const float *color   = dest;
+          const float *bgcolor = src;
+          gfloat       alpha;
+          gint         c;
+
+          alpha = 0.0f;
+
+          for (c = 0; c < 3; c++)
+            {
+              gfloat col   = CLAMP (color[c],   0.0f, 1.0f);
+              gfloat bgcol = CLAMP (bgcolor[c], 0.0f, 1.0f);
+
+              if (col != bgcol)
+                {
+                  gfloat a;
+
+                  if (col > bgcol)
+                    a = (col - bgcol) / (1.0f - bgcol);
+                  else
+                    a = (bgcol - col) / bgcol;
+
+                  alpha = MAX (alpha, a);
+                }
+            }
+
+          if (alpha > 0.0f)
+            {
+              gfloat alpha_inv = 1.0f / alpha;
+
+              for (c = 0; c < 3; c++)
+                out[c] = (color[c] - bgcolor[c]) * alpha_inv + bgcolor[c];
+            }
+          else
+            {
+              out[RED] = out[GREEN] = out[BLUE] = 0.0f;
+            }
+
+          out[ALPHA] = alpha;
+        }
+      else
+        out[ALPHA] = 0.0f;
+
+      out  += 4;
+      src  += 4;
+      dest += 4;
+    }
+}
+
+static inline void
 blendfun_dummy (const float *dest,
                 const float *src,
                 float       *out,
@@ -1887,13 +2443,14 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_ADDITION:       return blendfun_addition;
     case GIMP_LAYER_MODE_SUBTRACT:       return blendfun_subtract;
     case GIMP_LAYER_MODE_MULTIPLY:       return blendfun_multiply;
+    case GIMP_LAYER_MODE_NORMAL_LEGACY:
     case GIMP_LAYER_MODE_NORMAL:         return blendfun_normal;
     case GIMP_LAYER_MODE_BURN:           return blendfun_burn;
     case GIMP_LAYER_MODE_GRAIN_MERGE:    return blendfun_grain_merge;
     case GIMP_LAYER_MODE_GRAIN_EXTRACT:  return blendfun_grain_extract;
     case GIMP_LAYER_MODE_DODGE:          return blendfun_dodge;
     case GIMP_LAYER_MODE_OVERLAY:        return blendfun_overlay;
-    case GIMP_LAYER_MODE_HSV_COLOR:      return blendfun_hsv_color;
+    case GIMP_LAYER_MODE_HSL_COLOR:      return blendfun_hsl_color;
     case GIMP_LAYER_MODE_HSV_HUE:        return blendfun_hsv_hue;
     case GIMP_LAYER_MODE_HSV_SATURATION: return blendfun_hsv_saturation;
     case GIMP_LAYER_MODE_HSV_VALUE:      return blendfun_hsv_value;
@@ -1916,11 +2473,34 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_HARD_MIX:       return blendfun_hard_mix;
     case GIMP_LAYER_MODE_EXCLUSION:      return blendfun_exclusion;
     case GIMP_LAYER_MODE_LINEAR_BURN:    return blendfun_linear_burn;
+    case GIMP_LAYER_MODE_COLOR_ERASE_LEGACY:
+    case GIMP_LAYER_MODE_COLOR_ERASE:    return blendfun_color_erase;
 
     case GIMP_LAYER_MODE_DISSOLVE:
+    case GIMP_LAYER_MODE_BEHIND_LEGACY:
     case GIMP_LAYER_MODE_BEHIND:
-    case GIMP_LAYER_MODE_COLOR_ERASE:
+    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
+    case GIMP_LAYER_MODE_SCREEN_LEGACY:
+    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
+    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
+    case GIMP_LAYER_MODE_ADDITION_LEGACY:
+    case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
+    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
+    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
+    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
+    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
+    case GIMP_LAYER_MODE_HSL_COLOR_LEGACY:
+    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
+    case GIMP_LAYER_MODE_DIVIDE_LEGACY:
+    case GIMP_LAYER_MODE_DODGE_LEGACY:
+    case GIMP_LAYER_MODE_BURN_LEGACY:
+    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
+    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
+    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
+    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
     case GIMP_LAYER_MODE_ERASE:
+    case GIMP_LAYER_MODE_MERGE:
+    case GIMP_LAYER_MODE_SPLIT:
     case GIMP_LAYER_MODE_REPLACE:
     case GIMP_LAYER_MODE_ANTI_ERASE:
     case GIMP_LAYER_MODE_SEPARATOR: /* to stop GCC from complaining :P */

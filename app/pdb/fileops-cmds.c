@@ -515,17 +515,17 @@ register_file_handler_mime_invoker (GimpProcedure         *procedure,
 {
   gboolean success = TRUE;
   const gchar *procedure_name;
-  const gchar *mime_type;
+  const gchar *mime_types;
 
   procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
-  mime_type = g_value_get_string (gimp_value_array_index (args, 1));
+  mime_types = g_value_get_string (gimp_value_array_index (args, 1));
 
   if (success)
     {
       gchar *canonical = gimp_canonicalize_identifier (procedure_name);
 
-      success = gimp_plug_in_manager_register_mime_type (gimp->plug_in_manager,
-                                                         canonical, mime_type);
+      success = gimp_plug_in_manager_register_mime_types (gimp->plug_in_manager,
+                                                          canonical, mime_types);
 
       g_free (canonical);
     }
@@ -552,6 +552,33 @@ register_file_handler_uri_invoker (GimpProcedure         *procedure,
       gchar *canonical = gimp_canonicalize_identifier (procedure_name);
 
       success = gimp_plug_in_manager_register_handles_uri (gimp->plug_in_manager,
+                                                           canonical);
+
+      g_free (canonical);
+    }
+
+  return gimp_procedure_get_return_values (procedure, success,
+                                           error ? *error : NULL);
+}
+
+static GimpValueArray *
+register_file_handler_raw_invoker (GimpProcedure         *procedure,
+                                   Gimp                  *gimp,
+                                   GimpContext           *context,
+                                   GimpProgress          *progress,
+                                   const GimpValueArray  *args,
+                                   GError               **error)
+{
+  gboolean success = TRUE;
+  const gchar *procedure_name;
+
+  procedure_name = g_value_get_string (gimp_value_array_index (args, 0));
+
+  if (success)
+    {
+      gchar *canonical = gimp_canonicalize_identifier (procedure_name);
+
+      success = gimp_plug_in_manager_register_handles_raw (gimp->plug_in_manager,
                                                            canonical);
 
       g_free (canonical);
@@ -994,8 +1021,8 @@ register_fileops_procs (GimpPDB *pdb)
                                "gimp-register-file-handler-mime");
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-register-file-handler-mime",
-                                     "Associates a MIME type with a file handler procedure.",
-                                     "Registers a MIME type for a file handler procedure. This allows GIMP to determine the MIME type of the file opened or saved using this procedure.",
+                                     "Associates MIME types with a file handler procedure.",
+                                     "Registers MIME types for a file handler procedure. This allows GIMP to determine the MIME type of the file opened or saved using this procedure. It is recommended that only one MIME type is registered per file procedure; when registering more than one MIME type, GIMP will associate the first one with files opened or saved with this procedure.",
                                      "Sven Neumann <sven@gimp.org>",
                                      "Sven Neumann",
                                      "2004",
@@ -1008,9 +1035,9 @@ register_fileops_procs (GimpPDB *pdb)
                                                        NULL,
                                                        GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_string ("mime-type",
-                                                       "mime type",
-                                                       "A single MIME type, like for example \"image/jpeg\".",
+                               gimp_param_spec_string ("mime-types",
+                                                       "mime types",
+                                                       "A comma-separated list of MIME types, such as \"image/jpeg\".",
                                                        FALSE, FALSE, FALSE,
                                                        NULL,
                                                        GIMP_PARAM_READWRITE));
@@ -1035,6 +1062,30 @@ register_fileops_procs (GimpPDB *pdb)
                                gimp_param_spec_string ("procedure-name",
                                                        "procedure name",
                                                        "The name of the procedure to enable URIs for.",
+                                                       FALSE, FALSE, TRUE,
+                                                       NULL,
+                                                       GIMP_PARAM_READWRITE));
+  gimp_pdb_register_procedure (pdb, procedure);
+  g_object_unref (procedure);
+
+  /*
+   * gimp-register-file-handler-raw
+   */
+  procedure = gimp_procedure_new (register_file_handler_raw_invoker);
+  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+                               "gimp-register-file-handler-raw");
+  gimp_procedure_set_static_strings (procedure,
+                                     "gimp-register-file-handler-raw",
+                                     "Registers a file handler procedure as capable of handling raw camera files.",
+                                     "Registers a file handler procedure as capable of handling raw digital camera files. Use this procedure only to register raw load handlers, calling it on a save handler will generate an error.",
+                                     "Michael Natterer <mitch@gimp.org>",
+                                     "Michael Natterer",
+                                     "2017",
+                                     NULL);
+  gimp_procedure_add_argument (procedure,
+                               gimp_param_spec_string ("procedure-name",
+                                                       "procedure name",
+                                                       "The name of the procedure to enable raw handling for.",
                                                        FALSE, FALSE, TRUE,
                                                        NULL,
                                                        GIMP_PARAM_READWRITE));

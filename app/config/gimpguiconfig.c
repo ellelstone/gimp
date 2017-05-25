@@ -45,9 +45,16 @@
 
 enum
 {
+  SIZE_CHANGED,
+  LAST_SIGNAL
+};
+
+enum
+{
   PROP_0,
   PROP_MOVE_TOOL_CHANGES_ACTIVE,
   PROP_FILTER_TOOL_MAX_RECENT,
+  PROP_FILTER_TOOL_SHOW_COLOR_OPTIONS,
   PROP_TRUST_DIRTY_FLAG,
   PROP_SAVE_DEVICE_STATUS,
   PROP_DEVICES_SHARE_TOOL,
@@ -70,6 +77,7 @@ enum
   PROP_THEME,
   PROP_ICON_THEME_PATH,
   PROP_ICON_THEME,
+  PROP_ICON_SIZE,
   PROP_USE_HELP,
   PROP_SHOW_HELP_BUTTON,
   PROP_HELP_LOCALES,
@@ -113,17 +121,30 @@ static void   gimp_gui_config_get_property (GObject      *object,
                                             GValue       *value,
                                             GParamSpec   *pspec);
 
+static void   monitor_resolution_changed   (GimpDisplayConfig *display_config,
+                                            GParamSpec        *pspec,
+                                            GimpGuiConfig     *gui_config);
 
 G_DEFINE_TYPE (GimpGuiConfig, gimp_gui_config, GIMP_TYPE_DISPLAY_CONFIG)
 
 #define parent_class gimp_gui_config_parent_class
 
+static guint signals[LAST_SIGNAL] = { 0, };
 
 static void
 gimp_gui_config_class_init (GimpGuiConfigClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   gchar        *path;
+
+  signals[SIZE_CHANGED] =
+    g_signal_new ("size-changed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpGuiConfigClass, size_changed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 
   object_class->finalize     = gimp_gui_config_finalize;
   object_class->set_property = gimp_gui_config_set_property;
@@ -143,6 +164,13 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
                         0, 255, 10,
                         GIMP_PARAM_STATIC_STRINGS);
 
+  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_FILTER_TOOL_SHOW_COLOR_OPTIONS,
+                            "filter-tool-show-color-options",
+                            "Show avanced color options in filters",
+                            FILTER_TOOL_SHOW_COLOR_OPTIONS_BLURB,
+                            FALSE,
+                            GIMP_PARAM_STATIC_STRINGS);
+
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_TRUST_DIRTY_FLAG,
                             "trust-dirty-flag",
                             "Trust dirty flag",
@@ -159,7 +187,7 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_DEVICES_SHARE_TOOL,
                             "devices-share-tool",
-                            "Devics share tool",
+                            "Devices share tool",
                             DEVICES_SHARE_TOOL_BLURB,
                             FALSE,
                             GIMP_PARAM_STATIC_STRINGS);
@@ -304,6 +332,13 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
                            ICON_THEME_BLURB,
                            GIMP_CONFIG_DEFAULT_ICON_THEME,
                            GIMP_PARAM_STATIC_STRINGS);
+  GIMP_CONFIG_PROP_ENUM (object_class, PROP_ICON_SIZE,
+                         "icon-size",
+                         "icon-size",
+                         ICON_SIZE_BLURB,
+                         GIMP_TYPE_ICON_SIZE,
+                         GIMP_ICON_SIZE_AUTO,
+                         GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_USE_HELP,
                             "use-help",
@@ -540,6 +575,9 @@ gimp_gui_config_set_property (GObject      *object,
     case PROP_IMAGE_MAP_TOOL_MAX_RECENT:
       gui_config->filter_tool_max_recent = g_value_get_int (value);
       break;
+    case PROP_FILTER_TOOL_SHOW_COLOR_OPTIONS:
+      gui_config->filter_tool_show_color_options = g_value_get_boolean (value);
+      break;
     case PROP_TRUST_DIRTY_FLAG:
       gui_config->trust_dirty_flag = g_value_get_boolean (value);
       break;
@@ -609,6 +647,28 @@ gimp_gui_config_set_property (GObject      *object,
     case PROP_ICON_THEME:
       g_free (gui_config->icon_theme);
       gui_config->icon_theme = g_value_dup_string (value);
+      break;
+    case PROP_ICON_SIZE:
+        {
+          GimpIconSize size = g_value_get_enum (value);
+
+          g_signal_handlers_disconnect_by_func (GIMP_DISPLAY_CONFIG (gui_config),
+                                                G_CALLBACK (monitor_resolution_changed),
+                                                gui_config);
+          if (size == GIMP_ICON_SIZE_AUTO)
+            {
+              g_signal_connect (GIMP_DISPLAY_CONFIG (gui_config),
+                                "notify::monitor-xresolution",
+                                G_CALLBACK (monitor_resolution_changed),
+                                gui_config);
+              g_signal_connect (GIMP_DISPLAY_CONFIG (gui_config),
+                                "notify::monitor-yresolution",
+                                G_CALLBACK (monitor_resolution_changed),
+                                gui_config);
+            }
+          gui_config->icon_size = size;
+          g_signal_emit (gui_config, signals[SIZE_CHANGED], 0);
+        }
       break;
     case PROP_USE_HELP:
       gui_config->use_help = g_value_get_boolean (value);
@@ -700,6 +760,9 @@ gimp_gui_config_get_property (GObject    *object,
     case PROP_IMAGE_MAP_TOOL_MAX_RECENT:
       g_value_set_int (value, gui_config->filter_tool_max_recent);
       break;
+    case PROP_FILTER_TOOL_SHOW_COLOR_OPTIONS:
+      g_value_set_boolean (value, gui_config->filter_tool_show_color_options);
+      break;
     case PROP_TRUST_DIRTY_FLAG:
       g_value_set_boolean (value, gui_config->trust_dirty_flag);
       break;
@@ -765,6 +828,9 @@ gimp_gui_config_get_property (GObject    *object,
       break;
     case PROP_ICON_THEME:
       g_value_set_string (value, gui_config->icon_theme);
+      break;
+    case PROP_ICON_SIZE:
+      g_value_set_enum (value, gui_config->icon_size);
       break;
     case PROP_USE_HELP:
       g_value_set_boolean (value, gui_config->use_help);
@@ -835,4 +901,42 @@ gimp_gui_config_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
     }
+}
+
+static void
+monitor_resolution_changed (GimpDisplayConfig *display_config,
+                            GParamSpec        *pspec,
+                            GimpGuiConfig     *gui_config)
+{
+  if (gui_config->icon_size == GIMP_ICON_SIZE_AUTO)
+    {
+      g_signal_emit (gui_config, signals[SIZE_CHANGED], 0);
+    }
+}
+
+GimpIconSize
+gimp_gui_config_detect_icon_size (GimpGuiConfig *gui_config)
+{
+  GimpIconSize size = gui_config->icon_size;
+
+  if (size == GIMP_ICON_SIZE_AUTO)
+    {
+      GimpDisplayConfig *display_config;
+
+      display_config = GIMP_DISPLAY_CONFIG (gui_config);
+
+      if (display_config->monitor_xres < 100.0 ||
+          display_config->monitor_yres < 100.0)
+        size = GIMP_ICON_SIZE_SMALL;
+      else if (display_config->monitor_xres < 192.0 ||
+               display_config->monitor_yres < 192.0)
+        size = GIMP_ICON_SIZE_MEDIUM;
+      else if (display_config->monitor_xres < 300.0 ||
+               display_config->monitor_yres < 300.0)
+        size = GIMP_ICON_SIZE_LARGE;
+      else
+        size = GIMP_ICON_SIZE_HUGE;
+    }
+
+  return size;
 }

@@ -201,34 +201,50 @@ EXTRA_PROGRAMS = test-cpu-accel
 gen_sources = xgen-bec xgen-cec
 CLEANFILES = $(EXTRA_PROGRAMS) $(gen_sources)
 
-$(srcdir)/gimpbaseenums.c: $(srcdir)/gimpbaseenums.h $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
+xgen-bec: $(srcdir)/gimpbaseenums.h $(GIMP_MKENUMS) Makefile.am
+	$(AM_V_GEN) $(GIMP_MKENUMS) \
 		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#undef GIMP_DISABLE_DEPRECATED\n#include \"gimpbasetypes.h\"\n#include \"libgimp/libgimp-intl.h\"" \
-		--fprod "\n/* enumerations from \"@filename@\" */" \
+		--fprod "\n/* enumerations from \"@basename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n" \
 		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
 		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpbaseenums.h > xgen-bec \
-	&& cp xgen-bec $(@F) \
-	&& rm -f xgen-bec
+		$< > $@
 
+$(srcdir)/gimpbaseenums.c: xgen-bec
+	$(AM_V_GEN) if ! cmp -s $< $@; then \
+		cp $< $@; \
+	else \
+		# if the file hasn't changed, only update its timestamp, so that \
+		# the receipe doesn't get executed again next time, but allow this \
+		# to fail (e.g., when using a read-only source directory). \
+		touch $@ 2> /dev/null \
+		|| true; \
+	fi
 
-$(srcdir)/gimpcompatenums.c: $(srcdir)/gimpcompatenums.h $(GIMP_MKENUMS)
-	$(GIMP_MKENUMS) \
+xgen-cec: $(srcdir)/gimpcompatenums.h $(GIMP_MKENUMS) Makefile.am
+	$(AM_V_GEN) $(GIMP_MKENUMS) \
 		--fhead "#include \"config.h\"\n#include <glib-object.h>\n#include \"gimpbasetypes.h\"\n#include \"gimpcompatenums.h\"\n#include \"libgimp/libgimp-intl.h\"" \
-		--fprod "\n/* enumerations from \"@filename@\" */" \
+		--fprod "\n/* enumerations from \"@basename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static const G@Type@Value values[] =\n  {" \
 		--vprod "    { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "    { 0, NULL, NULL }\n  };\n" \
 		--dhead "  static const Gimp@Type@Desc descs[] =\n  {" \
 		--dprod "    { @VALUENAME@, @valuedesc@, @valuehelp@ }," \
 		--dtail "    { 0, NULL, NULL }\n  };\n\n  static GType type = 0;\n\n  if (G_UNLIKELY (! type))\n    {\n      type = g_@type@_register_static (\"@EnumName@\", values);\n      gimp_type_set_translation_domain (type, GETTEXT_PACKAGE \"-libgimp\");\n      gimp_type_set_translation_context (type, \"@enumnick@\");\n      gimp_@type@_set_value_descriptions (type, descs);\n    }\n\n  return type;\n}\n" \
-		$(srcdir)/gimpcompatenums.h > xgen-cec \
-	&& cp xgen-cec $(@F) \
-	&& rm -f xgen-cec
+		$< > $@
 
+$(srcdir)/gimpcompatenums.c: xgen-cec
+	$(AM_V_GEN) if ! cmp -s $< $@; then \
+		cp $< $@; \
+	else \
+		# if the file hasn't changed, only update its timestamp, so that \
+		# the receipe doesn't get executed again next time, but allow this \
+		# to fail (e.g., when using a read-only source directory). \
+		touch $@ 2> /dev/null \
+		|| true; \
+	fi
 
 DISTCLEANFILES = gimpversion.h

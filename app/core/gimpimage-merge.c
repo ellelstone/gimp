@@ -512,7 +512,11 @@ gimp_image_merge_layers (GimpImage     *image,
     }
 
   if ((x2 - x1) == 0 || (y2 - y1) == 0)
-    return NULL;
+    {
+      g_slist_free (reverse_list);
+
+      return NULL;
+    }
 
   /*  Start a merge undo group. */
 
@@ -527,10 +531,14 @@ gimp_image_merge_layers (GimpImage     *image,
                                     gimp_image_get_layer_format (image, FALSE),
                                     gimp_object_get_name (layer),
                                     GIMP_OPACITY_OPAQUE,
-                                    GIMP_LAYER_MODE_NORMAL);
+                                    GIMP_LAYER_MODE_NORMAL_LEGACY);
       if (! merge_layer)
         {
-          g_warning ("%s: could not allocate merge layer.", G_STRFUNC);
+          g_warning ("%s: could not allocate merge layer", G_STRFUNC);
+
+          g_free (name);
+          g_slist_free (reverse_list);
+
           return NULL;
         }
 
@@ -560,11 +568,15 @@ gimp_image_merge_layers (GimpImage     *image,
                         gimp_drawable_get_format_with_alpha (GIMP_DRAWABLE (layer)),
                         "merged layer",
                         GIMP_OPACITY_OPAQUE,
-                        GIMP_LAYER_MODE_NORMAL);
+                        GIMP_LAYER_MODE_NORMAL_LEGACY);
 
-      if (!merge_layer)
+      if (! merge_layer)
         {
           g_warning ("%s: could not allocate merge layer", G_STRFUNC);
+
+          g_free (name);
+          g_slist_free (reverse_list);
+
           return NULL;
         }
 
@@ -617,9 +629,11 @@ gimp_image_merge_layers (GimpImage     *image,
       composite_space = gimp_layer_get_composite_space (layer);
       composite_mode  = gimp_layer_get_composite_mode (layer);
 
-      if (layer == bottom_layer && mode != GIMP_LAYER_MODE_DISSOLVE)
+      if (layer == bottom_layer)
         {
-          mode            = GIMP_LAYER_MODE_NORMAL;
+          if (mode != GIMP_LAYER_MODE_DISSOLVE)
+            mode          = GIMP_LAYER_MODE_NORMAL_LEGACY;
+
           blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
           composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
           composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;

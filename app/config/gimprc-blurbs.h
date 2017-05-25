@@ -173,7 +173,10 @@ _("Sets the browser used by the help system.")
 "If empty, the language is taken from the user's locale setting."
 
 #define FILTER_TOOL_MAX_RECENT_BLURB \
-"How many recent settings to keep around in filter tools"
+_("How many recent settings to keep around in filter tools.")
+
+#define FILTER_TOOL_SHOW_COLOR_OPTIONS_BLURB \
+_("Show advanced color options in filter tools.")
 
 #define IMAGE_STATUS_FORMAT_BLURB \
 _("Sets the text to appear in image window status bars.")
@@ -182,8 +185,7 @@ _("Sets the text to appear in image window status bars.")
 _("Sets the text to appear in image window titles.")
 
 #define IMPORT_PROMOTE_FLOAT_BLURB \
-_("Promote imported images to floating point precision. Does not apply " \
-  "to indexed images.")
+_("Promote imported images to floating point precision. ")
 
 #define IMPORT_PROMOTE_DITHER_BLURB \
 _("When promoting imported images to floating point precision, also add " \
@@ -191,6 +193,9 @@ _("When promoting imported images to floating point precision, also add " \
 
 #define IMPORT_ADD_ALPHA_BLURB \
 _("Add an alpha channel to all layers of imported images.")
+
+#define IMPORT_RAW_PLUG_IN_BLURB \
+_("Which plug-in to use for importing raw digital camera files.")
 
 #define INITIAL_ZOOM_TO_FIT_BLURB \
 _("When enabled, this will ensure that the full image is visible after a " \
@@ -432,6 +437,9 @@ _("Sets the folder for temporary storage. Files will appear here " \
 
 #define ICON_THEME_BLURB \
 "The name of the icon theme to use."
+
+#define ICON_SIZE_BLURB \
+"The size of the icons to use."
 
 #define ICON_THEME_PATH_BLURB \
 "Sets the icon theme search path."

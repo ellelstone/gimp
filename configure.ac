@@ -43,11 +43,12 @@ m4_define([gimp_stable],
 m4_define([gimp_full_name], [GNU Image Manipulation Program])
 
 # required versions of other packages
-m4_define([babl_required_version], [0.1.24])
-m4_define([gegl_required_version], [0.3.12])
+m4_define([babl_required_version], [0.1.27])
+m4_define([gegl_required_version], [0.3.15])
 m4_define([glib_required_version], [2.40.0])
 m4_define([atk_required_version], [2.2.0])
 m4_define([gtk_required_version], [2.24.10])
+m4_define([gtk_win32_recommended_version], [2.24.32])
 m4_define([gdk_pixbuf_required_version], [2.30.8])
 m4_define([cairo_required_version], [1.12.2])
 m4_define([cairo_pdf_required_version], [1.12.2])
@@ -138,6 +139,7 @@ AC_SUBST(GIMP_FULL_NAME)
 GLIB_REQUIRED_VERSION=glib_required_version
 GDK_PIXBUF_REQUIRED_VERSION=gdk_pixbuf_required_version
 GTK_REQUIRED_VERSION=gtk_required_version
+GTK_WIN32_RECOMMENDED_VERSION=gtk_win32_recommended_version
 CAIRO_REQUIRED_VERSION=cairo_required_version
 CAIRO_PDF_REQUIRED_VERSION=cairo_pdf_required_version
 GEGL_REQUIRED_VERSION=gegl_required_version
@@ -168,6 +170,7 @@ XGETTEXT_RECOMMENDED_VERSION=xgettext_recommended_version
 AC_SUBST(GLIB_REQUIRED_VERSION)
 AC_SUBST(GDK_PIXBUF_REQUIRED_VERSION)
 AC_SUBST(GTK_REQUIRED_VERSION)
+AC_SUBST(GTK_WIN32_RECOMMENDED_VERSION)
 AC_SUBST(CAIRO_REQUIRED_VERSION)
 AC_SUBST(CAIRO_PDF_REQUIRED_VERSION)
 AC_SUBST(GEGL_REQUIRED_VERSION)
@@ -230,6 +233,11 @@ AS_IF([test "x$0" != "x./configure"], [
 # Determine a C compiler to use
 AC_PROG_CC
 AX_PROG_CC_FOR_BUILD
+# Works around a bug in AX_PROG_CC_FOR_BUILD for build with MinGW on
+# Windows. See bug 780270, comment 18.
+case "$build_os" in
+  cygwin*|mingw32*|mingw64*)	BUILD_EXEEXT=.exe ;;
+esac
 AM_PROG_CC_C_O
 
 # Determine a C++ compiler to use
@@ -665,6 +673,33 @@ else
                     [add_deps_error([gio-unix-2.0])])
 fi
 
+AC_MSG_CHECKING([for glib-networking (GIO TLS implementation)])
+gimp_save_CFLAGS="$CFLAGS"
+gimp_save_LIBS="$LIBS"
+CFLAGS="$CFLAGS $GIO_CFLAGS"
+LIBS="$LIBS $GIO_LIBS"
+AC_RUN_IFELSE([AC_LANG_PROGRAM([#include <gio/gio.h>],
+                               [return !g_tls_backend_supports_tls (g_tls_backend_get_default ());])],
+              [have_glib_networking="yes"],
+              [have_glib_networking="no"],
+              [have_glib_networking="unknown (cross-compiling)"])
+CFLAGS="$gimp_save_CFLAGS"
+LIBS="$gimp_save_LIBS"
+AC_MSG_RESULT($have_glib_networking)
+
+if test "x$have_glib_networking" = "xno"; then
+  add_deps_error([glib-networking],
+      [Test for glib-networking failed. This is required.])
+elif test "x$have_glib_networking" != "xyes"; then
+  warning_glib_networking="
+WARNING: Test for glib-networking cannot be performed while cross-compiling.
+         Make sure glib-networking is installed, otherwise GIMP will not be able
+         to display the remote help pages through the help browser, nor will it
+         be able to open remote HTTPS (or other protocol using SSL/TLS) files.
+         HTTPS is becoming the expected standard and should not be considered
+         optional anymore."
+fi
+
 AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources, no)
 if test "x$GLIB_COMPILE_RESOURCES" = xno; then
   add_deps_error([glib-compile-resources],
@@ -720,6 +755,27 @@ else
   have_gtk_2_26=no
 fi
 AC_MSG_RESULT($have_gtk_2_26)
+
+# Windows platform have a few bugs with GTK+ < 2.24.32.
+# In particular: broken shortcuts on non-latin locales.
+# Also SVG icons will be broken, hence --enable-vector-icons cannot be used.
+# Display a warning when necessary.
+# See bugs 769550 and 781020.
+have_recommended_gtk=""
+if test "x$platform_win32" = "xyes"; then
+    PKG_CHECK_MODULES(RECOMMENDED_WIN32_GTK, gtk+-2.0 >= gtk_win32_recommended_version,
+                      have_recommended_gtk="yes", have_recommended_gtk="no")
+
+    if test "x$have_recommended_gtk" = xno; then
+        have_recommended_gtk="
+WARNING: Your GTK+ version is `$PKG_CONFIG --modversion gtk+-2.0`.
+         The recommended GTK+ version under Windows is $GTK_WIN32_RECOMMENDED_VERSION or over.
+         If you continue without updating GTK+, shortcuts won't work with
+         non-latin locales, and vector icons will be disabled."
+    else
+        have_recommended_gtk=""
+    fi
+fi
 
 PKG_CHECK_MODULES(GDK_PIXBUF, gdk-pixbuf-2.0 >= gdk_pixbuf_required_version,,
                   [add_deps_error([gdk-pixbuf-2.0 >= gdk_pixbuf_required_version])])
@@ -2069,42 +2125,58 @@ AM_CONDITIONAL(HAVE_XSLTPROC, test "x$XSLTPROC" != "xno")
 # Check for vector icons
 ########################
 
-AC_ARG_ENABLE(vector-icons, [  --enable-vector-icons   generate vector icons], ,
-              enable_vector_icons=no)
+AC_ARG_ENABLE(vector-icons, [  --disable-vector-icons  use raster icons rather than vector ones (default=auto)], ,
+              enable_vector_icons=auto)
 
-if test "x$enable_vector_icons" = "xyes"; then
-  # Check if librsvg was built with --disable-pixbuf-loader.
-  gdk_pixbuf_moduledir=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
-  # AC_CHECK_FILE macro does not work when cross-compiling and exits with:
-  # error: cannot check for file existence when cross compiling
-  # So let's test files the shell way.
-  if (test "x$platform_win32" = "xyes" &&
-      test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.dll") ||
-     test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.so"; then
-    enable_vector_icons="yes"
+if test "x$enable_vector_icons" != "xno"; then
+  if test "x$have_recommended_gtk" != "x"; then
+      enable_vector_icons="no (gtk+-2-0 < gtk_win32_recommended_version)"
   else
-    enable_vector_icons="no (librsvg GdkPixbuf loader missing)"
+    have_shared_mime_info=""
+    # shared-mime-info is needed to correctly detect SVG files (except on
+    # Windows, apparently).
+    PKG_CHECK_MODULES(MIME_INFO, [shared-mime-info],
+                      have_shared_mime_info="yes", have_shared_mime_info="no")
+    if test "x$have_shared_mime_info" = "xyes" ||
+       test "x$platform_win32" = "xyes"; then
+      # Check if librsvg was built with --disable-pixbuf-loader.
+      gdk_pixbuf_moduledir=`$PKG_CONFIG --variable=gdk_pixbuf_moduledir gdk-pixbuf-2.0`
+      # AC_CHECK_FILE macro does not work when cross-compiling and exits with:
+      # error: cannot check for file existence when cross compiling
+      # So let's test files the shell way.
+      if (test "x$platform_win32" = "xyes" &&
+          test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.dll") ||
+         test -f "$gdk_pixbuf_moduledir/libpixbufloader-svg.so"; then
+        # We must not use $PKG_CONFIG nor PKG_CHECK_* macros because we need
+        # to make sure we use the native pkg-config (in case we cross-compile).
+        if pkg-config --atleast-version=glib_required_version glib-2.0 &&
+           pkg-config gio-2.0; then
+          NATIVE_GLIB_LIBS=`pkg-config --libs gio-2.0 glib-2.0`
+          NATIVE_GLIB_CFLAGS=`pkg-config --cflags gio-2.0 glib-2.0`
+          enable_vector_icons="yes"
+
+          if test "x$platform_win32" = "xyes"; then
+            warning_vector_icons_windows="
+WARNING: You enabled vector icons on Win32. Make sure to run:
+           $ gdk-pixbuf-query-loaders.exe --update-cache
+         on the target machine (this command generates loaders.cache)
+         so that GdkPixbuf knows where to find the SVG loader."
+          fi
+        else
+          enable_vector_icons="no (missing native glib-2.0 > glib_required_version or gio-2.0)"
+        fi
+      else
+        enable_vector_icons="no (librsvg GdkPixbuf loader missing)"
+      fi
+    else
+      enable_vector_icons="no (missing shared-mime-info)"
+    fi
   fi
 fi
 
-if test "x$enable_vector_icons" = "xyes"; then
-  # We must not use $PKG_CONFIG nor PKG_CHECK_* macros because we need
-  # to make sure we use the native pkg-config (in case we cross-compile).
-  if pkg-config --atleast-version=glib_required_version glib-2.0 &&
-     pkg-config gio-2.0; then
-    NATIVE_GLIB_LIBS=`pkg-config --libs gio-2.0 glib-2.0`
-    NATIVE_GLIB_CFLAGS=`pkg-config --cflags gio-2.0 glib-2.0`
-  else
-    enable_vector_icons="no (missing native glib > glib_required_version or gio)"
-  fi
-fi
 AC_SUBST(NATIVE_GLIB_LIBS)
 AC_SUBST(NATIVE_GLIB_CFLAGS)
 AM_CONDITIONAL(ENABLE_VECTOR_ICONS, test "x$enable_vector_icons" = "xyes")
-
-if test "x$enable_vector_icons" = "xyes"; then
-  enable_vector_icons="yes (experimental)"
-fi
 
 ####################
 # Check for xvfb-run
@@ -2123,6 +2195,26 @@ if test "x$with_xvfb_run" != "xno"; then
   fi
 fi
 AM_CONDITIONAL(HAVE_XVFB_RUN, test "x$have_xvfb_run" = "xyes")
+
+##########################
+# Check for appstream-util
+##########################
+
+AC_ARG_WITH(appdata-test,  [  --without-appdata-test  do not validate the appdata file])
+
+have_appstream_util="no (disabled)"
+if test "x$with_appdata_test" != "xno"; then
+  AC_PATH_PROG(APPSTREAM_UTIL, appstream-util, no)
+  if test "x$APPSTREAM_UTIL" != "xno"; then
+    have_appstream_util="yes"
+  else
+    have_appstream_util="no (appstream-util not found)"
+  fi
+fi
+AM_CONDITIONAL(HAVE_APPSTREAM_UTIL, test "x$have_appstream_util" = "xyes")
+if test "x$have_appstream_util" = "xyes"; then
+  have_appstream_util="yes (this test requires network access; --without-appdata-test to disable)"
+fi
 
 
 ######################################
@@ -2457,7 +2549,6 @@ icons/Symbolic/Makefile
 icons/Symbolic-Inverted/Makefile
 themes/Makefile
 themes/System/Makefile
-themes/Small/Makefile
 themes/Darker/Makefile
 themes/Dark/Makefile
 themes/Gray/Makefile
@@ -2566,7 +2657,8 @@ Optional Modules:
 
 Tests:
   Use xvfb-run         $have_xvfb_run
-$have_recommended_xgettext $have_recommended_fontconfig"
+  Test appdata         $have_appstream_util
+$have_recommended_xgettext$have_recommended_fontconfig$have_recommended_gtk$warning_vector_icons_windows$warning_glib_networking"
 
 if test "x$required_deps" = "x"; then
   AC_OUTPUT

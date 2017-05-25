@@ -22,6 +22,8 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gegl.h>
 
+#include "libgimpbase/gimpbase.h"
+
 #include "operations-types.h"
 
 #include "core/gimp.h"
@@ -49,7 +51,6 @@
 #include "gimpoperationbrightnesscontrast.h"
 #include "gimpoperationcurves.h"
 #include "gimpoperationdesaturate.h"
-#include "gimpoperationlchhuechroma.h"
 #include "gimpoperationlevels.h"
 #include "gimpoperationposterize.h"
 #include "gimpoperationthreshold.h"
@@ -57,22 +58,53 @@
 #include "gimp-operation-config.h"
 #include "gimpbrightnesscontrastconfig.h"
 #include "gimpcurvesconfig.h"
-#include "gimplchhuechromaconfig.h"
 #include "gimplevelsconfig.h"
+
+#include "layer-modes-legacy/gimpoperationadditionlegacy.h"
+#include "layer-modes-legacy/gimpoperationburnlegacy.h"
+#include "layer-modes-legacy/gimpoperationdarkenonlylegacy.h"
+#include "layer-modes-legacy/gimpoperationdifferencelegacy.h"
+#include "layer-modes-legacy/gimpoperationdividelegacy.h"
+#include "layer-modes-legacy/gimpoperationdodgelegacy.h"
+#include "layer-modes-legacy/gimpoperationgrainextractlegacy.h"
+#include "layer-modes-legacy/gimpoperationgrainmergelegacy.h"
+#include "layer-modes-legacy/gimpoperationhardlightlegacy.h"
+#include "layer-modes-legacy/gimpoperationhslcolorlegacy.h"
+#include "layer-modes-legacy/gimpoperationhsvhuelegacy.h"
+#include "layer-modes-legacy/gimpoperationhsvsaturationlegacy.h"
+#include "layer-modes-legacy/gimpoperationhsvvaluelegacy.h"
+#include "layer-modes-legacy/gimpoperationlightenonlylegacy.h"
+#include "layer-modes-legacy/gimpoperationmultiplylegacy.h"
+#include "layer-modes-legacy/gimpoperationscreenlegacy.h"
+#include "layer-modes-legacy/gimpoperationsoftlightlegacy.h"
+#include "layer-modes-legacy/gimpoperationsubtractlegacy.h"
 
 #include "layer-modes/gimp-layer-modes.h"
 #include "layer-modes/gimpoperationantierase.h"
 #include "layer-modes/gimpoperationbehind.h"
-#include "layer-modes/gimpoperationerase.h"
-#include "layer-modes/gimpoperationcolorerase.h"
 #include "layer-modes/gimpoperationdissolve.h"
+#include "layer-modes/gimpoperationerase.h"
+#include "layer-modes/gimpoperationmerge.h"
 #include "layer-modes/gimpoperationnormal.h"
 #include "layer-modes/gimpoperationreplace.h"
+#include "layer-modes/gimpoperationsplit.h"
 
+
+static void
+set_compat_file (GType        type,
+                 const gchar *basename)
+{
+  GFile *file  = gimp_directory_file ("tool-options", basename, NULL);
+  GQuark quark = g_quark_from_static_string ("compat-file");
+
+  g_type_set_qdata (type, quark, file);
+}
 
 void
-gimp_operations_init (void)
+gimp_operations_init (Gimp *gimp)
 {
+  g_return_if_fail (GIMP_IS_GIMP (gimp));
+
   gimp_layer_modes_init ();
 
   g_type_class_ref (GIMP_TYPE_OPERATION_BLEND);
@@ -96,7 +128,6 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST);
   g_type_class_ref (GIMP_TYPE_OPERATION_CURVES);
   g_type_class_ref (GIMP_TYPE_OPERATION_DESATURATE);
-  g_type_class_ref (GIMP_TYPE_OPERATION_HUE_CHROMA);
   g_type_class_ref (GIMP_TYPE_OPERATION_LEVELS);
   g_type_class_ref (GIMP_TYPE_OPERATION_POSTERIZE);
   g_type_class_ref (GIMP_TYPE_OPERATION_THRESHOLD);
@@ -104,17 +135,45 @@ gimp_operations_init (void)
   g_type_class_ref (GIMP_TYPE_OPERATION_NORMAL);
   g_type_class_ref (GIMP_TYPE_OPERATION_DISSOLVE);
   g_type_class_ref (GIMP_TYPE_OPERATION_BEHIND);
-  g_type_class_ref (GIMP_TYPE_OPERATION_COLOR_ERASE);
+  g_type_class_ref (GIMP_TYPE_OPERATION_MULTIPLY_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_SCREEN_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_DIFFERENCE_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_ADDITION_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_SUBTRACT_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_DARKEN_ONLY_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_LIGHTEN_ONLY_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_HUE_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_SATURATION_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HSL_COLOR_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HSV_VALUE_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_DIVIDE_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_DODGE_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_BURN_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_HARDLIGHT_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_SOFTLIGHT_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_GRAIN_EXTRACT_LEGACY);
+  g_type_class_ref (GIMP_TYPE_OPERATION_GRAIN_MERGE_LEGACY);
   g_type_class_ref (GIMP_TYPE_OPERATION_ERASE);
+  g_type_class_ref (GIMP_TYPE_OPERATION_MERGE);
+  g_type_class_ref (GIMP_TYPE_OPERATION_SPLIT);
   g_type_class_ref (GIMP_TYPE_OPERATION_REPLACE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ANTI_ERASE);
 
-  gimp_operation_config_register ("gimp:brightness-contrast",
+  gimp_operation_config_register (gimp,
+                                  "gimp:brightness-contrast",
                                   GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
-  gimp_operation_config_register ("gimp:curves",
+  set_compat_file (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
+                   "gimp-brightness-contrast-tool.settings");
+
+  gimp_operation_config_register (gimp,
+                                  "gimp:curves",
                                   GIMP_TYPE_CURVES_CONFIG);
-  gimp_operation_config_register ("gimp:hue-chroma",
-                                  GIMP_TYPE_HUE_CHROMA_CONFIG);
-  gimp_operation_config_register ("gimp:levels",
+  set_compat_file (GIMP_TYPE_CURVES_CONFIG,
+                   "gimp-curves-tool.settings");
+
+  gimp_operation_config_register (gimp,
+                                  "gimp:levels",
                                   GIMP_TYPE_LEVELS_CONFIG);
+  set_compat_file (GIMP_TYPE_LEVELS_CONFIG,
+                   "gimp-levels-tool.settings");
 }

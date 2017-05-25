@@ -239,11 +239,19 @@ GType gimp_convert_palette_type_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_MAKE_PALETTE,    /*< desc="Generate optimum palette"            >*/
-  GIMP_REUSE_PALETTE,   /*< skip >*/
-  GIMP_WEB_PALETTE,     /*< desc="Use web-optimized palette"           >*/
-  GIMP_MONO_PALETTE,    /*< desc="Use black and white (1-bit) palette" >*/
-  GIMP_CUSTOM_PALETTE   /*< desc="Use custom palette"                  >*/
+  GIMP_CONVERT_PALETTE_GENERATE, /*< desc="Generate optimum palette"          >*/
+  GIMP_CONVERT_PALETTE_REUSE,    /*< skip >*/
+  GIMP_CONVERT_PALETTE_WEB,      /*< desc="Use web-optimized palette"         >*/
+  GIMP_CONVERT_PALETTE_MONO,     /*< desc="Use black and white (1-bit) palette" >*/
+  GIMP_CONVERT_PALETTE_CUSTOM,   /*< desc="Use custom palette"                >*/
+
+#ifndef GIMP_DISABLE_DEPRECATED
+  GIMP_MAKE_PALETTE   = GIMP_CONVERT_PALETTE_GENERATE, /*< skip, pdb-skip >*/
+  GIMP_REUSE_PALETTE  = GIMP_CONVERT_PALETTE_REUSE,    /*< skip, pdb-skip >*/
+  GIMP_WEB_PALETTE    = GIMP_CONVERT_PALETTE_WEB,      /*< skip, pdb-skip >*/
+  GIMP_MONO_PALETTE   = GIMP_CONVERT_PALETTE_MONO,     /*< skip, pdb-skip >*/
+  GIMP_CUSTOM_PALETTE = GIMP_CONVERT_PALETTE_CUSTOM    /*< skip, pdb-skip >*/
+#endif /* GIMP_DISABLE_DEPRECATED */
 } GimpConvertPaletteType;
 
 
@@ -269,10 +277,10 @@ GType gimp_desaturate_mode_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_DESATURATE_LIGHTNESS,   /*< desc="Lightness"  >*/
-/*  GIMP_DESATURATE_LUMA,        < desc="Luma"       >*/
-  GIMP_DESATURATE_AVERAGE,     /*< desc="Average"    >*/
-  GIMP_DESATURATE_LUMINANCE,   /*< desc="Luminance"  >*/
+  GIMP_DESATURATE_LIGHTNESS,   /*< desc="Lightness (HSL)"          >*/
+  GIMP_DESATURATE_AVERAGE,     /*< desc="Average (HSI Intensity)"  >*/
+  GIMP_DESATURATE_LUMINANCE,   /*< desc="Luminance"                >*/
+  GIMP_DESATURATE_VALUE,       /*< desc="Value (HSV)"              >*/
 
 #ifndef GIMP_DISABLE_DEPRECATED
   GIMP_DESATURATE_LUMINOSITY = GIMP_DESATURATE_LUMINANCE /*< skip, pdb-skip >*/
@@ -453,6 +461,8 @@ typedef enum
   GIMP_RGBA_IMAGE,     /*< desc="RGB-alpha"       >*/
   GIMP_GRAY_IMAGE,     /*< desc="Grayscale"       >*/
   GIMP_GRAYA_IMAGE,    /*< desc="Grayscale-alpha" >*/
+/*  GIMP_INDEXED_IMAGE,  < desc="Indexed"         >*/
+/*  GIMP_INDEXEDA_IMAGE  < desc="Indexed-alpha"   >*/
 } GimpImageType;
 
 
@@ -717,14 +727,17 @@ GType gimp_select_criterion_get_type (void) G_GNUC_CONST;
 
 typedef enum
 {
-  GIMP_SELECT_CRITERION_COMPOSITE,  /*< desc="Composite"  >*/
-  GIMP_SELECT_CRITERION_R,          /*< desc="Red"        >*/
-  GIMP_SELECT_CRITERION_G,          /*< desc="Green"      >*/
-  GIMP_SELECT_CRITERION_B,          /*< desc="Blue"       >*/
-  GIMP_SELECT_CRITERION_H,          /*< desc="LCH Hue"  >*/
-  GIMP_SELECT_CRITERION_C,          /*< desc="LCH Chroma"  >*/
-  GIMP_SELECT_CRITERION_L,          /*< desc="LCH Lightness"  >*/
-  GIMP_SELECT_CRITERION_A           /*< desc="Alpha"      >*/
+  GIMP_SELECT_CRITERION_COMPOSITE,  /*< desc="Composite"        >*/
+  GIMP_SELECT_CRITERION_R,          /*< desc="Red"              >*/
+  GIMP_SELECT_CRITERION_G,          /*< desc="Green"            >*/
+  GIMP_SELECT_CRITERION_B,          /*< desc="Blue"             >*/
+  GIMP_SELECT_CRITERION_H,          /*< desc="Hue (HSV)"        >*/
+  GIMP_SELECT_CRITERION_S,          /*< desc="Saturation (HSV)" >*/
+  GIMP_SELECT_CRITERION_V,          /*< desc="Value (HSV)"      >*/
+  GIMP_SELECT_CRITERION_A,          /*< desc="Alpha"            >*/
+  GIMP_SELECT_CRITERION_LCH_L,      /*< desc="Lightness (LCH)"  >*/
+  GIMP_SELECT_CRITERION_LCH_C,      /*< desc="Chroma (LCH)"     >*/
+  GIMP_SELECT_CRITERION_LCH_H,      /*< desc="Hue (LCH)"        >*/
 } GimpSelectCriterion;
 
 
