@@ -906,8 +906,8 @@ gimp_color_frame_create_transform (GimpColorFrame *frame)
         {
           static GimpColorProfile *rgb_profile = NULL;
 
-          if (G_UNLIKELY (! rgb_profile))
-            rgb_profile = gimp_color_profile_new_rgb_srgb ();
+//          if (G_UNLIKELY (! rgb_profile))
+            rgb_profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_srgb ();
 
           frame->transform =
             gimp_color_transform_new (rgb_profile,

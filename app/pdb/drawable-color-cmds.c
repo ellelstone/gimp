@@ -39,7 +39,6 @@
 #include "core/gimpparamspecs.h"
 #include "operations/gimpbrightnesscontrastconfig.h"
 #include "operations/gimpcurvesconfig.h"
-#include "operations/gimplchhuechromaconfig.h"
 #include "operations/gimplevelsconfig.h"
 #include "plug-in/gimpplugin.h"
 #include "plug-in/gimppluginmanager.h"

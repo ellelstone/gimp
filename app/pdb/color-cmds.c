@@ -275,7 +275,7 @@ desaturate_invoker (GimpProcedure         *procedure,
           GeglNode *node =
             gegl_node_new_child (NULL,
                                  "operation", "gimp:desaturate",
-                                 "mode",      GIMP_DESATURATE_LIGHTNESS,
+                                 "mode",      GIMP_DESATURATE_LUMINANCE,
                                  NULL);
 
           gimp_drawable_apply_operation (drawable, progress,
@@ -1064,6 +1064,41 @@ register_color_procs (GimpPDB *pdb)
                                                         "Percentile that range falls under",
                                                         -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                                                         GIMP_PARAM_READWRITE));
+  gimp_pdb_register_procedure (pdb, procedure);
+  g_object_unref (procedure);
+
+  /*
+   * gimp-threshold
+   */
+  procedure = gimp_procedure_new (threshold_invoker);
+  gimp_object_set_static_name (GIMP_OBJECT (procedure),
+                               "gimp-threshold");
+  gimp_procedure_set_static_strings (procedure,
+                                     "gimp-threshold",
+                                     "Deprecated: Use 'gimp-drawable-threshold' instead.",
+                                     "Deprecated: Use 'gimp-drawable-threshold' instead.",
+                                     "",
+                                     "",
+                                     "",
+                                     "gimp-drawable-threshold");
+  gimp_procedure_add_argument (procedure,
+                               gimp_param_spec_drawable_id ("drawable",
+                                                            "drawable",
+                                                            "The drawable",
+                                                            pdb->gimp, FALSE,
+                                                            GIMP_PARAM_READWRITE));
+  gimp_procedure_add_argument (procedure,
+                               gimp_param_spec_int32 ("low-threshold",
+                                                      "low threshold",
+                                                      "The low threshold value",
+                                                      0, 255, 0,
+                                                      GIMP_PARAM_READWRITE));
+  gimp_procedure_add_argument (procedure,
+                               gimp_param_spec_int32 ("high-threshold",
+                                                      "high threshold",
+                                                      "The high threshold value",
+                                                      0, 255, 0,
+                                                      GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
 }

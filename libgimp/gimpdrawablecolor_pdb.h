@@ -57,12 +57,6 @@ gboolean gimp_drawable_histogram           (gint32                drawable_ID,
                                             gdouble              *pixels,
                                             gdouble              *count,
                                             gdouble              *percentile);
-gboolean gimp_drawable_hue_chroma          (gint32                drawable_ID,
-                                            GimpHueRange          hue_range,
-                                            gdouble               hue_offset,
-                                            gdouble               lightness,
-                                            gdouble               chroma,
-                                            gdouble               overlap);
 gboolean gimp_drawable_invert              (gint32                drawable_ID);
 gboolean gimp_drawable_levels              (gint32                drawable_ID,
                                             GimpHistogramChannel  channel,

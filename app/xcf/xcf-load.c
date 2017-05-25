@@ -1052,8 +1052,8 @@ xcf_load_layer_props (XcfInfo    *info,
 
             xcf_read_int32 (info, (guint32 *) &mode, 1);
 
-            if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
-              mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
+//            if (mode == GIMP_LAYER_MODE_OVERLAY_LEGACY)
+//              mode = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY;
 
             gimp_layer_set_mode (*layer, mode, FALSE);
           }
@@ -1581,7 +1581,7 @@ xcf_load_layer (XcfInfo    *info,
 
   /* create a new layer */
   layer = gimp_layer_new (image, width, height,
-                          format, name, 255, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                          format, name, 255, GIMP_LAYER_MODE_NORMAL);
   g_free (name);
   if (! layer)
     return NULL;

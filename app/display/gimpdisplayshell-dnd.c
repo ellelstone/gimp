@@ -723,7 +723,7 @@ gimp_display_shell_drop_pixbuf (GtkWidget *widget,
                                 gimp_image_get_layer_format (image, has_alpha),
                                 _("Dropped Buffer"),
                                 GIMP_OPACITY_OPAQUE,
-                                GIMP_LAYER_MODE_NORMAL_LEGACY);
+                                GIMP_LAYER_MODE_NORMAL);
 
   if (new_layer)
     {

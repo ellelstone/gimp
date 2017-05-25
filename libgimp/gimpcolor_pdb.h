@@ -81,12 +81,6 @@ gboolean gimp_histogram           (gint32                drawable_ID,
                                    gdouble              *pixels,
                                    gdouble              *count,
                                    gdouble              *percentile);
-GIMP_DEPRECATED_FOR(gimp_drawable_hue_chroma)
-gboolean gimp_hue_chroma          (gint32                drawable_ID,
-                                   GimpHueRange          hue_range,
-                                   gdouble               hue_offset,
-                                   gdouble               lightness,
-                                   gdouble               chroma);
 GIMP_DEPRECATED_FOR(gimp_drawable_threshold)
 gboolean gimp_threshold           (gint32                drawable_ID,
                                    gint                  low_threshold,

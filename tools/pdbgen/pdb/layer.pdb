@@ -31,29 +31,29 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'image', type => 'image',
-	  desc => 'The image to which to add the layer' },
-	{ name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'The layer width' },
-	{ name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'The layer height' },
-	{ name => 'type', type => 'enum GimpImageType',
-	  desc => 'The layer type' },
-	{ name => 'name', type => 'string',
-	  desc => 'The layer name', null_ok => 1 },
-	{ name => 'opacity', type => '0 <= float <= 100',
-	  desc => 'The layer opacity' },
-	{ name => 'mode', type => 'enum GimpLayerMode',
-	  desc => 'The layer combination mode' }
+  { name => 'image', type => 'image',
+    desc => 'The image to which to add the layer' },
+  { name => 'width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'The layer width' },
+  { name => 'height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'The layer height' },
+  { name => 'type', type => 'enum GimpImageType',
+    desc => 'The layer type' },
+  { name => 'name', type => 'string',
+    desc => 'The layer name', null_ok => 1 },
+  { name => 'opacity', type => '0 <= float <= 100',
+    desc => 'The layer opacity' },
+  { name => 'mode', type => 'enum GimpLayerMode',
+    desc => 'The layer combination mode' }
     );
 
     @outargs = (
-	{ name => 'layer', type => 'layer', wrap => 1,
-	  desc => 'The newly created layer' }
+  { name => 'layer', type => 'layer', wrap => 1,
+    desc => 'The newly created layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   GimpImageBaseType  base_type = GIMP_RGB;
   gboolean           has_alpha = FALSE;
@@ -114,21 +114,21 @@ HELP
     &neo_pdb_misc('2008', '2.6');
 
     @inargs = (
-	{ name => 'image', type => 'image',
-	  desc => 'The source image from where the content is copied' },
-	{ name => 'dest_image', type => 'image',
-	  desc => 'The destination image to which to add the layer' },
-	{ name => 'name', type => 'string',
-	  desc => 'The layer name', null_ok => 1 }
+  { name => 'image', type => 'image',
+    desc => 'The source image from where the content is copied' },
+  { name => 'dest_image', type => 'image',
+    desc => 'The destination image to which to add the layer' },
+  { name => 'name', type => 'string',
+    desc => 'The layer name', null_ok => 1 }
      );
 
     @outargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The newly created layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The newly created layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   GimpPickable     *pickable = GIMP_PICKABLE (image);
   GimpColorProfile *profile;
@@ -143,7 +143,7 @@ HELP
                                                                         TRUE),
                                            name,
                                            GIMP_OPACITY_OPAQUE,
-                                           GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                           GIMP_LAYER_MODE_NORMAL,
                                            profile);
 }
 CODE
@@ -164,19 +164,19 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The source drawable from where the new layer is copied' },
-	{ name => 'dest_image', type => 'image',
-	  desc => 'The destination image to which to add the layer' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The source drawable from where the new layer is copied' },
+  { name => 'dest_image', type => 'image',
+    desc => 'The destination image to which to add the layer' }
      );
 
     @outargs = (
-	{ name => 'layer_copy', type => 'layer',
-	  desc => 'The newly copied layer' }
+  { name => 'layer_copy', type => 'layer',
+    desc => 'The newly copied layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   GType     new_type;
   GimpItem *new_item;
@@ -213,16 +213,16 @@ HELP
     &barak_pdb_misc('2010', '2.8');
 
     @inargs = (
-	{ name => 'image', type => 'image',
-	  desc => 'The image to which to add the layer group' }
+  { name => 'image', type => 'image',
+    desc => 'The image to which to add the layer group' }
     );
 
     @outargs = (
-	{ name => 'layer_group', type => 'layer',
-	  desc => 'The newly created layer group' }
+  { name => 'layer_group', type => 'layer',
+    desc => 'The newly created layer group' }
     );
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   layer_group = gimp_group_layer_new (image);
 
@@ -247,19 +247,19 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer to copy' },
-	{ name => 'add_alpha', type => 'boolean',
-	  desc => 'Add an alpha channel to the copied layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer to copy' },
+  { name => 'add_alpha', type => 'boolean',
+    desc => 'Add an alpha channel to the copied layer' }
     );
 
     @outargs = (
-	{ name => 'layer_copy', type => 'layer', wrap => 1,
-	  desc => 'The newly copied layer' }
+  { name => 'layer_copy', type => 'layer', wrap => 1,
+    desc => 'The newly copied layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   layer_copy = GIMP_LAYER (gimp_item_duplicate (GIMP_ITEM (layer),
                                                 G_TYPE_FROM_INSTANCE (layer)));
@@ -314,19 +314,19 @@ HELP
     &std_pdb_misc();
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer to which to add the mask' },
- 	{ name => 'mask_type', type => 'enum GimpAddMaskType',
-	  desc => 'The type of mask' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer to which to add the mask' },
+  { name => 'mask_type', type => 'enum GimpAddMaskType',
+    desc => 'The type of mask' }
     );
 
     @outargs = (
-	{ name => 'mask', type => 'layer_mask',
-	  desc => 'The newly created mask' }
+  { name => 'mask', type => 'layer_mask',
+    desc => 'The newly created mask' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   GimpChannel *channel = NULL;
 
@@ -363,14 +363,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer to receive the mask' },
-	{ name => 'mask', type => 'layer_mask',
-	  desc => 'The mask to add to the layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer to receive the mask' },
+  { name => 'mask', type => 'layer_mask',
+    desc => 'The mask to add to the layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_floating (GIMP_ITEM (mask),
                                  gimp_item_get_image (GIMP_ITEM (layer)),
@@ -395,14 +395,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer from which to remove mask' },
-	{ name => 'mode', type => 'enum GimpMaskApplyMode',
-	  desc => 'Removal mode' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer from which to remove mask' },
+  { name => 'mode', type => 'enum GimpMaskApplyMode',
+    desc => 'Removal mode' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   GimpPDBItemModify modify = 0;
 
@@ -434,18 +434,18 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer height' },
-	{ name => 'local_origin', type => 'boolean',
-	  desc => 'Use a local origin (as opposed to the image origin)' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer width' },
+  { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer height' },
+  { name => 'local_origin', type => 'boolean',
+    desc => 'Use a local origin (as opposed to the image origin)' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
                                  GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
@@ -477,20 +477,20 @@ sub layer_scale_full {
     &neo_pdb_misc('2008', '2.6');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer height' },
-	{ name => 'local_origin', type => 'boolean',
-	  desc => 'Use a local origin (as opposed to the image origin)' },
-	{ name => 'interpolation', type => 'enum GimpInterpolationType',
-	  desc => 'Type of interpolation' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer width' },
+  { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer height' },
+  { name => 'local_origin', type => 'boolean',
+    desc => 'Use a local origin (as opposed to the image origin)' },
+  { name => 'interpolation', type => 'enum GimpInterpolationType',
+    desc => 'Type of interpolation' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
                                  GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
@@ -528,22 +528,22 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer width' },
-	{ name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
-	  desc => 'New layer height' },
-	{ name => 'offx', type => 'int32',
-	  desc => 'x offset between upper left corner of old and
-		   new layers: (old - new)' },
-	{ name => 'offy', type => 'int32',
-	  desc => 'y offset between upper left corner of old and
-		   new layers: (old - new)' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'new_width', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer width' },
+  { name => 'new_height', type => '1 <= int32 <= GIMP_MAX_IMAGE_SIZE',
+    desc => 'New layer height' },
+  { name => 'offx', type => 'int32',
+    desc => 'x offset between upper left corner of old and
+       new layers: (old - new)' },
+  { name => 'offy', type => 'int32',
+    desc => 'y offset between upper left corner of old and
+       new layers: (old - new)' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
                                  GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
@@ -568,12 +568,12 @@ HELP
     &yosh_pdb_misc('2003');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer to resize' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer to resize' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (layer), NULL,
                                  GIMP_PDB_ITEM_CONTENT | GIMP_PDB_ITEM_POSITION,
@@ -600,16 +600,16 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'offx', type => 'int32',
-	  desc => "Offset in x direction" },
-	{ name => 'offy', type => 'int32',
-	  desc => "Offset in y direction" }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'offx', type => 'int32',
+    desc => "Offset in x direction" },
+  { name => 'offy', type => 'int32',
+    desc => "Offset in y direction" }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
                                    GIMP_PDB_ITEM_POSITION, error))
@@ -646,12 +646,12 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
                                    GIMP_PDB_ITEM_CONTENT, error) &&
@@ -681,12 +681,12 @@ HELP
     &mitch_pdb_misc('2007', '2.4');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
                                    GIMP_PDB_ITEM_CONTENT, error) &&
@@ -713,16 +713,16 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'offx', type => 'int32',
-	  desc => "Offset in x direction" },
-	{ name => 'offy', type => 'int32',
-	  desc => "Offset in y direction" }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'offx', type => 'int32',
+    desc => "Offset in x direction" },
+  { name => 'offy', type => 'int32',
+    desc => "Offset in y direction" }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_modifyable (GIMP_ITEM (layer),
                                    GIMP_PDB_ITEM_POSITION, error))
@@ -760,18 +760,18 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'mask', type => 'layer_mask',
-	  desc => 'The layer mask',
-	  return_fail => -1 }
+  { name => 'mask', type => 'layer_mask',
+    desc => 'The layer mask',
+    return_fail => -1 }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   mask = gimp_layer_get_mask (layer);
 }
@@ -798,7 +798,7 @@ HELP
     @outargs = (
         { name => 'layer', type => 'layer',
           desc => 'The mask\'s layer',
-	  return_fail => -1 }
+    return_fail => -1 }
     );
 
     %invoke = (
@@ -822,17 +822,17 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'is_floating_sel', type => 'boolean',
-	  desc => 'TRUE if the layer is a floating selection' }
+  { name => 'is_floating_sel', type => 'boolean',
+    desc => 'TRUE if the layer is a floating selection' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   is_floating_sel = gimp_layer_is_floating_sel (layer);
 }
@@ -850,17 +850,17 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'lock_alpha', type => 'boolean',
-	  desc => 'The layer\'s lock alpha channel setting' }
+  { name => 'lock_alpha', type => 'boolean',
+    desc => 'The layer\'s lock alpha channel setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   lock_alpha = gimp_layer_get_lock_alpha (layer);
 }
@@ -878,14 +878,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'lock_alpha', type => 'boolean',
-	  desc => 'The new layer\'s lock alpha channel setting' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'lock_alpha', type => 'boolean',
+    desc => 'The new layer\'s lock alpha channel setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_layer_can_lock_alpha (layer))
     gimp_layer_set_lock_alpha (layer, lock_alpha, TRUE);
@@ -908,17 +908,17 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'apply_mask', type => 'boolean',
-	  desc => 'The layer\'s apply mask setting' }
+  { name => 'apply_mask', type => 'boolean',
+    desc => 'The layer\'s apply mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     apply_mask = gimp_layer_get_apply_mask (layer);
@@ -942,14 +942,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'apply_mask', type => 'boolean',
-	  desc => 'The new layer\'s apply mask setting' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'apply_mask', type => 'boolean',
+    desc => 'The new layer\'s apply mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     gimp_layer_set_apply_mask (layer, apply_mask, TRUE);
@@ -973,17 +973,17 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'show_mask', type => 'boolean',
-	  desc => 'The layer\'s show mask setting' }
+  { name => 'show_mask', type => 'boolean',
+    desc => 'The layer\'s show mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     show_mask = gimp_layer_get_show_mask (layer);
@@ -1007,14 +1007,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'show_mask', type => 'boolean',
-	  desc => 'The new layer\'s show mask setting' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'show_mask', type => 'boolean',
+    desc => 'The new layer\'s show mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     gimp_layer_set_show_mask (layer, show_mask, TRUE);
@@ -1037,17 +1037,17 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'edit_mask', type => 'boolean',
-	  desc => 'The layer\'s edit mask setting' }
+  { name => 'edit_mask', type => 'boolean',
+    desc => 'The layer\'s edit mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     edit_mask = gimp_layer_get_edit_mask (layer);
@@ -1071,14 +1071,14 @@ HELP
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'edit_mask', type => 'boolean',
-	  desc => 'The new layer\'s edit mask setting' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'edit_mask', type => 'boolean',
+    desc => 'The new layer\'s edit mask setting' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (layer->mask)
     gimp_layer_set_edit_mask (layer, edit_mask);
@@ -1096,17 +1096,17 @@ sub layer_get_opacity {
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'opacity', type => '0 <= float <= 100',
-	  desc => 'The layer opacity' }
+  { name => 'opacity', type => '0 <= float <= 100',
+    desc => 'The layer opacity' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   opacity = gimp_layer_get_opacity (layer) * 100.0;
 }
@@ -1121,14 +1121,14 @@ sub layer_set_opacity {
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'opacity', type => '0 <= float <= 100',
-	  desc => 'The new layer opacity' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'opacity', type => '0 <= float <= 100',
+    desc => 'The new layer opacity' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   gimp_layer_set_opacity (layer, opacity / 100.0, TRUE);
 }
@@ -1143,17 +1143,17 @@ sub layer_get_mode {
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'mode', type => 'enum GimpLayerMode',
-	  desc => 'The layer combination mode' }
+  { name => 'mode', type => 'enum GimpLayerMode',
+    desc => 'The layer combination mode' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   mode = gimp_layer_get_mode (layer);
 }
@@ -1168,14 +1168,14 @@ sub layer_set_mode {
     &std_pdb_misc;
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'mode', type => 'enum GimpLayerMode',
-	  desc => 'The new layer combination mode' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'mode', type => 'enum GimpLayerMode',
+    desc => 'The new layer combination mode' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_viewable_get_children (GIMP_VIEWABLE (layer)) == NULL)
     {
@@ -1202,17 +1202,17 @@ sub layer_get_blend_space {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'blend_space', type => 'enum GimpLayerColorSpace',
-	  desc => 'The layer blend space' }
+  { name => 'blend_space', type => 'enum GimpLayerColorSpace',
+    desc => 'The layer blend space' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   blend_space = gimp_layer_get_blend_space (layer);
 }
@@ -1227,14 +1227,14 @@ sub layer_set_blend_space {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'blend_space', type => 'enum GimpLayerColorSpace',
-	  desc => 'The new layer blend space' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'blend_space', type => 'enum GimpLayerColorSpace',
+    desc => 'The new layer blend space' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   gimp_layer_set_blend_space (layer, blend_space, TRUE);
 }
@@ -1249,17 +1249,17 @@ sub layer_get_composite_space {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'composite_space', type => 'enum GimpLayerColorSpace',
-	  desc => 'The layer composite space' }
+  { name => 'composite_space', type => 'enum GimpLayerColorSpace',
+    desc => 'The layer composite space' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   composite_space = gimp_layer_get_composite_space (layer);
 }
@@ -1274,14 +1274,14 @@ sub layer_set_composite_space {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'composite_space', type => 'enum GimpLayerColorSpace',
-	  desc => 'The new layer composite space' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'composite_space', type => 'enum GimpLayerColorSpace',
+    desc => 'The new layer composite space' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   gimp_layer_set_composite_space (layer, composite_space, TRUE);
 }
@@ -1296,17 +1296,17 @@ sub layer_get_composite_mode {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' }
     );
 
     @outargs = (
-	{ name => 'composite_mode', type => 'enum GimpLayerCompositeMode',
-	  desc => 'The layer composite mode' }
+  { name => 'composite_mode', type => 'enum GimpLayerCompositeMode',
+    desc => 'The layer composite mode' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   composite_mode = gimp_layer_get_composite_mode (layer);
 }
@@ -1321,14 +1321,14 @@ sub layer_set_composite_mode {
     &ell_pdb_misc('2017', '2.10');
 
     @inargs = (
-	{ name => 'layer', type => 'layer',
-	  desc => 'The layer' },
-	{ name => 'composite_mode', type => 'enum GimpLayerCompositeMode',
-	  desc => 'The new layer composite mode' }
+  { name => 'layer', type => 'layer',
+    desc => 'The layer' },
+  { name => 'composite_mode', type => 'enum GimpLayerCompositeMode',
+    desc => 'The new layer composite mode' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   gimp_layer_set_composite_mode (layer, composite_mode, TRUE);
 }
@@ -1361,13 +1361,13 @@ CODE
             layer_flatten
             layer_scale layer_scale_full
             layer_resize layer_resize_to_image_size
-	    layer_translate
+      layer_translate
             layer_set_offsets
             layer_create_mask
             layer_get_mask
             layer_from_mask
             layer_add_mask layer_remove_mask
-	    layer_is_floating_sel
+      layer_is_floating_sel
             layer_get_lock_alpha layer_set_lock_alpha
             layer_get_apply_mask layer_set_apply_mask
             layer_get_show_mask layer_set_show_mask

@@ -531,7 +531,7 @@ gimp_image_merge_layers (GimpImage     *image,
                                     gimp_image_get_layer_format (image, FALSE),
                                     gimp_object_get_name (layer),
                                     GIMP_OPACITY_OPAQUE,
-                                    GIMP_LAYER_MODE_NORMAL_LEGACY);
+                                    GIMP_LAYER_MODE_NORMAL);
       if (! merge_layer)
         {
           g_warning ("%s: could not allocate merge layer", G_STRFUNC);
@@ -568,7 +568,7 @@ gimp_image_merge_layers (GimpImage     *image,
                         gimp_drawable_get_format_with_alpha (GIMP_DRAWABLE (layer)),
                         "merged layer",
                         GIMP_OPACITY_OPAQUE,
-                        GIMP_LAYER_MODE_NORMAL_LEGACY);
+                        GIMP_LAYER_MODE_NORMAL);
 
       if (! merge_layer)
         {
@@ -632,7 +632,7 @@ gimp_image_merge_layers (GimpImage     *image,
       if (layer == bottom_layer)
         {
           if (mode != GIMP_LAYER_MODE_DISSOLVE)
-            mode          = GIMP_LAYER_MODE_NORMAL_LEGACY;
+            mode          = GIMP_LAYER_MODE_NORMAL;
 
           blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
           composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;

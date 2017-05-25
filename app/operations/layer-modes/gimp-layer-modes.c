@@ -25,25 +25,6 @@
 
 #include "../operations-types.h"
 
-#include "operations/layer-modes-legacy/gimpoperationadditionlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationburnlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationdarkenonlylegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationdifferencelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationdividelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationdodgelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationgrainextractlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationgrainmergelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationhardlightlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationhslcolorlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationhsvhuelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationhsvsaturationlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationhsvvaluelegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationlightenonlylegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationmultiplylegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationscreenlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationsoftlightlegacy.h"
-#include "operations/layer-modes-legacy/gimpoperationsubtractlegacy.h"
-
 #include "gimpoperationantierase.h"
 #include "gimpoperationbehind.h"
 #include "gimpoperationdissolve.h"
@@ -76,20 +57,6 @@ struct _GimpLayerModeInfo
 
 static const GimpLayerModeInfo layer_mode_infos[] =
 {
-  { GIMP_LAYER_MODE_NORMAL_LEGACY,
-
-    .op_name              = "gimp:normal",
-    .function             = gimp_operation_normal_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_OVER,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_OVER,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
   { GIMP_LAYER_MODE_DISSOLVE,
 
     .op_name              = "gimp:dissolve",
@@ -99,322 +66,6 @@ static const GimpLayerModeInfo layer_mode_infos[] =
     .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
     .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_OVER,
     .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_OVER
-  },
-
-  { GIMP_LAYER_MODE_BEHIND_LEGACY,
-
-    .op_name              = "gimp:behind",
-    .function             = gimp_operation_behind_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_PAINT |
-                            GIMP_LAYER_MODE_CONTEXT_FADE,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_OVER,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_OVER,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_MULTIPLY_LEGACY,
-
-    .op_name              = "gimp:multiply-legacy",
-    .function             = gimp_operation_multiply_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_SCREEN_LEGACY,
-
-    .op_name              = "gimp:screen-legacy",
-    .function             = gimp_operation_screen_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_OVERLAY_LEGACY,
-
-    .op_name              = "gimp:softlight-legacy",
-    .function             = gimp_operation_softlight_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_DIFFERENCE_LEGACY,
-
-    .op_name              = "gimp:difference-legacy",
-    .function             = gimp_operation_difference_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_ADDITION_LEGACY,
-
-    .op_name              = "gimp:addition-legacy",
-    .function             = gimp_operation_addition_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_SUBTRACT_LEGACY,
-
-    .op_name              = "gimp:subtract-legacy",
-    .function             = gimp_operation_subtract_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,
-
-    .op_name              = "gimp:darken-only-legacy",
-    .function             = gimp_operation_darken_only_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,
-
-    .op_name              = "gimp:lighten-only-legacy",
-    .function             = gimp_operation_lighten_only_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_HSV_HUE_LEGACY,
-
-    .op_name              = "gimp:hsv-hue-legacy",
-    .function             = gimp_operation_hsv_hue_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_HSV_SATURATION_LEGACY,
-
-    .op_name              = "gimp:hsv-saturation-legacy",
-    .function             = gimp_operation_hsv_saturation_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_HSL_COLOR_LEGACY,
-
-    .op_name              = "gimp:hsl-color-legacy",
-    .function             = gimp_operation_hsl_color_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_HSV_VALUE_LEGACY,
-
-    .op_name              = "gimp:hsv-value-legacy",
-    .function             = gimp_operation_hsv_value_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_DIVIDE_LEGACY,
-
-    .op_name              = "gimp:divide-legacy",
-    .function             = gimp_operation_divide_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_DODGE_LEGACY,
-
-    .op_name              = "gimp:dodge-legacy",
-    .function             = gimp_operation_dodge_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_BURN_LEGACY,
-
-    .op_name              = "gimp:burn-legacy",
-    .function             = gimp_operation_burn_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_HARDLIGHT_LEGACY,
-
-    .op_name              = "gimp:hardlight-legacy",
-    .function             = gimp_operation_hardlight_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,
-
-    .op_name              = "gimp:softlight-legacy",
-    .function             = gimp_operation_softlight_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,
-
-    .op_name              = "gimp:grain-extract-legacy",
-    .function             = gimp_operation_grain_extract_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,
-
-    .op_name              = "gimp:grain-merge-legacy",
-    .function             = gimp_operation_grain_merge_legacy_process,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
-  },
-
-  { GIMP_LAYER_MODE_COLOR_ERASE_LEGACY,
-
-    .op_name              = "gimp:layer-mode",
-    .function             = gimp_operation_layer_mode_process_pixels,
-    .flags                = GIMP_LAYER_MODE_FLAG_LEGACY                    |
-                            GIMP_LAYER_MODE_FLAG_BLEND_SPACE_IMMUTABLE     |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_SPACE_IMMUTABLE |
-                            GIMP_LAYER_MODE_FLAG_COMPOSITE_MODE_IMMUTABLE  |
-                            GIMP_LAYER_MODE_FLAG_SUBTRACTIVE,
-    .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
-    .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,
-    .composite_space      = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    .blend_space          = GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL
   },
 
   { GIMP_LAYER_MODE_OVERLAY,
@@ -939,52 +590,10 @@ static const GimpLayerMode layer_mode_group_default[] =
   GIMP_LAYER_MODE_LINEAR_BURN
 };
 
-static const GimpLayerMode layer_mode_group_legacy[] =
-{
-  GIMP_LAYER_MODE_NORMAL_LEGACY,
-  GIMP_LAYER_MODE_DISSOLVE,
-  GIMP_LAYER_MODE_BEHIND_LEGACY,
-  GIMP_LAYER_MODE_COLOR_ERASE_LEGACY,
-
-  GIMP_LAYER_MODE_SEPARATOR,
-
-  GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY,
-  GIMP_LAYER_MODE_SCREEN_LEGACY,
-  GIMP_LAYER_MODE_DODGE_LEGACY,
-  GIMP_LAYER_MODE_ADDITION_LEGACY,
-
-  GIMP_LAYER_MODE_SEPARATOR,
-
-  GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY,
-  GIMP_LAYER_MODE_MULTIPLY_LEGACY,
-  GIMP_LAYER_MODE_BURN_LEGACY,
-
-  GIMP_LAYER_MODE_SEPARATOR,
-
-  GIMP_LAYER_MODE_OVERLAY,
-  GIMP_LAYER_MODE_SOFTLIGHT_LEGACY,
-  GIMP_LAYER_MODE_HARDLIGHT_LEGACY,
-
-  GIMP_LAYER_MODE_SEPARATOR,
-
-  GIMP_LAYER_MODE_DIFFERENCE_LEGACY,
-  GIMP_LAYER_MODE_SUBTRACT_LEGACY,
-  GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY,
-  GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY,
-  GIMP_LAYER_MODE_DIVIDE_LEGACY,
-
-  GIMP_LAYER_MODE_SEPARATOR,
-
-  GIMP_LAYER_MODE_HSV_HUE_LEGACY,
-  GIMP_LAYER_MODE_HSV_SATURATION_LEGACY,
-  GIMP_LAYER_MODE_HSL_COLOR_LEGACY,
-  GIMP_LAYER_MODE_HSV_VALUE_LEGACY
-};
-
 static const GimpLayerMode layer_mode_groups[][2] =
 {
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_NORMAL,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_NORMAL_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_NORMAL
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_DISSOLVE,
@@ -992,15 +601,15 @@ static const GimpLayerMode layer_mode_groups[][2] =
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_BEHIND,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_BEHIND_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_BEHIND
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_MULTIPLY,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_MULTIPLY_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_MULTIPLY
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_SCREEN,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SCREEN_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SCREEN
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_OVERLAY,
@@ -1008,71 +617,71 @@ static const GimpLayerMode layer_mode_groups[][2] =
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_DIFFERENCE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DIFFERENCE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DIFFERENCE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_ADDITION,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_ADDITION_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_ADDITION
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_SUBTRACT,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SUBTRACT_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SUBTRACT
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_DARKEN_ONLY,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DARKEN_ONLY
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_LIGHTEN_ONLY,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_LIGHTEN_ONLY
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_HSV_HUE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_HUE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_HUE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_HSV_SATURATION,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_SATURATION_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_SATURATION
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_HSL_COLOR,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSL_COLOR_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSL_COLOR
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_HSV_VALUE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_VALUE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HSV_VALUE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_DIVIDE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DIVIDE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DIVIDE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_DODGE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DODGE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_DODGE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_BURN,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_BURN_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_BURN
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_HARDLIGHT,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HARDLIGHT_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_HARDLIGHT
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_SOFTLIGHT,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SOFTLIGHT_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_SOFTLIGHT
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_GRAIN_EXTRACT,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_GRAIN_EXTRACT
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_GRAIN_MERGE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_GRAIN_MERGE
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_COLOR_ERASE,
-    [GIMP_LAYER_MODE_GROUP_LEGACY ] = GIMP_LAYER_MODE_COLOR_ERASE_LEGACY,
+    [GIMP_LAYER_MODE_GROUP_LEGACY ] = -1,
   },
 
   { [GIMP_LAYER_MODE_GROUP_DEFAULT] = GIMP_LAYER_MODE_VIVID_LIGHT,
@@ -1141,7 +750,7 @@ gimp_layer_modes_init (void)
   gint i;
 
   for (i = 0; i < G_N_ELEMENTS (layer_mode_infos); i++)
-    {
+    {printf("gimp_layer_modes_init\n");
       g_assert ((GimpLayerMode) i == layer_mode_infos[i].layer_mode);
     }
 }
@@ -1160,10 +769,10 @@ gimp_layer_mode_is_legacy (GimpLayerMode mode)
 {
   const GimpLayerModeInfo *info = gimp_layer_mode_info (mode);
 
-  if (! info)
+ // if (! info)
     return FALSE;
 
-  return (info->flags & GIMP_LAYER_MODE_FLAG_LEGACY) != 0;
+ // return (info->flags & GIMP_LAYER_MODE_FLAG_LEGACY) != 0;
 }
 
 gboolean
@@ -1337,16 +946,16 @@ is_mode_in_array (const GimpLayerMode *modes,
 GimpLayerModeGroup
 gimp_layer_mode_get_group (GimpLayerMode mode)
 {
-  if (is_mode_in_array (layer_mode_group_default,
-                        G_N_ELEMENTS (layer_mode_group_default), mode))
-    {
-      return GIMP_LAYER_MODE_GROUP_DEFAULT;
-    }
-  else if (is_mode_in_array (layer_mode_group_legacy,
-                             G_N_ELEMENTS (layer_mode_group_legacy), mode))
-    {
-      return GIMP_LAYER_MODE_GROUP_LEGACY;
-    }
+//  if (is_mode_in_array (layer_mode_group_default,
+//                        G_N_ELEMENTS (layer_mode_group_default), mode))
+//    {
+//      return GIMP_LAYER_MODE_GROUP_DEFAULT;
+//    }
+//  else if (is_mode_in_array (layer_mode_group_legacy,
+//                             G_N_ELEMENTS (layer_mode_group_legacy), mode))
+//    {
+//      return GIMP_LAYER_MODE_GROUP_DEFAULT;
+//    }
 
   return GIMP_LAYER_MODE_GROUP_DEFAULT;
 }
@@ -1363,9 +972,9 @@ gimp_layer_mode_get_group_array (GimpLayerModeGroup  group,
       *n_modes = G_N_ELEMENTS (layer_mode_group_default);
       return layer_mode_group_default;
 
-    case GIMP_LAYER_MODE_GROUP_LEGACY:
-      *n_modes = G_N_ELEMENTS (layer_mode_group_legacy);
-      return layer_mode_group_legacy;
+//    case GIMP_LAYER_MODE_GROUP_LEGACY:
+//      *n_modes = G_N_ELEMENTS (layer_mode_group_legacy);
+//      return layer_mode_group_legacy;
 
     default:
       g_return_val_if_reached (NULL);

@@ -274,7 +274,7 @@ gimp_layer_new_from_surface (gint32                image_ID,
   layer = gimp_layer_new (image_ID, name, width, height,
                           format == CAIRO_FORMAT_RGB24 ?
                           GIMP_RGB_IMAGE : GIMP_RGBA_IMAGE,
-                          100.0, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                          100.0, GIMP_LAYER_MODE_NORMAL);
 
   if (layer == -1)
     return -1;

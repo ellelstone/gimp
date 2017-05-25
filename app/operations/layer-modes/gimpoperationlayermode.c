@@ -202,7 +202,7 @@ gimp_operation_layer_mode_class_init (GimpOperationLayerModeClass *klass)
                                    g_param_spec_enum ("layer-mode",
                                                       NULL, NULL,
                                                       GIMP_TYPE_LAYER_MODE,
-                                                      GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                                      GIMP_LAYER_MODE_NORMAL,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -1584,23 +1584,23 @@ blendfun_divide (const float *dest,
           for (c = 0; c < 3; c++)
             {
               /* code from upstream:
-               
+
                * make infinities(or NaN) correspond to a high number,
                * to get more predictable math, ideally higher than 5.0
                * but it seems like some babl conversions might be
                * acting up then
-               * 
+               *
               gfloat comp = dest[c] / src[c];
               if (!(comp > -42949672.0f && comp < 5.0f))
               comp = 5.0f;*/
 
-              /* possible alternative code 
+              /* possible alternative code
               gfloat comp = dest[c] / src[c];
               gfloat comp = (4294967296.0 / 4294967295.0 * dest[c]) / (1.0 / 4294967295.0 + src[c]);
               * or perhaps
               gfloat comp = (1.0000000002328300 * dest[c]) / (1.0000000002328306 + src[c]);*/
 
-              gfloat comp =   (1.0000000001 * dest[c]) / 
+              gfloat comp =   (1.0000000001 * dest[c]) /
                               (0.0000000001 + src[c]);
               comp = CLAMP (comp, 0.0, 4294967296.0);
               out[c] = comp;
@@ -2443,7 +2443,6 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_ADDITION:       return blendfun_addition;
     case GIMP_LAYER_MODE_SUBTRACT:       return blendfun_subtract;
     case GIMP_LAYER_MODE_MULTIPLY:       return blendfun_multiply;
-    case GIMP_LAYER_MODE_NORMAL_LEGACY:
     case GIMP_LAYER_MODE_NORMAL:         return blendfun_normal;
     case GIMP_LAYER_MODE_BURN:           return blendfun_burn;
     case GIMP_LAYER_MODE_GRAIN_MERGE:    return blendfun_grain_merge;
@@ -2473,31 +2472,10 @@ gimp_layer_mode_get_blend_fun (GimpLayerMode mode)
     case GIMP_LAYER_MODE_HARD_MIX:       return blendfun_hard_mix;
     case GIMP_LAYER_MODE_EXCLUSION:      return blendfun_exclusion;
     case GIMP_LAYER_MODE_LINEAR_BURN:    return blendfun_linear_burn;
-    case GIMP_LAYER_MODE_COLOR_ERASE_LEGACY:
     case GIMP_LAYER_MODE_COLOR_ERASE:    return blendfun_color_erase;
 
     case GIMP_LAYER_MODE_DISSOLVE:
-    case GIMP_LAYER_MODE_BEHIND_LEGACY:
     case GIMP_LAYER_MODE_BEHIND:
-    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
-    case GIMP_LAYER_MODE_SCREEN_LEGACY:
-    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
-    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
-    case GIMP_LAYER_MODE_ADDITION_LEGACY:
-    case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
-    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
-    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
-    case GIMP_LAYER_MODE_HSL_COLOR_LEGACY:
-    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
-    case GIMP_LAYER_MODE_DIVIDE_LEGACY:
-    case GIMP_LAYER_MODE_DODGE_LEGACY:
-    case GIMP_LAYER_MODE_BURN_LEGACY:
-    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
     case GIMP_LAYER_MODE_ERASE:
     case GIMP_LAYER_MODE_MERGE:
     case GIMP_LAYER_MODE_SPLIT:

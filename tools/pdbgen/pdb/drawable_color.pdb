@@ -30,17 +30,17 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'brightness', type => '-0.5 <= float <= 0.5',
-	  desc => 'Brightness adjustment' },
-	{ name => 'contrast', type => '-0.5 <= float <= 0.5',
-	  desc => 'Contrast adjustment' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'brightness', type => '-0.5 <= float <= 0.5',
+    desc => 'Brightness adjustment' },
+  { name => 'contrast', type => '-0.5 <= float <= 0.5',
+    desc => 'Contrast adjustment' }
     );
 
     %invoke = (
         headers => [ qw("operations/gimpbrightnesscontrastconfig.h") ],
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -80,19 +80,19 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
-	  desc => 'The channel to modify' },
-	{ name => 'values', type => 'floatarray',
-	  desc => 'The explicit curve',
-	  array => { name => 'num_values', type => '256 <= int32 <= 2096',
-		     desc => 'The number of values in the new curve' } }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'channel', type => 'enum GimpHistogramChannel',
+    desc => 'The channel to modify' },
+  { name => 'values', type => 'floatarray',
+    desc => 'The explicit curve',
+    array => { name => 'num_values', type => '256 <= int32 <= 2096',
+         desc => 'The number of values in the new curve' } }
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcurvesconfig.h") ],
-	code => <<'CODE'
+  headers => [ qw("operations/gimpcurvesconfig.h") ],
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -137,21 +137,21 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
-	  desc => 'The channel to modify' },
-	{ name => 'points', type => 'floatarray',
-	  desc => 'The spline control points: { cp1.x, cp1.y, cp2.x, cp2.y,
-		   ... }',
-	  array => { name => 'num_points', type => '4 <= int32 <= 2048',
-		     desc => 'The number of values in the control point array' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'channel', type => 'enum GimpHistogramChannel',
+    desc => 'The channel to modify' },
+  { name => 'points', type => 'floatarray',
+    desc => 'The spline control points: { cp1.x, cp1.y, cp2.x, cp2.y,
+       ... }',
+    array => { name => 'num_points', type => '4 <= int32 <= 2048',
+         desc => 'The number of values in the control point array' }
        }
     );
 
     %invoke = (
-	headers => [ qw("operations/gimpcurvesconfig.h") ],
-	code => <<'CODE'
+  headers => [ qw("operations/gimpcurvesconfig.h") ],
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -195,14 +195,14 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'desaturate_mode', type => 'enum GimpDesaturateMode',
-	  desc => 'The formula to use to desaturate' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'desaturate_mode', type => 'enum GimpDesaturateMode',
+    desc => 'The formula to use to desaturate' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -244,15 +244,15 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'mask_only', type => 'boolean',
-	  desc => 'Equalization option' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'mask_only', type => 'boolean',
+    desc => 'Equalization option' }
     );
 
     %invoke = (
-	headers => [ qw("core/gimpdrawable-equalize.h") ],
-	code => <<'CODE'
+  headers => [ qw("core/gimpdrawable-equalize.h") ],
+  code => <<'CODE'
 {
   if (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                    GIMP_PDB_ITEM_CONTENT, error) ||
@@ -295,35 +295,35 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
-	  desc => 'The channel to query' },
-	{ name => 'start_range', type => '0.0 <= float <= 1.0',
-	  desc => 'Start of the intensity measurement range' },
-	{ name => 'end_range', type => '0.0 <= float <= 1.0',
-	  desc => 'End of the intensity measurement range' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'channel', type => 'enum GimpHistogramChannel',
+    desc => 'The channel to query' },
+  { name => 'start_range', type => '0.0 <= float <= 1.0',
+    desc => 'Start of the intensity measurement range' },
+  { name => 'end_range', type => '0.0 <= float <= 1.0',
+    desc => 'End of the intensity measurement range' }
     );
 
     @outargs = (
-	{ name => 'mean', type => 'float', void_ret => 1,
-	  desc => 'Mean intensity value' },
-	{ name => 'std_dev',  type => 'float',
-	  desc => 'Standard deviation of intensity values' },
-	{ name => 'median',  type => 'float',
-	  desc => 'Median intensity value' },
-	{ name => 'pixels',  type => 'float',
-	  desc => 'Alpha-weighted pixel count for entire image' },
-	{ name => 'count',  type => 'float',
-	  desc => 'Alpha-weighted pixel count for range' },
-	{ name => 'percentile',  type => 'float',
-	  desc => 'Percentile that range falls under' }
+  { name => 'mean', type => 'float', void_ret => 1,
+    desc => 'Mean intensity value' },
+  { name => 'std_dev',  type => 'float',
+    desc => 'Standard deviation of intensity values' },
+  { name => 'median',  type => 'float',
+    desc => 'Median intensity value' },
+  { name => 'pixels',  type => 'float',
+    desc => 'Alpha-weighted pixel count for entire image' },
+  { name => 'count',  type => 'float',
+    desc => 'Alpha-weighted pixel count for range' },
+  { name => 'percentile',  type => 'float',
+    desc => 'Percentile that range falls under' }
     );
 
     %invoke = (
-	headers => [ qw("core/gimpdrawable-histogram.h"
+  headers => [ qw("core/gimpdrawable-histogram.h"
                         "core/gimphistogram.h") ],
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (! gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL, 0, error) ||
       (! gimp_drawable_has_alpha (drawable) &&
@@ -351,11 +351,11 @@ HELP
       end   = ROUND (end_range   * (n_bins - 1));
 
       mean       = gimp_histogram_get_mean (histogram, channel,
-		 			    start, end);
+              start, end);
       std_dev    = gimp_histogram_get_std_dev (histogram, channel,
-					       start, end);
+                 start, end);
       median     = gimp_histogram_get_median (histogram, channel,
-					      start, end);
+                start, end);
       pixels     = gimp_histogram_get_count (histogram, channel, 0, n_bins - 1);
       count      = gimp_histogram_get_count (histogram, channel,
                                              start, end);
@@ -375,68 +375,6 @@ CODE
     );
 }
 
-sub drawable_hue_chroma {
-    $blurb = <<'BLURB';
-Modify LCH Hue, Lightness, and Chroma in the specified drawable.
-BLURB
-
-    $help = <<'HELP';
-This procedure allows the LCH Hue, Lightness, and Chroma in the specified
-drawable to be modified. The 'hue-range' parameter provides the capability to
-limit range of affected hues. The 'overlap' parameter provides blending into
-neighboring hue channels when rendering.
-HELP
-
-    &std_pdb_misc;
-    $since = '2.10';
-
-    @inargs = (
-        { name => 'drawable', type => 'drawable',
-          desc => 'The drawable' },
-        { name => 'hue_range', type => 'enum GimpHueRange',
-          desc => 'Range of affected hues' },
-        { name => 'hue_offset', type => '-180 <= float <= 180',
-          desc => 'Hue offset in degrees' },
-        { name => 'lightness', type => '-100 <= float <= 100',
-          desc => 'Lightness modification' },
-        { name => 'chroma', type => '-100 <= float <= 100',
-          desc => 'Chroma modification' },
-        { name => 'overlap', type => '0 <= float <= 100',
-          desc => 'Overlap other hue channels' }
-    );
-
-    %invoke = (
-        headers => [ qw("operations/gimplchhuechromaconfig.h") ],
-        code => <<'CODE'
-{
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-    {
-      GObject *config = g_object_new (GIMP_TYPE_HUE_CHROMA_CONFIG,
-                                      "range", hue_range,
-                                      NULL);
-
-       g_object_set (config,
-                     "hue",       hue_offset / 180.0,
-                     "chroma",    chroma / 100.0,
-                     "lightness", lightness  / 100.0,
-                     "overlap",   overlap / 100.0,
-                     NULL);
-
-      gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             C_("undo-type", "Hue-Chroma"),
-                                             "gimp:hue-chroma",
-                                             config);
-      g_object_unref (config);
-    }
-  else
-    success = FALSE;
-}
-CODE
-    );
-}
-
 sub drawable_invert {
     $blurb = 'Invert the contents of the specified drawable.';
 
@@ -450,12 +388,12 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -493,25 +431,25 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
-	  desc => 'The channel to modify' },
-	{ name => 'low_input', type => '0.0 <= float <= 1.0',
-	  desc => "Intensity of lowest input" },
-	{ name => 'high_input', type => '0.0 <= float <= 1.0',
-	  desc => "Intensity of highest input" },
-	{ name => 'gamma', type => '0.1 <= float <= 10',
-	  desc => 'Gamma adjustment factor' },
-	{ name => 'low_output', type => '0.0 <= float <= 1.0',
-	  desc => "Intensity of lowest output" },
-	{ name => 'high_output', type => '0.0 <= float <= 1.0',
-	  desc => "Intensity of highest output" }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'channel', type => 'enum GimpHistogramChannel',
+    desc => 'The channel to modify' },
+  { name => 'low_input', type => '0.0 <= float <= 1.0',
+    desc => "Intensity of lowest input" },
+  { name => 'high_input', type => '0.0 <= float <= 1.0',
+    desc => "Intensity of highest input" },
+  { name => 'gamma', type => '0.1 <= float <= 10',
+    desc => 'Gamma adjustment factor' },
+  { name => 'low_output', type => '0.0 <= float <= 1.0',
+    desc => "Intensity of lowest output" },
+  { name => 'high_output', type => '0.0 <= float <= 1.0',
+    desc => "Intensity of highest output" }
     );
 
     %invoke = (
-	headers => [ qw("operations/gimplevelsconfig.h") ],
-	code => <<'CODE'
+  headers => [ qw("operations/gimplevelsconfig.h") ],
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -560,8 +498,8 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' }
     );
 
     %invoke = (
@@ -594,14 +532,14 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'levels', type => '2 <= int32 <= 255',
-	  desc => 'Levels of posterization' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'levels', type => '2 <= int32 <= 255',
+    desc => 'Levels of posterization' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -640,18 +578,18 @@ HELP
     $since = '2.10';
 
     @inargs = (
-	{ name => 'drawable', type => 'drawable',
-	  desc => 'The drawable' },
-	{ name => 'channel', type => 'enum GimpHistogramChannel',
-	  desc => 'The channel to base the threshold on' },
-	{ name => 'low_threshold', type => '0.0 <= float <= 1.0',
-	  desc => 'The low threshold value' },
-	{ name => 'high_threshold', type => '0.0 <= float <= 1.0',
-	  desc => 'The high threshold value' }
+  { name => 'drawable', type => 'drawable',
+    desc => 'The drawable' },
+  { name => 'channel', type => 'enum GimpHistogramChannel',
+    desc => 'The channel to base the threshold on' },
+  { name => 'low_threshold', type => '0.0 <= float <= 1.0',
+    desc => 'The low threshold value' },
+  { name => 'high_threshold', type => '0.0 <= float <= 1.0',
+    desc => 'The high threshold value' }
     );
 
     %invoke = (
-	code => <<'CODE'
+  code => <<'CODE'
 {
   if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
                                  GIMP_PDB_ITEM_CONTENT, error) &&
@@ -692,7 +630,6 @@ CODE
             drawable_desaturate
             drawable_equalize
             drawable_histogram
-            drawable_hue_chroma
             drawable_invert
             drawable_levels drawable_levels_stretch
             drawable_posterize

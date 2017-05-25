@@ -170,7 +170,7 @@ layer_new_from_visible_invoker (GimpProcedure         *procedure,
                                                                             TRUE),
                                                name,
                                                GIMP_OPACITY_OPAQUE,
-                                               GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                               GIMP_LAYER_MODE_NORMAL,
                                                profile);
     }
 
@@ -1369,7 +1369,7 @@ register_layer_procs (GimpPDB *pdb)
                                                   "mode",
                                                   "The layer combination mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                                  GIMP_LAYER_MODE_NORMAL,
                                                   GIMP_PARAM_READWRITE));
   gimp_procedure_add_return_value (procedure,
                                    gimp_param_spec_layer_id ("layer",
@@ -2305,7 +2305,7 @@ register_layer_procs (GimpPDB *pdb)
                                                       "mode",
                                                       "The layer combination mode",
                                                       GIMP_TYPE_LAYER_MODE,
-                                                      GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                                      GIMP_LAYER_MODE_NORMAL,
                                                       GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);
@@ -2335,7 +2335,7 @@ register_layer_procs (GimpPDB *pdb)
                                                   "mode",
                                                   "The new layer combination mode",
                                                   GIMP_TYPE_LAYER_MODE,
-                                                  GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                                  GIMP_LAYER_MODE_NORMAL,
                                                   GIMP_PARAM_READWRITE));
   gimp_pdb_register_procedure (pdb, procedure);
   g_object_unref (procedure);

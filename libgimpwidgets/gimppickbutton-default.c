@@ -273,7 +273,7 @@ gimp_pick_button_pick (GdkScreen      *screen,
       flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
       flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;
 
-      srgb_profile = gimp_color_profile_new_rgb_srgb ();
+      srgb_profile = gimp_color_profile_new_rgb_from_colorants();//gimp_color_profile_new_rgb_srgb ();
       transform = gimp_color_transform_new (monitor_profile, format,
                                             srgb_profile,    format,
                                             GIMP_COLOR_RENDERING_INTENT_PERCEPTUAL,

@@ -955,7 +955,7 @@ gimp_drawable_transform_cut (GimpDrawable *drawable,
       buffer = gimp_selection_extract (GIMP_SELECTION (gimp_image_get_mask (image)),
                                        GIMP_PICKABLE (drawable),
                                        context,
-                                       FALSE, 
+                                       FALSE,
                                        GIMP_IS_LAYER (drawable),
                                        offset_x, offset_y,
                                        NULL);
@@ -1001,7 +1001,7 @@ gimp_drawable_transform_paste (GimpDrawable     *drawable,
                                          gimp_drawable_get_format_with_alpha (drawable),
                                          _("Transformation"),
                                          GIMP_OPACITY_OPAQUE,
-                                         GIMP_LAYER_MODE_NORMAL_LEGACY,
+                                         GIMP_LAYER_MODE_NORMAL,
                                          buffer_profile);
 
       gimp_item_set_offset (GIMP_ITEM (layer), offset_x, offset_y);
