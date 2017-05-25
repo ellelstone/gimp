@@ -315,11 +315,11 @@ drawable_histogram_invoker (GimpProcedure         *procedure,
           end   = ROUND (end_range   * (n_bins - 1));
 
           mean       = gimp_histogram_get_mean (histogram, channel,
-                                                 start, end);
+                  start, end);
           std_dev    = gimp_histogram_get_std_dev (histogram, channel,
-                                                   start, end);
+                     start, end);
           median     = gimp_histogram_get_median (histogram, channel,
-                                                  start, end);
+                    start, end);
           pixels     = gimp_histogram_get_count (histogram, channel, 0, n_bins - 1);
           count      = gimp_histogram_get_count (histogram, channel,
                                                  start, end);
