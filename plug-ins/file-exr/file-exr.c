@@ -256,7 +256,7 @@ load_image (const gchar  *filename,
   gimp_image_set_filename (image, filename);
 
   layer = gimp_layer_new (image, _("Background"), width, height,
-                          layer_type, 100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                          layer_type, 100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image, layer, -1, 0);
 
   buffer = gimp_drawable_get_buffer (layer);
@@ -310,7 +310,7 @@ load_image (const gchar  *filename,
           gimp_image_set_color_profile (image, profile);
           g_object_unref (profile);
         }
-      else 
+      else
       {
         profile = gimp_color_profile_new_rgb_built_in_linear ();
         gimp_image_set_color_profile (image, profile);

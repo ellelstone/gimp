@@ -256,10 +256,10 @@ run (const gchar      *name,
       if (save_image (g_file_new_for_uri (param[3].data.d_string),
                       image_ID, drawable_ID, &error))
         {
-	  if (data_length)
-	    {
-	      gimp_set_data (SAVE_PROC, palette_file, data_length);
-	    }
+    if (data_length)
+      {
+        gimp_set_data (SAVE_PROC, palette_file, data_length);
+      }
         }
       else
         {
@@ -440,11 +440,11 @@ load_image (const gchar  *file,
   if (bpp == 32)
     layer = gimp_layer_new (image, _("Background"), width, height,
                             GIMP_RGBA_IMAGE,
-                            100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                            100, GIMP_LAYER_MODE_NORMAL);
   else
     layer = gimp_layer_new (image, _("Background"), width, height,
                             GIMP_INDEXEDA_IMAGE,
-                            100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                            100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image, layer, -1, 0);
   gimp_layer_set_offsets (layer, offx, offy);
 

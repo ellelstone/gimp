@@ -197,72 +197,58 @@ psd_lmode_layer (gint32  idLayer,
 {
   switch (gimp_layer_get_mode (idLayer))
     {
-    case GIMP_LAYER_MODE_NORMAL_LEGACY:
+    case GIMP_LAYER_MODE_NORMAL:
       strcpy (psdMode, "norm");
       break;
     case GIMP_LAYER_MODE_DARKEN_ONLY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
       strcpy (psdMode, "dark");
       break;
     case GIMP_LAYER_MODE_LIGHTEN_ONLY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
       strcpy (psdMode, "lite");
       break;
     case GIMP_LAYER_MODE_LCH_HUE:
-    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
+    case GIMP_LAYER_MODE_HSV_HUE:
       strcpy (psdMode, "hue ");
       break;
     case GIMP_LAYER_MODE_LCH_CHROMA:
-    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
+    case GIMP_LAYER_MODE_HSV_SATURATION:
       strcpy (psdMode, "sat ");
       break;
     case GIMP_LAYER_MODE_LCH_COLOR:
-    case GIMP_LAYER_MODE_HSL_COLOR_LEGACY:
       strcpy (psdMode, "colr");
       break;
     case GIMP_LAYER_MODE_ADDITION:
-    case GIMP_LAYER_MODE_ADDITION_LEGACY:
       strcpy (psdMode, "lddg");
       break;
     case GIMP_LAYER_MODE_MULTIPLY:
-    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
       strcpy (psdMode, "mul ");
       break;
     case GIMP_LAYER_MODE_SCREEN:
-    case GIMP_LAYER_MODE_SCREEN_LEGACY:
       strcpy (psdMode, "scrn");
       break;
     case GIMP_LAYER_MODE_DISSOLVE:
       strcpy (psdMode, "diss");
       break;
     case GIMP_LAYER_MODE_DIFFERENCE:
-    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
       strcpy (psdMode, "diff");
       break;
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:
-    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:                  /* ? */
+    case GIMP_LAYER_MODE_HSV_VALUE:                  /* ? */
       strcpy (psdMode, "lum ");
       break;
     case GIMP_LAYER_MODE_HARDLIGHT:
-    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
       strcpy (psdMode, "hLit");
-      break;
-    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
-    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
-      strcpy (psdMode, "sLit");
       break;
     case GIMP_LAYER_MODE_OVERLAY:
       strcpy (psdMode, "over");
       break;
     case GIMP_LAYER_MODE_DODGE:
-    case GIMP_LAYER_MODE_DODGE_LEGACY:
       strcpy (psdMode, "div");
       break;
     case GIMP_LAYER_MODE_EXCLUSION:
       strcpy (psdMode, "smud");
       break;
     case GIMP_LAYER_MODE_BURN:
-    case GIMP_LAYER_MODE_BURN_LEGACY:
       strcpy (psdMode, "idiv");
       break;
     case GIMP_LAYER_MODE_LINEAR_BURN:
@@ -1475,8 +1461,8 @@ create_merged_image (gint32 image_id)
             }
 
 
-	  data += n_components;
-//	}
+    data += n_components;
+//  }
       g_object_unref (buffer);
 
       if (! transparency_found)
@@ -1584,14 +1570,14 @@ save_image (const gchar  *filename,
 //  save_color_mode_data (fd, image_id);
   save_resources (fd, image_id);
 
-  /* PSD format does not support layers in indexed images 
+  /* PSD format does not support layers in indexed images
 
   if (PSDImageData.baseType == GIMP_INDEXED)
     write_gint32 (fd, 0, "layers info section length");
   else*/
     save_layer_and_mask (fd, image_id);
 
-  /* If this is an indexed image, write now channel and layer info 
+  /* If this is an indexed image, write now channel and layer info
 
   save_data (fd, image_id);*/
 

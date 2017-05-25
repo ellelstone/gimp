@@ -917,7 +917,7 @@ compose (const gchar  *compose_type,
 
       image_ID_dst = gimp_item_get_image (layer_ID_dst);
       buffer_dst = gimp_drawable_get_shadow_buffer (layer_ID_dst);
-      
+
 //      profile = gimp_image_get_color_profile (image_ID_dst);
 //      gimp_color_profile_get_colorants (profile);
     }
@@ -993,7 +993,7 @@ create_new_image (const gchar    *filename,
 
   *layer_ID = gimp_layer_new (image_ID, _("Background"), width, height,
                               gdtype,
-                              100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                              100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image_ID, *layer_ID, -1, 0);
 
   *buffer = gimp_drawable_get_buffer (*layer_ID);

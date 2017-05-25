@@ -298,7 +298,7 @@ run (const gchar      *name,
 
   INIT_I18N ();
   gegl_init (NULL, NULL);
-  
+
   run_mode = param[0].data.d_int32;
   image_ID = param[1].data.d_image;
   layer    = param[2].data.d_drawable;
@@ -581,7 +581,7 @@ create_new_layer (gint32             image_ID,
 
   layer_ID = gimp_layer_new (image_ID, layername, width, height,
                              gdtype,
-                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                             100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image_ID, layer_ID, -1, position);
 
   return layer_ID;

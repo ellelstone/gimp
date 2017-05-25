@@ -526,7 +526,7 @@ emitgimp (gint         hcol,
                              hcol,
                              row,
                              GIMP_GRAY_IMAGE,
-                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                             100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
 
   buffer = gimp_drawable_get_buffer (layer_ID);

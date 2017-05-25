@@ -806,7 +806,7 @@ load_image (GFile              *file,
           layer = gimp_layer_new (image, name,
                                   cols, rows,
                                   layer_type,
-                                  100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                                  100, GIMP_LAYER_MODE_NORMAL);
         }
       else
         {
@@ -820,7 +820,7 @@ load_image (GFile              *file,
           layer = gimp_layer_new (image, name,
                                   cols, rows,
                                   layer_type,
-                                  100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                                  100, GIMP_LAYER_MODE_NORMAL);
           g_free (name);
         }
 
@@ -828,7 +828,7 @@ load_image (GFile              *file,
         {
            can't create the palette format here, need to get it from
            * an existing layer
-           
+
           base_format = gimp_drawable_get_format (layer);
         }*/
 

@@ -307,7 +307,7 @@ load_image (const gchar  *filename,
       components[3] = jas_image_getcmptbytype (image, JAS_IMAGE_CT_OPACITY);
 
       /* ImageMagick seems to write out the 'matte' component type
-	 (number 3) */
+   (number 3) */
       if (components[3] == -1)
         components[3] = jas_image_getcmptbytype (image, 3);
 
@@ -395,7 +395,7 @@ load_image (const gchar  *filename,
                              _("Background"),
                              width, height,
                              image_type,
-                             100, GIMP_LAYER_MODE_NORMAL_LEGACY);
+                             100, GIMP_LAYER_MODE_NORMAL);
   gimp_image_insert_layer (image_ID, layer_ID, -1, 0);
 
   buffer = gimp_drawable_get_buffer (layer_ID);

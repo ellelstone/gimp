@@ -618,7 +618,7 @@ psd_to_gimp_blend_mode (const gchar            *psd_mode,
   if (g_ascii_strncasecmp (psd_mode, "norm", 4) == 0)           /* Normal (ps3) */
     {
       if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_AUTO;
-      return GIMP_LAYER_MODE_NORMAL_LEGACY;
+      return GIMP_LAYER_MODE_NORMAL;
     }
 
   if (g_ascii_strncasecmp (psd_mode, "dark", 4) == 0)           /* Darken (ps3) */
@@ -729,7 +729,7 @@ psd_to_gimp_blend_mode (const gchar            *psd_mode,
                      mode_name);
         }
       if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_AUTO;
-      return GIMP_LAYER_MODE_NORMAL_LEGACY;
+      return GIMP_LAYER_MODE_NORMAL;
     }
 
   if (g_ascii_strncasecmp (psd_mode, "lgCl", 4) == 0)           /* Lighter Color */
@@ -741,7 +741,7 @@ psd_to_gimp_blend_mode (const gchar            *psd_mode,
                      mode_name);
         }
       if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_AUTO;
-      return GIMP_LAYER_MODE_NORMAL_LEGACY;
+      return GIMP_LAYER_MODE_NORMAL;
     }
 
   if (CONVERSION_WARNINGS)
@@ -754,7 +754,7 @@ psd_to_gimp_blend_mode (const gchar            *psd_mode,
 
   if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_AUTO;
 
-  return GIMP_LAYER_MODE_NORMAL_LEGACY;
+  return GIMP_LAYER_MODE_NORMAL;
 }
 
 gchar *
@@ -763,7 +763,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
 {
   gchar *psd_mode;
 
-  if (((layer_mode == GIMP_LAYER_MODE_NORMAL_LEGACY ||
+  if (((layer_mode == GIMP_LAYER_MODE_NORMAL ||
         layer_mode == GIMP_LAYER_MODE_DISSOLVE) &&
        (layer_composite != GIMP_LAYER_COMPOSITE_AUTO &&
         layer_composite != GIMP_LAYER_COMPOSITE_SRC_OVER)) ||
@@ -774,7 +774,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
 
   switch (layer_mode)
     {
-    case GIMP_LAYER_MODE_NORMAL_LEGACY:
+    case GIMP_LAYER_MODE_NORMAL:
       psd_mode = g_strndup ("norm", 4);                       /* Normal (ps3) */
       break;
 
@@ -790,12 +790,12 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_MULTIPLY:
-    case GIMP_LAYER_MODE_MULTIPLY_LEGACY:
+    case GIMP_LAYER_MODE_MULTIPLY:
       psd_mode = g_strndup ("mul ", 4);                       /* Multiply (ps3) */
       break;
 
     case GIMP_LAYER_MODE_SCREEN:
-    case GIMP_LAYER_MODE_SCREEN_LEGACY:
+    case GIMP_LAYER_MODE_SCREEN:
       psd_mode = g_strndup ("scrn", 4);                       /* Screen (ps3) */
       break;
 
@@ -804,16 +804,16 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DIFFERENCE:
-    case GIMP_LAYER_MODE_DIFFERENCE_LEGACY:
+    case GIMP_LAYER_MODE_DIFFERENCE:
       psd_mode = g_strndup ("diff", 4);                       /* Difference (ps3) */
       break;
 
     case GIMP_LAYER_MODE_ADDITION:
-    case GIMP_LAYER_MODE_ADDITION_LEGACY:
+    case GIMP_LAYER_MODE_ADDITION:
       psd_mode = g_strndup ("lddg", 4);                       /* Linear dodge (ps7)*/
       break;
 
-    case GIMP_LAYER_MODE_SUBTRACT_LEGACY:
+    case GIMP_LAYER_MODE_SUBTRACT:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -821,22 +821,22 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DARKEN_ONLY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY_LEGACY:
+    case GIMP_LAYER_MODE_DARKEN_ONLY:
       psd_mode = g_strndup ("dark", 4);                       /* Darken (ps3) */
       break;
 
     case GIMP_LAYER_MODE_LIGHTEN_ONLY:
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY_LEGACY:
+    case GIMP_LAYER_MODE_LIGHTEN_ONLY:
       psd_mode = g_strndup ("lite", 4);                       /* Lighten (ps3) */
       break;
 
     case GIMP_LAYER_MODE_LCH_HUE:
-    case GIMP_LAYER_MODE_HSV_HUE_LEGACY:
+    case GIMP_LAYER_MODE_HSV_HUE:
       psd_mode = g_strndup ("hue ", 4);                       /* Hue (ps3) */
       break;
 
     case GIMP_LAYER_MODE_LCH_CHROMA:
-    case GIMP_LAYER_MODE_HSV_SATURATION_LEGACY:
+    case GIMP_LAYER_MODE_HSV_SATURATION:
       if (CONVERSION_WARNINGS)
         g_message ("GIMP uses a different equation to Photoshop for "
                    "blend mode: %s. Results may differ.",
@@ -845,12 +845,12 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_LCH_COLOR:
-    case GIMP_LAYER_MODE_HSL_COLOR_LEGACY:
+    case GIMP_LAYER_MODE_HSL_COLOR:
       psd_mode = g_strndup ("colr", 4);                       /* Color (ps3) */
       break;
 
     case GIMP_LAYER_MODE_LCH_LIGHTNESS:
-    case GIMP_LAYER_MODE_HSV_VALUE_LEGACY:
+    case GIMP_LAYER_MODE_HSV_VALUE:
       if (CONVERSION_WARNINGS)
         g_message ("GIMP uses a different equation to Photoshop for "
                    "blend mode: %s. Results may differ.",
@@ -858,7 +858,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       psd_mode = g_strndup ("lum ", 4);                       /* Luminosity (ps3) */
       break;
 
-    case GIMP_LAYER_MODE_DIVIDE_LEGACY:
+    case GIMP_LAYER_MODE_DIVIDE:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -866,7 +866,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DODGE:
-    case GIMP_LAYER_MODE_DODGE_LEGACY:
+    case GIMP_LAYER_MODE_DODGE:
       psd_mode = g_strndup ("div ", 4);                       /* Color Dodge (ps6) */
       break;
 
@@ -875,7 +875,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_BURN:
-    case GIMP_LAYER_MODE_BURN_LEGACY:
+    case GIMP_LAYER_MODE_BURN:
       psd_mode = g_strndup ("idiv", 4);                       /* Color Burn (ps6) */
       break;
 
@@ -884,7 +884,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_HARDLIGHT:
-    case GIMP_LAYER_MODE_HARDLIGHT_LEGACY:
+    case GIMP_LAYER_MODE_HARDLIGHT:
       psd_mode = g_strndup ("hLit", 4);                       /* Hard Light (ps3) */
       break;
 
@@ -908,8 +908,8 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       psd_mode = g_strndup ("hMix", 4);                       /* Hard Mix (CS)*/
       break;
 
-    case GIMP_LAYER_MODE_OVERLAY_LEGACY:
-    case GIMP_LAYER_MODE_SOFTLIGHT_LEGACY:
+    case GIMP_LAYER_MODE_OVERLAY:
+    case GIMP_LAYER_MODE_SOFTLIGHT:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -917,7 +917,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_GRAIN_EXTRACT:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY:
+    case GIMP_LAYER_MODE_GRAIN_EXTRACT:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -925,7 +925,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_GRAIN_MERGE:
-    case GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY:
+    case GIMP_LAYER_MODE_GRAIN_MERGE:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -933,7 +933,7 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_COLOR_ERASE:
-    case GIMP_LAYER_MODE_COLOR_ERASE_LEGACY:
+    case GIMP_LAYER_MODE_COLOR_ERASE:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -986,7 +986,7 @@ gimp_layer_mode_effects_name (GimpLayerMode mode)
     "COLOR ERASE"
   };
   static gchar *err_name = NULL;
-  if (mode >= 0 && mode <= GIMP_LAYER_MODE_COLOR_ERASE_LEGACY)
+  if (mode >= 0 && mode <= GIMP_LAYER_MODE_COLOR_ERASE)
     return layer_mode_effects_names[mode];
   g_free (err_name);
 
