@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdio.h>
 #include "config.h"
 
 #include <stdio.h>
@@ -258,7 +259,9 @@ app_run (const gchar         *full_prog_name,
   language_init (gimp->config->language);
 
   /*  initialize lowlevel stuff  */
+//   printf("app.c gimp_gegl_init (gimp); 1\n");
   gimp_gegl_init (gimp);
+//   printf("app.c gimp_gegl_init (gimp); 2\n");
 
   /*  Connect our restore_after callback before gui_init() connects
    *  theirs, so ours runs first and can grab the initial monitor

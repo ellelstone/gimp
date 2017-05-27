@@ -750,7 +750,7 @@ gimp_layer_modes_init (void)
   gint i;
 
   for (i = 0; i < G_N_ELEMENTS (layer_mode_infos); i++)
-    {printf("gimp_layer_modes_init\n");
+    {
       g_assert ((GimpLayerMode) i == layer_mode_infos[i].layer_mode);
     }
 }

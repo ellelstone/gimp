@@ -69,7 +69,7 @@ gimp_gegl_init (Gimp *gimp)
                     NULL);
 /*  g_signal_connect (config, "notify::use-opencl",
                     FALSE, //G_CALLBACK (gimp_gegl_notify_use_opencl),
-                    NULL); 
+                    NULL);
                     * if this isn't commented out there is a glib warning
                     * g_signal_connect_data: assertion 'c_handler != NULL' failed
                     * */

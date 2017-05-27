@@ -54,18 +54,17 @@ GType gimp_layer_mode_get_type (void) G_GNUC_CONST;
 typedef enum
 {
   /*  Modes that exist since ancient times  */
-  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
   GIMP_LAYER_MODE_DISSOLVE,              /*< desc="Dissolve"                 >*/
-  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
 
-  /*  Since 2.8  */
+  /*  Since 2.10 (XCF version 9) */
   GIMP_LAYER_MODE_OVERLAY,               /*< desc="Overlay"                  >*/
   GIMP_LAYER_MODE_LCH_HUE,               /*< desc="Hue (LCH)"                >*/
   GIMP_LAYER_MODE_LCH_CHROMA,            /*< desc="Chroma (LCH)"             >*/
   GIMP_LAYER_MODE_LCH_COLOR,             /*< desc="Color (LCH)"              >*/
   GIMP_LAYER_MODE_LCH_LIGHTNESS,         /*< desc="Lightness (LCH)"          >*/
 
-  /*  Since 2.10  */
+  /*  Since 2.10 (XCF version 10)  */
+  GIMP_LAYER_MODE_NORMAL,                /*< desc="Normal"                   >*/
   GIMP_LAYER_MODE_BEHIND,                /*< desc="Behind"                   >*/
   GIMP_LAYER_MODE_MULTIPLY,              /*< desc="Multiply"                 >*/
   GIMP_LAYER_MODE_SCREEN,                /*< desc="Screen"                   >*/
@@ -94,6 +93,7 @@ typedef enum
   GIMP_LAYER_MODE_LUMA_DARKEN_ONLY,   /*< desc="Luma/Luminance darken only"  >*/
   GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY,  /*< desc="Luma/Luminance lighten only" >*/
   GIMP_LAYER_MODE_LUMINANCE,             /*< desc="Luminance"                >*/
+  GIMP_LAYER_MODE_COLOR_ERASE,           /*< desc="Color erase"              >*/
   GIMP_LAYER_MODE_ERASE,                 /*< desc="Erase"                    >*/
   GIMP_LAYER_MODE_MERGE,                 /*< desc="Merge"                    >*/
   GIMP_LAYER_MODE_SPLIT,                 /*< desc="Split"                    >*/

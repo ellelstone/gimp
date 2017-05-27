@@ -85,9 +85,7 @@ void
 gimp_operations_init (Gimp *gimp)
 {
   g_return_if_fail (GIMP_IS_GIMP (gimp));
-
   gimp_layer_modes_init ();
-
   g_type_class_ref (GIMP_TYPE_OPERATION_BLEND);
   g_type_class_ref (GIMP_TYPE_OPERATION_BORDER);
   g_type_class_ref (GIMP_TYPE_OPERATION_CAGE_COEF_CALC);
@@ -122,11 +120,11 @@ gimp_operations_init (Gimp *gimp)
   g_type_class_ref (GIMP_TYPE_OPERATION_REPLACE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ANTI_ERASE);
 
-  gimp_operation_config_register (gimp,
+/*  gimp_operation_config_register (gimp,
                                   "gimp:brightness-contrast",
                                   GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
   set_compat_file (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                   "gimp-brightness-contrast-tool.settings");
+                   "gimp-brightness-contrast-tool.settings");*/
 
   gimp_operation_config_register (gimp,
                                   "gimp:curves",

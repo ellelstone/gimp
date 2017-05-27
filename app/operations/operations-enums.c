@@ -79,14 +79,13 @@ gimp_layer_mode_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { GIMP_LAYER_MODE_NORMAL, "GIMP_LAYER_MODE_NORMAL", "normal" },
     { GIMP_LAYER_MODE_DISSOLVE, "GIMP_LAYER_MODE_DISSOLVE", "dissolve" },
-    { GIMP_LAYER_MODE_COLOR_ERASE, "GIMP_LAYER_MODE_COLOR_ERASE", "color-erase" },
     { GIMP_LAYER_MODE_OVERLAY, "GIMP_LAYER_MODE_OVERLAY", "overlay" },
     { GIMP_LAYER_MODE_LCH_HUE, "GIMP_LAYER_MODE_LCH_HUE", "lch-hue" },
     { GIMP_LAYER_MODE_LCH_CHROMA, "GIMP_LAYER_MODE_LCH_CHROMA", "lch-chroma" },
     { GIMP_LAYER_MODE_LCH_COLOR, "GIMP_LAYER_MODE_LCH_COLOR", "lch-color" },
     { GIMP_LAYER_MODE_LCH_LIGHTNESS, "GIMP_LAYER_MODE_LCH_LIGHTNESS", "lch-lightness" },
+    { GIMP_LAYER_MODE_NORMAL, "GIMP_LAYER_MODE_NORMAL", "normal" },
     { GIMP_LAYER_MODE_BEHIND, "GIMP_LAYER_MODE_BEHIND", "behind" },
     { GIMP_LAYER_MODE_MULTIPLY, "GIMP_LAYER_MODE_MULTIPLY", "multiply" },
     { GIMP_LAYER_MODE_SCREEN, "GIMP_LAYER_MODE_SCREEN", "screen" },
@@ -115,6 +114,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, "GIMP_LAYER_MODE_LUMA_DARKEN_ONLY", "luma-darken-only" },
     { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, "GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY", "luma-lighten-only" },
     { GIMP_LAYER_MODE_LUMINANCE, "GIMP_LAYER_MODE_LUMINANCE", "luminance" },
+    { GIMP_LAYER_MODE_COLOR_ERASE, "GIMP_LAYER_MODE_COLOR_ERASE", "color-erase" },
     { GIMP_LAYER_MODE_ERASE, "GIMP_LAYER_MODE_ERASE", "erase" },
     { GIMP_LAYER_MODE_MERGE, "GIMP_LAYER_MODE_MERGE", "merge" },
     { GIMP_LAYER_MODE_SPLIT, "GIMP_LAYER_MODE_SPLIT", "split" },
@@ -125,14 +125,13 @@ gimp_layer_mode_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_LAYER_MODE_NORMAL, NC_("layer-mode", "Normal"), NULL },
     { GIMP_LAYER_MODE_DISSOLVE, NC_("layer-mode", "Dissolve"), NULL },
-    { GIMP_LAYER_MODE_COLOR_ERASE, NC_("layer-mode", "Color erase"), NULL },
     { GIMP_LAYER_MODE_OVERLAY, NC_("layer-mode", "Overlay"), NULL },
     { GIMP_LAYER_MODE_LCH_HUE, NC_("layer-mode", "Hue (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_CHROMA, NC_("layer-mode", "Chroma (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_COLOR, NC_("layer-mode", "Color (LCH)"), NULL },
     { GIMP_LAYER_MODE_LCH_LIGHTNESS, NC_("layer-mode", "Lightness (LCH)"), NULL },
+    { GIMP_LAYER_MODE_NORMAL, NC_("layer-mode", "Normal"), NULL },
     { GIMP_LAYER_MODE_BEHIND, NC_("layer-mode", "Behind"), NULL },
     { GIMP_LAYER_MODE_MULTIPLY, NC_("layer-mode", "Multiply"), NULL },
     { GIMP_LAYER_MODE_SCREEN, NC_("layer-mode", "Screen"), NULL },
@@ -161,6 +160,7 @@ gimp_layer_mode_get_type (void)
     { GIMP_LAYER_MODE_LUMA_DARKEN_ONLY, NC_("layer-mode", "Luma/Luminance darken only"), NULL },
     { GIMP_LAYER_MODE_LUMA_LIGHTEN_ONLY, NC_("layer-mode", "Luma/Luminance lighten only"), NULL },
     { GIMP_LAYER_MODE_LUMINANCE, NC_("layer-mode", "Luminance"), NULL },
+    { GIMP_LAYER_MODE_COLOR_ERASE, NC_("layer-mode", "Color erase"), NULL },
     { GIMP_LAYER_MODE_ERASE, NC_("layer-mode", "Erase"), NULL },
     { GIMP_LAYER_MODE_MERGE, NC_("layer-mode", "Merge"), NULL },
     { GIMP_LAYER_MODE_SPLIT, NC_("layer-mode", "Split"), NULL },
