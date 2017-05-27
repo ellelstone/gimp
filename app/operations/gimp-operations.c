@@ -48,7 +48,6 @@
 #include "gimpoperationshrink.h"
 #include "gimpoperationthresholdalpha.h"
 
-#include "gimpoperationbrightnesscontrast.h"
 #include "gimpoperationcurves.h"
 #include "gimpoperationdesaturate.h"
 #include "gimpoperationlevels.h"
@@ -104,7 +103,6 @@ gimp_operations_init (Gimp *gimp)
   g_type_class_ref (GIMP_TYPE_OPERATION_SHRINK);
   g_type_class_ref (GIMP_TYPE_OPERATION_THRESHOLD_ALPHA);
 
-  g_type_class_ref (GIMP_TYPE_OPERATION_BRIGHTNESS_CONTRAST);
   g_type_class_ref (GIMP_TYPE_OPERATION_CURVES);
   g_type_class_ref (GIMP_TYPE_OPERATION_DESATURATE);
   g_type_class_ref (GIMP_TYPE_OPERATION_LEVELS);

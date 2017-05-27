@@ -16,54 +16,6 @@
 
 # "Perlized" from C source by Manish Singh <yosh@gimp.org>
 
-sub drawable_brightness_contrast {
-    $blurb = 'Modify brightness/contrast in the specified drawable.';
-
-    $help = <<'HELP';
-This procedures allows the brightness and contrast of the specified drawable to
-be modified.  Both 'brightness' and 'contrast' parameters are defined between
--0.5 and 0.5.
-HELP
-
-    &std_pdb_misc;
-    $date = '1997';
-    $since = '2.10';
-
-    @inargs = (
-  { name => 'drawable', type => 'drawable',
-    desc => 'The drawable' },
-  { name => 'brightness', type => '-0.5 <= float <= 0.5',
-    desc => 'Brightness adjustment' },
-  { name => 'contrast', type => '-0.5 <= float <= 0.5',
-    desc => 'Contrast adjustment' }
-    );
-
-    %invoke = (
-        headers => [ qw("operations/gimpbrightnesscontrastconfig.h") ],
-  code => <<'CODE'
-{
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-    {
-      GObject *config = g_object_new (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                                      "brightness", brightness,
-                                      "contrast",   contrast,
-                                      NULL);
-
-      gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             C_("undo-type", "Brightness-Contrast"),
-                                             "gimp:brightness-contrast",
-                                             config);
-      g_object_unref (config);
-    }
-  else
-    success = FALSE;
-}
-CODE
-    );
-}
-
 sub drawable_curves_explicit {
     $blurb = 'Modifies the intensity curve(s) for specified drawable.';
 
@@ -625,8 +577,7 @@ CODE
               "gimppdb-utils.h"
               "gimp-intl.h");
 
-@procs = qw(drawable_brightness_contrast
-            drawable_curves_explicit drawable_curves_spline
+@procs = qw(drawable_curves_explicit drawable_curves_spline
             drawable_desaturate
             drawable_equalize
             drawable_histogram

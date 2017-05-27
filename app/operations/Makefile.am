@@ -27,8 +27,6 @@ libappoperations_a_sources = \
 	\
 	gimp-operation-config.c			\
 	gimp-operation-config.h			\
-	gimpbrightnesscontrastconfig.c		\
-	gimpbrightnesscontrastconfig.h		\
 	gimpcageconfig.c			\
 	gimpcageconfig.h			\
 	gimpcurvesconfig.c			\
@@ -73,8 +71,6 @@ libappoperations_a_sources = \
 	\
 	gimpoperationpointfilter.c		\
 	gimpoperationpointfilter.h		\
-	gimpoperationbrightnesscontrast.c	\
-	gimpoperationbrightnesscontrast.h	\
 	gimpoperationcurves.c			\
 	gimpoperationcurves.h			\
 	gimpoperationdesaturate.c		\

@@ -16,44 +16,6 @@
 
 # "Perlized" from C source by Manish Singh <yosh@gimp.org>
 
-sub brightness_contrast {
-    &std_pdb_deprecated ('gimp-drawable-brightness-contrast');
-
-    @inargs = (
-  { name => 'drawable', type => 'drawable',
-    desc => 'The drawable' },
-  { name => 'brightness', type => '-127 <= int32 <= 127',
-    desc => 'Brightness adjustment' },
-  { name => 'contrast', type => '-127 <= int32 <= 127',
-    desc => 'Contrast adjustment' }
-    );
-
-    %invoke = (
-        headers => [ qw("operations/gimpbrightnesscontrastconfig.h") ],
-  code => <<'CODE'
-{
-  if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                 GIMP_PDB_ITEM_CONTENT, error) &&
-      gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-    {
-      GObject *config = g_object_new (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                                      "brightness", brightness / 127.0,
-                                      "contrast",   contrast   / 127.0,
-                                      NULL);
-
-      gimp_drawable_apply_operation_by_name (drawable, progress,
-                                             C_("undo-type", "Brightness-Contrast"),
-                                             "gimp:brightness-contrast",
-                                             config);
-      g_object_unref (config);
-    }
-  else
-    success = FALSE;
-}
-CODE
-    );
-}
-
 sub levels {
     &std_pdb_deprecated ('gimp-drawable-levels');
 
@@ -584,8 +546,7 @@ CODE
               "gimppdb-utils.h"
               "gimp-intl.h");
 
-@procs = qw(brightness_contrast
-            levels levels_auto levels_stretch
+@procs = qw(levels levels_auto levels_stretch
             posterize
             desaturate desaturate_full
             equalize
