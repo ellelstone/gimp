@@ -599,10 +599,10 @@
       <separator />
 
     <menu action="filters-blur-menu" name="Blur">
-        <menuitem action="filters-box-blur" />
-        <menuitem action="filters-median-blur" />
         <menuitem action="filters-gaussian-blur" />
         <menuitem action="filters-gaussian-blur-selective" />
+<!--        <menuitem action="filters-box-blur" />
+        <menuitem action="filters-median-blur" />-->
       <separator />
      <placeholder name="Motion">
        <menuitem action="filters-motion-blur-circular" />

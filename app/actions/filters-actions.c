@@ -120,7 +120,7 @@ static const GimpStringActionEntry filters_actions[] =
 //  { "filters-box-blur", GIMP_ICON_GEGL,
 //    NC_("filters-action", "Box _Blur..."), NULL, NULL,
 //    "gegl:box-blur",
-//    GIMP_HELP_FILTER_BOX_BLUR  /* FIXME GIMP_HELP_FILTER_BOX_BLUR */ },
+//    NULL /* FIXME GIMP_HELP_FILTER_BOX_BLUR */},
 
   { "filters-bump-map", GIMP_ICON_GEGL,
     NC_("filters-action", "_Bump Map..."), NULL, NULL,
@@ -337,10 +337,10 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:maze",
     GIMP_HELP_FILTER_MAZE },
 
-//  { "filters-median-blur", GIMP_STOCK_GEGL,
-//    NC_("filters-action", "_Median Blur..."), NULL, NULL,
-//    "gegl:median-blur",
-//    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */},
+  { "filters-median-blur", GIMP_ICON_GEGL,
+    NC_("filters-action", "_Median Blur..."), NULL, NULL,
+    "gegl:median-blur",
+    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */},
 
   { "filters-mono-mixer", GIMP_ICON_GEGL,
     NC_("filters-action", "_Mono Mixer..."), NULL, NULL,

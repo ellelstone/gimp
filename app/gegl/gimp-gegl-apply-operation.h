@@ -109,6 +109,22 @@ void   gimp_gegl_apply_gaussian_blur   (GeglBuffer             *src_buffer,
                                         gdouble                 std_dev_x,
                                         gdouble                 std_dev_y);
 
+/*void   gimp_gegl_apply_box_blur        (GeglBuffer             *src_buffer,
+                                        GimpProgress           *progress,
+                                        const gchar            *undo_desc,
+                                        GeglBuffer             *dest_buffer,
+                                        const GeglRectangle    *dest_rect,
+                                        gdouble                 std_dev_x,
+                                        gdouble                 std_dev_y);
+
+void   gimp_gegl_apply_median_blur     (GeglBuffer             *src_buffer,
+                                        GimpProgress           *progress,
+                                        const gchar            *undo_desc,
+                                        GeglBuffer             *dest_buffer,
+                                        const GeglRectangle    *dest_rect,
+                                        gdouble                 std_dev_x,
+                                        gdouble                 std_dev_y);*/
+
 void   gimp_gegl_apply_invert_gamma    (GeglBuffer             *src_buffer,
                                         GimpProgress           *progress,
                                         const gchar            *undo_desc,

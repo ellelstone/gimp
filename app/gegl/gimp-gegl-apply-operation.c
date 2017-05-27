@@ -536,7 +536,59 @@ gimp_gegl_apply_gaussian_blur (GeglBuffer          *src_buffer,
                              node, dest_buffer, dest_rect);
   g_object_unref (node);
 }
+/*
+void
+gimp_gegl_apply_box_blur (GeglBuffer          *src_buffer,
+                               GimpProgress        *progress,
+                               const gchar         *undo_desc,
+                               GeglBuffer          *dest_buffer,
+                               const GeglRectangle *dest_rect,
+                               gdouble              std_dev_x,
+                               gdouble              std_dev_y)
+{
+  GeglNode *node;
 
+  g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
+  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
+
+  node = gegl_node_new_child (NULL,
+                              "operation", "gegl:box-blur",
+                              "std-dev-x", std_dev_x,
+                              "std-dev-y", std_dev_y,
+                              NULL);
+
+  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+                             node, dest_buffer, dest_rect);
+  g_object_unref (node);
+}
+
+void
+gimp_gegl_apply_median_blur (GeglBuffer          *src_buffer,
+                               GimpProgress        *progress,
+                               const gchar         *undo_desc,
+                               GeglBuffer          *dest_buffer,
+                               const GeglRectangle *dest_rect,
+                               gdouble              std_dev_x,
+                               gdouble              std_dev_y)
+{
+  GeglNode *node;
+
+  g_return_if_fail (GEGL_IS_BUFFER (src_buffer));
+  g_return_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress));
+  g_return_if_fail (GEGL_IS_BUFFER (dest_buffer));
+
+  node = gegl_node_new_child (NULL,
+                              "operation", "gegl:median-blur",
+                              "std-dev-x", std_dev_x,
+                              "std-dev-y", std_dev_y,
+                              NULL);
+
+  gimp_gegl_apply_operation (src_buffer, progress, undo_desc,
+                             node, dest_buffer, dest_rect);
+  g_object_unref (node);
+}
+*/
 void
 gimp_gegl_apply_invert_gamma (GeglBuffer    *src_buffer,
                               GimpProgress  *progress,
