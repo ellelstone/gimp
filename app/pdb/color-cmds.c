@@ -37,7 +37,6 @@
 #include "core/gimpdrawable.h"
 #include "core/gimphistogram.h"
 #include "core/gimpparamspecs.h"
-#include "operations/gimpbrightnesscontrastconfig.h"
 #include "operations/gimpcurvesconfig.h"
 #include "operations/gimplevelsconfig.h"
 #include "plug-in/gimpplugin.h"
@@ -50,48 +49,6 @@
 
 #include "gimp-intl.h"
 
-
-static GimpValueArray *
-brightness_contrast_invoker (GimpProcedure         *procedure,
-                             Gimp                  *gimp,
-                             GimpContext           *context,
-                             GimpProgress          *progress,
-                             const GimpValueArray  *args,
-                             GError               **error)
-{
-  gboolean success = TRUE;
-  GimpDrawable *drawable;
-  gint32 brightness;
-  gint32 contrast;
-
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  brightness = g_value_get_int (gimp_value_array_index (args, 1));
-  contrast = g_value_get_int (gimp_value_array_index (args, 2));
-
-  if (success)
-    {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        {
-          GObject *config = g_object_new (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                                          "brightness", brightness / 127.0,
-                                          "contrast",   contrast   / 127.0,
-                                          NULL);
-
-          gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 C_("undo-type", "Brightness-Contrast"),
-                                                 "gimp:brightness-contrast",
-                                                 config);
-          g_object_unref (config);
-        }
-      else
-        success = FALSE;
-    }
-
-  return gimp_procedure_get_return_values (procedure, success,
-                                           error ? *error : NULL);
-}
 
 static GimpValueArray *
 levels_invoker (GimpProcedure         *procedure,
@@ -631,41 +588,6 @@ void
 register_color_procs (GimpPDB *pdb)
 {
   GimpProcedure *procedure;
-
-  /*
-   * gimp-brightness-contrast
-   */
-  procedure = gimp_procedure_new (brightness_contrast_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-brightness-contrast");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-brightness-contrast",
-                                     "Deprecated: Use 'gimp-drawable-brightness-contrast' instead.",
-                                     "Deprecated: Use 'gimp-drawable-brightness-contrast' instead.",
-                                     "",
-                                     "",
-                                     "",
-                                     "gimp-drawable-brightness-contrast");
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("brightness",
-                                                      "brightness",
-                                                      "Brightness adjustment",
-                                                      -127, 127, -127,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("contrast",
-                                                      "contrast",
-                                                      "Contrast adjustment",
-                                                      -127, 127, -127,
-                                                      GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
 
   /*
    * gimp-levels

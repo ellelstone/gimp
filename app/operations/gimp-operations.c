@@ -55,7 +55,6 @@
 #include "gimpoperationthreshold.h"
 
 #include "gimp-operation-config.h"
-#include "gimpbrightnesscontrastconfig.h"
 #include "gimpcurvesconfig.h"
 #include "gimplevelsconfig.h"
 
@@ -117,12 +116,6 @@ gimp_operations_init (Gimp *gimp)
   g_type_class_ref (GIMP_TYPE_OPERATION_SPLIT);
   g_type_class_ref (GIMP_TYPE_OPERATION_REPLACE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ANTI_ERASE);
-
-/*  gimp_operation_config_register (gimp,
-                                  "gimp:brightness-contrast",
-                                  GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG);
-  set_compat_file (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                   "gimp-brightness-contrast-tool.settings");*/
 
   gimp_operation_config_register (gimp,
                                   "gimp:curves",

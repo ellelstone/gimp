@@ -551,9 +551,6 @@
       <menuitem action="tools-curves" />
       <menuitem action="filters-hue-chroma" />
       <separator />
-<!--      <menuitem action="tools-hue-saturation" />
-      <menuitem action="tools-color-balance" />
-      <menuitem action="tools-brightness-contrast" />-->
       <separator />
         <menuitem action="filters-stretch-contrast" />
         <menuitem action="drawable-invert" />
@@ -809,15 +806,6 @@
              <menuitem action="tools-n-point-deformation" />
   -->
       </menu>
-<!--      <menu action="tools-color-menu" name="Color Tools">-->
-<!--        <menuitem action="tools-color-balance" />-->
-<!--        <menuitem action="tools-hue-chroma" />-->
-<!--        <menuitem action="tools-colorize" />-->
-<!--        <menuitem action="tools-brightness-contrast" />
-        <menuitem action="tools-threshold" />
-        <menuitem action="tools-levels" />
-        <menuitem action="tools-curves" />
-      </menu>-->
       <menuitem action="tools-vector" />
       <menuitem action="tools-color-picker" />
       <menuitem action="tools-zoom" />

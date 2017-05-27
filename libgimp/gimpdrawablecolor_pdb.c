@@ -36,45 +36,6 @@
 
 
 /**
- * gimp_drawable_brightness_contrast:
- * @drawable_ID: The drawable.
- * @brightness: Brightness adjustment.
- * @contrast: Contrast adjustment.
- *
- * Modify brightness/contrast in the specified drawable.
- *
- * This procedures allows the brightness and contrast of the specified
- * drawable to be modified. Both 'brightness' and 'contrast' parameters
- * are defined between -0.5 and 0.5.
- *
- * Returns: TRUE on success.
- *
- * Since: 2.10
- **/
-gboolean
-gimp_drawable_brightness_contrast (gint32  drawable_ID,
-                                   gdouble brightness,
-                                   gdouble contrast)
-{
-  GimpParam *return_vals;
-  gint nreturn_vals;
-  gboolean success = TRUE;
-
-  return_vals = gimp_run_procedure ("gimp-drawable-brightness-contrast",
-                                    &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_FLOAT, brightness,
-                                    GIMP_PDB_FLOAT, contrast,
-                                    GIMP_PDB_END);
-
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
-
-  gimp_destroy_params (return_vals, nreturn_vals);
-
-  return success;
-}
-
-/**
  * gimp_drawable_curves_explicit:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.

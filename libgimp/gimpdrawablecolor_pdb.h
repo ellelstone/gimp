@@ -32,46 +32,43 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-gboolean gimp_drawable_brightness_contrast (gint32                drawable_ID,
-                                            gdouble               brightness,
-                                            gdouble               contrast);
-gboolean gimp_drawable_curves_explicit     (gint32                drawable_ID,
-                                            GimpHistogramChannel  channel,
-                                            gint                  num_values,
-                                            const gdouble        *values);
-gboolean gimp_drawable_curves_spline       (gint32                drawable_ID,
-                                            GimpHistogramChannel  channel,
-                                            gint                  num_points,
-                                            const gdouble        *points);
-gboolean gimp_drawable_desaturate          (gint32                drawable_ID,
-                                            GimpDesaturateMode    desaturate_mode);
-gboolean gimp_drawable_equalize            (gint32                drawable_ID,
-                                            gboolean              mask_only);
-gboolean gimp_drawable_histogram           (gint32                drawable_ID,
-                                            GimpHistogramChannel  channel,
-                                            gdouble               start_range,
-                                            gdouble               end_range,
-                                            gdouble              *mean,
-                                            gdouble              *std_dev,
-                                            gdouble              *median,
-                                            gdouble              *pixels,
-                                            gdouble              *count,
-                                            gdouble              *percentile);
-gboolean gimp_drawable_invert              (gint32                drawable_ID);
-gboolean gimp_drawable_levels              (gint32                drawable_ID,
-                                            GimpHistogramChannel  channel,
-                                            gdouble               low_input,
-                                            gdouble               high_input,
-                                            gdouble               gamma,
-                                            gdouble               low_output,
-                                            gdouble               high_output);
-gboolean gimp_drawable_levels_stretch      (gint32                drawable_ID);
-gboolean gimp_drawable_posterize           (gint32                drawable_ID,
-                                            gint                  levels);
-gboolean gimp_drawable_threshold           (gint32                drawable_ID,
-                                            GimpHistogramChannel  channel,
-                                            gdouble               low_threshold,
-                                            gdouble               high_threshold);
+gboolean gimp_drawable_curves_explicit (gint32                drawable_ID,
+                                        GimpHistogramChannel  channel,
+                                        gint                  num_values,
+                                        const gdouble        *values);
+gboolean gimp_drawable_curves_spline   (gint32                drawable_ID,
+                                        GimpHistogramChannel  channel,
+                                        gint                  num_points,
+                                        const gdouble        *points);
+gboolean gimp_drawable_desaturate      (gint32                drawable_ID,
+                                        GimpDesaturateMode    desaturate_mode);
+gboolean gimp_drawable_equalize        (gint32                drawable_ID,
+                                        gboolean              mask_only);
+gboolean gimp_drawable_histogram       (gint32                drawable_ID,
+                                        GimpHistogramChannel  channel,
+                                        gdouble               start_range,
+                                        gdouble               end_range,
+                                        gdouble              *mean,
+                                        gdouble              *std_dev,
+                                        gdouble              *median,
+                                        gdouble              *pixels,
+                                        gdouble              *count,
+                                        gdouble              *percentile);
+gboolean gimp_drawable_invert          (gint32                drawable_ID);
+gboolean gimp_drawable_levels          (gint32                drawable_ID,
+                                        GimpHistogramChannel  channel,
+                                        gdouble               low_input,
+                                        gdouble               high_input,
+                                        gdouble               gamma,
+                                        gdouble               low_output,
+                                        gdouble               high_output);
+gboolean gimp_drawable_levels_stretch  (gint32                drawable_ID);
+gboolean gimp_drawable_posterize       (gint32                drawable_ID,
+                                        gint                  levels);
+gboolean gimp_drawable_threshold       (gint32                drawable_ID,
+                                        GimpHistogramChannel  channel,
+                                        gdouble               low_threshold,
+                                        gdouble               high_threshold);
 
 
 G_END_DECLS

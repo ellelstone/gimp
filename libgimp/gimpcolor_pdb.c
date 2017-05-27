@@ -35,39 +35,6 @@
 
 
 /**
- * gimp_brightness_contrast:
- * @drawable_ID: The drawable.
- * @brightness: Brightness adjustment.
- * @contrast: Contrast adjustment.
- *
- * Deprecated: Use gimp_drawable_brightness_contrast() instead.
- *
- * Returns: TRUE on success.
- **/
-gboolean
-gimp_brightness_contrast (gint32 drawable_ID,
-                          gint   brightness,
-                          gint   contrast)
-{
-  GimpParam *return_vals;
-  gint nreturn_vals;
-  gboolean success = TRUE;
-
-  return_vals = gimp_run_procedure ("gimp-brightness-contrast",
-                                    &nreturn_vals,
-                                    GIMP_PDB_DRAWABLE, drawable_ID,
-                                    GIMP_PDB_INT32, brightness,
-                                    GIMP_PDB_INT32, contrast,
-                                    GIMP_PDB_END);
-
-  success = return_vals[0].data.d_status == GIMP_PDB_SUCCESS;
-
-  gimp_destroy_params (return_vals, nreturn_vals);
-
-  return success;
-}
-
-/**
  * gimp_levels:
  * @drawable_ID: The drawable.
  * @channel: The channel to modify.

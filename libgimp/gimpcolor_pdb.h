@@ -32,59 +32,55 @@ G_BEGIN_DECLS
 /* For information look into the C source or the html documentation */
 
 
-GIMP_DEPRECATED_FOR(gimp_drawable_brightness_contrast)
-gboolean gimp_brightness_contrast (gint32                drawable_ID,
-                                   gint                  brightness,
-                                   gint                  contrast);
 GIMP_DEPRECATED_FOR(gimp_drawable_levels)
-gboolean gimp_levels              (gint32                drawable_ID,
-                                   GimpHistogramChannel  channel,
-                                   gint                  low_input,
-                                   gint                  high_input,
-                                   gdouble               gamma,
-                                   gint                  low_output,
-                                   gint                  high_output);
+gboolean gimp_levels          (gint32                drawable_ID,
+                               GimpHistogramChannel  channel,
+                               gint                  low_input,
+                               gint                  high_input,
+                               gdouble               gamma,
+                               gint                  low_output,
+                               gint                  high_output);
 GIMP_DEPRECATED_FOR(gimp_drawable_levels_stretch)
-gboolean gimp_levels_auto         (gint32                drawable_ID);
+gboolean gimp_levels_auto     (gint32                drawable_ID);
 GIMP_DEPRECATED_FOR(gimp_drawable_levels_stretch)
-gboolean gimp_levels_stretch      (gint32                drawable_ID);
+gboolean gimp_levels_stretch  (gint32                drawable_ID);
 GIMP_DEPRECATED_FOR(gimp_drawable_posterize)
-gboolean gimp_posterize           (gint32                drawable_ID,
-                                   gint                  levels);
+gboolean gimp_posterize       (gint32                drawable_ID,
+                               gint                  levels);
 GIMP_DEPRECATED_FOR(gimp_drawable_desaturate)
-gboolean gimp_desaturate          (gint32                drawable_ID);
+gboolean gimp_desaturate      (gint32                drawable_ID);
 GIMP_DEPRECATED_FOR(gimp_drawable_desaturate)
-gboolean gimp_desaturate_full     (gint32                drawable_ID,
-                                   GimpDesaturateMode    desaturate_mode);
+gboolean gimp_desaturate_full (gint32                drawable_ID,
+                               GimpDesaturateMode    desaturate_mode);
 GIMP_DEPRECATED_FOR(gimp_drawable_equalize)
-gboolean gimp_equalize            (gint32                drawable_ID,
-                                   gboolean              mask_only);
-gboolean gimp_invert              (gint32                drawable_ID);
+gboolean gimp_equalize        (gint32                drawable_ID,
+                               gboolean              mask_only);
+gboolean gimp_invert          (gint32                drawable_ID);
 GIMP_DEPRECATED_FOR(gimp_drawable_curves_spline)
-gboolean gimp_curves_spline       (gint32                drawable_ID,
-                                   GimpHistogramChannel  channel,
-                                   gint                  num_points,
-                                   const guint8         *control_pts);
+gboolean gimp_curves_spline   (gint32                drawable_ID,
+                               GimpHistogramChannel  channel,
+                               gint                  num_points,
+                               const guint8         *control_pts);
 GIMP_DEPRECATED_FOR(gimp_drawable_curves_explicit)
-gboolean gimp_curves_explicit     (gint32                drawable_ID,
-                                   GimpHistogramChannel  channel,
-                                   gint                  num_bytes,
-                                   const guint8         *curve);
+gboolean gimp_curves_explicit (gint32                drawable_ID,
+                               GimpHistogramChannel  channel,
+                               gint                  num_bytes,
+                               const guint8         *curve);
 GIMP_DEPRECATED_FOR(gimp_drawable_histogram)
-gboolean gimp_histogram           (gint32                drawable_ID,
-                                   GimpHistogramChannel  channel,
-                                   gint                  start_range,
-                                   gint                  end_range,
-                                   gdouble              *mean,
-                                   gdouble              *std_dev,
-                                   gdouble              *median,
-                                   gdouble              *pixels,
-                                   gdouble              *count,
-                                   gdouble              *percentile);
+gboolean gimp_histogram       (gint32                drawable_ID,
+                               GimpHistogramChannel  channel,
+                               gint                  start_range,
+                               gint                  end_range,
+                               gdouble              *mean,
+                               gdouble              *std_dev,
+                               gdouble              *median,
+                               gdouble              *pixels,
+                               gdouble              *count,
+                               gdouble              *percentile);
 GIMP_DEPRECATED_FOR(gimp_drawable_threshold)
-gboolean gimp_threshold           (gint32                drawable_ID,
-                                   gint                  low_threshold,
-                                   gint                  high_threshold);
+gboolean gimp_threshold       (gint32                drawable_ID,
+                               gint                  low_threshold,
+                               gint                  high_threshold);
 
 
 G_END_DECLS

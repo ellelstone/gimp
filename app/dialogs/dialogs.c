@@ -223,10 +223,7 @@ static GtkWidget * dialogs_restore_window (GimpDialogFactory *factory,
 static const GimpDialogFactoryEntry entries[] =
 {
   /*  foreign toplevels without constructor  */
-//  FOREIGN ("gimp-brightness-contrast-tool-dialog", TRUE,  FALSE),
-//  FOREIGN ("gimp-color-balance-tool-dialog",       TRUE,  FALSE),
   FOREIGN ("gimp-color-picker-tool-dialog",        TRUE,  TRUE),
-//  FOREIGN ("gimp-colorize-tool-dialog",            TRUE,  FALSE),
   FOREIGN ("gimp-crop-tool-dialog",                TRUE,  FALSE),
   FOREIGN ("gimp-curves-tool-dialog",              TRUE,  TRUE),
   FOREIGN ("gimp-desaturate-tool-dialog",          TRUE,  FALSE),

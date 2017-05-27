@@ -37,7 +37,6 @@
 #include "core/gimpdrawable.h"
 #include "core/gimphistogram.h"
 #include "core/gimpparamspecs.h"
-#include "operations/gimpbrightnesscontrastconfig.h"
 #include "operations/gimpcurvesconfig.h"
 #include "operations/gimplevelsconfig.h"
 #include "plug-in/gimpplugin.h"
@@ -50,48 +49,6 @@
 
 #include "gimp-intl.h"
 
-
-static GimpValueArray *
-drawable_brightness_contrast_invoker (GimpProcedure         *procedure,
-                                      Gimp                  *gimp,
-                                      GimpContext           *context,
-                                      GimpProgress          *progress,
-                                      const GimpValueArray  *args,
-                                      GError               **error)
-{
-  gboolean success = TRUE;
-  GimpDrawable *drawable;
-  gdouble brightness;
-  gdouble contrast;
-
-  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 0), gimp);
-  brightness = g_value_get_double (gimp_value_array_index (args, 1));
-  contrast = g_value_get_double (gimp_value_array_index (args, 2));
-
-  if (success)
-    {
-      if (gimp_pdb_item_is_attached (GIMP_ITEM (drawable), NULL,
-                                     GIMP_PDB_ITEM_CONTENT, error) &&
-          gimp_pdb_item_is_not_group (GIMP_ITEM (drawable), error))
-        {
-          GObject *config = g_object_new (GIMP_TYPE_BRIGHTNESS_CONTRAST_CONFIG,
-                                          "brightness", brightness,
-                                          "contrast",   contrast,
-                                          NULL);
-
-          gimp_drawable_apply_operation_by_name (drawable, progress,
-                                                 C_("undo-type", "Brightness-Contrast"),
-                                                 "gimp:brightness-contrast",
-                                                 config);
-          g_object_unref (config);
-        }
-      else
-        success = FALSE;
-    }
-
-  return gimp_procedure_get_return_values (procedure, success,
-                                           error ? *error : NULL);
-}
 
 static GimpValueArray *
 drawable_curves_explicit_invoker (GimpProcedure         *procedure,
@@ -564,41 +521,6 @@ void
 register_drawable_color_procs (GimpPDB *pdb)
 {
   GimpProcedure *procedure;
-
-  /*
-   * gimp-drawable-brightness-contrast
-   */
-  procedure = gimp_procedure_new (drawable_brightness_contrast_invoker);
-  gimp_object_set_static_name (GIMP_OBJECT (procedure),
-                               "gimp-drawable-brightness-contrast");
-  gimp_procedure_set_static_strings (procedure,
-                                     "gimp-drawable-brightness-contrast",
-                                     "Modify brightness/contrast in the specified drawable.",
-                                     "This procedures allows the brightness and contrast of the specified drawable to be modified. Both 'brightness' and 'contrast' parameters are defined between -0.5 and 0.5.",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1997",
-                                     NULL);
-  gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_drawable_id ("drawable",
-                                                            "drawable",
-                                                            "The drawable",
-                                                            pdb->gimp, FALSE,
-                                                            GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("brightness",
-                                                    "brightness",
-                                                    "Brightness adjustment",
-                                                    -0.5, 0.5, -0.5,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_procedure_add_argument (procedure,
-                               g_param_spec_double ("contrast",
-                                                    "contrast",
-                                                    "Contrast adjustment",
-                                                    -0.5, 0.5, -0.5,
-                                                    GIMP_PARAM_READWRITE));
-  gimp_pdb_register_procedure (pdb, procedure);
-  g_object_unref (procedure);
 
   /*
    * gimp-drawable-curves-explicit
