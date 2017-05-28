@@ -98,14 +98,14 @@ struct _GimpGui
                * (* get_mount_operation)    (Gimp                *gimp,
                                              GimpProgress        *progress);
 
-  GimpColorProfilePolicy
+/*  GimpColorProfilePolicy
                  (* query_profile_policy)   (Gimp                *gimp,
                                              GimpImage           *image,
                                              GimpContext         *context,
                                              GimpColorProfile   **dest_profile,
                                              GimpColorRenderingIntent *intent,
                                              gboolean            *bpc,
-                                             gboolean            *dont_ask);
+                                             gboolean            *dont_ask);*/
 };
 
 
@@ -189,14 +189,14 @@ GMountOperation
              * gimp_get_mount_operation    (Gimp                *gimp,
                                             GimpProgress        *progress);
 
-GimpColorProfilePolicy
+/*GimpColorProfilePolicy
                gimp_query_profile_policy   (Gimp                *gimp,
                                             GimpImage           *image,
                                             GimpContext         *context,
                                             GimpColorProfile   **dest_profile,
                                             GimpColorRenderingIntent *intent,
                                             gboolean            *bpc,
-                                            gboolean            *dont_ask);
+                                            gboolean            *dont_ask);*/
 
 
 #endif  /* __GIMP_GUI_H__ */

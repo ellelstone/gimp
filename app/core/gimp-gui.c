@@ -66,7 +66,7 @@ gimp_gui_init (Gimp *gimp)
   gimp->gui.recent_list_add_file   = NULL;
   gimp->gui.recent_list_load       = NULL;
   gimp->gui.get_mount_operation    = NULL;
-  gimp->gui.query_profile_policy   = NULL;
+//  gimp->gui.query_profile_policy   = NULL;
 }
 
 void
@@ -520,7 +520,7 @@ gimp_get_mount_operation (Gimp         *gimp,
   return g_mount_operation_new ();
 }
 
-GimpColorProfilePolicy
+/*GimpColorProfilePolicy
 gimp_query_profile_policy (Gimp                      *gimp,
                            GimpImage                 *image,
                            GimpContext               *context,
@@ -541,4 +541,4 @@ gimp_query_profile_policy (Gimp                      *gimp,
                                            dont_ask);
 
   return GIMP_COLOR_PROFILE_POLICY_KEEP;
-}
+}*/

@@ -1033,33 +1033,6 @@ gimp_message_severity_get_type (void)
 }
 
 GType
-gimp_color_profile_policy_get_type (void)
-{
-  static const GEnumValue values[] =
-  {
-    { GIMP_COLOR_PROFILE_POLICY_KEEP, "GIMP_COLOR_PROFILE_POLICY_KEEP", "keep" },
-    { 0, NULL, NULL }
-  };
-
-  static const GimpEnumDesc descs[] =
-  {
-    { GIMP_COLOR_PROFILE_POLICY_KEEP, "GIMP_COLOR_PROFILE_POLICY_KEEP", NULL },
-    { 0, NULL, NULL }
-  };
-
-  static GType type = 0;
-
-  if (G_UNLIKELY (! type))
-    {
-      type = g_enum_register_static ("GimpColorProfilePolicy", values);
-      gimp_type_set_translation_context (type, "color-profile-policy");
-      gimp_enum_set_value_descriptions (type, descs);
-    }
-
-  return type;
-}
-
-GType
 gimp_dynamics_output_type_get_type (void)
 {
   static const GEnumValue values[] =

@@ -445,7 +445,7 @@ prefs_color_management_reset (GtkWidget *widget,
   GimpCoreConfig *core_config = GIMP_CORE_CONFIG (config);
 
   gimp_config_reset (GIMP_CONFIG (core_config->color_management));
-  gimp_config_reset_property (config, "color-profile-policy");
+//  gimp_config_reset_property (config, "color-profile-policy");
   gimp_config_reset_property (config, "filter-tool-show-color-options");
 }
 
@@ -1337,10 +1337,10 @@ prefs_dialog_new (Gimp       *gimp,
                                    _("Add an alpha channel to imported images"),
                                    GTK_BOX (vbox2));
 
-  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
+/*  table = prefs_table_new (1, GTK_CONTAINER (vbox2));
   button = prefs_enum_combo_box_add (object, "color-profile-policy", 0, 0,
                                      _("Color profile policy:"),
-                                     GTK_TABLE (table), 0, NULL);
+                                     GTK_TABLE (table), 0, NULL);*/
 
   /*  Raw Image Importer  */
   vbox2 = prefs_frame_new (_("Raw Image Importer"),

@@ -39,8 +39,8 @@ _("Specifies how the area around the image should be drawn.")
 #define COLOR_MANAGEMENT_BLURB \
 "Defines the color management behavior."
 
-#define COLOR_PROFILE_POLICY_BLURB \
-_("How to handle embedded color profiles when opening a file.")
+/*#define COLOR_PROFILE_POLICY_BLURB \
+_("How to handle embedded color profiles when opening a file.")*/
 
 #define CURSOR_MODE_BLURB \
 _("Sets the type of mouse pointers to use.")

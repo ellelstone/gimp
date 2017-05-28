@@ -46,7 +46,7 @@ enum
 
   PROP_GIMP,
 
-  PROP_COLOR_PROFILE_POLICY,
+//  PROP_COLOR_PROFILE_POLICY,
 
   PROP_IMAGE_CONVERT_PROFILE_INTENT,
   PROP_IMAGE_CONVERT_PROFILE_BPC,
@@ -166,13 +166,13 @@ gimp_dialog_config_class_init (GimpDialogConfigClass *klass)
                                                         GIMP_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  GIMP_CONFIG_PROP_ENUM (object_class, PROP_COLOR_PROFILE_POLICY,
+/*  GIMP_CONFIG_PROP_ENUM (object_class, PROP_COLOR_PROFILE_POLICY,
                          "color-profile-policy",
                          "Color profile policy",
                          COLOR_PROFILE_POLICY_BLURB,
                          GIMP_TYPE_COLOR_PROFILE_POLICY,
                          GIMP_COLOR_PROFILE_POLICY_KEEP,
-                         GIMP_PARAM_STATIC_STRINGS);
+                         GIMP_PARAM_STATIC_STRINGS);*/
 
   GIMP_CONFIG_PROP_ENUM (object_class, PROP_IMAGE_CONVERT_PROFILE_INTENT,
                          "image-convert-profile-intent",
@@ -606,9 +606,9 @@ gimp_dialog_config_set_property (GObject      *object,
       priv->gimp = g_value_get_object (value); /* don't ref */
       break;
 
-    case PROP_COLOR_PROFILE_POLICY:
+/*    case PROP_COLOR_PROFILE_POLICY:
       config->color_profile_policy = g_value_get_enum (value);
-      break;
+      break;*/
 
     case PROP_IMAGE_CONVERT_PROFILE_INTENT:
       config->image_convert_profile_intent = g_value_get_enum (value);
@@ -797,9 +797,9 @@ gimp_dialog_config_get_property (GObject    *object,
       g_value_set_object (value, priv->gimp);
       break;
 
-    case PROP_COLOR_PROFILE_POLICY:
+/*    case PROP_COLOR_PROFILE_POLICY:
       g_value_set_enum (value, config->color_profile_policy);
-      break;
+      break;*/
 
     case PROP_IMAGE_CONVERT_PROFILE_INTENT:
       g_value_set_enum (value, config->image_convert_profile_intent);

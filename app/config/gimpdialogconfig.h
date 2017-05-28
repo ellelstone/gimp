@@ -44,7 +44,7 @@ struct _GimpDialogConfig
 {
   GimpGuiConfig             parent_instance;
 
-  GimpColorProfilePolicy    color_profile_policy;
+//  GimpColorProfilePolicy    color_profile_policy;
 
   GimpColorRenderingIntent  image_convert_profile_intent;
   gboolean                  image_convert_profile_bpc;
