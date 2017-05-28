@@ -148,7 +148,7 @@ gimp_layer_mode_box_constructed (GObject *object)
                           G_BINDING_BIDIRECTIONAL |
                           G_BINDING_SYNC_CREATE);
 
-  box->priv->group_combo = group_combo =
+/*  box->priv->group_combo = group_combo =
     gimp_prop_enum_combo_box_new (G_OBJECT (mode_combo),
                                   "group", 0, 0);
   gtk_box_pack_start (GTK_BOX (box), group_combo, FALSE, FALSE, 0);
@@ -183,7 +183,7 @@ gimp_layer_mode_box_constructed (GObject *object)
   gtk_cell_layout_pack_start (layout, cell, FALSE);
   gtk_cell_layout_set_attributes (layout, cell,
                                   "icon-name", GIMP_INT_STORE_ICON_NAME,
-                                  NULL);
+                                  NULL);*/
 }
 
 static void

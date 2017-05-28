@@ -192,7 +192,7 @@ gimp_layer_mode_group_get_type (void)
 
   static const GimpEnumDesc descs[] =
   {
-    { GIMP_LAYER_MODE_GROUP_DEFAULT, NC_("layer-mode-group", "Default"), NULL },
+    { GIMP_LAYER_MODE_GROUP_DEFAULT, "GIMP_LAYER_MODE_GROUP_DEFAULT", NULL },
     { 0, NULL, NULL }
   };
 

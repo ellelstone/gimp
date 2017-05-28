@@ -113,8 +113,7 @@ GType gimp_layer_mode_group_get_type (void) G_GNUC_CONST;
 
 typedef enum  /*< pdb-skip >*/
 {
-  GIMP_LAYER_MODE_GROUP_DEFAULT,     /*< desc="Default"      >*/
-//  GIMP_LAYER_MODE_GROUP_LEGACY,      /*< desc="Legacy"       >*/
+  GIMP_LAYER_MODE_GROUP_DEFAULT
 } GimpLayerModeGroup;
 
 
