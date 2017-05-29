@@ -2,7 +2,6 @@
 
 SUBDIRS = \
 	layer-modes		\
-	layer-modes-legacy	\
 	tests
 
 AM_CPPFLAGS = \
