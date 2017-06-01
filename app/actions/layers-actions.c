@@ -335,9 +335,9 @@ static const GimpToggleActionEntry layers_toggle_actions[] =
     GIMP_HELP_LAYER_LOCK_ALPHA },
 };
 
-static const GimpRadioActionEntry layers_blend_space_actions[] =
+/*static const GimpRadioActionEntry layers_blend_space_actions[] =
 {
-/*  { "layers-blend-space-auto", NULL,
+  { "layers-blend-space-auto", NULL,
     NC_("layers-action", "Auto"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_AUTO,
     NULL },
@@ -350,12 +350,12 @@ static const GimpRadioActionEntry layers_blend_space_actions[] =
   { "layers-blend-space-rgb-perceptual", NULL,
     NC_("layers-action", "RGB (perceptual)"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    NULL }*/
-};
+    NULL }
+};*/
 
-static const GimpRadioActionEntry layers_composite_space_actions[] =
+/*static const GimpRadioActionEntry layers_composite_space_actions[] =
 {
-/*  { "layers-composite-space-auto", NULL,
+  { "layers-composite-space-auto", NULL,
     NC_("layers-action", "Auto"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_AUTO,
     NULL },
@@ -368,8 +368,8 @@ static const GimpRadioActionEntry layers_composite_space_actions[] =
   { "layers-composite-space-rgb-perceptual", NULL,
     NC_("layers-action", "RGB (perceptual)"), NULL, NULL,
     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL,
-    NULL }*/
-};
+    NULL }
+};*/
 
 static const GimpRadioActionEntry layers_composite_mode_actions[] =
 {
