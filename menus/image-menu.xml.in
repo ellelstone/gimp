@@ -509,7 +509,9 @@
         <separator />
         <menuitem action="drawable-offset" />
       </menu>
+
 <!-- Layer Properties
+
       <menu action="layers-properties-menu" name="Properties">
         <menuitem action="layers-edit-attributes" />
         <menu action="layers-opacity-menu" name="Opacity">
@@ -529,7 +531,9 @@
         <menuitem action="drawable-lock-content" />
         <menuitem action="layers-lock-alpha" />
       </menu>
+
 -->
+
       <separator />
       <placeholder name="Resize">
         <menuitem action="layers-resize" />
@@ -551,11 +555,9 @@
       <menuitem action="tools-curves" />
       <menuitem action="filters-hue-chroma" />
       <separator />
-      <separator />
         <menuitem action="filters-stretch-contrast" />
-        <menuitem action="drawable-invert" />
         <menuitem action="filters-invert-perceptual" />
-        <menuitem action="filters-invert-linear" />
+<!--        <menuitem action="filters-invert-linear" />-->
         <menuitem action="filters-component-extract" />
         <menuitem action="filters-rgb-clip" />
         <separator />
@@ -761,7 +763,6 @@
       <placeholder name="Extensions" />
 <!--      <separator />-->
     </menu>
-
 
     <menu action="tools-menu" name="Tools">
       <menu action="tools-select-menu" name="Selection Tools">
