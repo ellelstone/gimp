@@ -125,11 +125,11 @@ gimp_layer_mode_box_constructed (GObject *object)
 {
   GimpLayerModeBox *box = GIMP_LAYER_MODE_BOX (object);
   GtkWidget        *mode_combo;
-  GtkWidget        *group_combo;
-  GtkTreeModel     *group_model;
-  GtkCellLayout    *layout;
-  GtkCellRenderer  *cell;
-  gint              i;
+//  GtkWidget        *group_combo;
+//  GtkTreeModel     *group_model;
+//  GtkCellLayout    *layout;
+//  GtkCellRenderer  *cell;
+//  gint              i;
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
 
