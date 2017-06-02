@@ -233,9 +233,29 @@ gimp_gegl_procedure_execute (GimpProcedure   *procedure,
                              GimpValueArray  *args,
                              GError         **error)
 {
-  return GIMP_PROCEDURE_CLASS (parent_class)->execute (procedure, gimp,
-                                                       context, progress,
-                                                       args, error);
+  GimpImage    *image;
+  GimpDrawable *drawable;
+  GimpObject   *settings;
+  GeglNode     *node;
+
+  image    = gimp_value_get_image    (gimp_value_array_index (args, 1), gimp);
+  drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2), gimp);
+  settings = g_value_get_object      (gimp_value_array_index (args, 3));
+
+  node = gegl_node_new_child (NULL,
+                              "operation", procedure->original_name,
+                              NULL);
+  if (settings)
+    gimp_operation_config_sync_node (settings, node);
+
+  gimp_drawable_apply_operation (drawable, progress,
+                                 gimp_procedure_get_label (procedure),
+                                 node);
+  g_object_unref (node);
+
+  gimp_image_flush (image);
+
+  return gimp_procedure_get_return_values (procedure, TRUE, NULL);
 }
 
 static void
@@ -246,61 +266,48 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
                                    GimpValueArray *args,
                                    GimpObject     *display)
 {
-  GimpRunMode    run_mode = g_value_get_int (gimp_value_array_index (args, 0));
-  GimpObject    *settings;
-  GimpContainer *container;
-  GimpTool      *active_tool;
+  GimpRunMode  run_mode;
+  GimpObject  *settings;
+  GimpTool    *active_tool;
 
-  settings = gimp_operation_config_new (gimp,
-                                        procedure->original_name,
-                                        gimp_viewable_get_icon_name (GIMP_VIEWABLE (procedure)),
-                                        GIMP_TYPE_SETTINGS);
+  run_mode = g_value_get_int    (gimp_value_array_index (args, 0));
+  settings = g_value_get_object (gimp_value_array_index (args, 3));
 
-  container =
-    gimp_operation_config_get_container (gimp,
-                                         G_TYPE_FROM_INSTANCE (settings),
-                                         (GCompareFunc) gimp_settings_compare);
-
-  g_object_unref (settings);
-
-  /*  the last used settings  */
-  settings = gimp_container_get_child_by_index (container, 0);
-
-  /*  only use the settings if they are automatically created "last used"
-   *  values, not if they were saved explicitly and have a zero timestamp;
-   *  and if they are not a separator.
-   */
-  if (settings &&
-      (GIMP_SETTINGS (settings)->time == 0 ||
-       ! gimp_object_get_name (settings)))
+  if (! settings)
     {
-      settings = NULL;
+      /*  if we didn't get settings passed, get the last used settings  */
+
+      GType          config_type;
+      GimpContainer *container;
+
+      config_type = G_VALUE_TYPE (gimp_value_array_index (args, 3));
+
+      container = gimp_operation_config_get_container (gimp, config_type,
+                                                       (GCompareFunc)
+                                                       gimp_settings_compare);
+
+      settings = gimp_container_get_child_by_index (container, 0);
+
+      /*  only use the settings if they are automatically created
+       *  "last used" values, not if they were saved explicitly and
+       *  have a zero timestamp; and if they are not a separator.
+       */
+      if (settings &&
+          (GIMP_SETTINGS (settings)->time == 0 ||
+           ! gimp_object_get_name (settings)))
+        {
+          settings = NULL;
+        }
     }
 
-  if (run_mode == GIMP_RUN_WITH_LAST_VALS)
+  if (run_mode == GIMP_RUN_NONINTERACTIVE ||
+      run_mode == GIMP_RUN_WITH_LAST_VALS)
     {
-      if (settings)
+      if (settings || run_mode == GIMP_RUN_NONINTERACTIVE)
         {
-          GimpImage    *image;
-          GimpDrawable *drawable;
-          GeglNode     *node;
-
-          node = gegl_node_new_child (NULL,
-                                      "operation", procedure->original_name,
-                                      NULL);
-          gimp_operation_config_sync_node (settings, node);
-
-          image = gimp_value_get_image (gimp_value_array_index (args, 1),
-                                        gimp);
-          drawable = gimp_value_get_drawable (gimp_value_array_index (args, 2),
-                                              gimp);
-
-          gimp_drawable_apply_operation (drawable, progress,
-                                         gimp_procedure_get_label (procedure),
-                                         node);
-          g_object_unref (node);
-
-          gimp_image_flush (image);
+          g_value_set_object (gimp_value_array_index (args, 3), settings);
+          gimp_procedure_execute (procedure, gimp, context, progress,
+                                  args, NULL);
           return;
         }
 
@@ -366,6 +373,7 @@ gimp_gegl_procedure_execute_async (GimpProcedure  *procedure,
 
 GimpProcedure *
 gimp_gegl_procedure_new (Gimp        *gimp,
+                         GimpRunMode  default_run_mode,
                          const gchar *operation,
                          const gchar *name,
                          const gchar *menu_label,
@@ -374,16 +382,21 @@ gimp_gegl_procedure_new (Gimp        *gimp,
                          const gchar *help_id)
 {
   GimpProcedure *procedure;
+  GType          config_type;
 
   g_return_val_if_fail (GIMP_IS_GIMP (gimp), NULL);
   g_return_val_if_fail (operation != NULL, NULL);
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (menu_label != NULL, NULL);
 
+  config_type = gimp_operation_config_get_type (gimp, operation, icon_name,
+                                                GIMP_TYPE_SETTINGS);
+
   procedure = g_object_new (GIMP_TYPE_GEGL_PROCEDURE, NULL);
 
-  GIMP_GEGL_PROCEDURE (procedure)->menu_label = g_strdup (menu_label);
-  GIMP_GEGL_PROCEDURE (procedure)->help_id    = g_strdup (help_id);
+  GIMP_GEGL_PROCEDURE (procedure)->default_run_mode = default_run_mode;
+  GIMP_GEGL_PROCEDURE (procedure)->menu_label       = g_strdup (menu_label);
+  GIMP_GEGL_PROCEDURE (procedure)->help_id          = g_strdup (help_id);
 
   gimp_object_set_name (GIMP_OBJECT (procedure), name);
   gimp_viewable_set_icon_name (GIMP_VIEWABLE (procedure), icon_name);
@@ -395,9 +408,9 @@ gimp_gegl_procedure_new (Gimp        *gimp,
                               NULL);
 
   gimp_procedure_add_argument (procedure,
-                               gimp_param_spec_int32 ("dummy-param",
-                                                      "Dummy Param",
-                                                      "Dummy parameter",
+                               gimp_param_spec_int32 ("run-mode",
+                                                      "Run mode",
+                                                      "Run mode",
                                                       G_MININT32, G_MAXINT32, 0,
                                                       GIMP_PARAM_READWRITE));
   gimp_procedure_add_argument (procedure,
@@ -412,6 +425,12 @@ gimp_gegl_procedure_new (Gimp        *gimp,
                                                             "Input drawable",
                                                             gimp, TRUE,
                                                             GIMP_PARAM_READWRITE));
+  gimp_procedure_add_argument (procedure,
+                               g_param_spec_object ("settings",
+                                                    "Settings",
+                                                    "Settings",
+                                                    config_type,
+                                                    GIMP_PARAM_READWRITE));
 
   return procedure;
 }

@@ -97,15 +97,43 @@ static const GimpActionEntry filters_menu_actions[] =
 
 static const GimpStringActionEntry filters_actions[] =
 {
+  { "filters-antialias", GIMP_ICON_GEGL,
+    NC_("filters-action", "_Antialias"), NULL, NULL,
+    "gegl:antialias",
+    GIMP_HELP_FILTER_ANTIALIAS },
+
+  { "filters-color-enhance", GIMP_ICON_GEGL,
+    NC_("filters-action", "_Color Enhance"), NULL, NULL,
+    "gegl:color-enhance",
+    GIMP_HELP_FILTER_COLOR_ENHANCE },
+
+  { "filters-invert-linear", GIMP_ICON_INVERT,
+    NC_("filters-action", "_Linear Invert"), NULL, NULL,
+    "gegl:invert-linear",
+    GIMP_HELP_FILTER_INVERT_LINEAR },
+
+  { "filters-invert-perceptual", GIMP_ICON_INVERT,
+    NC_("filters-action", "In_vert"), NULL, NULL,
+    "gegl:invert-gamma",
+    GIMP_HELP_FILTER_INVERT_PERCEPTUAL },
+
+  { "filters-invert-value", GIMP_ICON_GEGL,
+    NC_("filters-action", "_Value Invert"), NULL, NULL,
+    "gegl:value-invert",
+    GIMP_HELP_FILTER_INVERT_VALUE },
+
+  { "filters-stretch-contrast-hsv", GIMP_ICON_GEGL,
+    NC_("filters-action", "_Stretch Contrast HSV"), NULL, NULL,
+    "gegl:stretch-contrast-hsv",
+    GIMP_HELP_FILTER_STRETCH_CONTRAST_HSV }
+};
+
+static const GimpStringActionEntry filters_interactive_actions[] =
+{
   { "filters-alien-map", GIMP_ICON_GEGL,
     NC_("filters-action", "_Alien Map..."), NULL, NULL,
     "gegl:alien-map",
     GIMP_HELP_FILTER_ALIEN_MAP },
-
-  { "filters-antialias", GIMP_ICON_GEGL,
-    NC_("filters-action", "_Antialias..."), NULL, NULL,
-    "gegl:antialias",
-    GIMP_HELP_FILTER_ANTIALIAS },
 
   { "filters-apply-canvas", GIMP_ICON_GEGL,
     NC_("filters-action", "_Apply Canvas..."), NULL, NULL,
@@ -116,11 +144,6 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "Apply _Lens..."), NULL, NULL,
     "gegl:apply-lens",
     GIMP_HELP_FILTER_APPLY_LENS },
-
-//  { "filters-box-blur", GIMP_ICON_GEGL,
-//    NC_("filters-action", "Box _Blur..."), NULL, NULL,
-//    "gegl:box-blur",
-//    NULL /* FIXME GIMP_HELP_FILTER_BOX_BLUR */},
 
   { "filters-bump-map", GIMP_ICON_GEGL,
     NC_("filters-action", "_Bump Map..."), NULL, NULL,
@@ -146,11 +169,6 @@ static const GimpStringActionEntry filters_actions[] =
     NC_("filters-action", "_Checkerboard..."), NULL, NULL,
     "gegl:checkerboard",
     GIMP_HELP_FILTER_CHECKERBOARD },
-
-  { "filters-color-enhance", GIMP_ICON_GEGL,
-    NC_("filters-action", "_Color Enhance..."), NULL, NULL,
-    "gegl:color-enhance",
-    GIMP_HELP_FILTER_COLOR_ENHANCE },
 
   { "filters-color-exchange", GIMP_ICON_GEGL,
     NC_("filters-action", "_Color Exchange..."), NULL, NULL,
@@ -337,11 +355,6 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:maze",
     GIMP_HELP_FILTER_MAZE },
 
-  { "filters-median-blur", GIMP_ICON_GEGL,
-    NC_("filters-action", "_Median Blur..."), NULL, NULL,
-    "gegl:median-blur",
-    NULL /* FIXME GIMP_HELP_FILTER_MEDIAN_BLUR */},
-
   { "filters-mono-mixer", GIMP_ICON_GEGL,
     NC_("filters-action", "_Mono Mixer..."), NULL, NULL,
     "gegl:mono-mixer",
@@ -527,11 +540,6 @@ static const GimpStringActionEntry filters_actions[] =
     "gegl:stretch-contrast",
     GIMP_HELP_FILTER_STRETCH_CONTRAST },
 
-//  { "filters-stretch-contrast-hsv", GIMP_ICON_GEGL,
-//    NC_("filters-action", "_Stretch Contrast HSV..."), NULL, NULL,
-//    "gegl:stretch-contrast-hsv",
-//    GIMP_HELP_FILTER_STRETCH_CONTRAST_HSV },
-
   { "filters-stress", GIMP_ICON_GEGL,
     NC_("filters-action", "_Stress..."), NULL, NULL,
     "gegl:stress",
@@ -634,7 +642,12 @@ filters_actions_setup (GimpActionGroup *group)
   gimp_action_group_add_string_actions (group, "filters-action",
                                         filters_actions,
                                         G_N_ELEMENTS (filters_actions),
-                                        G_CALLBACK (filters_filter_cmd_callback));
+                                        G_CALLBACK (filters_apply_cmd_callback));
+
+  gimp_action_group_add_string_actions (group, "filters-action",
+                                        filters_interactive_actions,
+                                        G_N_ELEMENTS (filters_interactive_actions),
+                                        G_CALLBACK (filters_apply_interactive_cmd_callback));
 
   gimp_action_group_add_enum_actions (group, "filters-action",
                                       filters_repeat_actions,
@@ -644,6 +657,18 @@ filters_actions_setup (GimpActionGroup *group)
   for (i = 0; i < G_N_ELEMENTS (filters_actions); i++)
     {
       const GimpStringActionEntry *entry = &filters_actions[i];
+      const gchar                 *description;
+
+      description = gegl_operation_get_key (entry->value, "description");
+
+      if (description)
+        gimp_action_group_set_action_tooltip (group, entry->name,
+                                              description);
+    }
+
+  for (i = 0; i < G_N_ELEMENTS (filters_interactive_actions); i++)
+    {
+      const GimpStringActionEntry *entry = &filters_interactive_actions[i];
       const gchar                 *description;
 
       description = gegl_operation_get_key (entry->value, "description");
@@ -728,7 +753,6 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-antialias",               writable);
   SET_SENSITIVE ("filters-apply-canvas",            writable);
   SET_SENSITIVE ("filters-apply-lens",              writable);
-/*  SET_SENSITIVE ("filters-box-blur",                writable);*/
   SET_SENSITIVE ("filters-bump-map",                writable);
   SET_SENSITIVE ("filters-c2g",                     writable && !gray);
 /*  SET_SENSITIVE ("filters-cartoon",                 writable);*/
@@ -766,13 +790,15 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-high-pass",               writable);
   SET_SENSITIVE ("filters-hue-chroma",              writable);
   SET_SENSITIVE ("filters-illusion",                writable);
+  SET_SENSITIVE ("filters-invert-linear",           writable);
+  SET_SENSITIVE ("filters-invert-perceptual",       writable);
+  SET_SENSITIVE ("filters-invert-value",            writable);
   SET_SENSITIVE ("filters-image-gradient",          writable);
   SET_SENSITIVE ("filters-kaleidoscope",            writable);
   SET_SENSITIVE ("filters-lens-distortion",         writable);
   SET_SENSITIVE ("filters-lens-flare",              writable);
   SET_SENSITIVE ("filters-mantiuk-2006",            writable);
   SET_SENSITIVE ("filters-maze",                    writable);
-/*  SET_SENSITIVE ("filters-median-blur",             writable);*/
   SET_SENSITIVE ("filters-mono-mixer",              writable && !gray);
   SET_SENSITIVE ("filters-mosaic",                  writable);
   SET_SENSITIVE ("filters-motion-blur-circular",    writable);
@@ -841,7 +867,7 @@ filters_actions_update (GimpActionGroup *group,
       {
         gimp_action_group_set_action_sensitive (group, "filters-repeat", FALSE);
         gimp_action_group_set_action_sensitive (group, "filters-reshow", FALSE);
-      }
+     }
 
     for (i = 0; i < gimp_filter_history_length (group->gimp); i++)
       {

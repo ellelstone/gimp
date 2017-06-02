@@ -47,12 +47,6 @@ static const GimpActionEntry drawable_actions[] =
     G_CALLBACK (drawable_equalize_cmd_callback),
     GIMP_HELP_LAYER_EQUALIZE },*/
 
-  { "drawable-invert", GIMP_ICON_INVERT,
-    NC_("drawable-action", "In_vert"), NULL,
-    NC_("drawable-action", "Invert the colors perceptually"),
-    G_CALLBACK (drawable_invert_cmd_callback),
-    GIMP_HELP_LAYER_INVERT },
-
 /*  { "drawable-linear-invert", GIMP_ICON_INVERT,
     NC_("drawable-action", "_Linear Invert"), NULL,
     NC_("drawable-action", "Invert the colors in linear light"),
@@ -247,7 +241,6 @@ drawable_actions_update (GimpActionGroup *group,
         gimp_action_group_set_action_active (group, action, (condition) != 0)
 
 //  SET_SENSITIVE ("drawable-equalize",       writable && !children);
-  SET_SENSITIVE ("drawable-invert",         writable && !children);
 //  SET_SENSITIVE ("drawable-linear-invert",  writable && !children);
 //  SET_SENSITIVE ("drawable-value-invert",   writable && !children);
 //  SET_SENSITIVE ("drawable-levels-stretch", writable && !children && is_rgb);

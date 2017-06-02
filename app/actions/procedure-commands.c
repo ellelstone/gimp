@@ -180,7 +180,8 @@ procedure_commands_get_item_args (GimpProcedure *procedure,
 
 GimpValueArray *
 procedure_commands_get_display_args (GimpProcedure *procedure,
-                                     GimpDisplay   *display)
+                                     GimpDisplay   *display,
+                                     GimpObject    *settings)
 {
   GimpValueArray *args;
   gint            n_args = 0;
@@ -216,8 +217,7 @@ procedure_commands_get_display_args (GimpProcedure *procedure,
 
       if (image)
         {
-          gimp_value_set_image (gimp_value_array_index (args, n_args),
-                                image);
+          gimp_value_set_image (gimp_value_array_index (args, n_args), image);
           n_args++;
 
           if (gimp_value_array_length (args) > n_args &&
@@ -241,6 +241,14 @@ procedure_commands_get_display_args (GimpProcedure *procedure,
         }
     }
 
+  if (gimp_value_array_length (args) > n_args &&
+      g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (procedure->args[n_args]),
+                   GIMP_TYPE_OBJECT))
+    {
+      g_value_set_object (gimp_value_array_index (args, n_args), settings);
+      n_args++;
+    }
+
   gimp_value_array_truncate (args, n_args);
 
   return args;
@@ -250,9 +258,44 @@ gboolean
 procedure_commands_run_procedure (GimpProcedure  *procedure,
                                   Gimp           *gimp,
                                   GimpProgress   *progress,
-                                  GimpRunMode     run_mode,
-                                  GimpValueArray *args,
-                                  GimpDisplay    *display)
+                                  GimpValueArray *args)
+{
+  GimpValueArray *return_vals;
+  GError         *error = NULL;
+
+  g_return_val_if_fail (GIMP_IS_PROCEDURE (procedure), FALSE);
+  g_return_val_if_fail (GIMP_IS_GIMP (gimp), FALSE);
+  g_return_val_if_fail (progress == NULL || GIMP_IS_PROGRESS (progress), FALSE);
+  g_return_val_if_fail (args != NULL, FALSE);
+
+  g_value_set_int (gimp_value_array_index (args, 0), GIMP_RUN_NONINTERACTIVE);
+
+  return_vals = gimp_procedure_execute (procedure, gimp,
+                                        gimp_get_user_context (gimp),
+                                        progress, args,
+                                        &error);
+  gimp_value_array_unref (return_vals);
+
+  if (error)
+    {
+      gimp_message_literal (gimp,
+                            G_OBJECT (progress), GIMP_MESSAGE_ERROR,
+                            error->message);
+      g_clear_error (&error);
+
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+gboolean
+procedure_commands_run_procedure_async (GimpProcedure  *procedure,
+                                        Gimp           *gimp,
+                                        GimpProgress   *progress,
+                                        GimpRunMode     run_mode,
+                                        GimpValueArray *args,
+                                        GimpDisplay    *display)
 {
   GError *error = NULL;
 

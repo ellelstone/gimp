@@ -554,6 +554,8 @@
       <separator />
         <menuitem action="filters-stretch-contrast" />
         <menuitem action="drawable-invert" />
+        <menuitem action="filters-invert-perceptual" />
+        <menuitem action="filters-invert-linear" />
         <menuitem action="filters-component-extract" />
         <menuitem action="filters-rgb-clip" />
         <separator />
