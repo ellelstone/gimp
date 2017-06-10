@@ -40,57 +40,67 @@
 
 /* Declare local functions.  */
 
-static void   query      (void);
-static void   run        (const gchar      *name,
-                          gint              nparams,
-                          const GimpParam  *param,
-                          gint             *nreturn_vals,
-                          GimpParam       **return_vals);
+static void   query            (void);
+static void   run              (const gchar      *name,
+                                gint              nparams,
+                                const GimpParam  *param,
+                                gint             *nreturn_vals,
+                                GimpParam       **return_vals);
 
-static gint32 load_image (const gchar      *filename,
-                          GError          **error);
+static gint32 load_image       (const gchar      *filename,
+                                GError          **error);
 
-static void   load_1     (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          guchar           *buf,
-                          guint16           bytes);
-static void   load_4     (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          guchar           *buf,
-                          guint16           bytes);
-static void   load_8     (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          guchar           *buf,
-                          guint16           bytes);
-static void   load_24    (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          guchar           *buf,
-                          guint16           bytes);
-static void   readline   (FILE             *fp,
-                          guchar           *buf,
-                          gint              bytes);
+static void   load_1           (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                guchar           *buf,
+                                guint16           bytes);
+static void   load_4           (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                guchar           *buf,
+                                guint16           bytes);
+static void   load_sub_8       (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                gint              bpp,
+                                gint              plane,
+                                guchar           *buf,
+                                guint16           bytes);
+static void   load_8           (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                guchar           *buf,
+                                guint16           bytes);
+static void   load_24          (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                guchar           *buf,
+                                guint16           bytes);
+static void   readline         (FILE             *fp,
+                                guchar           *buf,
+                                gint              bytes);
 
-static gint   save_image (const gchar      *filename,
-                          gint32            image,
-                          gint32            layer,
-                          GError          **error);
-
-static void   save_8     (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          const guchar     *buf);
-static void   save_24    (FILE             *fp,
-                          gint              width,
-                          gint              height,
-                          const guchar     *buf);
-static void   writeline  (FILE             *fp,
-                          const guchar     *buf,
-                          gint              bytes);
-
+static gint   save_image       (const gchar      *filename,
+                                gint32            image,
+                                gint32            layer,
+                                GError          **error);
+static void   save_less_than_8 (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                const gint        bpp,
+                                const guchar       *buf);
+static void   save_8           (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                const guchar     *buf);
+static void   save_24          (FILE             *fp,
+                                gint              width,
+                                gint              height,
+                                const guchar     *buf);
+static void   writeline        (FILE             *fp,
+                                const guchar     *buf,
+                                gint              bytes);
 
 const GimpPlugInInfo PLUG_IN_INFO =
 {
@@ -271,8 +281,6 @@ run (const gchar      *name,
 
   values[0].data.d_status = status;
 }
-
-static const guchar mono[6]= { 0, 0, 0, 255, 255, 255 };
 
 static struct
 {
@@ -458,15 +466,49 @@ load_image (const gchar  *filename,
     {
       dest = g_new (guchar, ((gsize) width) * height);
       load_1 (fd, width, height, dest, bytesperline);
-      gimp_image_set_colormap (image, mono, 2);
+      /* Monochrome does not mean necessarily B&W. Therefore we still
+       * want to check the header palette, even for just 2 colors.
+       * Hopefully the header palette will always be filled with
+       * meaningful colors and the creator software did not just assume
+       * B&W by being monochrome.
+       * Until now test samples showed that even when B&W the header
+       * palette was correctly filled with these 2 colors and we didn't
+       * find counter-examples.
+       * See bug 159947, comment 21 and 23.
+       */
+      gimp_image_set_colormap (image, pcx_header.colormap, 2);
     }
-  else if (pcx_header.planes == 4 && pcx_header.bpp == 1)
+  else if (pcx_header.bpp == 1 && pcx_header.planes == 2)
+    {
+      dest = g_new (guchar, ((gsize) width) * height);
+      load_sub_8 (fd, width, height, 1, 2, dest, bytesperline);
+      gimp_image_set_colormap (image, pcx_header.colormap, 4);
+    }
+  else if (pcx_header.bpp == 2 && pcx_header.planes == 1)
+    {
+      dest = g_new (guchar, ((gsize) width) * height);
+      load_sub_8 (fd, width, height, 2, 1, dest, bytesperline);
+      gimp_image_set_colormap (image, pcx_header.colormap, 4);
+    }
+  else if (pcx_header.bpp == 1 && pcx_header.planes == 3)
+    {
+      dest = g_new (guchar, ((gsize) width) * height);
+      load_sub_8 (fd, width, height, 1, 3, dest, bytesperline);
+      gimp_image_set_colormap (image, pcx_header.colormap, 8);
+    }
+  else if (pcx_header.bpp == 1 && pcx_header.planes == 4)
     {
       dest = g_new (guchar, ((gsize) width) * height);
       load_4 (fd, width, height, dest, bytesperline);
       gimp_image_set_colormap (image, pcx_header.colormap, 16);
     }
-  else if (pcx_header.planes == 1 && pcx_header.bpp == 8)
+  else if (pcx_header.bpp == 4 && pcx_header.planes == 1)
+    {
+      dest = g_new (guchar, ((gsize) width) * height);
+      load_sub_8 (fd, width, height, 4, 1, dest, bytesperline);
+      gimp_image_set_colormap (image, pcx_header.colormap, 16);
+    }
+  else if (pcx_header.bpp == 8 && pcx_header.planes == 1)
     {
       dest = g_new (guchar, ((gsize) width) * height);
       load_8 (fd, width, height, dest, bytesperline);
@@ -474,7 +516,7 @@ load_image (const gchar  *filename,
       fread (cmap, 768, 1, fd);
       gimp_image_set_colormap (image, cmap, 256);
     }
-  else if (pcx_header.planes == 3 && pcx_header.bpp == 8)
+  else if (pcx_header.bpp == 8 && pcx_header.planes == 3)
     {
       dest = g_new (guchar, ((gsize) width) * height * 3);
       load_24 (fd, width, height, dest, bytesperline);
@@ -600,6 +642,43 @@ load_4 (FILE    *fp,
 }
 
 static void
+load_sub_8 (FILE    *fp,
+            gint     width,
+            gint     height,
+            gint     bpp,
+            gint     plane,
+            guchar  *buf,
+            guint16  bytes)
+{
+  gint    x, y, c, b;
+  guchar *line = g_new (guchar, bytes);
+  gint    real_bpp = bpp - 1;
+  gint    current_bit = 0;
+
+  for (y = 0; y < height; buf += width, ++y)
+    {
+      for (x = 0; x < width; ++x)
+        buf[x] = 0;
+      for (c = 0; c < plane; ++c)
+        {
+          readline (fp, line, bytes);
+          for (x = 0; x < width; ++x)
+            {
+              for (b = 0; b < bpp; b++)
+                {
+                  current_bit = bpp * x + b;
+                  if (line[current_bit / 8] & (128 >> (current_bit % 8)))
+                    buf[x] += (1 << (real_bpp - b + c));
+                }
+            }
+        }
+      gimp_progress_update ((double) y / (double) height);
+    }
+
+  g_free (line);
+}
+
+static void
 readline (FILE   *fp,
           guchar *buf,
           gint    bytes)
@@ -669,12 +748,43 @@ save_image (const gchar  *filename,
   switch (drawable_type)
     {
     case GIMP_INDEXED_IMAGE:
-      cmap                    = gimp_image_get_colormap (image, &colors);
-      pcx_header.bpp          = 8;
-      pcx_header.planes       = 1;
+      cmap                          = gimp_image_get_colormap (image, &colors);
+      if (colors > 16)
+        {
+          pcx_header.bpp            = 8;
+          pcx_header.planes         = 1;
+          pcx_header.bytesperline   = GUINT16_TO_LE (width);
+        }
+      else if (colors > 2)
+        {
+          pcx_header.bpp            = 4;
+          pcx_header.planes         = 1;
+          pcx_header.bytesperline   = GUINT16_TO_LE ((width + 1) / 2);
+        }
+      else
+       {
+          pcx_header.bpp            = 1;
+          pcx_header.planes         = 1;
+          pcx_header.bytesperline   = GUINT16_TO_LE ((width + 7) / 8);
+        }
       pcx_header.color        = GUINT16_TO_LE (1);
-      pcx_header.bytesperline = GUINT16_TO_LE (width);
       format                  = NULL;
+
+      /* Some references explain that 2bpp/1plane and 4bpp/1plane files
+       * would use the palette at EOF (not the one from the header) if
+       * we are in version 5 of PCX. Other sources affirm that even in
+       * version 5, EOF palette must be used only when there are more
+       * than 16 colors. We go with this second assumption.
+       * See bug 159947, comment 21 and 23.
+       */
+      if (colors <= 16)
+        {
+          for (i = 0; i < (colors * 3); i++)
+            {
+              pcx_header.colormap[i] = cmap[i];
+            }
+        }
+
       break;
 
     case GIMP_RGB_IMAGE:
@@ -697,6 +807,12 @@ save_image (const gchar  *filename,
       g_message (_("Cannot export images with alpha channel."));
       return FALSE;
   }
+
+  /* Bytes per Line must be an even number, according to spec */
+  if (pcx_header.bytesperline % 2 != 0)
+    {
+      pcx_header.bytesperline++;
+    }
 
   pixels = (guchar *) g_malloc (width * height * pcx_header.planes);
 
@@ -756,14 +872,21 @@ save_image (const gchar  *filename,
   switch (drawable_type)
     {
     case GIMP_INDEXED_IMAGE:
-      save_8 (fp, width, height, pixels);
-      fputc (0x0c, fp);
-      fwrite (cmap, colors, 3, fp);
-      for (i = colors; i < 256; i++)
+      if (colors > 16)
         {
-          fputc (0, fp);
-          fputc (0, fp);
-          fputc (0, fp);
+          save_8 (fp, width, height, pixels);
+          fputc (0x0c, fp);
+          fwrite (cmap, colors, 3, fp);
+          for (i = colors; i < 256; i++)
+            {
+              fputc (0, fp);
+              fputc (0, fp);
+              fputc (0, fp);
+            }
+        }
+      else /* Covers 1 and 4 bpp */
+        {
+          save_less_than_8 (fp, width, height, pcx_header.bpp, pixels);
         }
       break;
 
@@ -798,6 +921,46 @@ save_image (const gchar  *filename,
     }
 
   return TRUE;
+}
+
+static void
+save_less_than_8 (FILE         *fp,
+                  gint          width,
+                  gint          height,
+                  const gint    bpp,
+                  const guchar *buf)
+{
+  const gint  bit_limit     = (8 - bpp);
+  const gint  buf_size      = width * height;
+  const gint  line_end      = width - 1;
+  gint        j             = bit_limit;
+  gint        count         = 0;
+  guchar      byte_to_write = 0x00;
+  guchar     *line;
+
+  line = (guchar *) g_malloc (((width + 7) / 8) * bpp);
+
+  for (gint x = 0; x < buf_size; x++)
+    {
+      byte_to_write |= (buf[x] << j);
+      j -= bpp;
+
+      if (j < 0 || (x % width == line_end))
+        {
+          line[count] = byte_to_write;
+          count++;
+          byte_to_write = 0x00;
+          j = bit_limit;
+
+          if ((x % width == line_end))
+            {
+              writeline (fp, line, count);
+              count = 0;
+              gimp_progress_update ((double) x / (double) buf_size);
+            }
+        }
+    }
+  g_free (line);
 }
 
 static void

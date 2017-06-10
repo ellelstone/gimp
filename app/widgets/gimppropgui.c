@@ -43,8 +43,12 @@
 #include "gimpmessagebox.h"
 #include "gimpspinscale.h"
 #include "gimppropgui.h"
-#include "gimppropgui-constructors.h"
+#include "gimppropgui-channel-mixer.h"
+#include "gimppropgui-color-rotate.h"
+#include "gimppropgui-convolution-matrix.h"
+#include "gimppropgui-diffration-patterns.h"
 #include "gimppropgui-eval.h"
+#include "gimppropgui-generic.h"
 #include "gimppropwidgets.h"
 #include "gimpwidgets-utils.h"
 

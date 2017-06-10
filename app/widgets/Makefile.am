@@ -299,10 +299,18 @@ libappwidgets_a_sources = \
 	gimpprogressdialog.h		\
 	gimppropgui.c			\
 	gimppropgui.h			\
-	gimppropgui-constructors.c	\
-	gimppropgui-constructors.h	\
+	gimppropgui-channel-mixer.c	\
+	gimppropgui-channel-mixer.h	\
+	gimppropgui-color-rotate.c	\
+	gimppropgui-color-rotate.h	\
+	gimppropgui-convolution-matrix.c	\
+	gimppropgui-convolution-matrix.h	\
+	gimppropgui-diffration-patterns.c	\
+	gimppropgui-diffration-patterns.h	\
 	gimppropgui-eval.c		\
 	gimppropgui-eval.h		\
+	gimppropgui-generic.c		\
+	gimppropgui-generic.h		\
 	gimppropwidgets.c		\
 	gimppropwidgets.h		\
 	gimpradioaction.c		\

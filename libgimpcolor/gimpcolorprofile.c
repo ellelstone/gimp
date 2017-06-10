@@ -428,9 +428,9 @@ gimp_color_profile_new_from_lcms_profile (gpointer   lcms_profile,
 
 /**
  * gimp_color_profile_save_to_file:
- * profile: a #GimpColorProfile
- * @file:   a #GFile
- * @error:  return location for #GError
+ * @profile: a #GimpColorProfile
+ * @file:    a #GFile
+ * @error:   return location for #GError
  *
  * This function saves @profile to @file as ICC profile.
  *
@@ -461,7 +461,6 @@ gimp_color_profile_save_to_file (GimpColorProfile  *profile,
  * gimp_color_profile_get_icc_profile:
  * @profile: a #GimpColorProfile
  * @length:  return location for the number of bytes
- * @error:   return location for #GError
  *
  * This function returns @profile as ICC profile data. The returned
  * memory belongs to @profile and must not be modified or freed.
@@ -1224,27 +1223,6 @@ gimp_color_profile_new_gray_built_in_internal (void)
                               "Public Domain");
 
   return profile;
-  /*cmsHPROFILE profile;
-
-   white point is D50 from the ICC profile illuminant specs
-  cmsCIExyY whitepoint = {0.345702915, 0.358538597, 1.0};
-
-  cmsToneCurve *curve = cmsBuildGamma (NULL, 1.0);
-
-  profile = cmsCreateGrayProfile (&whitepoint, curve);
-
-  cmsFreeToneCurve (curve);
-
-  gimp_color_profile_set_tag (profile, cmsSigProfileDescriptionTag,
-                              "GIMP-CCE built-in D50 Linear Grayscale");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceMfgDescTag,
-                              "GIMP-CCE");
-  gimp_color_profile_set_tag (profile, cmsSigDeviceModelDescTag,
-                              "D50 Linear Grayscale");
-  gimp_color_profile_set_tag (profile, cmsSigCopyrightTag,
-                              "Public Domain");
-
-  return profile; */
 }
 
 /**

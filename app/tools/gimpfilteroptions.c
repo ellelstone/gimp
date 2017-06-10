@@ -36,14 +36,10 @@ enum
   PROP_PREVIEW_SPLIT,
   PROP_PREVIEW_ALIGNMENT,
   PROP_PREVIEW_POSITION,
-  PROP_REGION,
-//  PROP_COLOR_MANAGED,
-//  PROP_GAMMA_HACK,
-  PROP_SETTINGS
+  PROP_REGION
 };
 
 
-static void   gimp_filter_options_finalize     (GObject      *object);
 static void   gimp_filter_options_set_property (GObject      *object,
                                                 guint         property_id,
                                                 const GValue *value,
@@ -65,7 +61,6 @@ gimp_filter_options_class_init (GimpFilterOptionsClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->finalize     = gimp_filter_options_finalize;
   object_class->set_property = gimp_filter_options_set_property;
   object_class->get_property = gimp_filter_options_get_property;
 
@@ -106,50 +101,12 @@ gimp_filter_options_class_init (GimpFilterOptionsClass *klass)
                                                       GIMP_FILTER_REGION_SELECTION,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
-/* elle: remove stupid color-managed functions */ 
-//  g_object_class_install_property (object_class, PROP_COLOR_MANAGED,
-//                                   g_param_spec_boolean ("color-managed",
-//                                                         _("Color _managed"),
-//                                                         NULL,
-//                                                         FALSE,
-//                                                         GIMP_PARAM_READWRITE |
-//                                                         G_PARAM_CONSTRUCT));
-
-/* elle: remove gamma hack functions */ 
-//g_object_class_install_property (object_class, PROP_GAMMA_HACK,
-//                                   g_param_spec_boolean ("gamma-hack",
-//                                                         "Gamma hack (temp hack, please ignore)",
-//                                                         NULL,
-//                                                         FALSE,
-//                                                         GIMP_PARAM_READWRITE |
-//                                                         G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (object_class, PROP_SETTINGS,
-                                   g_param_spec_object ("settings",
-                                                        NULL, NULL,
-                                                        G_TYPE_FILE,
-                                                        GIMP_PARAM_READWRITE));
 }
 
 static void
 gimp_filter_options_init (GimpFilterOptions *options)
 {
 }
-
-static void
-gimp_filter_options_finalize (GObject *object)
-{
-  GimpFilterOptions *options = GIMP_FILTER_OPTIONS (object);
-
-  if (options->settings)
-    {
-      g_object_unref (options->settings);
-      options->settings = NULL;
-    }
-
-  G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
 
 static void
 gimp_filter_options_set_property (GObject      *object,
@@ -179,20 +136,6 @@ gimp_filter_options_set_property (GObject      *object,
 
     case PROP_REGION:
       options->region = g_value_get_enum (value);
-      break;
-
-//    case PROP_COLOR_MANAGED:
-//      options->color_managed = g_value_get_boolean (value);
-//      break;
-
-//    case PROP_GAMMA_HACK:
-//      options->gamma_hack = FALSE; //g_value_get_boolean (value);
-//      break;
-
-    case PROP_SETTINGS:
-      if (options->settings)
-        g_object_unref (options->settings);
-      options->settings = g_value_dup_object (value);
       break;
 
     default:
@@ -229,18 +172,6 @@ gimp_filter_options_get_property (GObject    *object,
 
     case PROP_REGION:
       g_value_set_enum (value, options->region);
-      break;
-
-//    case PROP_COLOR_MANAGED:
-//      g_value_set_boolean (value, options->color_managed);
-//      break;
-
-//    case PROP_GAMMA_HACK:
-//      g_value_set_boolean (value, FALSE /*options->gamma_hack*/);
-//      break;
-
-    case PROP_SETTINGS:
-      g_value_set_object (value, options->settings);
       break;
 
     default:

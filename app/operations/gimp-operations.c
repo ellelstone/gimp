@@ -79,6 +79,16 @@ set_compat_file (GType        type,
   g_type_set_qdata (type, quark, file);
 }
 
+static void
+set_settings_folder (GType        type,
+                     const gchar *basename)
+{
+  GFile *file  = gimp_directory_file (basename, NULL);
+  GQuark quark = g_quark_from_static_string ("settings-folder");
+
+  g_type_set_qdata (type, quark, file);
+}
+
 void
 gimp_operations_init (Gimp *gimp)
 {
@@ -117,15 +127,20 @@ gimp_operations_init (Gimp *gimp)
   g_type_class_ref (GIMP_TYPE_OPERATION_REPLACE);
   g_type_class_ref (GIMP_TYPE_OPERATION_ANTI_ERASE);
 
+
   gimp_operation_config_register (gimp,
                                   "gimp:curves",
                                   GIMP_TYPE_CURVES_CONFIG);
   set_compat_file (GIMP_TYPE_CURVES_CONFIG,
                    "gimp-curves-tool.settings");
+  set_settings_folder (GIMP_TYPE_CURVES_CONFIG,
+                       "curves");
 
   gimp_operation_config_register (gimp,
                                   "gimp:levels",
                                   GIMP_TYPE_LEVELS_CONFIG);
   set_compat_file (GIMP_TYPE_LEVELS_CONFIG,
                    "gimp-levels-tool.settings");
+  set_settings_folder (GIMP_TYPE_LEVELS_CONFIG,
+                       "levels");
 }

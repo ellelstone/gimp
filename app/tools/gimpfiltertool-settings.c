@@ -19,9 +19,6 @@
 
 #include "config.h"
 
-#include <errno.h>
-
-#include <glib/gstdio.h>
 #include <gegl.h>
 #include <gtk/gtk.h>
 
@@ -31,19 +28,13 @@
 
 #include "tools-types.h"
 
-#include "operations/gimp-operation-config.h"
-
 #include "core/gimp.h"
-#include "core/gimpcontext.h"
-#include "core/gimplist.h"
-#include "core/gimpsettings.h"
 #include "core/gimptoolinfo.h"
 
 #include "widgets/gimpsettingsbox.h"
 
 #include "display/gimptoolgui.h"
 
-#include "gimpfilteroptions.h"
 #include "gimpfiltertool.h"
 #include "gimpfiltertool-settings.h"
 
@@ -66,9 +57,14 @@ GtkWidget *
 gimp_filter_tool_get_settings_box (GimpFilterTool *filter_tool)
 {
   GimpToolInfo *tool_info = GIMP_TOOL (filter_tool)->tool_info;
+  GQuark        quark     = g_quark_from_static_string ("settings-folder");
+  GType         type      = G_TYPE_FROM_INSTANCE (filter_tool->config);
+  GFile        *settings_folder;
   GtkWidget    *box;
   GtkWidget    *label;
   GtkWidget    *combo;
+
+  settings_folder = g_type_get_qdata (type, quark);
 
   box = gimp_settings_box_new (tool_info->gimp,
                                filter_tool->config,
@@ -76,7 +72,7 @@ gimp_filter_tool_get_settings_box (GimpFilterTool *filter_tool)
                                filter_tool->import_dialog_title,
                                filter_tool->export_dialog_title,
                                filter_tool->help_id,
-                               filter_tool->settings_folder,
+                               settings_folder,
                                NULL);
 
   g_signal_connect (box, "import",
@@ -180,10 +176,6 @@ gimp_filter_tool_settings_import (GimpSettingsBox *box,
 
   g_object_unref (input);
 
-  g_object_set (GIMP_TOOL_GET_OPTIONS (filter_tool),
-                "settings", file,
-                NULL);
-
   return TRUE;
 }
 
@@ -234,10 +226,6 @@ gimp_filter_tool_settings_export (GimpSettingsBox *box,
                 GIMP_MESSAGE_INFO,
                 _("Settings saved to '%s'"),
                 gimp_file_get_utf8_name (file));
-
-  g_object_set (GIMP_TOOL_GET_OPTIONS (filter_tool),
-                "settings", file,
-                NULL);
 
   return TRUE;
 }

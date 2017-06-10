@@ -722,19 +722,19 @@
 <!--      </menu>-->
 
     <menu action="filters-patterns-menu" name="Patterns">
-    <menuitem action="filters-noise-cell" />
-    <menuitem action="filters-noise-perlin" />
-    <menuitem action="filters-plasma" />
-    <menuitem action="filters-noise-simplex" />
-    <menuitem action="filters-noise-solid" />
-    <separator />
-    <menuitem action="filters-checkerboard" />
-    <menuitem action="filters-diffraction-patterns" />
-    <menuitem action="filters-grid" />
-    <menuitem action="filters-maze" />
-    <menuitem action="filters-sinus" />
-    <separator />
-</menu>
+      <menuitem action="filters-noise-cell" />
+      <menuitem action="filters-noise-perlin" />
+      <menuitem action="filters-plasma" />
+      <menuitem action="filters-noise-simplex" />
+      <menuitem action="filters-noise-solid" />
+      <separator />
+      <menuitem action="filters-checkerboard" />
+      <menuitem action="filters-diffraction-patterns" />
+      <menuitem action="filters-grid" />
+      <menuitem action="filters-maze" />
+      <menuitem action="filters-sinus" />
+      <separator />
+    </menu>
 
 
 <!--      <menu action="filters-decor-menu" name="Decor" />

@@ -43,8 +43,8 @@ m4_define([gimp_stable],
 m4_define([gimp_full_name], [GNU Image Manipulation Program])
 
 # required versions of other packages
-m4_define([babl_required_version], [0.1.27])
-m4_define([gegl_required_version], [0.3.15])
+m4_define([babl_required_version], [0.1.28])
+m4_define([gegl_required_version], [0.3.18])
 m4_define([glib_required_version], [2.40.0])
 m4_define([atk_required_version], [2.2.0])
 m4_define([gtk_required_version], [2.24.10])
@@ -1524,6 +1524,9 @@ if test "x$with_libmng" != xno && test -z "$MNG_LIBS" &&
   if test "$mng_ok" = yes; then
     have_libmng=yes
     FILE_MNG='file-mng$(EXEEXT)'; MNG_LIBS="-lmng $JPEG_LIBS $PNG_LIBS"; MNG_CFLAGS="$PNG_CFLAGS"
+    if test "x$platform_win32" = "xyes"; then
+      MNG_CFLAGS="$MNG_CFLAGS -DMNG_USE_DLL"
+    fi
   else
     have_libmng="no (MNG header file not found)"
   fi
@@ -2130,6 +2133,20 @@ AM_CONDITIONAL(HAVE_XSLTPROC, test "x$XSLTPROC" != "xno")
 ########################
 # Check for vector icons
 ########################
+
+# If not cross-compiling, default build's link and compile flags to the
+# target's flags.
+if test "$cross_compiling" != "yes"; then
+  if test "x$LDFLAGS_FOR_BUILD" = "x"; then
+    LDFLAGS_FOR_BUILD="$LDFLAGS"
+  fi
+  if test "x$CFLAGS_FOR_BUILD" = "x"; then
+    CFLAGS_FOR_BUILD="$CFLAGS"
+  fi
+  if test "x$CPPFLAGS_FOR_BUILD" = "x"; then
+    CPPFLAGS_FOR_BUILD="$CPPFLAGS"
+  fi
+fi
 
 AC_ARG_ENABLE(vector-icons, [  --disable-vector-icons  use raster icons rather than vector ones (default=auto)], ,
               enable_vector_icons=auto)
