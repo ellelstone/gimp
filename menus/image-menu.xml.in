@@ -510,30 +510,6 @@
         <menuitem action="drawable-offset" />
       </menu>
 
-<!-- Layer Properties
-
-      <menu action="layers-properties-menu" name="Properties">
-        <menuitem action="layers-edit-attributes" />
-        <menu action="layers-opacity-menu" name="Opacity">
-          <menuitem action="layers-opacity-transparent" />
-          <menuitem action="layers-opacity-opaque" />
-          <menuitem action="layers-opacity-decrease" />
-          <menuitem action="layers-opacity-increase" />
-        </menu>
-        <menu action="layers-mode-menu" name="Layer Mode">
-          <menuitem action="layers-mode-first" />
-          <menuitem action="layers-mode-last" />
-          <menuitem action="layers-mode-previous" />
-          <menuitem action="layers-mode-next" />
-        </menu>
-        <menuitem action="drawable-visible" />
-        <menuitem action="drawable-linked" />
-        <menuitem action="drawable-lock-content" />
-        <menuitem action="layers-lock-alpha" />
-      </menu>
-
--->
-
       <separator />
       <placeholder name="Resize">
         <menuitem action="layers-resize" />
@@ -557,7 +533,7 @@
       <separator />
         <menuitem action="filters-stretch-contrast" />
         <menuitem action="filters-invert-perceptual" />
-<!--        <menuitem action="filters-invert-linear" />-->
+<!--        <menuitem action="filters-invert-linear" /> linear and perceptual do the same thing -->
         <menuitem action="filters-component-extract" />
         <menuitem action="filters-rgb-clip" />
         <separator />
@@ -577,20 +553,6 @@
   <menuitem action="filters-stress" />
   </menu>
         <separator />
-<!--  <menuitem action="filters-c2g" /> removed but should be put somewhere in Filters-->
-<!--  <menuitem action="tools-color-balance" /> uses HSL, possibly recode to use LCH-->
-<!--  <menuitem action="tools-colorize" /> uses HSL, possibly recode to use LCH-->
-<!--  <menuitem action="filters-color-rotate" /> uses HSV - use Hue-Chroma tool instead-->
-<!--  <menuitem action="tools-brightness-contrast" /> instead use Levels or GEGL Workshop op or better yet use PhotoFlow plug-in-->
-<!--  <menuitem action="filters-color-exchange" /> this operation doesn't work very well-->
-<!--  <menuitem action="filters-alien-map" /> moved to Filters-->
-<!--  <menuitem action="filters-color-to-alpha" /> moved to Filters-->
-<!--  <menuitem action="filters-color-reduction" /> moved to Filters-->
-<!--  <menuitem action="drawable-equalize" /> removed -->
-<!--  <menuitem action="drawable-levels-stretch" /> removed-->
-<!--  <menuitem action="filters-sepia" /> permanently removed: instead use a sepia layer set to Multiply, Soft Light, or LCH Color blend mode, and fine-tune with the Hue-Chroma tool-->
-<!--  <menuitem action="filters-stretch-contrast-hsv" /> permanently removed: uses HSV-->
-<!--  <menuitem action="filters-color-temperature" /> permantently removed: sRGB only-->
     </menu>
 
     <menu action="filters-menu" name="Filters">
@@ -624,8 +586,7 @@
         <menuitem action="filters-color-enhance" />
         <menuitem action="filters-red-eye-removal" />
         <separator />
-        <menuitem action="filters-antialias" /><!-- subtle, puts intermediate values along edges -->
-<!--         <menuitem action="filters-deinterlace" />segfaults on default and patched GIMP -->
+        <menuitem action="filters-antialias" />
         <separator />
       </menu>
 
@@ -642,7 +603,6 @@
         <menuitem action="filters-noise-cie-lch" />
         <menuitem action="filters-noise-rgb" />
         <menuitem action="filters-dither" />
-<!--    <menuitem action="filters-noise-hsv" /> uses HSV-->
         <separator />
         <menuitem action="filters-noise-hurl" />
         <menuitem action="filters-noise-pick" />
@@ -652,8 +612,6 @@
       </menu>
 
       <menu action="filters-generic-menu" name="Generic">
-        <menuitem action="drawable-dilate" />
-        <menuitem action="drawable-erode" />
         <menuitem action="filters-value-propagate" /><!-- like dilate/erode but adjustable -->
         <separator />
         <menuitem action="filters-tile-seamless" />
@@ -668,58 +626,40 @@
       </menu>
 <separator />
       <menu action="filters-effects-menu" name="Effects">
-<!--        <menuitem action="filters-apply-canvas" />-->
         <menuitem action="filters-softglow" />
-        <menuitem action="filters-emboss" /><!-- -->
+        <menuitem action="filters-emboss" />
         <menuitem action="filters-mosaic" />
         <menuitem action="filters-cubism" />
         <separator />
         <menuitem action="filters-c2g" />
         <separator />
-        <menuitem action="filters-photocopy" /><!-- -->
-        <menuitem action="filters-engrave" /><!-- -->
-        <menuitem action="filters-video-degradation" /><!-- -->
+        <menuitem action="filters-photocopy" />
+        <menuitem action="filters-engrave" />
+        <menuitem action="filters-video-degradation" />
         <separator />
-        <menuitem action="filters-vignette" /><!-- this isn't lens vignetting but rather adding a frame with an oval cut-out-->
+        <menuitem action="filters-vignette" />
         <separator />
         <menuitem action="filters-alien-map" />
-<!--         <menuitem action="filters-dropshadow" />how do you get this to do anything? -->
-<!--         <menuitem action="filters-tile-glass" />out, imho - g'mic has better -->
         <separator />
-<!--    <menuitem action="filters-cartoon" /> removed-->
-<!--    <menuitem action="filters-oilify" /> removed-->
-<!--    <menuitem action="filters-supernova" /> uses HSV-->
-<!--         <menuitem action="filters-lens-flare" />out, imho-->
       </menu>
-<!-- -->
       <menu action="filters-distorts-menu" name="Distortions">
-        <menuitem action="filters-apply-lens" /><!-- sort of like a wider-angle lens-->
-        <menuitem action="filters-lens-distortion" /><!-- -->
-        <menuitem action="filters-polar-coordinates" /><!-- -->
-        <menuitem action="filters-panorama-projection" /><!-- -->
+        <menuitem action="filters-apply-lens" />
+        <menuitem action="filters-lens-distortion" />
+        <menuitem action="filters-polar-coordinates" />
+        <menuitem action="filters-panorama-projection" />
         <separator />
-        <menuitem action="filters-kaleidoscope" /><!-- -->
+        <menuitem action="filters-kaleidoscope" />
         <separator />
-        <menuitem action="filters-ripple" /><!-- -->
-        <menuitem action="filters-waves" /><!-- -->
-        <menuitem action="filters-whirl-pinch" /><!-- -->
+        <menuitem action="filters-ripple" />
+        <menuitem action="filters-waves" />
+        <menuitem action="filters-whirl-pinch" />
         <separator />
-        <menuitem action="filters-shift" /><!-- -->
-        <menuitem action="filters-wind" /><!-- -->
+        <menuitem action="filters-shift" />
+        <menuitem action="filters-wind" />
         <separator />
-        <menuitem action="filters-fractal-trace" /><!-- -->
+        <menuitem action="filters-fractal-trace" />
         <separator />
       </menu>
-
-<!--      <menu action="filters-combine-menu" name="Combine" />
-
-      <menu action="filters-map-menu" name="Map">-->
-<!--         <menuitem action="filters-bump-map" />how do you get this to do anything? -->
-<!--         <menuitem action="filters-displace" />how do you get this to do anything? -->
-<!--         <menuitem action="filters-illusion" />useless, imho -->
-<!--         <menuitem action="filters-tile-paper" />useless, imho -->
-<!--       <separator />-->
-<!--      </menu>-->
 
     <menu action="filters-patterns-menu" name="Patterns">
       <menuitem action="filters-noise-cell" />
@@ -736,24 +676,6 @@
       <separator />
     </menu>
 
-
-<!--      <menu action="filters-decor-menu" name="Decor" />
-
-      <menu action="filters-web-menu" name="Web">
-      </menu>
-
-      <menu action="colors-tone-mapping-menu" name="Tone Mapping">
-  <menuitem action="filters-fattal-2002" />
-  <menuitem action="filters-mantiuk-2006" />
-  <menuitem action="filters-reinhard-2005" />
-  <menuitem action="filters-stress" />
-        <separator />
-      </menu>
-
-      <menu action="filters-animation-menu" name="Animation" >
-        <placeholder name="Animators" />
-        <separator />
-      </menu>-->
       <separator />
       <placeholder name="Menus" />
 <!--      <separator />-->
@@ -798,14 +720,14 @@
         <menuitem action="tools-perspective" />
         <menuitem action="tools-unified-transform" />
   <!-- Enable when the tool leaves the playground
-             <menuitem action="tools-handle-transform" />
-  -->
+             <menuitem action="tools-handle-transform" />  -->
+
         <menuitem action="tools-flip" />
         <menuitem action="tools-cage" />
         <menuitem action="tools-warp" />
   <!-- Enable when the tool leaves the playground
-             <menuitem action="tools-n-point-deformation" />
-  -->
+             <menuitem action="tools-n-point-deformation" />  -->
+
       </menu>
       <menuitem action="tools-vector" />
       <menuitem action="tools-color-picker" />

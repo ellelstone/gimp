@@ -193,11 +193,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     "gegl:c2g",
     GIMP_HELP_FILTER_C2G },
 
-//  { "filters-cartoon", GIMP_ICON_GEGL,
-//    NC_("filters-action", "Ca_rtoon..."), NULL, NULL,
-//    "gegl:cartoon",
-//    GIMP_HELP_FILTER_CARTOON },
-
   { "filters-channel-mixer", GIMP_ICON_GEGL,
     NC_("filters-action", "_Channel Mixer..."), NULL, NULL,
     "gegl:channel-mixer",
@@ -208,35 +203,15 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     "gegl:checkerboard",
     GIMP_HELP_FILTER_CHECKERBOARD },
 
-//  { "filters-color-balance", GIMP_ICON_TOOL_COLOR_BALANCE,
-//    NC_("filters-action", "Color _Balance..."), NULL, NULL,
-//    "gimp:color-balance",
-//    GIMP_HELP_TOOL_COLOR_BALANCE },
-
   { "filters-color-exchange", GIMP_ICON_GEGL,
     NC_("filters-action", "_Color Exchange..."), NULL, NULL,
     "gegl:color-exchange",
     GIMP_HELP_FILTER_COLOR_EXCHANGE },
 
-//  { "filters-colorize", GIMP_ICON_TOOL_COLORIZE,
-//    NC_("filters-action", "Colori_ze..."), NULL, NULL,
-//    "gimp:colorize",
-//    GIMP_HELP_TOOL_COLORIZE },
-
   { "filters-dither", GIMP_ICON_GEGL,
     NC_("filters-action", "Dithe_r..."), NULL, NULL,
     "gegl:dither",
     GIMP_HELP_FILTER_DITHER },
-
-//  { "filters-color-rotate", GIMP_ICON_GEGL,
-//    NC_("filters-action", "_Rotate Colors..."), NULL, NULL,
-//    "gegl:color-rotate",
-//    GIMP_HELP_FILTER_COLOR_ROTATE },
-
-//  { "filters-color-temperature", GIMP_ICON_GEGL,
-//    NC_("filters-action", "Color T_emperature..."), NULL, NULL,
-//    "gegl:color-temperature",
-//    GIMP_HELP_FILTER_COLOR_TEMPERATURE },
 
   { "filters-color-to-alpha", GIMP_ICON_GEGL,
     NC_("filters-action", "Color to _Alpha..."), NULL, NULL,
@@ -303,11 +278,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     "gegl:edge-laplace",
     GIMP_HELP_FILTER_EDGE_LAPLACE },
 
-//  { "filters-edge-neon", GIMP_ICON_GEGL,
-//    NC_("filters-action", "_Neon..."), NULL, NULL,
-//    "gegl:edge-neon",
-//    GIMP_HELP_FILTER_EDGE_NEON },
-
   { "filters-edge-sobel", GIMP_ICON_GEGL,
     NC_("filters-action", "_Sobel..."), NULL, NULL,
     "gegl:edge-sobel",
@@ -367,11 +337,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     NC_("filters-action", "_Hue-_Chroma..."), NULL, NULL,
     "gegl:hue-chroma",
     GIMP_HELP_FILTER_HUE_CHROMA },
-
-//  { "filters-hue-saturation", GIMP_ICON_TOOL_HUE_SATURATION,
-//    NC_("filters-action", "Hue-_Saturation..."), NULL, NULL,
-//    "gimp:hue-saturation",
-//    GIMP_HELP_TOOL_HUE_SATURATION },
 
   { "filters-illusion", GIMP_ICON_GEGL,
     NC_("filters-action", "_Illusion..."), NULL, NULL,
@@ -443,11 +408,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     "gegl:noise-cie-lch",
     GIMP_HELP_FILTER_NOISE_CIE_LCH },
 
-//  { "filters-noise-hsv", GIMP_ICON_GEGL,
-//    NC_("filters-action", "HSV Noise..."), NULL, NULL,
-//    "gegl:noise-hsv",
-//    GIMP_HELP_FILTER_NOISE_HSV },
-
   { "filters-noise-hurl", GIMP_ICON_GEGL,
     NC_("filters-action", "_Hurl..."), NULL, NULL,
     "gegl:noise-hurl",
@@ -492,11 +452,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     NC_("filters-action", "Sp_read..."), NULL, NULL,
     "gegl:noise-spread",
     GIMP_HELP_FILTER_NOISE_SPREAD },
-
-//  { "filters-oilify", GIMP_ICON_GEGL,
-//    NC_("filters-action", "Oili_fy..."), NULL, NULL,
-//    "gegl:oilify",
-//    GIMP_HELP_FILTER_OILIFY },
 
   { "filters-panorama-projection", GIMP_ICON_GEGL,
     NC_("filters-action", "_Panorama Projection..."), NULL, NULL,
@@ -558,11 +513,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     "gimp:semi-flatten",
     GIMP_HELP_FILTER_SEMI_FLATTEN },
 
-//  { "filters-sepia", GIMP_ICON_GEGL,
-//    NC_("filters-action", "_Sepia..."), NULL, NULL,
-//    "gegl:sepia",
-//    GIMP_HELP_FILTER_SEPIA },
-
   { "filters-shift", GIMP_ICON_GEGL,
     NC_("filters-action", "_Shift..."), NULL, NULL,
     "gegl:shift",
@@ -597,11 +547,6 @@ static const GimpStringActionEntry filters_interactive_actions[] =
     NC_("filters-action", "_Stress..."), NULL, NULL,
     "gegl:stress",
     GIMP_HELP_FILTER_STRESS },
-
-//  { "filters-supernova", GIMP_ICON_GEGL,
-//    NC_("filters-action", "Super_nova..."), NULL, NULL,
-//    "gegl:supernova",
-//    GIMP_HELP_FILTER_SUPERNOVA },
 
   { "filters-threshold-alpha", GIMP_ICON_GEGL,
     NC_("filters-action", "_Threshold Alpha..."), NULL, NULL,
@@ -795,16 +740,11 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-apply-lens",              writable);
   SET_SENSITIVE ("filters-bump-map",                writable);
   SET_SENSITIVE ("filters-c2g",                     writable && !gray);
-/*  SET_SENSITIVE ("filters-cartoon",                 writable);*/
   SET_SENSITIVE ("filters-channel-mixer",           writable);
   SET_SENSITIVE ("filters-checkerboard",            writable);
-  SET_SENSITIVE ("filters-color-balance",           writable && !gray);
   SET_SENSITIVE ("filters-color-enhance",           writable && !gray);
   SET_SENSITIVE ("filters-color-exchange",          writable);
-  SET_SENSITIVE ("filters-colorize",                writable && !gray);
   SET_SENSITIVE ("filters-dither",                  writable);
-/*  SET_SENSITIVE ("filters-color-rotate",            writable);*/
-/*  SET_SENSITIVE ("filters-color-temperature",       writable && !gray);*/
   SET_SENSITIVE ("filters-color-to-alpha",          writable && !gray && alpha);
   SET_SENSITIVE ("filters-component-extract",       writable);
   SET_SENSITIVE ("filters-convolution-matrix",      writable);
@@ -819,7 +759,6 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-dropshadow",              writable && alpha);
   SET_SENSITIVE ("filters-edge",                    writable);
   SET_SENSITIVE ("filters-edge-laplace",            writable);
-/*  SET_SENSITIVE ("filters-edge-neon",               writable);*/
   SET_SENSITIVE ("filters-edge-sobel",              writable);
   SET_SENSITIVE ("filters-emboss",                  writable);
   SET_SENSITIVE ("filters-engrave",                 writable);
@@ -833,7 +772,6 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-grid",                    writable);
   SET_SENSITIVE ("filters-high-pass",               writable);
   SET_SENSITIVE ("filters-hue-chroma",              writable);
-  SET_SENSITIVE ("filters-hue-saturation",          writable && !gray);
   SET_SENSITIVE ("filters-illusion",                writable);
   SET_SENSITIVE ("filters-invert-linear",           writable);
   SET_SENSITIVE ("filters-invert-perceptual",       writable);
@@ -851,7 +789,6 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-motion-blur-zoom",        writable);
   SET_SENSITIVE ("filters-noise-cell",              writable);
   SET_SENSITIVE ("filters-noise-cie-lch",           writable);
-/*  SET_SENSITIVE ("filters-noise-hsv",               writable && !gray);*/
   SET_SENSITIVE ("filters-noise-hurl",              writable);
   SET_SENSITIVE ("filters-noise-perlin",            writable);
   SET_SENSITIVE ("filters-noise-pick",              writable);
@@ -861,7 +798,6 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-noise-slur",              writable);
   SET_SENSITIVE ("filters-noise-solid",             writable);
   SET_SENSITIVE ("filters-noise-spread",            writable);
-/*  SET_SENSITIVE ("filters-oilify",                  writable);*/
   SET_SENSITIVE ("filters-panorama-projection",     writable);
   SET_SENSITIVE ("filters-photocopy",               writable);
   SET_SENSITIVE ("filters-pixelize",                writable);
@@ -873,17 +809,13 @@ filters_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("filters-rgb-clip",                writable);
   SET_SENSITIVE ("filters-ripple",                  writable);
   SET_SENSITIVE ("filters-saturation",              writable && !gray);
-/*  SET_SENSITIVE ("filters-semi-flatten",            writable && alpha);*/
-/*  SET_SENSITIVE ("filters-sepia",                   writable && !gray);*/
   SET_SENSITIVE ("filters-shift",                   writable);
   SET_SENSITIVE ("filters-sinus",                   writable);
   SET_SENSITIVE ("filters-slic",                    writable);
   SET_SENSITIVE ("filters-snn-mean",                writable);
   SET_SENSITIVE ("filters-softglow",                writable);
   SET_SENSITIVE ("filters-stretch-contrast",        writable);
-//  SET_SENSITIVE ("filters-stretch-contrast-hsv",    writable);
   SET_SENSITIVE ("filters-stress",                  writable);
-//  SET_SENSITIVE ("filters-supernova",               writable);
   SET_SENSITIVE ("filters-threshold-alpha",         writable && alpha);
   SET_SENSITIVE ("filters-tile-glass",              writable);
   SET_SENSITIVE ("filters-tile-paper",              writable);
