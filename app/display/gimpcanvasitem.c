@@ -67,6 +67,7 @@ struct _GimpCanvasItemPrivate
 
 /*  local function prototypes  */
 
+static void             gimp_canvas_item_dispose          (GObject         *object);
 static void             gimp_canvas_item_constructed      (GObject         *object);
 static void             gimp_canvas_item_set_property     (GObject         *object,
                                                            guint            property_id,
@@ -105,6 +106,7 @@ gimp_canvas_item_class_init (GimpCanvasItemClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+  object_class->dispose                     = gimp_canvas_item_dispose;
   object_class->constructed                 = gimp_canvas_item_constructed;
   object_class->set_property                = gimp_canvas_item_set_property;
   object_class->get_property                = gimp_canvas_item_get_property;
@@ -187,6 +189,16 @@ gimp_canvas_item_constructed (GObject *object)
   item->private->change_count = 0; /* undo hack from init() */
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
+}
+
+static void
+gimp_canvas_item_dispose (GObject *object)
+{
+  GimpCanvasItem *item = GIMP_CANVAS_ITEM (object);
+
+  item->private->change_count++; /* avoid emissions during destruction */
+
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -583,6 +595,63 @@ gimp_canvas_item_transform_xy_f (GimpCanvasItem *item,
   g_return_if_fail (GIMP_IS_CANVAS_ITEM (item));
 
   gimp_display_shell_zoom_xy_f (item->private->shell, x, y, tx, ty);
+}
+
+/**
+ * gimp_canvas_item_transform_distance:
+ * @item: a #GimpCanvasItem
+ * @x1:   start point X in image coordinates
+ * @y1:   start point Y in image coordinates
+ * @x2:   end point X in image coordinates
+ * @y2:   end point Y in image coordinates
+ *
+ * If you just need to compare distances, consider to use
+ * gimp_canvas_item_transform_distance_square() instead.
+ *
+ * Returns: the distance between the given points in display coordinates
+ **/
+gdouble
+gimp_canvas_item_transform_distance (GimpCanvasItem *item,
+                                     gdouble         x1,
+                                     gdouble         y1,
+                                     gdouble         x2,
+                                     gdouble         y2)
+{
+  return sqrt (gimp_canvas_item_transform_distance_square (item,
+                                                           x1, y1, x2, y2));
+}
+
+/**
+ * gimp_canvas_item_transform_distance_square:
+ * @item: a #GimpCanvasItem
+ * @x1:   start point X in image coordinates
+ * @y1:   start point Y in image coordinates
+ * @x2:   end point X in image coordinates
+ * @y2:   end point Y in image coordinates
+ *
+ * This function is more effective than
+ * gimp_canvas_item_transform_distance() as it doesn't perform a
+ * sqrt(). Use this if you just need to compare distances.
+ *
+ * Returns: the square of the distance between the given points in
+ *          display coordinates
+ **/
+gdouble
+gimp_canvas_item_transform_distance_square (GimpCanvasItem   *item,
+                                            gdouble           x1,
+                                            gdouble           y1,
+                                            gdouble           x2,
+                                            gdouble           y2)
+{
+  gdouble tx1, ty1;
+  gdouble tx2, ty2;
+
+  g_return_val_if_fail (GIMP_IS_CANVAS_ITEM (item), 0.0);
+
+  gimp_canvas_item_transform_xy_f (item, x1, y1, &tx1, &ty1);
+  gimp_canvas_item_transform_xy_f (item, x2, y2, &tx2, &ty2);
+
+  return SQR (tx2 - tx1) + SQR (ty2 - ty1);
 }
 
 
