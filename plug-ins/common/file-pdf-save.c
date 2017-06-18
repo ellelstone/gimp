@@ -349,7 +349,7 @@ query (void)
                           "Copyright Barak Itkin, Lionel N., Jehan",
                           "August 2009, 2017",
                           N_("Portable Document Format"),
-                          "RGB*, GRAY*, INDEXED*",
+                          "RGB*, GRAY*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (save2_args), 0,
                           save2_args, NULL);
@@ -1400,7 +1400,7 @@ get_layer_color (gint32    layer_ID,
 
 /*  if (gimp_drawable_is_indexed (layer_ID))
     {//this always returns FALSE as I've removed all indexed image support
-       FIXME: We can't do a propper histogram on indexed layers! 
+       FIXME: We can't do a propper histogram on indexed layers!
       *single = FALSE;
       col. r = col.g = col.b = col.a = 0;
       return col;
