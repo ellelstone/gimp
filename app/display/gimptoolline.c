@@ -105,7 +105,7 @@ static void     gimp_tool_line_get_property    (GObject               *object,
                                                 GParamSpec            *pspec);
 
 static void     gimp_tool_line_changed         (GimpToolWidget        *widget);
-static gboolean gimp_tool_line_button_press    (GimpToolWidget        *widget,
+static gint     gimp_tool_line_button_press    (GimpToolWidget        *widget,
                                                 const GimpCoords      *coords,
                                                 guint32                time,
                                                 GdkModifierType        state,
@@ -372,10 +372,10 @@ gimp_tool_line_button_press (GimpToolWidget      *widget,
       gimp_tool_line_point_motion (line,
                                    state & gimp_get_constrain_behavior_mask ());
 
-      return TRUE;
+      return 1;
     }
 
-  return FALSE;
+  return 0;
 }
 
 void
@@ -584,24 +584,12 @@ gimp_tool_line_update_hilight (GimpToolLine *line)
     hilight_point = gimp_tool_line_get_point (line);
 
   if (start_visible)
-    {
-      gimp_canvas_item_begin_change (private->start_handle_circle);
-      g_object_set (private->start_handle_circle,
-                    "width",  start_diameter,
-                    "height", start_diameter,
-                    NULL);
-      gimp_canvas_item_end_change (private->start_handle_circle);
-    }
+    gimp_canvas_handle_set_size (private->start_handle_circle,
+                                 start_diameter, start_diameter);
 
   if (end_visible)
-    {
-      gimp_canvas_item_begin_change (private->end_handle_circle);
-      g_object_set (private->end_handle_circle,
-                    "width",  end_diameter,
-                    "height", end_diameter,
-                    NULL);
-      gimp_canvas_item_end_change (private->end_handle_circle);
-    }
+    gimp_canvas_handle_set_size (private->end_handle_circle,
+                                 end_diameter, end_diameter);
 
   gimp_canvas_item_set_highlight (private->start_handle_circle,
                                   hilight_point == POINT_START);

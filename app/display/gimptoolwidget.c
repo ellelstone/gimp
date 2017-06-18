@@ -25,9 +25,12 @@
 
 #include "display-types.h"
 
+#include "core/gimpmarshal.h"
+
 #include "gimpcanvasgroup.h"
 #include "gimpcanvashandle.h"
 #include "gimpcanvasline.h"
+#include "gimpcanvastransformguides.h"
 #include "gimpdisplayshell.h"
 #include "gimptoolwidget.h"
 
@@ -42,6 +45,8 @@ enum
 enum
 {
   CHANGED,
+  SNAP_OFFSETS,
+  STATUS,
   LAST_SIGNAL
 };
 
@@ -96,6 +101,29 @@ gimp_tool_widget_class_init (GimpToolWidgetClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  widget_signals[SNAP_OFFSETS] =
+    g_signal_new ("snap-offsets",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolWidgetClass, snap_offsets),
+                  NULL, NULL,
+                  gimp_marshal_VOID__INT_INT_INT_INT,
+                  G_TYPE_NONE, 4,
+                  G_TYPE_INT,
+                  G_TYPE_INT,
+                  G_TYPE_INT,
+                  G_TYPE_INT);
+
+  widget_signals[STATUS] =
+    g_signal_new ("status",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolWidgetClass, status),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__STRING,
+                  G_TYPE_NONE, 1,
+                  G_TYPE_STRING);
 
   g_object_class_install_property (object_class, PROP_SHELL,
                                    g_param_spec_object ("shell",
@@ -181,6 +209,10 @@ gimp_tool_widget_get_property (GObject    *object,
       g_value_set_object (value, private->shell);
       break;
 
+    case PROP_ITEM:
+      g_value_set_object (value, private->item);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -202,12 +234,43 @@ gimp_tool_widget_properties_changed (GObject     *object,
 
 /*  public functions  */
 
+GimpDisplayShell *
+gimp_tool_widget_get_shell (GimpToolWidget *widget)
+{
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  return widget->private->shell;
+}
+
 GimpCanvasItem *
 gimp_tool_widget_get_item (GimpToolWidget *widget)
 {
   g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
 
   return widget->private->item;
+}
+
+void
+gimp_tool_widget_snap_offsets (GimpToolWidget *widget,
+                               gint            offset_x,
+                               gint            offset_y,
+                               gint            width,
+                               gint            height)
+{
+  g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
+
+  g_signal_emit (widget, widget_signals[SNAP_OFFSETS], 0,
+                 offset_x, offset_y, width, height);
+}
+
+void
+gimp_tool_widget_status (GimpToolWidget *widget,
+                         const gchar    *status)
+{
+  g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
+
+  g_signal_emit (widget, widget_signals[STATUS], 0,
+                 status);
 }
 
 void
@@ -343,22 +406,46 @@ gimp_tool_widget_add_handle (GimpToolWidget   *widget,
   return item;
 }
 
-gboolean
+GimpCanvasItem *
+gimp_tool_widget_add_transform_guides (GimpToolWidget    *widget,
+                                       const GimpMatrix3 *transform,
+                                       gdouble            x1,
+                                       gdouble            y1,
+                                       gdouble            x2,
+                                       gdouble            y2,
+                                       GimpGuidesType     type,
+                                       gint               n_guides)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_transform_guides_new (widget->private->shell,
+                                           transform, x1, y1, x2, y2,
+                                           type, n_guides);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+gint
 gimp_tool_widget_button_press (GimpToolWidget      *widget,
                                const GimpCoords    *coords,
                                guint32              time,
                                GdkModifierType      state,
                                GimpButtonPressType  press_type)
 {
-  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), FALSE);
-  g_return_val_if_fail (coords != NULL, FALSE);
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), 0);
+  g_return_val_if_fail (coords != NULL, 0);
 
   if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->button_press)
     return GIMP_TOOL_WIDGET_GET_CLASS (widget)->button_press (widget,
                                                               coords, time, state,
                                                               press_type);
 
-  return FALSE;
+  return 0;
 }
 
 void

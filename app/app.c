@@ -65,6 +65,7 @@
 #include "app.h"
 #include "errors.h"
 #include "language.h"
+#include "sanity.h"
 #include "gimp-debug.h"
 
 #include "gimp-intl.h"
@@ -181,6 +182,7 @@ app_run (const gchar         *full_prog_name,
   GMainLoop          *run_loop;
   GFile              *default_folder = NULL;
   GFile              *gimpdir;
+  const gchar        *abort_message;
 
   app_initialize_colorants ();/* initializes contents of colorant_data for "anyrgb" */
 
@@ -257,6 +259,13 @@ app_run (const gchar         *full_prog_name,
 
   /*  change the locale if a language if specified  */
   language_init (gimp->config->language);
+
+  /*  run the late-stage sanity check.  it's important that this check is run
+   *  after the call to language_init() (see comment in sanity_check_late().)
+   */
+  abort_message = sanity_check_late ();
+  if (abort_message)
+    app_abort (no_interface, abort_message);
 
   /*  initialize lowlevel stuff  */
 //   printf("app.c gimp_gegl_init (gimp); 1\n");

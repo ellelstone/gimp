@@ -164,8 +164,16 @@ libappdisplay_a_sources = \
 	gimptooldialog.h			\
 	gimptoolgui.c				\
 	gimptoolgui.h				\
+	gimptoolcompass.c			\
+	gimptoolcompass.h			\
 	gimptoolline.c				\
 	gimptoolline.h				\
+	gimptoolrotategrid.c			\
+	gimptoolrotategrid.h			\
+	gimptoolsheargrid.c			\
+	gimptoolsheargrid.h			\
+	gimptooltransformgrid.c			\
+	gimptooltransformgrid.h			\
 	gimptoolwidget.c			\
 	gimptoolwidget.h
 

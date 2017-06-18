@@ -48,10 +48,17 @@ struct _GimpToolWidgetClass
   GimpObjectClass  parent_class;
 
   /*  signals  */
-  void     (* changed)        (GimpToolWidget        *widget);
+  void     (* changed)         (GimpToolWidget        *widget);
+  void     (* snap_offsets)    (GimpToolWidget        *widget,
+                                gint                   offset_x,
+                                gint                   offset_y,
+                                gint                   width,
+                                gint                   height);
+  void     (* status)          (GimpToolWidget        *widget,
+                                const gchar           *status);
 
   /*  virtual functions  */
-  gboolean (* button_press)    (GimpToolWidget        *widget,
+  gint     (* button_press)    (GimpToolWidget        *widget,
                                 const GimpCoords      *coords,
                                 guint32                time,
                                 GdkModifierType        state,
@@ -89,43 +96,63 @@ struct _GimpToolWidgetClass
 };
 
 
-GType             gimp_tool_widget_get_type         (void) G_GNUC_CONST;
+GType              gimp_tool_widget_get_type         (void) G_GNUC_CONST;
 
-GimpCanvasItem  * gimp_tool_widget_get_item         (GimpToolWidget  *widget);
+GimpDisplayShell * gimp_tool_widget_get_shell        (GimpToolWidget  *widget);
+GimpCanvasItem   * gimp_tool_widget_get_item         (GimpToolWidget  *widget);
+
+/*  for subclasses, to notify the handling tool
+ */
+void               gimp_tool_widget_snap_offsets     (GimpToolWidget  *widget,
+                                                      gint             offset_x,
+                                                      gint             offset_y,
+                                                      gint             width,
+                                                      gint             height);
+void               gimp_tool_widget_status           (GimpToolWidget  *widget,
+                                                      const gchar     *status);
 
 /*  for subclasses, to add and manage their items
  */
-void              gimp_tool_widget_add_item         (GimpToolWidget  *widget,
-                                                     GimpCanvasItem  *item);
-void              gimp_tool_widget_remove_item      (GimpToolWidget  *widget,
-                                                     GimpCanvasItem  *item);
+void               gimp_tool_widget_add_item         (GimpToolWidget  *widget,
+                                                      GimpCanvasItem  *item);
+void               gimp_tool_widget_remove_item      (GimpToolWidget  *widget,
+                                                      GimpCanvasItem  *item);
 
-GimpCanvasGroup * gimp_tool_widget_add_stroke_group (GimpToolWidget  *widget);
-GimpCanvasGroup * gimp_tool_widget_add_fill_group   (GimpToolWidget  *widget);
+GimpCanvasGroup  * gimp_tool_widget_add_stroke_group (GimpToolWidget  *widget);
+GimpCanvasGroup  * gimp_tool_widget_add_fill_group   (GimpToolWidget  *widget);
 
-void              gimp_tool_widget_push_group       (GimpToolWidget  *widget,
-                                                     GimpCanvasGroup *group);
-void              gimp_tool_widget_pop_group        (GimpToolWidget  *widget);
+void               gimp_tool_widget_push_group       (GimpToolWidget  *widget,
+                                                      GimpCanvasGroup *group);
+void               gimp_tool_widget_pop_group        (GimpToolWidget  *widget);
 
-/*  convenience functions to add specific items
+/*  for subclasses, convenience functions to add specific items
  */
-GimpCanvasItem * gimp_tool_widget_add_line   (GimpToolWidget   *widget,
-                                              gdouble           x1,
-                                              gdouble           y1,
-                                              gdouble           x2,
-                                              gdouble           y2);
-GimpCanvasItem * gimp_tool_widget_add_handle (GimpToolWidget   *widget,
-                                              GimpHandleType    type,
-                                              gdouble           x,
-                                              gdouble           y,
-                                              gint              width,
-                                              gint              height,
-                                              GimpHandleAnchor  anchor);
+GimpCanvasItem * gimp_tool_widget_add_line   (GimpToolWidget    *widget,
+                                              gdouble            x1,
+                                              gdouble            y1,
+                                              gdouble            x2,
+                                              gdouble            y2);
+GimpCanvasItem * gimp_tool_widget_add_handle (GimpToolWidget    *widget,
+                                              GimpHandleType     type,
+                                              gdouble            x,
+                                              gdouble            y,
+                                              gint               width,
+                                              gint               height,
+                                              GimpHandleAnchor   anchor);
+GimpCanvasItem * gimp_tool_widget_add_transform_guides
+                                             (GimpToolWidget    *widget,
+                                              const GimpMatrix3 *transform,
+                                              gdouble            x1,
+                                              gdouble            y1,
+                                              gdouble            x2,
+                                              gdouble            y2,
+                                              GimpGuidesType     type,
+                                              gint               n_guides);
 
 /*  for tools, to be called from the respective GimpTool method
  *  implementations
  */
-gboolean   gimp_tool_widget_button_press    (GimpToolWidget        *widget,
+gint       gimp_tool_widget_button_press    (GimpToolWidget        *widget,
                                              const GimpCoords      *coords,
                                              guint32                time,
                                              GdkModifierType        state,

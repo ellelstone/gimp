@@ -144,6 +144,10 @@ Tools:
     discarded on tool change anymore.
   - For Intelligent Scissors, GIMP now checks whether the first and the
     last isegments are distinct before closing the curve.
+  - Flip tool: add Clipping option to the flip tool. Add support for
+    reflecting across guides: when clicking on a guide while using the
+    Flip tool, reflect the active item across the guide, rather than
+    around its center.
 
 Painting:
 
@@ -156,6 +160,7 @@ Painting:
   - Allow painting on transparent layers with modes other than normal.
   - Add a specialized convolution algorithm for the hardness blur
     to make it faster.
+  - New dynamics "Pressure Size".
 
 File Formats
 
@@ -182,6 +187,7 @@ File Formats
     * loading 2bpp, 2 planes/1bpp, 3 planes/1bpp and 4bpp images.
     * non-Black&White monochrome PCX files (any 2 colors according to
       the palette).
+  - Add support for exporting multi-page PDF from image layers.
 
 Printing
 
@@ -213,6 +219,13 @@ Color Palettes
   - Merge Palettes command is available for multiple selected color
     palettes now.
 
+Assets / Resources
+
+  - Some basic presets are available for the Crop tool now: 2x3,
+    3x4, 16:10, 16x9, and square.
+  - Documents templates have been updated and now feature popular,
+    contemporary document presets for both print and digital media.
+
 PDB:
 
   - Rename *-paste-as-new to *-paste-as-new-image.
@@ -221,11 +234,11 @@ PDB:
 
 Build:
 
-  - Depends on LCMS2.7+ now, because earlier LCMS2 releases caused
+  - Depend on LCMS2.7+ now, because earlier LCMS2 releases caused
     problems with certain GIMP blend modes.
-  - Depends on libpng 1.6.25+ to avoid warnings about known incorrect
+  - Depend on libpng 1.6.25+ to avoid warnings about known incorrect
     sRGB profiles, also avoid various vulnerabilities.
-  - Depends on glib-networking now for HTTPS support.
+  - Depend on glib-networking now for HTTPS support.
   - Add a flatpak-builder manifest.
 
 OS-specific changes:
