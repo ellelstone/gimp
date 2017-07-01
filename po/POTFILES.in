@@ -255,6 +255,11 @@ app/display/gimpdisplayshell-title.c
 app/display/gimpnavigationeditor.c
 app/display/gimpstatusbar.c
 app/display/gimptoolcompass.c
+app/display/gimptoolhandlegrid.c
+app/display/gimptoolline.c
+app/display/gimptoolpath.c
+app/display/gimptoolpolygon.c
+app/display/gimptoolrectangle.c
 app/display/gimptooltransformgrid.c
 
 app/file/file-open.c
@@ -438,7 +443,6 @@ app/tools/gimpperspectivetool.c
 app/tools/gimprectangleoptions.c
 app/tools/gimprectangleselectoptions.c
 app/tools/gimprectangleselecttool.c
-app/tools/gimprectangletool.c
 app/tools/gimpregionselectoptions.c
 app/tools/gimpregionselecttool.c
 app/tools/gimprotatetool.c

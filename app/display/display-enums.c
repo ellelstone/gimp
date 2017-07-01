@@ -260,6 +260,99 @@ gimp_path_style_get_type (void)
 }
 
 GType
+gimp_rectangle_constraint_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_RECTANGLE_CONSTRAIN_NONE, "GIMP_RECTANGLE_CONSTRAIN_NONE", "none" },
+    { GIMP_RECTANGLE_CONSTRAIN_IMAGE, "GIMP_RECTANGLE_CONSTRAIN_IMAGE", "image" },
+    { GIMP_RECTANGLE_CONSTRAIN_DRAWABLE, "GIMP_RECTANGLE_CONSTRAIN_DRAWABLE", "drawable" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_RECTANGLE_CONSTRAIN_NONE, "GIMP_RECTANGLE_CONSTRAIN_NONE", NULL },
+    { GIMP_RECTANGLE_CONSTRAIN_IMAGE, "GIMP_RECTANGLE_CONSTRAIN_IMAGE", NULL },
+    { GIMP_RECTANGLE_CONSTRAIN_DRAWABLE, "GIMP_RECTANGLE_CONSTRAIN_DRAWABLE", NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpRectangleConstraint", values);
+      gimp_type_set_translation_context (type, "rectangle-constraint");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_rectangle_fixed_rule_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_RECTANGLE_FIXED_ASPECT, "GIMP_RECTANGLE_FIXED_ASPECT", "aspect" },
+    { GIMP_RECTANGLE_FIXED_WIDTH, "GIMP_RECTANGLE_FIXED_WIDTH", "width" },
+    { GIMP_RECTANGLE_FIXED_HEIGHT, "GIMP_RECTANGLE_FIXED_HEIGHT", "height" },
+    { GIMP_RECTANGLE_FIXED_SIZE, "GIMP_RECTANGLE_FIXED_SIZE", "size" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_RECTANGLE_FIXED_ASPECT, NC_("rectangle-fixed-rule", "Aspect ratio"), NULL },
+    { GIMP_RECTANGLE_FIXED_WIDTH, NC_("rectangle-fixed-rule", "Width"), NULL },
+    { GIMP_RECTANGLE_FIXED_HEIGHT, NC_("rectangle-fixed-rule", "Height"), NULL },
+    { GIMP_RECTANGLE_FIXED_SIZE, NC_("rectangle-fixed-rule", "Size"), NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpRectangleFixedRule", values);
+      gimp_type_set_translation_context (type, "rectangle-fixed-rule");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_rectangle_precision_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_RECTANGLE_PRECISION_INT, "GIMP_RECTANGLE_PRECISION_INT", "int" },
+    { GIMP_RECTANGLE_PRECISION_DOUBLE, "GIMP_RECTANGLE_PRECISION_DOUBLE", "double" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_RECTANGLE_PRECISION_INT, "GIMP_RECTANGLE_PRECISION_INT", NULL },
+    { GIMP_RECTANGLE_PRECISION_DOUBLE, "GIMP_RECTANGLE_PRECISION_DOUBLE", NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpRectanglePrecision", values);
+      gimp_type_set_translation_context (type, "rectangle-precision");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
 gimp_transform_function_get_type (void)
 {
   static const GEnumValue values[] =
@@ -288,6 +381,68 @@ gimp_transform_function_get_type (void)
     {
       type = g_enum_register_static ("GimpTransformFunction", values);
       gimp_type_set_translation_context (type, "transform-function");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_transform_handle_mode_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_HANDLE_MODE_ADD_TRANSFORM, "GIMP_HANDLE_MODE_ADD_TRANSFORM", "add-transform" },
+    { GIMP_HANDLE_MODE_MOVE, "GIMP_HANDLE_MODE_MOVE", "move" },
+    { GIMP_HANDLE_MODE_REMOVE, "GIMP_HANDLE_MODE_REMOVE", "remove" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_HANDLE_MODE_ADD_TRANSFORM, NC_("transform-handle-mode", "Add / Transform"), NULL },
+    { GIMP_HANDLE_MODE_MOVE, NC_("transform-handle-mode", "Move"), NULL },
+    { GIMP_HANDLE_MODE_REMOVE, NC_("transform-handle-mode", "Remove"), NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpTransformHandleMode", values);
+      gimp_type_set_translation_context (type, "transform-handle-mode");
+      gimp_enum_set_value_descriptions (type, descs);
+    }
+
+  return type;
+}
+
+GType
+gimp_vector_mode_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { GIMP_VECTOR_MODE_DESIGN, "GIMP_VECTOR_MODE_DESIGN", "design" },
+    { GIMP_VECTOR_MODE_EDIT, "GIMP_VECTOR_MODE_EDIT", "edit" },
+    { GIMP_VECTOR_MODE_MOVE, "GIMP_VECTOR_MODE_MOVE", "move" },
+    { 0, NULL, NULL }
+  };
+
+  static const GimpEnumDesc descs[] =
+  {
+    { GIMP_VECTOR_MODE_DESIGN, NC_("vector-mode", "Design"), NULL },
+    { GIMP_VECTOR_MODE_EDIT, NC_("vector-mode", "Edit"), NULL },
+    { GIMP_VECTOR_MODE_MOVE, NC_("vector-mode", "Move"), NULL },
+    { 0, NULL, NULL }
+  };
+
+  static GType type = 0;
+
+  if (G_UNLIKELY (! type))
+    {
+      type = g_enum_register_static ("GimpVectorMode", values);
+      gimp_type_set_translation_context (type, "vector-mode");
       gimp_enum_set_value_descriptions (type, descs);
     }
 

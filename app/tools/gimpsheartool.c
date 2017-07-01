@@ -117,7 +117,6 @@ gimp_shear_tool_init (GimpShearTool *shear_tool)
   gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_SHEAR);
 
   tr_tool->progress_text = _("Shearing");
-  tr_tool->use_grid      = TRUE;
 }
 
 static void
@@ -175,10 +174,9 @@ gimp_shear_tool_prepare (GimpTransformTool *tr_tool)
 static GimpToolWidget *
 gimp_shear_tool_get_widget (GimpTransformTool *tr_tool)
 {
-  GimpTool             *tool    = GIMP_TOOL (tr_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-  GimpDisplayShell     *shell   = gimp_display_get_shell (tool->display);
-  GimpToolWidget       *widget;
+  GimpTool         *tool  = GIMP_TOOL (tr_tool);
+  GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+  GimpToolWidget   *widget;
 
   widget = gimp_tool_shear_grid_new (shell,
                                      tr_tool->x1,
@@ -190,20 +188,9 @@ gimp_shear_tool_get_widget (GimpTransformTool *tr_tool)
                                      tr_tool->trans_info[SHEAR_Y]);
 
   g_object_set (widget,
-                "guide-type",              options->grid_type,
-                "n-guides",                options->grid_size,
-                "inside-function",         GIMP_TRANSFORM_FUNCTION_SHEAR,
-                "outside-function",        GIMP_TRANSFORM_FUNCTION_SHEAR,
-                "constrain-move",          options->constrain_move,
-                "constrain-scale",         options->constrain_scale,
-                "constrain-rotate",        options->constrain_rotate,
-                "constrain-shear",         options->constrain_shear,
-                "constrain-perspective",   options->constrain_perspective,
-                "frompivot-scale",         options->frompivot_scale,
-                "frompivot-shear",         TRUE,
-                "frompivot-perspective",   options->frompivot_perspective,
-                "cornersnap",              options->cornersnap,
-                "fixedpivot",              options->fixedpivot,
+                "inside-function",  GIMP_TRANSFORM_FUNCTION_SHEAR,
+                "outside-function", GIMP_TRANSFORM_FUNCTION_SHEAR,
+                "frompivot-shear",  TRUE,
                 NULL);
 
   g_signal_connect (widget, "changed",

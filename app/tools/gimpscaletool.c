@@ -119,7 +119,6 @@ gimp_scale_tool_init (GimpScaleTool *scale_tool)
   gimp_tool_control_set_tool_cursor (tool->control, GIMP_TOOL_CURSOR_RESIZE);
 
   tr_tool->progress_text = _("Scaling");
-  tr_tool->use_grid      = TRUE;
 }
 
 static void
@@ -194,36 +193,23 @@ gimp_scale_tool_prepare (GimpTransformTool *tr_tool)
 static GimpToolWidget *
 gimp_scale_tool_get_widget (GimpTransformTool *tr_tool)
 {
-  GimpTool             *tool    = GIMP_TOOL (tr_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-  GimpDisplayShell     *shell   = gimp_display_get_shell (tool->display);
-  GimpToolWidget       *widget;
+  GimpTool         *tool  = GIMP_TOOL (tr_tool);
+  GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+  GimpToolWidget   *widget;
 
   widget = gimp_tool_transform_grid_new (shell,
                                          &tr_tool->transform,
                                          tr_tool->x1,
                                          tr_tool->y1,
                                          tr_tool->x2,
-                                         tr_tool->y2,
-                                         options->grid_type,
-                                         options->grid_size);
+                                         tr_tool->y2);
 
   g_object_set (widget,
-                "inside-function",         GIMP_TRANSFORM_FUNCTION_SCALE,
-                "outside-function",        GIMP_TRANSFORM_FUNCTION_SCALE,
-                "use-corner-handles",      TRUE,
-                "use-side-handles",        TRUE,
-                "use-center-handle",       TRUE,
-                "constrain-move",          options->constrain_move,
-                "constrain-scale",         options->constrain_scale,
-                "constrain-rotate",        options->constrain_rotate,
-                "constrain-shear",         options->constrain_shear,
-                "constrain-perspective",   options->constrain_perspective,
-                "frompivot-scale",         options->frompivot_scale,
-                "frompivot-shear",         options->frompivot_shear,
-                "frompivot-perspective",   options->frompivot_perspective,
-                "cornersnap",              options->cornersnap,
-                "fixedpivot",              options->fixedpivot,
+                "inside-function",    GIMP_TRANSFORM_FUNCTION_SCALE,
+                "outside-function",   GIMP_TRANSFORM_FUNCTION_SCALE,
+                "use-corner-handles", TRUE,
+                "use-side-handles",   TRUE,
+                "use-center-handle",  TRUE,
                 NULL);
 
   g_signal_connect (widget, "changed",

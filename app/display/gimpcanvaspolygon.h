@@ -52,11 +52,17 @@ GType            gimp_canvas_polygon_get_type        (void) G_GNUC_CONST;
 GimpCanvasItem * gimp_canvas_polygon_new             (GimpDisplayShell  *shell,
                                                       const GimpVector2 *points,
                                                       gint               n_points,
+                                                      GimpMatrix3       *transform,
                                                       gboolean           filled);
 GimpCanvasItem * gimp_canvas_polygon_new_from_coords (GimpDisplayShell  *shell,
                                                       const GimpCoords  *coords,
                                                       gint               n_coords,
+                                                      GimpMatrix3       *transform,
                                                       gboolean           filled);
+
+void             gimp_canvas_polygon_set_points      (GimpCanvasItem    *polygon,
+                                                      const GimpVector2 *points,
+                                                      gint               n_points);
 
 
 #endif /* __GIMP_CANVAS_POLYGON_H__ */

@@ -41,15 +41,8 @@ struct _GimpPerspectiveCloneTool
   GimpBrushTool   parent_instance;
 
   GimpDisplay    *src_display;
-
   gint            src_x;
   gint            src_y;
-
-  gdouble         curx;           /*  current x coord                  */
-  gdouble         cury;           /*  current y coord                  */
-
-  gdouble         lastx;          /*  last x coord                     */
-  gdouble         lasty;          /*  last y coord                     */
 
   GimpMatrix3     transform;      /*  transformation matrix            */
   TransInfo       trans_info;     /*  transformation info              */
@@ -58,13 +51,8 @@ struct _GimpPerspectiveCloneTool
   gint            x1, y1;         /*  upper left hand coordinate       */
   gint            x2, y2;         /*  lower right hand coords          */
 
-  gdouble         tx1, ty1;       /*  transformed coords               */
-  gdouble         tx2, ty2;
-  gdouble         tx3, ty3;
-  gdouble         tx4, ty4;
-  gdouble         tcx, tcy;
-
-  TransformAction function;       /*  current tool activity            */
+  GimpToolWidget *widget;
+  GimpToolWidget *grab_widget;
 };
 
 struct _GimpPerspectiveCloneToolClass

@@ -40,14 +40,10 @@
 #include "gimpdisplayshell.h"
 #include "gimptoolline.h"
 
+#include "gimp-intl.h"
 
-#define SHOW_LINE             TRUE
-#define HANDLE_CROSS_DIAMETER 18
-#define HANDLE_DIAMETER       40
 
-#define POINT_GRAB_THRESHOLD_SQ     (SQR (HANDLE_DIAMETER / 2))
-#define FULL_HANDLE_THRESHOLD_SQ    (POINT_GRAB_THRESHOLD_SQ * 9)
-#define PARTIAL_HANDLE_THRESHOLD_SQ (FULL_HANDLE_THRESHOLD_SQ * 5)
+#define SHOW_LINE TRUE
 
 
 typedef enum
@@ -82,7 +78,8 @@ struct _GimpToolLinePrivate
 
   gdouble            mouse_x;
   gdouble            mouse_y;
-  GimpToolLinePoint  grabbed_point;
+  GimpToolLinePoint  point;
+  gboolean           point_grabbed;
 
   GimpCanvasItem    *line;
   GimpCanvasItem    *start_handle_circle;
@@ -132,14 +129,16 @@ static gboolean gimp_tool_line_get_cursor      (GimpToolWidget        *widget,
                                                 GdkModifierType        state,
                                                 GimpCursorType        *cursor,
                                                 GimpToolCursorType    *tool_cursor,
-                                                GimpCursorModifier    *cursor_modifier);
+                                                GimpCursorModifier    *modifier);
 
 static gboolean gimp_tool_line_point_motion    (GimpToolLine          *line,
                                                 gboolean               constrain_angle);
 
+static void     gimp_tool_line_update_handles  (GimpToolLine          *line);
 static void     gimp_tool_line_update_hilight  (GimpToolLine          *line);
-static GimpToolLinePoint
-                gimp_tool_line_get_point       (GimpToolLine          *line);
+static void     gimp_tool_line_update_status   (GimpToolLine          *line,
+                                                GdkModifierType        state,
+                                                gboolean               proximity);
 
 
 G_DEFINE_TYPE (GimpToolLine, gimp_tool_line, GIMP_TYPE_TOOL_WIDGET)
@@ -226,8 +225,8 @@ gimp_tool_line_constructed (GObject *object)
                                  GIMP_HANDLE_CIRCLE,
                                  private->x1,
                                  private->y1,
-                                 HANDLE_DIAMETER,
-                                 HANDLE_DIAMETER,
+                                 2 * GIMP_CANVAS_HANDLE_SIZE_CROSS,
+                                 2 * GIMP_CANVAS_HANDLE_SIZE_CROSS,
                                  GIMP_HANDLE_ANCHOR_CENTER);
 
   private->start_handle_cross =
@@ -235,8 +234,8 @@ gimp_tool_line_constructed (GObject *object)
                                  GIMP_HANDLE_CROSS,
                                  private->x1,
                                  private->y1,
-                                 HANDLE_CROSS_DIAMETER,
-                                 HANDLE_CROSS_DIAMETER,
+                                 GIMP_CANVAS_HANDLE_SIZE_CROSS,
+                                 GIMP_CANVAS_HANDLE_SIZE_CROSS,
                                  GIMP_HANDLE_ANCHOR_CENTER);
 
   private->end_handle_circle =
@@ -244,8 +243,8 @@ gimp_tool_line_constructed (GObject *object)
                                  GIMP_HANDLE_CIRCLE,
                                  private->x2,
                                  private->y2,
-                                 HANDLE_DIAMETER,
-                                 HANDLE_DIAMETER,
+                                 2 * GIMP_CANVAS_HANDLE_SIZE_CROSS,
+                                 2 * GIMP_CANVAS_HANDLE_SIZE_CROSS,
                                  GIMP_HANDLE_ANCHOR_CENTER);
 
   private->end_handle_cross =
@@ -253,9 +252,11 @@ gimp_tool_line_constructed (GObject *object)
                                  GIMP_HANDLE_CROSS,
                                  private->x2,
                                  private->y2,
-                                 HANDLE_CROSS_DIAMETER,
-                                 HANDLE_CROSS_DIAMETER,
+                                 GIMP_CANVAS_HANDLE_SIZE_CROSS,
+                                 GIMP_CANVAS_HANDLE_SIZE_CROSS,
                                  GIMP_HANDLE_ANCHOR_CENTER);
+
+  gimp_tool_line_changed (widget);
 }
 
 static void
@@ -344,6 +345,7 @@ gimp_tool_line_changed (GimpToolWidget *widget)
                                    private->x2,
                                    private->y2);
 
+  gimp_tool_line_update_handles (line);
   gimp_tool_line_update_hilight (line);
 }
 
@@ -357,23 +359,22 @@ gimp_tool_line_button_press (GimpToolWidget      *widget,
   GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
   GimpToolLinePrivate *private = line->private;
 
-  private->grabbed_point = gimp_tool_line_get_point (line);
-
-  if (state & GDK_MOD1_MASK)
-    private->grabbed_point = POINT_BOTH;
-
-  if (private->grabbed_point != POINT_NONE)
+  if (private->point != POINT_NONE)
     {
       private->saved_x1 = private->x1;
       private->saved_y1 = private->y1;
       private->saved_x2 = private->x2;
       private->saved_y2 = private->y2;
 
+      private->point_grabbed = TRUE;
+
       gimp_tool_line_point_motion (line,
                                    state & gimp_get_constrain_behavior_mask ());
 
-      return 1;
+      return private->point;
     }
+
+  gimp_tool_line_update_status (line, state, TRUE);
 
   return 0;
 }
@@ -398,7 +399,7 @@ gimp_tool_line_button_release (GimpToolWidget        *widget,
                     NULL);
     }
 
-  private->grabbed_point = POINT_NONE;
+  private->point_grabbed = FALSE;
 }
 
 void
@@ -409,22 +410,19 @@ gimp_tool_line_motion (GimpToolWidget   *widget,
 {
   GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
   GimpToolLinePrivate *private = line->private;
-  gdouble              last_x  = private->mouse_x;
-  gdouble              last_y  = private->mouse_y;
+  gdouble              diff_x  = coords->x - private->mouse_x;
+  gdouble              diff_y  = coords->y - private->mouse_y;
 
   private->mouse_x = coords->x;
   private->mouse_y = coords->y;
 
-  if (private->grabbed_point == POINT_BOTH)
+  if (private->point == POINT_BOTH)
     {
-      gdouble dx = last_x - coords->x;
-      gdouble dy = last_y - coords->y;
-
       g_object_set (line,
-                    "x1", private->x1 - dx,
-                    "y1", private->y1 - dy,
-                    "x2", private->x2 - dx,
-                    "y2", private->y2 - dy,
+                    "x1", private->x1 + diff_x,
+                    "y1", private->y1 + diff_y,
+                    "x2", private->x2 + diff_x,
+                    "y2", private->y2 + diff_y,
                     NULL);
     }
   else
@@ -433,6 +431,8 @@ gimp_tool_line_motion (GimpToolWidget   *widget,
 
       gimp_tool_line_point_motion (line, constrain);
     }
+
+  gimp_tool_line_update_status (line, state, TRUE);
 }
 
 void
@@ -447,7 +447,31 @@ gimp_tool_line_hover (GimpToolWidget   *widget,
   private->mouse_x = coords->x;
   private->mouse_y = coords->y;
 
+  gimp_tool_line_update_handles (line);
+
+  if (state & GDK_MOD1_MASK)
+    {
+      private->point = POINT_BOTH;
+    }
+  else if (gimp_canvas_item_hit (private->end_handle_circle,
+                                 private->mouse_x,
+                                 private->mouse_y))
+    {
+      private->point = POINT_END;
+    }
+  else if (gimp_canvas_item_hit (private->start_handle_circle,
+                                 private->mouse_x,
+                                 private->mouse_y))
+    {
+      private->point = POINT_START;
+    }
+  else
+    {
+      private->point = POINT_NONE;
+    }
+
   gimp_tool_line_update_hilight (line);
+  gimp_tool_line_update_status (line, state, proximity);
 }
 
 static void
@@ -461,6 +485,8 @@ gimp_tool_line_motion_modifier (GimpToolWidget  *widget,
   if (key == gimp_get_constrain_behavior_mask ())
     {
       gimp_tool_line_point_motion (line, press);
+
+      gimp_tool_line_update_status (line, state, TRUE);
     }
 }
 
@@ -470,14 +496,14 @@ gimp_tool_line_get_cursor (GimpToolWidget     *widget,
                            GdkModifierType     state,
                            GimpCursorType     *cursor,
                            GimpToolCursorType *tool_cursor,
-                           GimpCursorModifier *cursor_modifier)
+                           GimpCursorModifier *modifier)
 {
-  GimpToolLine *line = GIMP_TOOL_LINE (widget);
+  GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
+  GimpToolLinePrivate *private = line->private;
 
-  if (gimp_tool_line_get_point (line) ||
-      (state & GDK_MOD1_MASK))
+  if (private->point == POINT_BOTH)
     {
-      *cursor_modifier = GIMP_CURSOR_MODIFIER_MOVE;
+      *modifier = GIMP_CURSOR_MODIFIER_MOVE;
 
       return TRUE;
     }
@@ -493,7 +519,7 @@ gimp_tool_line_point_motion (GimpToolLine *line,
   gdouble              x       = private->mouse_x;
   gdouble              y       = private->mouse_y;
 
-  switch (private->grabbed_point)
+  switch (private->point)
     {
     case POINT_START:
       if (constrain_angle)
@@ -526,62 +552,38 @@ gimp_tool_line_point_motion (GimpToolLine *line,
   return FALSE;
 }
 
-static gint
-calc_handle_diameter (gdouble distance)
-{
-  /* Calculate the handle size based on distance from the cursor
-   */
-  gdouble size = (1.0 - (distance - FULL_HANDLE_THRESHOLD_SQ) /
-                  (PARTIAL_HANDLE_THRESHOLD_SQ - FULL_HANDLE_THRESHOLD_SQ));
-
-  size = CLAMP (size, 0.0, 1.0);
-
-  return (gint) (size * HANDLE_DIAMETER);
-}
-
 static void
-gimp_tool_line_update_hilight (GimpToolLine *line)
+gimp_tool_line_update_handles (GimpToolLine *line)
 {
   GimpToolLinePrivate *private = line->private;
-  GimpToolLinePoint    hilight_point;
   gboolean             start_visible,  end_visible;
   gint                 start_diameter, end_diameter;
 
   /* Calculate handle visibility */
-  if (private->grabbed_point)
+  if (private->point_grabbed)
     {
       start_visible = FALSE;
       end_visible   = FALSE;
     }
   else
     {
-      gdouble dist;
+      start_diameter = gimp_canvas_handle_calc_size (private->start_handle_circle,
+                                                     private->mouse_x,
+                                                     private->mouse_y,
+                                                     0,
+                                                     2 * GIMP_CANVAS_HANDLE_SIZE_CROSS);
+      start_visible = start_diameter > 2;
 
-      dist = gimp_canvas_item_transform_distance_square (private->line,
-                                                         private->mouse_x,
-                                                         private->mouse_y,
-                                                         private->x1,
-                                                         private->y1);
-      start_diameter = calc_handle_diameter (dist);
-      start_visible  = start_diameter > 2;
-
-      dist = gimp_canvas_item_transform_distance_square (private->line,
-                                                         private->mouse_x,
-                                                         private->mouse_y,
-                                                         private->x2,
-                                                         private->y2);
-      end_diameter = calc_handle_diameter (dist);
-      end_visible  = end_diameter > 2;
+      end_diameter = gimp_canvas_handle_calc_size (private->end_handle_circle,
+                                                   private->mouse_x,
+                                                   private->mouse_y,
+                                                   0,
+                                                   2 * GIMP_CANVAS_HANDLE_SIZE_CROSS);
+      end_visible = end_diameter > 2;
     }
 
   gimp_canvas_item_set_visible (private->start_handle_circle, start_visible);
   gimp_canvas_item_set_visible (private->end_handle_circle,   end_visible);
-
-  /* Update hilights */
-  if (private->grabbed_point)
-    hilight_point = private->grabbed_point;
-  else
-    hilight_point = gimp_tool_line_get_point (line);
 
   if (start_visible)
     gimp_canvas_handle_set_size (private->start_handle_circle,
@@ -590,46 +592,55 @@ gimp_tool_line_update_hilight (GimpToolLine *line)
   if (end_visible)
     gimp_canvas_handle_set_size (private->end_handle_circle,
                                  end_diameter, end_diameter);
-
-  gimp_canvas_item_set_highlight (private->start_handle_circle,
-                                  hilight_point == POINT_START);
-  gimp_canvas_item_set_highlight (private->start_handle_cross,
-                                  hilight_point == POINT_START);
-
-  gimp_canvas_item_set_highlight (private->end_handle_circle,
-                                  hilight_point == POINT_END);
-  gimp_canvas_item_set_highlight (private->end_handle_cross,
-                                  hilight_point == POINT_END);
 }
 
-static GimpToolLinePoint
-gimp_tool_line_get_point (GimpToolLine *line)
+static void
+gimp_tool_line_update_hilight (GimpToolLine *line)
 {
   GimpToolLinePrivate *private = line->private;
-  gdouble              dist;
 
-  /* Check the points in the reverse order of drawing */
+  gimp_canvas_item_set_highlight (private->start_handle_circle,
+                                  private->point == POINT_START);
+  gimp_canvas_item_set_highlight (private->start_handle_cross,
+                                  private->point == POINT_START);
 
-  /* Check end point */
-  dist = gimp_canvas_item_transform_distance_square (private->line,
-                                                     private->mouse_x,
-                                                     private->mouse_y,
-                                                     private->x2,
-                                                     private->y2);
-  if (dist < POINT_GRAB_THRESHOLD_SQ)
-    return POINT_END;
+  gimp_canvas_item_set_highlight (private->end_handle_circle,
+                                  private->point == POINT_END);
+  gimp_canvas_item_set_highlight (private->end_handle_cross,
+                                  private->point == POINT_END);
+}
 
-  /* Check start point */
-  dist = gimp_canvas_item_transform_distance_square (private->line,
-                                                     private->mouse_x,
-                                                     private->mouse_y,
-                                                     private->x1,
-                                                     private->y1);
-  if (dist < POINT_GRAB_THRESHOLD_SQ)
-    return POINT_START;
+static void
+gimp_tool_line_update_status (GimpToolLine    *line,
+                              GdkModifierType  state,
+                              gboolean         proximity)
+{
+  GimpToolLinePrivate *private = line->private;
 
-  /* No point found */
-  return POINT_NONE;
+  if (proximity)
+    {
+      gchar *status_help =
+        gimp_suggest_modifiers ("",
+                                (gimp_get_constrain_behavior_mask () |
+                                 GDK_MOD1_MASK) &
+                                ~state,
+                                NULL,
+                                _("%s for constrained angles"),
+                                _("%s to move the whole line"));
+
+      gimp_tool_widget_set_status_coords (GIMP_TOOL_WIDGET (line),
+                                          _("Blend: "),
+                                          private->x2 - private->x1,
+                                          ", ",
+                                          private->y2 - private->y1,
+                                          status_help);
+
+      g_free (status_help);
+    }
+  else
+    {
+      gimp_tool_widget_set_status (GIMP_TOOL_WIDGET (line), NULL);
+    }
 }
 
 

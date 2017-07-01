@@ -150,6 +150,7 @@ typedef enum
   SA_IGNORE_HIDDEN,
   SA_APPLY_MASKS,
   SA_LAYERS_AS_PAGES,
+  SA_REVERSE_ORDER,
   SA_ARG_COUNT
 } SaveArgs;
 
@@ -172,6 +173,7 @@ typedef struct
   gboolean ignore_hidden;
   gboolean apply_masks;
   gboolean layers_as_pages;
+  gboolean reverse_order;
 } PdfOptimize;
 
 typedef struct
@@ -263,7 +265,8 @@ static PdfOptimize optimize =
   TRUE,  /* vectorize */
   TRUE,  /* ignore_hidden */
   TRUE,  /* apply_masks */
-  FALSE  /* layers_as_pages */
+  FALSE, /* layers_as_pages */
+  FALSE  /* reverse_order */
 };
 
 static GtkTreeModel *model;
@@ -307,7 +310,8 @@ query (void)
     { GIMP_PDB_INT32,    "vectorize",       "Convert bitmaps to vector graphics where possible. TRUE or FALSE" },
     { GIMP_PDB_INT32,    "ignore-hidden",   "Omit hidden layers and layers with zero opacity. TRUE or FALSE" },
     { GIMP_PDB_INT32,    "apply-masks",     "Apply layer masks before saving. TRUE or FALSE (Keeping them will not change the output)" },
-    { GIMP_PDB_INT32,    "layers-as-pages", "Layers as pages. TRUE or FALSE" }
+    { GIMP_PDB_INT32,    "layers-as-pages", "Layers as pages. TRUE or FALSE" },
+    { GIMP_PDB_INT32,    "reverse-order",   "Reverse the pages order. TRUE or FALSE" }
   };
 
   static GimpParamDef save_multi_args[] =
@@ -539,8 +543,12 @@ run (const gchar      *name,
        */
       cairo_surface_set_fallback_resolution (pdf_file, x_res, y_res);
 
-      /* PDF is usually 72 points per inch. If we have a different resolution,
-       * we will need this to fit our drawings
+      /* Cairo has a concept of user-space vs device-space units.
+       * From what I understand, by default the user-space unit is the
+       * typographical "point". Since we work mostly with pixels, not
+       * points, the following call simply scales the transformation
+       * matrix from points to pixels, relatively to the image
+       * resolution, knowing that 1 typographical point == 1/72 inch.
        */
       cairo_scale (cr, x_scale, y_scale);
 
@@ -550,23 +558,13 @@ run (const gchar      *name,
        * otherwise the output PDF will always show white for background,
        * and may display artifacts at transparency boundaries
        */
-      if (gimp_drawable_has_alpha(layers[n_layers - 1]))
+      if (gimp_drawable_has_alpha (layers[n_layers - 1]))
         {
           GimpRGB color;
-          gint width=0, height=0;
-          for (j = 0; j < n_layers; j++)
-            {
-              gint32 layer_ID   = layers [n_layers - j - 1];
 
-              if (gimp_item_get_visible (layer_ID) &&
-                 (! optimize.ignore_hidden ||
-                  (optimize.ignore_hidden && gimp_layer_get_opacity (layer_ID) > 0.0)))
-                {
-                  width = MAX (width, gimp_drawable_width (layer_ID));
-                  height = MAX (height, gimp_drawable_height (layer_ID));
-                }
-            }
-          cairo_rectangle (cr, 0, 0, width, height);
+          cairo_rectangle (cr, 0.0, 0.0,
+                           gimp_image_width (image_ID),
+                           gimp_image_height (image_ID));
           gimp_context_get_background (&color);
           cairo_set_source_rgb (cr,
                                 color.r,
@@ -578,12 +576,17 @@ run (const gchar      *name,
       /* Now, we should loop over the layers of each image */
       for (j = 0; j < n_layers; j++)
         {
-          gint32           layer_ID   = layers [n_layers - j - 1];
+          gint32           layer_ID;
           gint32           mask_ID    = -1;
           cairo_surface_t *mask_image = NULL;
           gdouble          opacity;
           gboolean         single_color;
           gint             x, y;
+
+          if (optimize.reverse_order && optimize.layers_as_pages)
+            layer_ID = layers [j];
+          else
+            layer_ID = layers [n_layers - j - 1];
 
           opacity = gimp_layer_get_opacity (layer_ID) / 100.0;
 
@@ -739,7 +742,7 @@ init_vals (const gchar      *name,
   gint32   i;
   gint32   image;
 
-  if ((g_str_equal (name, SAVE_PROC) && nparams == SA_ARG_COUNT - 1) ||
+  if ((g_str_equal (name, SAVE_PROC) && nparams == SA_ARG_COUNT - 2) ||
       (g_str_equal (name, SAVE2_PROC) && nparams == SA_ARG_COUNT))
     {
       single = TRUE;
@@ -753,7 +756,10 @@ init_vals (const gchar      *name,
           optimize.vectorize = param[SA_VECTORIZE].data.d_int32;
           optimize.ignore_hidden = param[SA_IGNORE_HIDDEN].data.d_int32;
           if (nparams == SA_ARG_COUNT)
+          {
             optimize.layers_as_pages = param[SA_LAYERS_AS_PAGES].data.d_int32;
+            optimize.reverse_order = param[SA_REVERSE_ORDER].data.d_int32;
+          }
         }
       else
         defaults = TRUE;
@@ -885,7 +891,9 @@ gui_single (void)
   GtkWidget *ignore_hidden_c;
   GtkWidget *apply_c;
   GtkWidget *layers_as_pages_c;
+  GtkWidget *reverse_order_c;
   gboolean   run;
+  gint32     n_layers;
 
   gimp_ui_init (PLUG_IN_BINARY, FALSE);
 
@@ -913,10 +921,27 @@ gui_single (void)
   gtk_box_pack_end (GTK_BOX (vbox), apply_c, TRUE, TRUE, 0);
   gimp_help_set_help_data (apply_c, _("Keeping the masks will not change the output"), NULL);
 
+  reverse_order_c = gtk_check_button_new_with_label (_("Reverse the pages order"));
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (reverse_order_c),
+                                optimize.reverse_order);
+  gtk_box_pack_end (GTK_BOX (vbox), reverse_order_c, TRUE, TRUE, 0);
+
   layers_as_pages_c = gtk_check_button_new_with_label (_("Layers as pages"));
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (layers_as_pages_c),
                                 optimize.layers_as_pages);
+  gimp_image_get_layers (multi_page.images[0], &n_layers);
   gtk_box_pack_end (GTK_BOX (vbox), layers_as_pages_c, TRUE, TRUE, 0);
+
+  if (n_layers <= 1)
+  {
+    gtk_widget_set_sensitive(layers_as_pages_c, FALSE);
+    gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (layers_as_pages_c),
+                                  FALSE);
+  }
+
+  g_object_bind_property (layers_as_pages_c, "active",
+                          reverse_order_c,  "sensitive",
+                          G_BINDING_SYNC_CREATE);
 
   gtk_widget_show_all (window);
 
@@ -930,6 +955,8 @@ gui_single (void)
     gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (apply_c));
   optimize.layers_as_pages =
     gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (layers_as_pages_c));
+  optimize.reverse_order =
+    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (reverse_order_c));
 
   gtk_widget_destroy (window);
 

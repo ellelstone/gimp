@@ -60,7 +60,7 @@ m4_define([harfbuzz_required_version], [0.9.19])
 m4_define([gtkdoc_required_version], [1.0])
 m4_define([webkit_required_version], [1.6.1])
 m4_define([alsa_required_version], [1.0.0])
-m4_define([rsvg_required_version], [2.36.0])
+m4_define([rsvg_required_version], [2.40.6])
 m4_define([wmf_required_version], [0.2.8])
 m4_define([pygtk_required_version], [2.10.4])
 m4_define([pycairo_required_version], [1.0.2])
@@ -1362,26 +1362,25 @@ MIME_TYPES="image/bmp;image/g3fax;image/gif;image/x-fits;image/x-pcx;image/x-por
 # Check for libtiff
 ###################
 
-have_libtiff=no
+libtiff_error=
 if test -z "$TIFF_LIBS"; then
-  have_libtiff=yes
   AC_CHECK_LIB(tiff, TIFFReadScanline,
     [AC_CHECK_HEADER(tiffio.h,
       FILE_TIFF_LOAD='file-tiff-load$(EXEEXT)'; FILE_TIFF_SAVE='file-tiff-save$(EXEEXT)'; TIFF_LIBS='-ltiff',
-      [have_libtiff="no (TIFF header files not found)"])],
+      [libtiff_error="TIFF header files not found"])],
     [AC_CHECK_LIB(tiff, TIFFWriteScanline,
       [AC_CHECK_HEADER(tiffio.h,
         FILE_TIFF_LOAD='file-tiff-load$(EXEEXT)'; FILE_TIFF_SAVE='file-tiff-save$(EXEEXT)'; TIFF_LIBS='-ltiff -ljpeg -lz',
-	[have_libtiff="no (TIFF header files not found)"])],
+	[libtiff_error="TIFF header files not found"])],
       [AC_CHECK_LIB(tiff34, TIFFFlushData,
 	[AC_CHECK_HEADER(tiffio.h,
           FILE_TIFF_LOAD='file-tiff-load$(EXEEXT)'; FILE_TIFF_SAVE='file-tiff-save$(EXEEXT)'; TIFF_LIBS='-ltiff34 -ljpeg -lz',
-	  [have_libtiff="no (TIFF header files not found)"])],
-      [have_libtiff="no (TIFF library not found)"], -ljpeg -lz -lm)], -ljpeg -lz -lm)], -lm)
+	  [libtiff_error="TIFF header files not found"])],
+      [libtiff_error="TIFF library not found"], -ljpeg -lz -lm)], -ljpeg -lz -lm)], -lm)
 fi
 
 if test -z "$TIFF_LIBS"; then
-  add_deps_error([libtiff], [Checks for TIFF library failed])
+  add_deps_error([libtiff], [Checks for TIFF library failed: $libtiff_error])
 fi
 
 MIME_TYPES="$MIME_TYPES;image/tiff"
@@ -2523,6 +2522,7 @@ plug-ins/file-fli/Makefile
 plug-ins/file-ico/Makefile
 plug-ins/file-jpeg/Makefile
 plug-ins/file-psd/Makefile
+plug-ins/file-rawtherapee/Makefile
 plug-ins/file-sgi/Makefile
 plug-ins/file-tiff/Makefile
 plug-ins/file-webp/Makefile

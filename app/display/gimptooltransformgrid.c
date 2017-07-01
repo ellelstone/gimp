@@ -43,7 +43,6 @@
 
 
 #define MIN_HANDLE_SIZE 6
-#define GIMP_TOOL_HANDLE_SIZE_LARGE 25 /* FIXME */
 
 
 enum
@@ -176,7 +175,7 @@ static gboolean gimp_tool_transform_grid_get_cursor     (GimpToolWidget        *
                                                          GdkModifierType        state,
                                                          GimpCursorType        *cursor,
                                                          GimpToolCursorType    *tool_cursor,
-                                                         GimpCursorModifier    *cursor_modifier);
+                                                         GimpCursorModifier    *modifier);
 
 static void     gimp_tool_transform_grid_update_hilight (GimpToolTransformGrid *grid);
 static void     gimp_tool_transform_grid_update_box     (GimpToolTransformGrid *grid);
@@ -1153,14 +1152,14 @@ gimp_tool_transform_grid_button_press (GimpToolWidget      *widget,
 
           gimp_canvas_handle_get_position (handle, &x, &y);
 
-          gimp_tool_widget_snap_offsets (widget,
-                                         SIGNED_ROUND (x - coords->x),
-                                         SIGNED_ROUND (y - coords->y),
-                                         0, 0);
+          gimp_tool_widget_set_snap_offsets (widget,
+                                             SIGNED_ROUND (x - coords->x),
+                                             SIGNED_ROUND (y - coords->y),
+                                             0, 0);
         }
       else
         {
-          gimp_tool_widget_snap_offsets (widget, 0, 0, 0, 0);
+          gimp_tool_widget_set_snap_offsets (widget, 0, 0, 0, 0);
         }
 
       private->prev_tx1 = private->tx1;
@@ -1179,7 +1178,7 @@ gimp_tool_transform_grid_button_press (GimpToolWidget      *widget,
       return private->handle;
     }
 
-  gimp_tool_widget_snap_offsets (widget, 0, 0, 0, 0);
+  gimp_tool_widget_set_snap_offsets (widget, 0, 0, 0, 0);
 
   return 0;
 }
@@ -1890,8 +1889,15 @@ gimp_tool_transform_grid_hover (GimpToolWidget   *widget,
         }
     }
 
-  if (handle != GIMP_TRANSFORM_HANDLE_NONE)
-    gimp_tool_widget_status (widget, get_friendly_operation_name (handle));
+  if (handle != GIMP_TRANSFORM_HANDLE_NONE && proximity)
+    {
+      gimp_tool_widget_set_status (widget,
+                                   get_friendly_operation_name (handle));
+    }
+  else
+    {
+      gimp_tool_widget_set_status (widget, NULL);
+    }
 
   private->handle = handle;
 
@@ -1904,7 +1910,7 @@ gimp_tool_transform_grid_get_cursor (GimpToolWidget     *widget,
                                      GdkModifierType     state,
                                      GimpCursorType     *cursor,
                                      GimpToolCursorType *tool_cursor,
-                                     GimpCursorModifier *cursor_modifier)
+                                     GimpCursorModifier *modifier)
 {
   GimpToolTransformGrid        *grid    = GIMP_TOOL_TRANSFORM_GRID (widget);
   GimpToolTransformGridPrivate *private = grid->private;
@@ -2079,7 +2085,7 @@ gimp_tool_transform_grid_get_cursor (GimpToolWidget     *widget,
 
     case GIMP_TRANSFORM_HANDLE_PIVOT:
       *tool_cursor = GIMP_TOOL_CURSOR_ROTATE;
-      *cursor_modifier = GIMP_CURSOR_MODIFIER_MOVE;
+      *modifier    = GIMP_CURSOR_MODIFIER_MOVE;
       break;
 
     case GIMP_TRANSFORM_HANDLE_N_S:
@@ -2212,9 +2218,9 @@ gimp_tool_transform_grid_calc_handles (GimpToolTransformGrid *grid,
   y2 = MAX4 (dy1, dy2, dy3, dy4);
 
   *handle_w = CLAMP ((x2 - x1) / 3,
-                     MIN_HANDLE_SIZE, GIMP_TOOL_HANDLE_SIZE_LARGE);
+                     MIN_HANDLE_SIZE, GIMP_CANVAS_HANDLE_SIZE_LARGE);
   *handle_h = CLAMP ((y2 - y1) / 3,
-                     MIN_HANDLE_SIZE, GIMP_TOOL_HANDLE_SIZE_LARGE);
+                     MIN_HANDLE_SIZE, GIMP_CANVAS_HANDLE_SIZE_LARGE);
 }
 
 
@@ -2226,9 +2232,7 @@ gimp_tool_transform_grid_new (GimpDisplayShell  *shell,
                               gdouble            x1,
                               gdouble            y1,
                               gdouble            x2,
-                              gdouble            y2,
-                              GimpGuidesType     guide_type,
-                              gint               n_guides)
+                              gdouble            y2)
 {
   g_return_val_if_fail (GIMP_IS_DISPLAY_SHELL (shell), NULL);
 
@@ -2239,7 +2243,5 @@ gimp_tool_transform_grid_new (GimpDisplayShell  *shell,
                        "y1",         y1,
                        "x2",         x2,
                        "y2",         y2,
-                       "guide-type", guide_type,
-                       "n-guides",   n_guides,
                        NULL);
 }

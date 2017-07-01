@@ -22,14 +22,21 @@
 
 #include <gegl.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "display-types.h"
 
 #include "core/gimpmarshal.h"
 
+#include "gimpcanvasarc.h"
+#include "gimpcanvascorner.h"
 #include "gimpcanvasgroup.h"
 #include "gimpcanvashandle.h"
 #include "gimpcanvasline.h"
+#include "gimpcanvaspath.h"
+#include "gimpcanvaspolygon.h"
+#include "gimpcanvasrectangle.h"
+#include "gimpcanvasrectangleguides.h"
 #include "gimpcanvastransformguides.h"
 #include "gimpdisplayshell.h"
 #include "gimptoolwidget.h"
@@ -45,8 +52,10 @@ enum
 enum
 {
   CHANGED,
+  RESPONSE,
   SNAP_OFFSETS,
   STATUS,
+  STATUS_COORDS,
   LAST_SIGNAL
 };
 
@@ -55,24 +64,32 @@ struct _GimpToolWidgetPrivate
   GimpDisplayShell *shell;
   GimpCanvasItem   *item;
   GList            *group_stack;
+
+  gint              snap_offset_x;
+  gint              snap_offset_y;
+  gint              snap_width;
+  gint              snap_height;
 };
 
 
 /*  local function prototypes  */
 
-static void   gimp_tool_widget_finalize           (GObject         *object);
-static void   gimp_tool_widget_constructed        (GObject         *object);
-static void   gimp_tool_widget_set_property       (GObject         *object,
-                                                   guint            property_id,
-                                                   const GValue    *value,
-                                                   GParamSpec      *pspec);
-static void   gimp_tool_widget_get_property       (GObject         *object,
-                                                   guint            property_id,
-                                                   GValue          *value,
-                                                   GParamSpec      *pspec);
-static void   gimp_tool_widget_properties_changed (GObject         *object,
-                                                   guint            n_pspecs,
-                                                   GParamSpec     **pspecs);
+static void     gimp_tool_widget_finalize           (GObject         *object);
+static void     gimp_tool_widget_constructed        (GObject         *object);
+static void     gimp_tool_widget_set_property       (GObject         *object,
+                                                     guint            property_id,
+                                                     const GValue    *value,
+                                                     GParamSpec      *pspec);
+static void     gimp_tool_widget_get_property       (GObject         *object,
+                                                     guint            property_id,
+                                                     GValue          *value,
+                                                     GParamSpec      *pspec);
+static void     gimp_tool_widget_properties_changed (GObject         *object,
+                                                     guint            n_pspecs,
+                                                     GParamSpec     **pspecs);
+
+static gboolean gimp_tool_widget_real_key_press     (GimpToolWidget  *widget,
+                                                     GdkEventKey     *kevent);
 
 
 G_DEFINE_TYPE (GimpToolWidget, gimp_tool_widget, GIMP_TYPE_OBJECT)
@@ -93,6 +110,8 @@ gimp_tool_widget_class_init (GimpToolWidgetClass *klass)
   object_class->get_property                = gimp_tool_widget_get_property;
   object_class->dispatch_properties_changed = gimp_tool_widget_properties_changed;
 
+  klass->key_press                          = gimp_tool_widget_real_key_press;
+
   widget_signals[CHANGED] =
     g_signal_new ("changed",
                   G_TYPE_FROM_CLASS (klass),
@@ -101,6 +120,16 @@ gimp_tool_widget_class_init (GimpToolWidgetClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  widget_signals[RESPONSE] =
+    g_signal_new ("response",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolWidgetClass, response),
+                  NULL, NULL,
+                  gimp_marshal_VOID__INT,
+                  G_TYPE_NONE, 1,
+                  G_TYPE_INT);
 
   widget_signals[SNAP_OFFSETS] =
     g_signal_new ("snap-offsets",
@@ -123,6 +152,20 @@ gimp_tool_widget_class_init (GimpToolWidgetClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE, 1,
+                  G_TYPE_STRING);
+
+  widget_signals[STATUS_COORDS] =
+    g_signal_new ("status-coords",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolWidgetClass, status_coords),
+                  NULL, NULL,
+                  gimp_marshal_VOID__STRING_DOUBLE_STRING_DOUBLE_STRING,
+                  G_TYPE_NONE, 5,
+                  G_TYPE_STRING,
+                  G_TYPE_DOUBLE,
+                  G_TYPE_STRING,
+                  G_TYPE_DOUBLE,
                   G_TYPE_STRING);
 
   g_object_class_install_property (object_class, PROP_SHELL,
@@ -231,6 +274,33 @@ gimp_tool_widget_properties_changed (GObject     *object,
   g_signal_emit (object, widget_signals[CHANGED], 0);
 }
 
+static gboolean
+gimp_tool_widget_real_key_press (GimpToolWidget *widget,
+                                 GdkEventKey    *kevent)
+{
+  switch (kevent->keyval)
+    {
+    case GDK_KEY_Return:
+    case GDK_KEY_KP_Enter:
+    case GDK_KEY_ISO_Enter:
+      gimp_tool_widget_response (widget, GIMP_TOOL_WIDGET_RESPONSE_CONFIRM);
+      return TRUE;
+
+    case GDK_KEY_Escape:
+      gimp_tool_widget_response (widget, GIMP_TOOL_WIDGET_RESPONSE_CANCEL);
+      return TRUE;
+
+    case GDK_KEY_BackSpace:
+      gimp_tool_widget_response (widget, GIMP_TOOL_WIDGET_RESPONSE_RESET);
+      return TRUE;
+
+    default:
+      break;
+    }
+
+  return FALSE;
+}
+
 
 /*  public functions  */
 
@@ -251,26 +321,84 @@ gimp_tool_widget_get_item (GimpToolWidget *widget)
 }
 
 void
-gimp_tool_widget_snap_offsets (GimpToolWidget *widget,
-                               gint            offset_x,
-                               gint            offset_y,
-                               gint            width,
-                               gint            height)
+gimp_tool_widget_response (GimpToolWidget *widget,
+                           gint            response_id)
 {
   g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
 
-  g_signal_emit (widget, widget_signals[SNAP_OFFSETS], 0,
-                 offset_x, offset_y, width, height);
+  g_signal_emit (widget, widget_signals[RESPONSE], 0,
+                 response_id);
 }
 
 void
-gimp_tool_widget_status (GimpToolWidget *widget,
-                         const gchar    *status)
+gimp_tool_widget_set_snap_offsets (GimpToolWidget *widget,
+                                   gint            offset_x,
+                                   gint            offset_y,
+                                   gint            width,
+                                   gint            height)
+{
+  GimpToolWidgetPrivate *private;
+
+  g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
+
+  private = widget->private;
+
+  if (offset_x != private->snap_offset_x ||
+      offset_y != private->snap_offset_y ||
+      width    != private->snap_width    ||
+      height   != private->snap_height)
+    {
+      private->snap_offset_x = offset_x;
+      private->snap_offset_y = offset_y;
+      private->snap_width    = width;
+      private->snap_height   = height;
+
+      g_signal_emit (widget, widget_signals[SNAP_OFFSETS], 0,
+                 offset_x, offset_y, width, height);
+    }
+}
+
+void
+gimp_tool_widget_get_snap_offsets (GimpToolWidget *widget,
+                                   gint           *offset_x,
+                                   gint           *offset_y,
+                                   gint           *width,
+                                   gint           *height)
+{
+  GimpToolWidgetPrivate *private;
+
+  g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
+
+  private = widget->private;
+
+  if (offset_x) *offset_x = private->snap_offset_x;
+  if (offset_y) *offset_y = private->snap_offset_y;
+  if (width)    *width    = private->snap_width;
+  if (height)   *height   = private->snap_height;
+}
+
+void
+gimp_tool_widget_set_status (GimpToolWidget *widget,
+                             const gchar    *status)
 {
   g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
 
   g_signal_emit (widget, widget_signals[STATUS], 0,
                  status);
+}
+
+void
+gimp_tool_widget_set_status_coords (GimpToolWidget *widget,
+                                    const gchar    *title,
+                                    gdouble         x,
+                                    const gchar    *separator,
+                                    gdouble         y,
+                                    const gchar    *help)
+{
+  g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
+
+  g_signal_emit (widget, widget_signals[STATUS_COORDS], 0,
+                 title, x, separator, y, help);
 }
 
 void
@@ -385,6 +513,114 @@ gimp_tool_widget_add_line (GimpToolWidget *widget,
 }
 
 GimpCanvasItem *
+gimp_tool_widget_add_rectangle (GimpToolWidget *widget,
+                                gdouble         x,
+                                gdouble         y,
+                                gdouble         width,
+                                gdouble         height,
+                                gboolean        filled)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_rectangle_new (widget->private->shell,
+                                    x, y, width, height, filled);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_arc (GimpToolWidget *widget,
+                          gdouble         center_x,
+                          gdouble         center_y,
+                          gdouble         radius_x,
+                          gdouble         radius_y,
+                          gdouble         start_angle,
+                          gdouble         slice_angle,
+                          gboolean        filled)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_arc_new (widget->private->shell,
+                              center_x, center_y,
+                              radius_x, radius_y,
+                              start_angle, slice_angle,
+                              filled);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_polygon (GimpToolWidget    *widget,
+                              GimpMatrix3       *transform,
+                              const GimpVector2 *points,
+                              gint               n_points,
+                              gboolean           filled)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+  g_return_val_if_fail (points == NULL || n_points > 0, NULL);
+
+  item = gimp_canvas_polygon_new (widget->private->shell,
+                                  points, n_points,
+                                  transform, filled);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_polygon_from_coords (GimpToolWidget    *widget,
+                                          GimpMatrix3       *transform,
+                                          const GimpCoords  *points,
+                                          gint               n_points,
+                                          gboolean           filled)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+  g_return_val_if_fail (points == NULL || n_points > 0, NULL);
+
+  item = gimp_canvas_polygon_new_from_coords (widget->private->shell,
+                                              points, n_points,
+                                              transform, filled);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_path (GimpToolWidget       *widget,
+                           const GimpBezierDesc *desc)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_path_new (widget->private->shell,
+                               desc, 0, 0, FALSE, GIMP_PATH_STYLE_DEFAULT);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
 gimp_tool_widget_add_handle (GimpToolWidget   *widget,
                              GimpHandleType    type,
                              gdouble           x,
@@ -399,6 +635,53 @@ gimp_tool_widget_add_handle (GimpToolWidget   *widget,
 
   item = gimp_canvas_handle_new (widget->private->shell,
                                  type, anchor, x, y, width, height);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_corner (GimpToolWidget   *widget,
+                             gdouble           x,
+                             gdouble           y,
+                             gdouble           width,
+                             gdouble           height,
+                             GimpHandleAnchor  anchor,
+                             gint              corner_width,
+                             gint              corner_height,
+                             gboolean          outside)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_corner_new (widget->private->shell,
+                                 x, y, width, height,
+                                 anchor, corner_width, corner_height,
+                                 outside);
+
+  gimp_tool_widget_add_item (widget, item);
+  g_object_unref (item);
+
+  return item;
+}
+
+GimpCanvasItem *
+gimp_tool_widget_add_rectangle_guides (GimpToolWidget *widget,
+                                       gdouble         x,
+                                       gdouble         y,
+                                       gdouble         width,
+                                       gdouble         height,
+                                       GimpGuidesType  type)
+{
+  GimpCanvasItem *item;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), NULL);
+
+  item = gimp_canvas_rectangle_guides_new (widget->private->shell,
+                                           x, y, width, height, type, 4);
 
   gimp_tool_widget_add_item (widget, item);
   g_object_unref (item);
@@ -492,6 +775,32 @@ gimp_tool_widget_hover (GimpToolWidget   *widget,
                                                 coords, state, proximity);
 }
 
+gboolean
+gimp_tool_widget_key_press (GimpToolWidget *widget,
+                            GdkEventKey    *kevent)
+{
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), FALSE);
+  g_return_val_if_fail (kevent != NULL, FALSE);
+
+  if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->key_press)
+    return GIMP_TOOL_WIDGET_GET_CLASS (widget)->key_press (widget, kevent);
+
+  return FALSE;
+}
+
+gboolean
+gimp_tool_widget_key_release (GimpToolWidget *widget,
+                              GdkEventKey    *kevent)
+{
+  g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), FALSE);
+  g_return_val_if_fail (kevent != NULL, FALSE);
+
+  if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->key_release)
+    return GIMP_TOOL_WIDGET_GET_CLASS (widget)->key_release (widget, kevent);
+
+  return FALSE;
+}
+
 void
 gimp_tool_widget_motion_modifier (GimpToolWidget  *widget,
                                   GdkModifierType  key,
@@ -513,9 +822,9 @@ gimp_tool_widget_hover_modifier (GimpToolWidget  *widget,
 {
   g_return_if_fail (GIMP_IS_TOOL_WIDGET (widget));
 
-  if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->motion_modifier)
-    GIMP_TOOL_WIDGET_GET_CLASS (widget)->motion_modifier (widget,
-                                                          key, press, state);
+  if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->hover_modifier)
+    GIMP_TOOL_WIDGET_GET_CLASS (widget)->hover_modifier (widget,
+                                                         key, press, state);
 }
 
 gboolean
@@ -524,7 +833,7 @@ gimp_tool_widget_get_cursor (GimpToolWidget      *widget,
                              GdkModifierType      state,
                              GimpCursorType      *cursor,
                              GimpToolCursorType  *tool_cursor,
-                             GimpCursorModifier  *cursor_modifier)
+                             GimpCursorModifier  *modifier)
 
 {
   g_return_val_if_fail (GIMP_IS_TOOL_WIDGET (widget), FALSE);
@@ -534,21 +843,21 @@ gimp_tool_widget_get_cursor (GimpToolWidget      *widget,
     {
       GimpCursorType     my_cursor;
       GimpToolCursorType my_tool_cursor;
-      GimpCursorModifier my_cursor_modifier;
+      GimpCursorModifier my_modifier;
 
-      if (cursor)          my_cursor          = *cursor;
-      if (tool_cursor)     my_tool_cursor     = *tool_cursor;
-      if (cursor_modifier) my_cursor_modifier = *cursor_modifier;
+      if (cursor)      my_cursor      = *cursor;
+      if (tool_cursor) my_tool_cursor = *tool_cursor;
+      if (modifier)    my_modifier    = *modifier;
 
       if (GIMP_TOOL_WIDGET_GET_CLASS (widget)->get_cursor (widget, coords,
                                                            state,
                                                            &my_cursor,
                                                            &my_tool_cursor,
-                                                           &my_cursor_modifier))
+                                                           &my_modifier))
         {
-          if (cursor)          *cursor          = my_cursor;
-          if (tool_cursor)     *tool_cursor     = my_tool_cursor;
-          if (cursor_modifier) *cursor_modifier = my_cursor_modifier;
+          if (cursor)      *cursor      = my_cursor;
+          if (tool_cursor) *tool_cursor = my_tool_cursor;
+          if (modifier)    *modifier    = my_modifier;
 
           return TRUE;
         }

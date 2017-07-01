@@ -73,11 +73,6 @@ static gboolean gimp_blend_tool_initialize        (GimpTool              *tool,
 static void   gimp_blend_tool_control             (GimpTool              *tool,
                                                    GimpToolAction         action,
                                                    GimpDisplay           *display);
-static void   gimp_blend_tool_oper_update         (GimpTool              *tool,
-                                                   const GimpCoords      *coords,
-                                                   GdkModifierType        state,
-                                                   gboolean               proximity,
-                                                   GimpDisplay           *display);
 static void   gimp_blend_tool_button_press        (GimpTool              *tool,
                                                    const GimpCoords      *coords,
                                                    guint32                time,
@@ -93,14 +88,6 @@ static void   gimp_blend_tool_button_release      (GimpTool              *tool,
 static void   gimp_blend_tool_motion              (GimpTool              *tool,
                                                    const GimpCoords      *coords,
                                                    guint32                time,
-                                                   GdkModifierType        state,
-                                                   GimpDisplay           *display);
-static gboolean gimp_blend_tool_key_press         (GimpTool              *tool,
-                                                   GdkEventKey           *kevent,
-                                                   GimpDisplay           *display);
-static void   gimp_blend_tool_active_modifier_key (GimpTool              *tool,
-                                                   GdkModifierType        key,
-                                                   gboolean               press,
                                                    GdkModifierType        state,
                                                    GimpDisplay           *display);
 static void   gimp_blend_tool_cursor_update       (GimpTool              *tool,
@@ -119,20 +106,17 @@ static void   gimp_blend_tool_options_notify      (GimpTool              *tool,
                                                    GimpToolOptions       *options,
                                                    const GParamSpec      *pspec);
 
-static void   gimp_blend_tool_draw                (GimpDrawTool          *draw_tool);
-
 static void   gimp_blend_tool_start               (GimpBlendTool         *blend_tool,
+                                                   const GimpCoords      *coords,
                                                    GimpDisplay           *display);
 static void   gimp_blend_tool_halt                (GimpBlendTool         *blend_tool);
 static void   gimp_blend_tool_commit              (GimpBlendTool         *blend_tool);
 
 static void   gimp_blend_tool_line_changed        (GimpToolWidget        *widget,
                                                    GimpBlendTool         *blend_tool);
-
-static void   gimp_blend_tool_update_status       (GimpBlendTool         *blend_tool,
-                                                   GdkModifierType        state,
-                                                   gboolean               proximity,
-                                                   GimpDisplay           *display);
+static void   gimp_blend_tool_line_response       (GimpToolWidget        *widget,
+                                                   gint                   response_id,
+                                                   GimpBlendTool         *blend_tool);
 
 static void   gimp_blend_tool_precalc_shapeburst  (GimpBlendTool         *blend_tool);
 
@@ -186,28 +170,22 @@ gimp_blend_tool_register (GimpToolRegisterCallback  callback,
 static void
 gimp_blend_tool_class_init (GimpBlendToolClass *klass)
 {
-  GObjectClass      *object_class    = G_OBJECT_CLASS (klass);
-  GimpToolClass     *tool_class      = GIMP_TOOL_CLASS (klass);
-  GimpDrawToolClass *draw_tool_class = GIMP_DRAW_TOOL_CLASS (klass);
+  GObjectClass  *object_class = G_OBJECT_CLASS (klass);
+  GimpToolClass *tool_class   = GIMP_TOOL_CLASS (klass);
 
-  object_class->dispose           = gimp_blend_tool_dispose;
+  object_class->dispose      = gimp_blend_tool_dispose;
 
-  tool_class->initialize          = gimp_blend_tool_initialize;
-  tool_class->control             = gimp_blend_tool_control;
-  tool_class->oper_update         = gimp_blend_tool_oper_update;
-  tool_class->button_press        = gimp_blend_tool_button_press;
-  tool_class->button_release      = gimp_blend_tool_button_release;
-  tool_class->motion              = gimp_blend_tool_motion;
-  tool_class->key_press           = gimp_blend_tool_key_press;
-  tool_class->active_modifier_key = gimp_blend_tool_active_modifier_key;
-  tool_class->cursor_update       = gimp_blend_tool_cursor_update;
-  tool_class->get_undo_desc       = gimp_blend_tool_get_undo_desc;
-  tool_class->get_redo_desc       = gimp_blend_tool_get_redo_desc;
-  tool_class->undo                = gimp_blend_tool_undo;
-  tool_class->redo                = gimp_blend_tool_redo;
-  tool_class->options_notify      = gimp_blend_tool_options_notify;
-
-  draw_tool_class->draw           = gimp_blend_tool_draw;
+  tool_class->initialize     = gimp_blend_tool_initialize;
+  tool_class->control        = gimp_blend_tool_control;
+  tool_class->button_press   = gimp_blend_tool_button_press;
+  tool_class->button_release = gimp_blend_tool_button_release;
+  tool_class->motion         = gimp_blend_tool_motion;
+  tool_class->cursor_update  = gimp_blend_tool_cursor_update;
+  tool_class->get_undo_desc  = gimp_blend_tool_get_undo_desc;
+  tool_class->get_redo_desc  = gimp_blend_tool_get_redo_desc;
+  tool_class->undo           = gimp_blend_tool_undo;
+  tool_class->redo           = gimp_blend_tool_redo;
+  tool_class->options_notify = gimp_blend_tool_options_notify;
 }
 
 static void
@@ -231,6 +209,9 @@ gimp_blend_tool_init (GimpBlendTool *blend_tool)
                                          "context/context-opacity-set");
   gimp_tool_control_set_action_object_1 (tool->control,
                                          "context/context-gradient-select-set");
+
+  gimp_draw_tool_set_default_status (GIMP_DRAW_TOOL (tool),
+                                     _("Click-Drag to draw a gradient"));
 }
 
 static void
@@ -314,23 +295,6 @@ gimp_blend_tool_control (GimpTool       *tool,
 }
 
 static void
-gimp_blend_tool_oper_update (GimpTool         *tool,
-                             const GimpCoords *coords,
-                             GdkModifierType   state,
-                             gboolean          proximity,
-                             GimpDisplay      *display)
-{
-  GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
-
-  if (display == tool->display && blend_tool->line)
-    {
-      gimp_tool_widget_hover (blend_tool->line, coords, state, proximity);
-    }
-
-  gimp_blend_tool_update_status (blend_tool, state, proximity, display);
-}
-
-static void
 gimp_blend_tool_button_press (GimpTool            *tool,
                               const GimpCoords    *coords,
                               guint32              time,
@@ -345,33 +309,13 @@ gimp_blend_tool_button_press (GimpTool            *tool,
   gdouble        end_y;
 
   if (tool->display && display != tool->display)
+    gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, tool->display);
+
+  if (! blend_tool->widget)
     {
-      gimp_tool_pop_status (tool, tool->display);
-      gimp_blend_tool_halt (blend_tool);
-    }
+      gimp_blend_tool_start (blend_tool, coords, display);
 
-  if (! blend_tool->line)
-    {
-      GimpDisplayShell *shell = gimp_display_get_shell (display);
-
-      blend_tool->start_x = coords->x;
-      blend_tool->start_y = coords->y;
-      blend_tool->end_x   = coords->x;
-      blend_tool->end_y   = coords->y;
-
-      blend_tool->line = gimp_tool_line_new (shell,
-                                             blend_tool->start_x,
-                                             blend_tool->start_y,
-                                             blend_tool->end_x,
-                                             blend_tool->end_y);
-
-      gimp_tool_widget_hover (blend_tool->line, coords, state, TRUE);
-
-      g_signal_connect (blend_tool->line, "changed",
-                        G_CALLBACK (gimp_blend_tool_line_changed),
-                        blend_tool);
-
-      gimp_blend_tool_start (blend_tool, display);
+      gimp_tool_widget_hover (blend_tool->widget, coords, state, TRUE);
     }
 
   /*  save the current line for undo, widget_button_press() might change it
@@ -381,10 +325,10 @@ gimp_blend_tool_button_press (GimpTool            *tool,
   end_x   = blend_tool->end_x;
   end_y   = blend_tool->end_y;
 
-  if (gimp_tool_widget_button_press (blend_tool->line, coords, time, state,
+  if (gimp_tool_widget_button_press (blend_tool->widget, coords, time, state,
                                      press_type))
     {
-      blend_tool->grab_widget = blend_tool->line;
+      blend_tool->grab_widget = blend_tool->widget;
 
       blend_tool->undo_stack =
         g_list_prepend (blend_tool->undo_stack,
@@ -392,8 +336,6 @@ gimp_blend_tool_button_press (GimpTool            *tool,
     }
 
   gimp_tool_control_activate (tool->control);
-
-  gimp_blend_tool_update_status (blend_tool, state, TRUE, display);
 }
 
 static void
@@ -446,7 +388,6 @@ gimp_blend_tool_button_release (GimpTool              *tool,
       /*  a click outside any handle commits the tool
        */
       gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, display);
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
     }
 }
 
@@ -463,53 +404,6 @@ gimp_blend_tool_motion (GimpTool         *tool,
     {
       gimp_tool_widget_motion (blend_tool->grab_widget, coords, time, state);
     }
-
-  gimp_blend_tool_update_status (blend_tool, state, TRUE, display);
-}
-
-static gboolean
-gimp_blend_tool_key_press (GimpTool    *tool,
-                           GdkEventKey *kevent,
-                           GimpDisplay *display)
-{
-  switch (kevent->keyval)
-    {
-    case GDK_KEY_BackSpace:
-      return TRUE;
-
-    case GDK_KEY_Return:
-    case GDK_KEY_KP_Enter:
-    case GDK_KEY_ISO_Enter:
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, display);
-      /* fall thru */
-
-    case GDK_KEY_Escape:
-      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
-      return TRUE;
-
-    default:
-      break;
-    }
-
-  return FALSE;
-}
-
-static void
-gimp_blend_tool_active_modifier_key (GimpTool        *tool,
-                                     GdkModifierType  key,
-                                     gboolean         press,
-                                     GdkModifierType  state,
-                                     GimpDisplay     *display)
-{
-  GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
-
-  if (blend_tool->grab_widget)
-    {
-      gimp_tool_widget_motion_modifier (blend_tool->grab_widget,
-                                        key, press, state);
-    }
-
-  gimp_blend_tool_update_status (blend_tool, state, TRUE, display);
 }
 
 static void
@@ -518,29 +412,28 @@ gimp_blend_tool_cursor_update (GimpTool         *tool,
                                GdkModifierType   state,
                                GimpDisplay      *display)
 {
-  GimpBlendTool      *blend_tool = GIMP_BLEND_TOOL (tool);
-  GimpImage          *image      = gimp_display_get_image (display);
-  GimpDrawable       *drawable   = gimp_image_get_active_drawable (image);
-  GimpCursorModifier  modifier   = GIMP_CURSOR_MODIFIER_NONE;
+  GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
+  GimpImage     *image      = gimp_display_get_image (display);
+  GimpDrawable  *drawable   = gimp_image_get_active_drawable (image);
 
   if (gimp_viewable_get_children (GIMP_VIEWABLE (drawable)) ||
       gimp_item_is_content_locked (GIMP_ITEM (drawable))    ||
       ! gimp_item_is_visible (GIMP_ITEM (drawable)))
     {
-      modifier = GIMP_CURSOR_MODIFIER_BAD;
+      gimp_tool_set_cursor (tool, display,
+                            gimp_tool_control_get_cursor (tool->control),
+                            gimp_tool_control_get_tool_cursor (tool->control),
+                            GIMP_CURSOR_MODIFIER_BAD);
+      return;
     }
-  else if (display != tool->display || ! blend_tool->line)
+  else if (display != tool->display || ! blend_tool->widget)
     {
-      modifier = GIMP_CURSOR_MODIFIER_PLUS;
+      gimp_tool_set_cursor (tool, display,
+                            gimp_tool_control_get_cursor (tool->control),
+                            gimp_tool_control_get_tool_cursor (tool->control),
+                            GIMP_CURSOR_MODIFIER_PLUS);
+      return;
     }
-  else if (blend_tool->line)
-    {
-      gimp_tool_widget_get_cursor (blend_tool->line,
-                                   coords, state,
-                                   NULL, NULL, &modifier);
-    }
-
-  gimp_tool_control_set_cursor_modifier (tool->control, modifier);
 
   GIMP_TOOL_CLASS (parent_class)->cursor_update (tool, coords, state, display);
 }
@@ -589,7 +482,7 @@ gimp_blend_tool_undo (GimpTool    *tool,
 
   info = blend_tool->undo_stack->data;
 
-  g_object_set (blend_tool->line,
+  g_object_set (blend_tool->widget,
                 "x1", info->start_x,
                 "y1", info->start_y,
                 "x2", info->end_x,
@@ -620,7 +513,7 @@ gimp_blend_tool_redo (GimpTool    *tool,
 
   info = blend_tool->redo_stack->data;
 
-  g_object_set (blend_tool->line,
+  g_object_set (blend_tool->widget,
                 "x1", info->start_x,
                 "y1", info->start_y,
                 "x2", info->end_x,
@@ -689,23 +582,12 @@ gimp_blend_tool_options_notify (GimpTool         *tool,
 }
 
 static void
-gimp_blend_tool_draw (GimpDrawTool *draw_tool)
-{
-  GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (draw_tool);
-
-  if (blend_tool->line)
-    {
-      GimpCanvasItem *item = gimp_tool_widget_get_item (blend_tool->line);
-
-      gimp_draw_tool_add_item (draw_tool, item);
-    }
-}
-
-static void
-gimp_blend_tool_start (GimpBlendTool *blend_tool,
-                       GimpDisplay   *display)
+gimp_blend_tool_start (GimpBlendTool    *blend_tool,
+                       const GimpCoords *coords,
+                       GimpDisplay      *display)
 {
   GimpTool         *tool     = GIMP_TOOL (blend_tool);
+  GimpDisplayShell *shell    = gimp_display_get_shell (display);
   GimpImage        *image    = gimp_display_get_image (display);
   GimpDrawable     *drawable = gimp_image_get_active_drawable (image);
   GimpBlendOptions *options  = GIMP_BLEND_TOOL_GET_OPTIONS (blend_tool);
@@ -713,6 +595,26 @@ gimp_blend_tool_start (GimpBlendTool *blend_tool,
 
   tool->display  = display;
   tool->drawable = drawable;
+
+  blend_tool->start_x = coords->x;
+  blend_tool->start_y = coords->y;
+  blend_tool->end_x   = coords->x;
+  blend_tool->end_y   = coords->y;
+
+  blend_tool->widget = gimp_tool_line_new (shell,
+                                           blend_tool->start_x,
+                                           blend_tool->start_y,
+                                           blend_tool->end_x,
+                                           blend_tool->end_y);
+
+  gimp_draw_tool_set_widget (GIMP_DRAW_TOOL (tool), blend_tool->widget);
+
+  g_signal_connect (blend_tool->widget, "changed",
+                    G_CALLBACK (gimp_blend_tool_line_changed),
+                    blend_tool);
+  g_signal_connect (blend_tool->widget, "response",
+                    G_CALLBACK (gimp_blend_tool_line_response),
+                    blend_tool);
 
   gimp_blend_tool_create_filter (blend_tool, drawable);
 
@@ -726,8 +628,7 @@ gimp_blend_tool_start (GimpBlendTool *blend_tool,
   if (gimp_blend_tool_is_shapeburst (blend_tool))
     gimp_blend_tool_precalc_shapeburst (blend_tool);
 
-  if (! gimp_draw_tool_is_active (GIMP_DRAW_TOOL (blend_tool)))
-    gimp_draw_tool_start (GIMP_DRAW_TOOL (blend_tool), display);
+  gimp_draw_tool_start (GIMP_DRAW_TOOL (blend_tool), display);
 }
 
 static void
@@ -781,17 +682,17 @@ gimp_blend_tool_halt (GimpBlendTool *blend_tool)
       blend_tool->redo_stack = NULL;
     }
 
-  tool->display  = NULL;
-  tool->drawable = NULL;
+  if (tool->display)
+    gimp_tool_pop_status (tool, tool->display);
 
   if (gimp_draw_tool_is_active (GIMP_DRAW_TOOL (blend_tool)))
     gimp_draw_tool_stop (GIMP_DRAW_TOOL (blend_tool));
 
-  if (blend_tool->line)
-    {
-      g_object_unref (blend_tool->line);
-      blend_tool->line = NULL;
-    }
+  gimp_draw_tool_set_widget (GIMP_DRAW_TOOL (tool), NULL);
+  g_clear_object (&blend_tool->widget);
+
+  tool->display  = NULL;
+  tool->drawable = NULL;
 }
 
 static void
@@ -812,6 +713,8 @@ gimp_blend_tool_commit (GimpBlendTool *blend_tool)
 
       gimp_image_flush (gimp_display_get_image (tool->display));
     }
+
+  gimp_blend_tool_halt (blend_tool);
 }
 
 static void
@@ -830,43 +733,21 @@ gimp_blend_tool_line_changed (GimpToolWidget *widget,
 }
 
 static void
-gimp_blend_tool_update_status (GimpBlendTool   *blend_tool,
-                               GdkModifierType  state,
-                               gboolean         proximity,
-                               GimpDisplay     *display)
+gimp_blend_tool_line_response (GimpToolWidget *widget,
+                               gint            response_id,
+                               GimpBlendTool  *blend_tool)
 {
   GimpTool *tool = GIMP_TOOL (blend_tool);
 
-  gimp_tool_pop_status (tool, display);
-
-  if (proximity)
+  switch (response_id)
     {
-      if (display == tool->display && blend_tool->line)
-        {
-          gchar *status_help =
-            gimp_suggest_modifiers ("",
-                                    (gimp_get_constrain_behavior_mask () |
-                                     GDK_MOD1_MASK) &
-                                    ~state,
-                                    NULL,
-                                    _("%s for constrained angles"),
-                                    _("%s to move the whole line"));
+    case GIMP_TOOL_WIDGET_RESPONSE_CONFIRM:
+      gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, tool->display);
+      break;
 
-          gimp_tool_push_status_coords (tool, display,
-                                        gimp_tool_control_get_precision (tool->control),
-                                        _("Blend: "),
-                                        blend_tool->end_x - blend_tool->start_x,
-                                        ", ",
-                                        blend_tool->end_y - blend_tool->start_y,
-                                        status_help);
-
-          g_free (status_help);
-        }
-      else
-        {
-          gimp_tool_push_status (tool, display,
-                                 _("Blend: Click-Drag to draw a gradient"));
-        }
+    case GIMP_TOOL_WIDGET_RESPONSE_CANCEL:
+      gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, tool->display);
+      break;
     }
 }
 

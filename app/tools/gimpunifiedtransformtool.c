@@ -111,7 +111,6 @@ gimp_unified_transform_tool_init (GimpUnifiedTransformTool *unified_tool)
   GimpTransformTool *tr_tool = GIMP_TRANSFORM_TOOL (unified_tool);
 
   tr_tool->progress_text    = _("Unified transform");
-  tr_tool->use_grid         = TRUE;
   tr_tool->does_perspective = TRUE;
 }
 
@@ -186,19 +185,16 @@ gimp_unified_transform_tool_prepare (GimpTransformTool *tr_tool)
 static GimpToolWidget *
 gimp_unified_transform_tool_get_widget (GimpTransformTool *tr_tool)
 {
-  GimpTool             *tool    = GIMP_TOOL (tr_tool);
-  GimpTransformOptions *options = GIMP_TRANSFORM_TOOL_GET_OPTIONS (tr_tool);
-  GimpDisplayShell     *shell   = gimp_display_get_shell (tool->display);
-  GimpToolWidget       *widget;
+  GimpTool         *tool  = GIMP_TOOL (tr_tool);
+  GimpDisplayShell *shell = gimp_display_get_shell (tool->display);
+  GimpToolWidget   *widget;
 
   widget = gimp_tool_transform_grid_new (shell,
                                          &tr_tool->transform,
                                          tr_tool->x1,
                                          tr_tool->y1,
                                          tr_tool->x2,
-                                         tr_tool->y2,
-                                         options->grid_type,
-                                         options->grid_size);
+                                         tr_tool->y2);
 
   g_object_set (widget,
                 "pivot-x",                 (tr_tool->x1 + tr_tool->x2) / 2.0,
@@ -210,16 +206,6 @@ gimp_unified_transform_tool_get_widget (GimpTransformTool *tr_tool)
                 "use-side-handles",        TRUE,
                 "use-shear-handles",       TRUE,
                 "use-pivot-handle",        TRUE,
-                "constrain-move",          options->constrain_move,
-                "constrain-scale",         options->constrain_scale,
-                "constrain-rotate",        options->constrain_rotate,
-                "constrain-shear",         options->constrain_shear,
-                "constrain-perspective",   options->constrain_perspective,
-                "frompivot-scale",         options->frompivot_scale,
-                "frompivot-shear",         options->frompivot_shear,
-                "frompivot-perspective",   options->frompivot_perspective,
-                "cornersnap",              options->cornersnap,
-                "fixedpivot",              options->fixedpivot,
                 NULL);
 
   g_signal_connect (widget, "changed",

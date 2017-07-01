@@ -153,8 +153,6 @@ libapptools_a_sources = \
 	gimprectangleselecttool.h	\
 	gimprectangleselectoptions.c	\
 	gimprectangleselectoptions.h	\
-	gimprectangletool.c		\
-	gimprectangletool.h		\
 	gimprectangleoptions.c		\
 	gimprectangleoptions.h		\
 	gimpregionselectoptions.c	\

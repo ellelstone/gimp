@@ -23,54 +23,6 @@
  * these enums are registered with the type system
  */
 
-#define GIMP_TYPE_TRANSFORM_HANDLE_MODE (gimp_transform_handle_mode_get_type ())
-
-GType gimp_transform_handle_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_HANDLE_MODE_ADD_TRANSFORM, /*< desc="Add / Transform" >*/
-  GIMP_HANDLE_MODE_MOVE,          /*< desc="Move"            >*/
-  GIMP_HANDLE_MODE_REMOVE         /*< desc="Remove"          >*/
-} GimpTransformHandleMode;
-
-
-#define GIMP_TYPE_RECTANGLE_CONSTRAINT (gimp_rectangle_constraint_get_type ())
-
-GType gimp_rectangle_constraint_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RECTANGLE_CONSTRAIN_NONE,
-  GIMP_RECTANGLE_CONSTRAIN_IMAGE,
-  GIMP_RECTANGLE_CONSTRAIN_DRAWABLE
-} GimpRectangleConstraint;
-
-
-#define GIMP_TYPE_RECTANGLE_PRECISION (gimp_rectangle_precision_get_type ())
-
-GType gimp_rectangle_precision_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RECTANGLE_PRECISION_INT,
-  GIMP_RECTANGLE_PRECISION_DOUBLE,
-} GimpRectanglePrecision;
-
-
-#define GIMP_TYPE_RECTANGLE_TOOL_FIXED_RULE (gimp_rectangle_tool_fixed_rule_get_type ())
-
-GType gimp_rectangle_tool_fixed_rule_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_RECTANGLE_TOOL_FIXED_ASPECT, /*< desc="Aspect ratio" >*/
-  GIMP_RECTANGLE_TOOL_FIXED_WIDTH,  /*< desc="Width"        >*/
-  GIMP_RECTANGLE_TOOL_FIXED_HEIGHT, /*< desc="Height"       >*/
-  GIMP_RECTANGLE_TOOL_FIXED_SIZE,   /*< desc="Size"         >*/
-} GimpRectangleToolFixedRule;
-
-
 #define GIMP_TYPE_RECT_SELECT_MODE (gimp_rect_select_mode_get_type ())
 
 GType gimp_rect_select_mode_get_type (void) G_GNUC_CONST;
@@ -93,18 +45,6 @@ typedef enum
   GIMP_TRANSFORM_TYPE_SELECTION, /*< desc="Selection" >*/
   GIMP_TRANSFORM_TYPE_PATH       /*< desc="Path"      >*/
 } GimpTransformType;
-
-
-#define GIMP_TYPE_VECTOR_MODE (gimp_vector_mode_get_type ())
-
-GType gimp_vector_mode_get_type (void) G_GNUC_CONST;
-
-typedef enum
-{
-  GIMP_VECTOR_MODE_DESIGN,      /*< desc="Design" >*/
-  GIMP_VECTOR_MODE_EDIT,        /*< desc="Edit"   >*/
-  GIMP_VECTOR_MODE_MOVE         /*< desc="Move"   >*/
-} GimpVectorMode;
 
 
 #define GIMP_TYPE_TOOL_ACTION (gimp_tool_action_get_type ())

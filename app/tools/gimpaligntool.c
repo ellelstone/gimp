@@ -32,8 +32,7 @@
 #include "core/gimpguide.h"
 #include "core/gimpimage.h"
 #include "core/gimpimage-arrange.h"
-#include "core/gimpimage-guides.h"
-#include "core/gimpimage-pick-layer.h"
+#include "core/gimpimage-pick-item.h"
 #include "core/gimpimage-undo.h"
 #include "core/gimplayer.h"
 
@@ -284,28 +283,25 @@ gimp_align_tool_button_release (GimpTool              *tool,
       GimpLayer   *layer;
       gint         snap_distance = display->config->snap_distance;
 
-      if (gimp_draw_tool_on_vectors (GIMP_DRAW_TOOL (tool), display,
-                                     coords, snap_distance, snap_distance,
-                                     NULL, NULL, NULL, NULL, NULL,
-                                     &vectors))
+      if ((vectors = gimp_image_pick_vectors (image,
+                                              coords->x, coords->y,
+                                              FUNSCALEX (shell, snap_distance),
+                                              FUNSCALEY (shell, snap_distance))))
         {
           object = G_OBJECT (vectors);
         }
       else if (gimp_display_shell_get_show_guides (shell) &&
-               (guide = gimp_image_find_guide (image,
+               (guide = gimp_image_pick_guide (image,
                                                coords->x, coords->y,
                                                FUNSCALEX (shell, snap_distance),
                                                FUNSCALEY (shell, snap_distance))))
         {
           object = G_OBJECT (guide);
         }
-      else
+      else if ((layer = gimp_image_pick_layer_by_bounds (image,
+                                                         coords->x, coords->y)))
         {
-          if ((layer = gimp_image_pick_layer_by_bounds (image,
-                                                        coords->x, coords->y)))
-            {
-              object = G_OBJECT (layer);
-            }
+          object = G_OBJECT (layer);
         }
 
       if (object)
@@ -434,9 +430,10 @@ gimp_align_tool_oper_update (GimpTool         *tool,
   add = ((state & gimp_get_extend_selection_mask ()) &&
          align_tool->selected_objects);
 
-  if (gimp_draw_tool_on_vectors (GIMP_DRAW_TOOL (tool), display,
-                                 coords, snap_distance, snap_distance,
-                                 NULL, NULL, NULL, NULL, NULL, NULL))
+  if (gimp_image_pick_vectors (image,
+                               coords->x, coords->y,
+                               FUNSCALEX (shell, snap_distance),
+                               FUNSCALEY (shell, snap_distance)))
     {
       if (add)
         align_tool->function = ALIGN_TOOL_ADD_PATH;
@@ -444,7 +441,7 @@ gimp_align_tool_oper_update (GimpTool         *tool,
         align_tool->function = ALIGN_TOOL_PICK_PATH;
     }
   else if (gimp_display_shell_get_show_guides (shell) &&
-           gimp_image_find_guide (image,
+           gimp_image_pick_guide (image,
                                   coords->x, coords->y,
                                   FUNSCALEX (shell, snap_distance),
                                   FUNSCALEY (shell, snap_distance)))
@@ -454,23 +451,16 @@ gimp_align_tool_oper_update (GimpTool         *tool,
       else
         align_tool->function = ALIGN_TOOL_PICK_GUIDE;
     }
+  else if (gimp_image_pick_layer_by_bounds (image, coords->x, coords->y))
+    {
+      if (add)
+        align_tool->function = ALIGN_TOOL_ADD_LAYER;
+      else
+        align_tool->function = ALIGN_TOOL_PICK_LAYER;
+    }
   else
     {
-      GimpLayer *layer;
-
-      layer = gimp_image_pick_layer_by_bounds (image, coords->x, coords->y);
-
-      if (layer)
-        {
-          if (add)
-            align_tool->function = ALIGN_TOOL_ADD_LAYER;
-          else
-            align_tool->function = ALIGN_TOOL_PICK_LAYER;
-        }
-      else
-        {
-          align_tool->function = ALIGN_TOOL_IDLE;
-        }
+      align_tool->function = ALIGN_TOOL_IDLE;
     }
 
   gimp_align_tool_status_update (tool, display, state, proximity);
