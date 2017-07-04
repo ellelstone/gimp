@@ -33,15 +33,16 @@
 #include "libgimpconfig/gimpconfig.h"
 #include "libgimpwidgets/gimpwidgets.h"
 
-#include "widgets-types.h"
+#include "propgui-types.h"
 
 #include "gegl/gimp-gegl-utils.h"
 
 #include "core/gimpcontext.h"
 
+#include "widgets/gimppropwidgets.h"
+
 #include "gimppropgui.h"
 #include "gimppropgui-generic.h"
-#include "gimppropwidgets.h"
 
 #include "gimp-intl.h"
 
@@ -56,13 +57,14 @@ static void   gimp_prop_gui_chain_toggled (GimpChainButton *chain,
 /*  public functions  */
 
 GtkWidget *
-_gimp_prop_gui_new_generic (GObject              *config,
-                            GParamSpec          **param_specs,
-                            guint                 n_param_specs,
-                            GeglRectangle        *area,
-                            GimpContext          *context,
-                            GimpCreatePickerFunc  create_picker_func,
-                            gpointer              picker_creator)
+_gimp_prop_gui_new_generic (GObject                  *config,
+                            GParamSpec              **param_specs,
+                            guint                     n_param_specs,
+                            GeglRectangle            *area,
+                            GimpContext              *context,
+                            GimpCreatePickerFunc      create_picker_func,
+                            GimpCreateControllerFunc  create_controller_func,
+                            gpointer                  creator)
 {
   GtkWidget    *main_vbox;
   GtkSizeGroup *label_group;
@@ -104,12 +106,14 @@ _gimp_prop_gui_new_generic (GObject              *config,
           widget_x = gimp_prop_widget_new_from_pspec (config, pspec,
                                                       area, context,
                                                       create_picker_func,
-                                                      picker_creator,
+                                                      create_controller_func,
+                                                      creator,
                                                       &label_x);
           widget_y = gimp_prop_widget_new_from_pspec (config, next_pspec,
                                                       area, context,
                                                       create_picker_func,
-                                                      picker_creator,
+                                                      create_controller_func,
+                                                      creator,
                                                       &label_y);
 
           adj_x = gtk_spin_button_get_adjustment (GTK_SPIN_BUTTON (widget_x));
@@ -167,7 +171,7 @@ _gimp_prop_gui_new_generic (GObject              *config,
               pspec_name = g_strconcat (pspec->name, ":",
                                         next_pspec->name, NULL);
 
-              button = create_picker_func (picker_creator,
+              button = create_picker_func (creator,
                                            pspec_name,
                                            GIMP_ICON_CURSOR,
                                            _("Pick coordinates from the image"),
@@ -188,7 +192,8 @@ _gimp_prop_gui_new_generic (GObject              *config,
           widget = gimp_prop_widget_new_from_pspec (config, pspec,
                                                     area, context,
                                                     create_picker_func,
-                                                    picker_creator,
+                                                    create_controller_func,
+                                                    creator,
                                                     &label);
 
           if (GTK_IS_SCROLLED_WINDOW (widget))

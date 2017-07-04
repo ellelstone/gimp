@@ -40,6 +40,11 @@ struct _GimpTool
 
   GimpToolInfo    *tool_info;
 
+  gchar           *label;
+  gchar           *undo_desc;
+  gchar           *icon_name;
+  gchar           *help_id;
+
   gint             ID;          /*  unique tool ID                         */
 
   GimpToolControl *control;
@@ -135,9 +140,9 @@ struct _GimpToolClass
                                            GdkModifierType        state,
                                            GimpDisplay           *display);
 
-  const gchar   * (* get_undo_desc)       (GimpTool              *tool,
+  const gchar   * (* can_undo)            (GimpTool              *tool,
                                            GimpDisplay           *display);
-  const gchar   * (* get_redo_desc)       (GimpTool              *tool,
+  const gchar   * (* can_redo)            (GimpTool              *tool,
                                            GimpDisplay           *display);
   gboolean        (* undo)                (GimpTool              *tool,
                                            GimpDisplay           *display);
@@ -159,6 +164,22 @@ struct _GimpToolClass
 GType             gimp_tool_get_type            (void) G_GNUC_CONST;
 
 GimpToolOptions * gimp_tool_get_options         (GimpTool            *tool);
+
+void              gimp_tool_set_label           (GimpTool            *tool,
+                                                 const gchar         *label);
+const gchar     * gimp_tool_get_label           (GimpTool            *tool);
+
+void              gimp_tool_set_undo_desc       (GimpTool            *tool,
+                                                 const gchar         *undo_desc);
+const gchar     * gimp_tool_get_undo_desc       (GimpTool            *tool);
+
+void              gimp_tool_set_icon_name       (GimpTool            *tool,
+                                                 const gchar         *icon_name);
+const gchar     * gimp_tool_get_icon_name       (GimpTool            *tool);
+
+void              gimp_tool_set_help_id         (GimpTool            *tool,
+                                                 const gchar         *help_id);
+const gchar     * gimp_tool_get_help_id         (GimpTool            *tool);
 
 gboolean          gimp_tool_has_display         (GimpTool            *tool,
                                                  GimpDisplay         *display);
@@ -214,9 +235,9 @@ void              gimp_tool_cursor_update       (GimpTool            *tool,
                                                  GdkModifierType      state,
                                                  GimpDisplay         *display);
 
-const gchar     * gimp_tool_get_undo_desc       (GimpTool            *tool,
+const gchar     * gimp_tool_can_undo            (GimpTool            *tool,
                                                  GimpDisplay         *display);
-const gchar     * gimp_tool_get_redo_desc       (GimpTool            *tool,
+const gchar     * gimp_tool_can_redo            (GimpTool            *tool,
                                                  GimpDisplay         *display);
 gboolean          gimp_tool_undo                (GimpTool            *tool,
                                                  GimpDisplay         *display);

@@ -63,17 +63,27 @@ gimp_filter_tool_get_settings_box (GimpFilterTool *filter_tool)
   GtkWidget    *box;
   GtkWidget    *label;
   GtkWidget    *combo;
+  gchar        *import_title;
+  gchar        *export_title;
 
   settings_folder = g_type_get_qdata (type, quark);
+
+  import_title = g_strdup_printf (_("Import '%s' Settings"),
+                                  gimp_tool_get_label (GIMP_TOOL (filter_tool)));
+  export_title = g_strdup_printf (_("Export '%s' Settings"),
+                                  gimp_tool_get_label (GIMP_TOOL (filter_tool)));
 
   box = gimp_settings_box_new (tool_info->gimp,
                                filter_tool->config,
                                filter_tool->settings,
-                               filter_tool->import_dialog_title,
-                               filter_tool->export_dialog_title,
-                               filter_tool->help_id,
+                               import_title,
+                               export_title,
+                               gimp_tool_get_help_id (GIMP_TOOL (filter_tool)),
                                settings_folder,
                                NULL);
+
+  g_free (import_title);
+  g_free (export_title);
 
   g_signal_connect (box, "import",
                     G_CALLBACK (gimp_filter_tool_settings_import),
@@ -113,12 +123,15 @@ gimp_filter_tool_real_settings_export (GimpFilterTool  *filter_tool,
                                        GOutputStream   *output,
                                        GError         **error)
 {
+  GimpTool *tool = GIMP_TOOL (filter_tool);
   gchar    *header;
   gchar    *footer;
   gboolean  success;
 
-  header = g_strdup_printf ("GIMP '%s' settings",   filter_tool->title);
-  footer = g_strdup_printf ("end of '%s' settings", filter_tool->title);
+  header = g_strdup_printf ("GIMP '%s' settings",
+                            gimp_tool_get_label (tool));
+  footer = g_strdup_printf ("end of '%s' settings",
+                            gimp_tool_get_label (tool));
 
   success = gimp_config_serialize_to_stream (GIMP_CONFIG (filter_tool->config),
                                              output,

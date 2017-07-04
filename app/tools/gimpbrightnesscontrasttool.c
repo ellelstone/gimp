@@ -73,14 +73,8 @@ static void   gimp_brightness_contrast_tool_motion         (GimpTool            
 
 static gchar *
               gimp_brightness_contrast_tool_get_operation  (GimpFilterTool        *filter_tool,
-                                                            gchar                **title,
                                                             gchar                **description,
-                                                            gchar                **undo_desc,
-                                                            gchar                **icon_name,
-                                                            gchar                **help_id,
-                                                            gboolean              *has_settings,
-                                                            gchar                **import_dialog_title,
-                                                            gchar                **export_dialog_title);
+                                                            gboolean              *has_settings);
 static void   gimp_brightness_contrast_tool_dialog         (GimpFilterTool        *filter_tool);
 
 static void   brightness_contrast_to_levels_callback       (GtkWidget             *widget,
@@ -163,19 +157,11 @@ gimp_brightness_contrast_tool_initialize (GimpTool     *tool,
 
 static gchar *
 gimp_brightness_contrast_tool_get_operation (GimpFilterTool  *filter_tool,
-                                             gchar          **title,
                                              gchar          **description,
-                                             gchar          **undo_desc,
-                                             gchar          **icon_name,
-                                             gchar          **help_id,
-                                             gboolean        *has_settings,
-                                             gchar          **import_dialog_title,
-                                             gchar          **export_dialog_title)
+                                             gboolean        *has_settings)
 {
-  *description         = g_strdup (_("Adjust Brightness and Contrast"));
-  *has_settings        = TRUE;
-  *import_dialog_title = g_strdup (_("Import Brightness-Contrast settings"));
-  *export_dialog_title = g_strdup (_("Export Brightness-Contrast settings"));
+  *description  = g_strdup (_("Adjust Brightness and Contrast"));
+  *has_settings = TRUE;
 
   return g_strdup ("gimp:brightness-contrast");
 }

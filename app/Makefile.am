@@ -24,6 +24,7 @@ SUBDIRS = \
 	file		\
 	pdb		\
 	widgets		\
+	propgui		\
 	display		\
 	tools		\
 	dialogs		\
@@ -187,6 +188,7 @@ gimp_@GIMP_APP_VERSION@_LDADD = \
 	dialogs/libappdialogs.a		\
 	tools/libapptools.a		\
 	display/libappdisplay.a		\
+	propgui/libapppropgui.a		\
 	widgets/libappwidgets.a		\
 	$(libgimpwidgets)		\
 	$(GTK_LIBS)			\

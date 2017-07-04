@@ -26,14 +26,15 @@
 
 #include "libgimpwidgets/gimpwidgets.h"
 
-#include "widgets-types.h"
+#include "propgui-types.h"
 
 #include "core/gimpcontext.h"
+
+#include "widgets/gimppropwidgets.h"
 
 #include "gimppropgui.h"
 #include "gimppropgui-color-rotate.h"
 #include "gimppropgui-generic.h"
-#include "gimppropwidgets.h"
 
 #include "gimp-intl.h"
 
@@ -189,13 +190,14 @@ gimp_prop_polar_box_new (GObject     *config,
 }
 
 GtkWidget *
-_gimp_prop_gui_new_color_rotate (GObject              *config,
-                                 GParamSpec          **param_specs,
-                                 guint                 n_param_specs,
-                                 GeglRectangle        *area,
-                                 GimpContext          *context,
-                                 GimpCreatePickerFunc  create_picker_func,
-                                 gpointer              picker_creator)
+_gimp_prop_gui_new_color_rotate (GObject                  *config,
+                                 GParamSpec              **param_specs,
+                                 guint                     n_param_specs,
+                                 GeglRectangle            *area,
+                                 GimpContext              *context,
+                                 GimpCreatePickerFunc      create_picker_func,
+                                 GimpCreateControllerFunc  create_controller_func,
+                                 gpointer                  creator)
 {
   GtkWidget *main_vbox;
   GtkWidget *frame;
@@ -242,7 +244,9 @@ _gimp_prop_gui_new_color_rotate (GObject              *config,
   box = _gimp_prop_gui_new_generic (config,
                                     param_specs + 6, 2,
                                     area, context,
-                                    create_picker_func, picker_creator);
+                                    create_picker_func,
+                                    create_controller_func,
+                                    creator);
   gtk_box_pack_start (GTK_BOX (vbox), box, FALSE, FALSE, 0);
   gtk_widget_show (box);
 

@@ -463,6 +463,9 @@ gimp_rectangle_select_tool_cursor_update (GimpTool         *tool,
     {
       gimp_tool_widget_get_cursor (private->widget, coords, state,
                                    &cursor, NULL, &modifier);
+
+      gimp_tool_control_set_cursor          (tool->control, cursor);
+      gimp_tool_control_set_cursor_modifier (tool->control, modifier);
     }
 
   /* override the previous if shift or ctrl are down */
@@ -676,7 +679,7 @@ gimp_rectangle_select_tool_start (GimpRectangleSelectTool *rect_tool,
 
   g_object_set (widget,
                 "draw-ellipse", draw_ellipse,
-                "status-title", draw_ellipse ? _("Ellipse: ") : _("Rectangle :"),
+                "status-title", draw_ellipse ? _("Ellipse: ") : _("Rectangle: "),
                 NULL);
 
   gimp_draw_tool_set_widget (GIMP_DRAW_TOOL (tool), widget);

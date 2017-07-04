@@ -38,11 +38,7 @@ struct _GimpOperationTool
   GimpFilterTool  parent_instance;
 
   gchar          *operation;
-  gchar          *title;
   gchar          *description;
-  gchar          *undo_desc;
-  gchar          *icon_name;
-  gchar          *help_id;
 
   GList          *aux_inputs;
 

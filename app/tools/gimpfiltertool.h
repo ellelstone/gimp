@@ -45,15 +45,9 @@ struct _GimpFilterTool
   GObject               *default_config;
   GimpContainer         *settings;
 
-  gchar                 *title;
   gchar                 *description;
-  gchar                 *undo_desc;
-  gchar                 *icon_name;
-  gchar                 *help_id;
 
   gboolean               has_settings;
-  gchar                 *import_dialog_title;
-  gchar                 *export_dialog_title;
 
   GimpDrawableFilter    *filter;
 
@@ -68,6 +62,10 @@ struct _GimpFilterTool
   GtkWidget             *settings_box;
   GtkWidget             *region_combo;
   GtkWidget             *active_picker;
+
+  /* widget */
+  GimpToolWidget        *widget;
+  GimpToolWidget        *grab_widget;
 };
 
 struct _GimpFilterToolClass
@@ -76,18 +74,15 @@ struct _GimpFilterToolClass
 
   /* virtual functions */
   gchar     * (* get_operation)   (GimpFilterTool    *filter_tool,
-                                   gchar            **title,
                                    gchar            **description,
-                                   gchar            **undo_desc,
-                                   gchar            **icon_name,
-                                   gchar            **help_id,
-                                   gboolean          *has_settings,
-                                   gchar            **import_dialog_title,
-                                   gchar            **export_dialog_title);
+                                   gboolean          *has_settings);
   void        (* dialog)          (GimpFilterTool    *filter_tool);
   void        (* reset)           (GimpFilterTool    *filter_tool);
   void        (* set_config)      (GimpFilterTool    *filter_tool,
                                    GimpConfig        *config);
+  void        (* config_notify)   (GimpFilterTool    *filter_tool,
+                                   GimpConfig        *config,
+                                   const GParamSpec  *pspec);
 
   gboolean    (* settings_import) (GimpFilterTool    *filter_tool,
                                    GInputStream      *input,
@@ -129,11 +124,20 @@ void        gimp_filter_tool_enable_color_picking  (GimpFilterTool   *filter_too
                                                     gpointer          identifier,
                                                     gboolean          pick_abyss);
 void        gimp_filter_tool_disable_color_picking (GimpFilterTool   *filter_tool);
+
 GtkWidget * gimp_filter_tool_add_color_picker      (GimpFilterTool   *filter_tool,
                                                     gpointer          identifier,
                                                     const gchar      *icon_name,
                                                     const gchar      *tooltip,
                                                     gboolean          pick_abyss);
+
+void        gimp_filter_tool_set_widget            (GimpFilterTool   *filter_tool,
+                                                    GimpToolWidget   *widget);
+
+gboolean    gimp_filter_tool_get_drawable_area     (GimpFilterTool   *filter_tool,
+                                                    gint             *drawable_offset_x,
+                                                    gint             *drawable_offset_y,
+                                                    GeglRectangle    *drawable_area);
 
 
 #endif /* __GIMP_FILTER_TOOL_H__ */
