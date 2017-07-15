@@ -194,11 +194,12 @@ static gchar *
 gimp_tool_info_get_description (GimpViewable  *viewable,
                                 gchar        **tooltip)
 {
-//  GimpToolInfo *tool_info = GIMP_TOOL_INFO (viewable);
+  GimpToolInfo *tool_info = GIMP_TOOL_INFO (viewable);
 
-//  *tooltip = g_strdup (tool_info->tooltip);
+  if (tooltip)
+    *tooltip = g_strdup (tool_info->tooltip);
 
-  return NULL;// g_strdup (tool_info->label);
+  return g_strdup (tool_info->label);
 }
 
 static gboolean
