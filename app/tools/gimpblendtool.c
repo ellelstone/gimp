@@ -443,9 +443,8 @@ gimp_blend_tool_can_undo (GimpTool    *tool,
                           GimpDisplay *display)
 {
   GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
-  GimpDrawTool  *draw_tool  = GIMP_DRAW_TOOL (tool);
 
-  if (display != draw_tool->display || ! blend_tool->undo_stack)
+  if (! blend_tool->undo_stack)
     return NULL;
 
   return _("Blend Step");
@@ -456,9 +455,8 @@ gimp_blend_tool_can_redo (GimpTool    *tool,
                           GimpDisplay *display)
 {
   GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
-  GimpDrawTool  *draw_tool  = GIMP_DRAW_TOOL (tool);
 
-  if (display != draw_tool->display || ! blend_tool->redo_stack)
+  if (! blend_tool->redo_stack)
     return NULL;
 
   return _("Blend Step");
@@ -470,9 +468,6 @@ gimp_blend_tool_undo (GimpTool    *tool,
 {
   GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
   BlendInfo     *info;
-
-  if (! gimp_blend_tool_can_undo (tool, display))
-    return FALSE;
 
   info = blend_info_new (blend_tool->start_x,
                          blend_tool->start_y,
@@ -501,9 +496,6 @@ gimp_blend_tool_redo (GimpTool    *tool,
 {
   GimpBlendTool *blend_tool = GIMP_BLEND_TOOL (tool);
   BlendInfo     *info;
-
-  if (! gimp_blend_tool_can_redo (tool, display))
-    return FALSE;
 
   info = blend_info_new (blend_tool->start_x,
                          blend_tool->start_y,
@@ -623,7 +615,7 @@ gimp_blend_tool_start (GimpBlendTool    *blend_tool,
   gimp_blend_tool_create_filter (blend_tool, drawable);
 
   /* Initially sync all of the properties */
-  gimp_operation_config_sync_node (GIMP_OBJECT (options),
+  gimp_operation_config_sync_node (G_OBJECT (options),
                                    blend_tool->render_node);
 
   /* Connect signal handlers for the gradient */
@@ -717,8 +709,6 @@ gimp_blend_tool_commit (GimpBlendTool *blend_tool)
 
       gimp_image_flush (gimp_display_get_image (tool->display));
     }
-
-  gimp_blend_tool_halt (blend_tool);
 }
 
 static void

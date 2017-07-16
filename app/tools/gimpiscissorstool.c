@@ -486,7 +486,6 @@ gimp_iscissors_tool_button_press (GimpTool            *tool,
                                              iscissors->y))
         {
           gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, display);
-          gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
         }
       else if (! iscissors->curve->closed)
         {
@@ -1093,7 +1092,6 @@ gimp_iscissors_tool_key_press (GimpTool    *tool,
       if (iscissors->curve->closed && iscissors->mask)
         {
           gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, display);
-          gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
           return TRUE;
         }
       return FALSE;
@@ -1113,7 +1111,7 @@ gimp_iscissors_tool_can_undo (GimpTool    *tool,
 {
   GimpIscissorsTool *iscissors = GIMP_ISCISSORS_TOOL (tool);
 
-  if (display != tool->display || ! iscissors->undo_stack)
+  if (! iscissors->undo_stack)
     return NULL;
 
   return _("Modify Scissors Curve");
@@ -1125,7 +1123,7 @@ gimp_iscissors_tool_can_redo (GimpTool    *tool,
 {
   GimpIscissorsTool *iscissors = GIMP_ISCISSORS_TOOL (tool);
 
-  if (display != tool->display || ! iscissors->redo_stack)
+  if (! iscissors->redo_stack)
     return NULL;
 
   return _("Modify Scissors Curve");
@@ -1136,9 +1134,6 @@ gimp_iscissors_tool_undo (GimpTool    *tool,
                           GimpDisplay *display)
 {
   GimpIscissorsTool *iscissors = GIMP_ISCISSORS_TOOL (tool);
-
-  if (! gimp_iscissors_tool_can_undo (tool, display))
-    return FALSE;
 
   gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
 
@@ -1167,9 +1162,6 @@ gimp_iscissors_tool_redo (GimpTool    *tool,
                           GimpDisplay *display)
 {
   GimpIscissorsTool *iscissors = GIMP_ISCISSORS_TOOL (tool);
-
-  if (! gimp_iscissors_tool_can_redo (tool, display))
-    return FALSE;
 
   gimp_draw_tool_pause (GIMP_DRAW_TOOL (tool));
 

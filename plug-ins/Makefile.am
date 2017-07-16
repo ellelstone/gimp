@@ -41,6 +41,7 @@ SUBDIRS = \
 	file-tiff		\
 	help			\
 	$(help_browser)		\
+	metadata		\
 	$(print)		\
 	screenshot		\
 	selection-to-path	\

@@ -2530,6 +2530,7 @@ plug-ins/file-webp/Makefile
 plug-ins/ui/Makefile
 plug-ins/help-browser/Makefile
 plug-ins/help/Makefile
+plug-ins/metadata/Makefile
 plug-ins/print/Makefile
 plug-ins/pygimp/Makefile
 plug-ins/pygimp/plug-ins/Makefile

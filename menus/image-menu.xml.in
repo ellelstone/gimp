@@ -53,8 +53,8 @@
       <placeholder name="Send" />
       <separator />
       <placeholder name="Info">
-  <menuitem action="file-copy-location" />
-  <menuitem action="file-show-in-file-manager" />
+	<menuitem action="file-copy-location" />
+	<menuitem action="file-show-in-file-manager" />
       </placeholder>
       <separator />
       <menuitem action="view-close" />
@@ -222,7 +222,7 @@
       </placeholder>
       <separator />
       <placeholder name="Preferences">
-        <menuitem action="dialogs-preferences" />
+        <menuitem action="dialogs-preferences" />      
         <menuitem action="dialogs-input-devices" />
         <menuitem action="dialogs-keyboard-shortcuts" />
         <menuitem action="dialogs-module-dialog"/>
@@ -280,8 +280,8 @@
       <menu action="view-rotate-menu" name="Rotate">
         <menuitem action="view-rotate-reset" />
         <separator />
-  <menuitem action="view-flip-horizontally" />
-  <menuitem action="view-flip-vertically" />
+	<menuitem action="view-flip-horizontally" />
+	<menuitem action="view-flip-vertically" />
         <separator />
         <menuitem action="view-rotate-15" />
         <menuitem action="view-rotate-345" />
@@ -305,21 +305,21 @@
         <menuitem action="view-color-management-enable" />
         <menuitem action="view-color-management-softproof" />
         <separator />
-  <menu action="view-display-intent-menu" name="Display Rendering Intent">
+	<menu action="view-display-intent-menu" name="Display Rendering Intent">
           <menuitem action="view-display-intent-perceptual" />
           <menuitem action="view-display-intent-relative-colorimetric" />
           <menuitem action="view-display-intent-saturation" />
           <menuitem action="view-display-intent-absolute-colorimetric" />
-  </menu>
+	</menu>
         <menuitem action="view-display-black-point-compensation" />
         <separator />
         <menuitem action="view-softproof-profile" />
-  <menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
+	<menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
           <menuitem action="view-softproof-intent-perceptual" />
           <menuitem action="view-softproof-intent-relative-colorimetric" />
           <menuitem action="view-softproof-intent-saturation" />
           <menuitem action="view-softproof-intent-absolute-colorimetric" />
-  </menu>
+	</menu>
         <menuitem action="view-softproof-black-point-compensation" />
         <menuitem action="view-softproof-gamut-check" />
         <separator />
@@ -360,7 +360,7 @@
       <menu action="image-mode-menu" name="Mode">
         <menuitem action="image-convert-rgb" />
         <menuitem action="image-convert-grayscale" />
-  <separator />
+	<separator />
       </menu>
       <menu action="image-precision-menu" name="Precision">
         <menuitem action="image-convert-u8" />
@@ -416,7 +416,10 @@
       <menu action="image-guides-menu" name="Guides">
       </menu>
       <menuitem action="image-configure-grid" />
+      <separator />
       <menuitem action="image-properties" />
+      <menu action="image-metadata-menu" name="Metadata">
+      </menu>
       <separator />
     </menu>
 
@@ -719,23 +722,21 @@
         <menuitem action="tools-shear" />
         <menuitem action="tools-perspective" />
         <menuitem action="tools-unified-transform" />
-  <!-- Enable when the tool leaves the playground
-             <menuitem action="tools-handle-transform" />  -->
-
         <menuitem action="tools-handle-transform" />
         <menuitem action="tools-flip" />
         <menuitem action="tools-cage" />
         <menuitem action="tools-warp" />
-  <!-- Enable when the tool leaves the playground
-             <menuitem action="tools-n-point-deformation" />  -->
-
+	<!-- Enable when the tool leaves the playground
+             <menuitem action="tools-n-point-deformation" />
+	-->
       </menu>
       <menuitem action="tools-vector" />
-      <menuitem action="tools-color-picker" />
-      <menuitem action="tools-zoom" />
-      <menuitem action="tools-measure" />
       <menuitem action="tools-text" />
 <!--      <menuitem action="tools-gegl" />-->
+      <separator />
+      <menuitem action="tools-color-picker" />
+      <menuitem action="tools-measure" />
+      <menuitem action="tools-zoom" />
       <separator />
       <menuitem action="dialogs-toolbox" />
       <menuitem action="context-colors-default" />

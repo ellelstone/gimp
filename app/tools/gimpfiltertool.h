@@ -36,36 +36,34 @@ typedef struct _GimpFilterToolClass GimpFilterToolClass;
 
 struct _GimpFilterTool
 {
-  GimpColorTool          parent_instance;
+  GimpColorTool       parent_instance;
 
-  GimpDrawable          *drawable;
+  GeglNode           *operation;
+  GObject            *config;
+  GObject            *default_config;
+  GimpContainer      *settings;
 
-  GeglNode              *operation;
-  GObject               *config;
-  GObject               *default_config;
-  GimpContainer         *settings;
+  gchar              *description;
 
-  gchar                 *description;
+  gboolean            has_settings;
 
-  gboolean               has_settings;
+  GimpDrawableFilter *filter;
 
-  GimpDrawableFilter    *filter;
+  GimpGuide          *preview_guide;
 
-  GimpGuide             *preview_guide;
-
-  gpointer               pick_identifier;
-  gboolean               pick_abyss;
+  gpointer            pick_identifier;
+  gboolean            pick_abyss;
 
   /* dialog */
-  gboolean               overlay;
-  GimpToolGui           *gui;
-  GtkWidget             *settings_box;
-  GtkWidget             *region_combo;
-  GtkWidget             *active_picker;
+  gboolean            overlay;
+  GimpToolGui        *gui;
+  GtkWidget          *settings_box;
+  GtkWidget          *region_combo;
+  GtkWidget          *active_picker;
 
   /* widget */
-  GimpToolWidget        *widget;
-  GimpToolWidget        *grab_widget;
+  GimpToolWidget     *widget;
+  GimpToolWidget     *grab_widget;
 };
 
 struct _GimpFilterToolClass
@@ -74,8 +72,7 @@ struct _GimpFilterToolClass
 
   /* virtual functions */
   gchar     * (* get_operation)   (GimpFilterTool    *filter_tool,
-                                   gchar            **description,
-                                   gboolean          *has_settings);
+                                   gchar            **description);
   void        (* dialog)          (GimpFilterTool    *filter_tool);
   void        (* reset)           (GimpFilterTool    *filter_tool);
   void        (* set_config)      (GimpFilterTool    *filter_tool,
@@ -104,9 +101,6 @@ GType       gimp_filter_tool_get_type              (void) G_GNUC_CONST;
 
 void        gimp_filter_tool_get_operation         (GimpFilterTool   *filter_tool);
 
-void        gimp_filter_tool_set_has_settings      (GimpFilterTool   *filter_tool,
-                                                    gboolean          has_settings);
-
 void        gimp_filter_tool_set_config            (GimpFilterTool   *filter_tool,
                                                     GimpConfig       *config);
 
@@ -130,6 +124,12 @@ GtkWidget * gimp_filter_tool_add_color_picker      (GimpFilterTool   *filter_too
                                                     const gchar      *icon_name,
                                                     const gchar      *tooltip,
                                                     gboolean          pick_abyss);
+GCallback   gimp_filter_tool_add_controller        (GimpFilterTool   *filter_tool,
+                                                    GimpControllerType controller_type,
+                                                    const gchar      *status_title,
+                                                    GCallback         callback,
+                                                    gpointer          callback_data,
+                                                    gpointer         *set_func_data);
 
 void        gimp_filter_tool_set_widget            (GimpFilterTool   *filter_tool,
                                                     GimpToolWidget   *widget);

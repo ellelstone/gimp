@@ -81,8 +81,7 @@ static void       gimp_curves_tool_oper_update     (GimpTool             *tool,
                                                     GimpDisplay          *display);
 
 static gchar    * gimp_curves_tool_get_operation   (GimpFilterTool       *filter_tool,
-                                                    gchar               **description,
-                                                    gboolean             *has_settings);
+                                                    gchar               **description);
 static void       gimp_curves_tool_dialog          (GimpFilterTool       *filter_tool);
 static void       gimp_curves_tool_reset           (GimpFilterTool       *filter_tool);
 static void       gimp_curves_tool_config_notify   (GimpFilterTool       *filter_tool,
@@ -343,11 +342,9 @@ gimp_curves_tool_oper_update (GimpTool         *tool,
 
 static gchar *
 gimp_curves_tool_get_operation (GimpFilterTool  *filter_tool,
-                                gchar          **description,
-                                gboolean        *has_settings)
+                                gchar          **description)
 {
-  *description  = g_strdup (_("Adjust Color Curves"));
-  *has_settings = TRUE;
+  *description = g_strdup (_("Adjust Color Curves"));
 
   return g_strdup ("gimp:curves");
 }
@@ -652,11 +649,9 @@ gimp_curves_tool_color_picked (GimpFilterTool *filter_tool,
                                const Babl     *sample_format,
                                const GimpRGB  *color)
 {
-  GimpCurvesTool   *tool   = GIMP_CURVES_TOOL (filter_tool);
-  GimpCurvesConfig *config = GIMP_CURVES_CONFIG (filter_tool->config);
-  GimpDrawable     *drawable;
-
-  drawable = GIMP_FILTER_TOOL (tool)->drawable;
+  GimpCurvesTool   *tool     = GIMP_CURVES_TOOL (filter_tool);
+  GimpCurvesConfig *config   = GIMP_CURVES_CONFIG (filter_tool->config);
+  GimpDrawable     *drawable = GIMP_TOOL (tool)->drawable;
 
   tool->picked_color[GIMP_HISTOGRAM_RED]   = color->r;
   tool->picked_color[GIMP_HISTOGRAM_GREEN] = color->g;
@@ -805,7 +800,7 @@ static gboolean
 curves_menu_sensitivity (gint      value,
                          gpointer  data)
 {
-  GimpDrawable         *drawable = GIMP_FILTER_TOOL (data)->drawable;
+  GimpDrawable         *drawable = GIMP_TOOL (data)->drawable;
   GimpHistogramChannel  channel  = value;
 
   if (!drawable)

@@ -39,10 +39,15 @@ void            gimp_operation_config_deserialize   (Gimp          *gimp,
                                                      GimpContainer *container,
                                                      GFile         *file);
 
-void            gimp_operation_config_sync_node     (GimpObject    *config,
+void            gimp_operation_config_sync_node     (GObject       *config,
                                                      GeglNode      *node);
-void            gimp_operation_config_connect_node  (GimpObject    *config,
+void            gimp_operation_config_connect_node  (GObject       *config,
                                                      GeglNode      *node);
+
+GParamSpec ** gimp_operation_config_list_properties (GObject      *config,
+                                                     GType         owner_type,
+                                                     GParamFlags   flags,
+                                                     guint        *n_pspecs);
 
 
 #endif /* __GIMP_OPERATION_CONFIG_H__ */

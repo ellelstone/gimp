@@ -241,10 +241,7 @@ gimp_warp_tool_button_press (GimpTool            *tool,
   gint             off_x, off_y;
 
   if (tool->display && display != tool->display)
-    {
-      gimp_tool_pop_status (tool, tool->display);
-      gimp_warp_tool_halt (wt);
-    }
+    gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, tool->display);
 
   if (! tool->display)
     {
@@ -383,7 +380,7 @@ gimp_warp_tool_key_press (GimpTool    *tool,
     case GDK_KEY_KP_Enter:
     case GDK_KEY_ISO_Enter:
       gimp_tool_control (tool, GIMP_TOOL_ACTION_COMMIT, display);
-      /* fall thru */
+      return TRUE;
 
     case GDK_KEY_Escape:
       gimp_tool_control (tool, GIMP_TOOL_ACTION_HALT, display);
@@ -507,16 +504,8 @@ gimp_warp_tool_undo (GimpTool    *tool,
   GimpWarpTool *wt = GIMP_WARP_TOOL (tool);
   GeglNode     *to_delete;
   GeglNode     *prev_node;
-  const gchar  *type;
-
-  if (! wt->render_node)
-    return FALSE;
 
   to_delete = gegl_node_get_producer (wt->render_node, "aux", NULL);
-  type = gegl_node_get_operation (to_delete);
-
-  if (strcmp (type, "gegl:warp"))
-    return FALSE;
 
   wt->redo_stack = g_list_prepend (wt->redo_stack, to_delete);
 
@@ -541,9 +530,6 @@ gimp_warp_tool_redo (GimpTool    *tool,
 {
   GimpWarpTool *wt = GIMP_WARP_TOOL (tool);
   GeglNode     *to_add;
-
-  if (! wt->render_node || ! wt->redo_stack)
-    return FALSE;
 
   to_add = wt->redo_stack->data;
 

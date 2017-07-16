@@ -708,7 +708,13 @@ gimp_tool_control (GimpTool       *tool,
       break;
 
     case GIMP_TOOL_ACTION_COMMIT:
+      /*  always HALT after COMMIT here and not in each tool individually;
+       *  some tools interact with their subclasses (e.g. filter tool
+       *  and operation tool), and it's essential that COMMIT runs
+       *  through the entire class hierarchy before HALT
+       */
       GIMP_TOOL_GET_CLASS (tool)->control (tool, action, display);
+      GIMP_TOOL_GET_CLASS (tool)->control (tool, GIMP_TOOL_ACTION_HALT, display);
       break;
     }
 }
@@ -1196,7 +1202,7 @@ gimp_tool_undo (GimpTool    *tool,
   g_return_val_if_fail (GIMP_IS_TOOL (tool), FALSE);
   g_return_val_if_fail (GIMP_IS_DISPLAY (display), FALSE);
 
-  if (display == tool->display)
+  if (gimp_tool_can_undo (tool, display))
     return GIMP_TOOL_GET_CLASS (tool)->undo (tool, display);
 
   return FALSE;
@@ -1209,7 +1215,7 @@ gimp_tool_redo (GimpTool    *tool,
   g_return_val_if_fail (GIMP_IS_TOOL (tool), FALSE);
   g_return_val_if_fail (GIMP_IS_DISPLAY (display), FALSE);
 
-  if (display == tool->display)
+  if (gimp_tool_can_redo (tool, display))
     return GIMP_TOOL_GET_CLASS (tool)->redo (tool, display);
 
   return FALSE;

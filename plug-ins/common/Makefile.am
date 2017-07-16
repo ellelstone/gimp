@@ -60,9 +60,9 @@ libexec_PROGRAMS = \
 	file-gih \
 	file-glob \
 	$(FILE_JP2_LOAD) \
+	file-pat \
 	$(FILE_PDF_LOAD) \
 	$(FILE_PDF_SAVE) \
-	file-pat \
 	file-png \
 	unit-editor \
 	wavelet-decompose

@@ -3,6 +3,7 @@
  *
  * metadata.c
  * Copyright (C) 2013 Hartmut Kuhse
+ * Copyright (C) 2016 Ben Touchette
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,8 @@
 #include "libgimp/stdplugins-intl.h"
 
 
-#define PLUG_IN_PROC   "plug-in-metadata-editor"
-#define PLUG_IN_BINARY "metadata"
+#define PLUG_IN_PROC   "plug-in-metadata-viewer"
+#define PLUG_IN_BINARY "metadata-viewer"
 #define PLUG_IN_ROLE   "gimp-metadata"
 
 #define EXIF_PREFIX "Exif."
@@ -45,6 +46,7 @@
  * of type "Byte" or "Undefined"), in bytes.
  */
 #define RAW_DATA_MAX_SIZE 16
+
 
 enum
 {
@@ -60,12 +62,12 @@ enum
   NUM_EXIF_COLS
 };
 
-
-typedef struct
+enum
 {
-  gchar *tag;
-  gchar *mode;
-} iptc_tag;
+  C_IPTC_TAG = 0,
+  C_IPTC_VALUE,
+  NUM_IPTC_COLS
+};
 
 
 /*  local function prototypes  */
@@ -77,24 +79,18 @@ static void       run                              (const gchar      *name,
                                                     gint             *nreturn_vals,
                                                     GimpParam       **return_vals);
 
-static gboolean   metadata_dialog                  (gint32            image_id,
-                                                    GimpMetadata     *metadata);
-
-static void       metadata_dialog_set_metadata     (GExiv2Metadata   *metadata,
-                                                    GtkBuilder       *builder);
-
+static gboolean   metadata_viewer_dialog           (gint32          image_id,
+                                                    GExiv2Metadata *metadata);
+static void       metadata_dialog_set_metadata     (GExiv2Metadata *metadata,
+                                                    GtkBuilder     *builder);
 static void       metadata_dialog_append_tags      (GExiv2Metadata  *metadata,
                                                     gchar          **tags,
                                                     GtkListStore    *store,
                                                     gint             tag_column,
                                                     gint             value_column);
-
 static gchar    * metadata_dialog_format_tag_value (GExiv2Metadata  *metadata,
                                                     const gchar     *tag,
                                                     gboolean         truncate);
-
-static void       metadata_dialog_iptc_callback    (GtkWidget      *dialog,
-                                                    GtkBuilder     *builder);
 
 
 /* local variables */
@@ -106,30 +102,6 @@ const GimpPlugInInfo PLUG_IN_INFO =
   query, /* query_proc */
   run,   /* run_proc   */
 };
-
-static const iptc_tag const iptc_tags[] =
-{
-  { "Iptc.Application2.Byline",                  "single" },
-  { "Iptc.Application2.BylineTitle",             "single" },
-  { "Iptc.Application2.Caption",                 "multi"  },
-  { "Iptc.Application2.Category",                "single" },
-  { "Iptc.Application2.City",                    "single" },
-  { "Iptc.Application2.Copyright",               "single" },
-  { "Iptc.Application2.CountryName",             "single" },
-  { "Iptc.Application2.Credit",                  "single" },
-  { "Iptc.Application2.Headline",                "multi"  },
-  { "Iptc.Application2.Keywords",                "multi"  },
-  { "Iptc.Application2.ObjectName",              "single" },
-  { "Iptc.Application2.ProvinceState",           "single" },
-  { "Iptc.Application2.Source",                  "single" },
-  { "Iptc.Application2.SpecialInstructions",     "multi"  },
-  { "Iptc.Application2.SubLocation",             "single" },
-  { "Iptc.Application2.SuppCategory",            "multi"  },
-  { "Iptc.Application2.TransmissionReference",   "single" },
-  { "Iptc.Application2.Urgency",                 "single" },
-  { "Iptc.Application2.Writer",                  "single" }
-};
-
 
 /*  functions  */
 
@@ -145,22 +117,20 @@ query (void)
   };
 
   gimp_install_procedure (PLUG_IN_PROC,
-                          N_("View and edit metadata (Exif, IPTC, XMP)"),
-                          "View and edit metadata information attached to the "
+                          N_("View metadata (Exif, IPTC, XMP)"),
+                          "View metadata information attached to the "
                           "current image.  This can include Exif, IPTC and/or "
-                          "XMP information.  Some or all of this metadata "
-                          "will be saved in the file, depending on the output "
-                          "file format.",
-                          "Hartmut Kuhse, Michael Natterer",
-                          "Hartmut Kuhse, Michael Natterer",
-                          "2013",
-                          N_("Image Metadata"),
+                          "XMP information.",
+                          "Hartmut Kuhse, Michael Natterer, Ben Touchette",
+                          "Hartmut Kuhse, Michael Natterer, Ben Touchette",
+                          "2013, 2016",
+                          N_("View Metadata"),
                           "*",
                           GIMP_PLUGIN,
                           G_N_ELEMENTS (metadata_args), 0,
                           metadata_args, NULL);
 
-  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image");
+  gimp_plugin_menu_register (PLUG_IN_PROC, "<Image>/Image/Metadata");
 }
 
 static void
@@ -189,14 +159,19 @@ run (const gchar      *name,
 
       metadata = gimp_image_get_metadata (image_ID);
 
-      if (metadata)
+      /* Always show metadata dialog so we can add
+         appropriate iptc data as needed. Sometimes
+         license data needs to be added after the
+         fact and the image may not contain metadata
+         but should have it added as needed. */
+
+      if (!metadata)
         {
-          metadata_dialog (image_ID, metadata);
+          metadata = gimp_metadata_new();
+          gimp_image_set_metadata (image_ID, metadata);
         }
-      else
-        {
-          g_message (_("This image has no metadata attached to it."));
-        }
+
+      metadata_viewer_dialog (image_ID, GEXIV2_METADATA (metadata));
 
       status = GIMP_PDB_SUCCESS;
     }
@@ -209,23 +184,22 @@ run (const gchar      *name,
 }
 
 static gboolean
-metadata_dialog (gint32        image_id,
-                 GimpMetadata *metadata)
+metadata_viewer_dialog (gint32          image_id,
+                        GExiv2Metadata *metadata)
 {
-  GtkBuilder *builder;
-  GtkWidget  *dialog;
-  GtkWidget  *metadata_vbox;
-  GtkWidget  *content_area;
-  GObject    *write_button;
-  gchar      *ui_file;
-  gchar      *title;
-  gchar      *name;
-  GError     *error = NULL;
+  GtkBuilder    *builder;
+  GtkWidget     *dialog;
+  GtkWidget     *metadata_vbox;
+  GtkWidget     *content_area;
+  gchar         *ui_file;
+  gchar         *title;
+  gchar         *name;
+  GError        *error = NULL;
 
   builder = gtk_builder_new ();
 
   ui_file = g_build_filename (gimp_data_directory (),
-                              "ui", "plug-ins", "plug-in-metadata.ui", NULL);
+                              "ui", "plug-ins", "plug-in-metadata-viewer.ui", NULL);
 
   if (! gtk_builder_add_from_file (builder, ui_file, &error))
     {
@@ -240,17 +214,17 @@ metadata_dialog (gint32        image_id,
   g_free (ui_file);
 
   name = gimp_image_get_name (image_id);
-  title = g_strdup_printf ("Metadata: %s", name);
+  title = g_strdup_printf (_("Metadata Viewer: %s"), name);
   g_free (name);
 
   dialog = gimp_dialog_new (title,
-                            "gimp-metadata-dialog",
+                            "gimp-metadata-viewer-dialog",
                             NULL, 0,
                             gimp_standard_help_func, PLUG_IN_PROC,
-
                             _("_Close"), GTK_RESPONSE_CLOSE,
-
                             NULL);
+
+  gtk_widget_set_size_request(dialog, 460, 340);
 
   g_free (title);
 
@@ -265,13 +239,7 @@ metadata_dialog (gint32        image_id,
   gtk_container_set_border_width (GTK_CONTAINER (metadata_vbox), 12);
   gtk_box_pack_start (GTK_BOX (content_area), metadata_vbox, TRUE, TRUE, 0);
 
-  write_button = gtk_builder_get_object (builder, "iptc-write-button");
-
-  g_signal_connect (write_button, "clicked",
-                    G_CALLBACK (metadata_dialog_iptc_callback),
-                    builder);
-
-  metadata_dialog_set_metadata (GEXIV2_METADATA (metadata), builder);
+  metadata_dialog_set_metadata (metadata, builder);
 
   gtk_dialog_run (GTK_DIALOG (dialog));
 
@@ -285,62 +253,32 @@ static void
 metadata_dialog_set_metadata (GExiv2Metadata *metadata,
                               GtkBuilder     *builder)
 {
-  GtkListStore  *exif_store;
-  GtkListStore  *xmp_store;
-  gchar        **exif_data;
-  gchar        **xmp_data;
-  gchar        **iptc_data;
-  gchar         *value;
-  gint           i;
+  gchar        **tags;
+  GtkListStore  *store;
 
-  exif_data  = gexiv2_metadata_get_exif_tags (metadata);
-  exif_store = GTK_LIST_STORE (gtk_builder_get_object (builder,
-                                                       "exif-liststore"));
+  /* load exif tags */
+  tags  = gexiv2_metadata_get_exif_tags (metadata);
+  store = GTK_LIST_STORE (gtk_builder_get_object (builder, "exif-liststore"));
 
-  metadata_dialog_append_tags (metadata, exif_data,
-                               exif_store, C_EXIF_TAG, C_EXIF_VALUE);
+  metadata_dialog_append_tags (metadata, tags, store, C_EXIF_TAG, C_EXIF_VALUE);
 
-  g_strfreev (exif_data);
+  g_strfreev (tags);
 
-  xmp_data  = gexiv2_metadata_get_xmp_tags (metadata);
-  xmp_store = GTK_LIST_STORE (gtk_builder_get_object (builder,
-                                                       "xmp-liststore"));
+  /* load xmp tags */
+  tags  = gexiv2_metadata_get_xmp_tags (metadata);
+  store = GTK_LIST_STORE (gtk_builder_get_object (builder, "xmp-liststore"));
 
-  metadata_dialog_append_tags (metadata, xmp_data,
-                               xmp_store, C_XMP_TAG, C_XMP_VALUE);
+  metadata_dialog_append_tags (metadata, tags, store, C_XMP_TAG, C_XMP_VALUE);
 
-  g_strfreev (xmp_data);
+  g_strfreev (tags);
 
-  iptc_data = gexiv2_metadata_get_iptc_tags (metadata);
+  /* load iptc tags */
+  tags  = gexiv2_metadata_get_iptc_tags (metadata);
+  store = GTK_LIST_STORE (gtk_builder_get_object (builder, "iptc-liststore"));
 
-  for (i = 0; iptc_data[i] != NULL; i++)
-    {
-      GtkWidget *widget;
+  metadata_dialog_append_tags (metadata, tags, store, C_IPTC_TAG, C_IPTC_VALUE);
 
-      widget = GTK_WIDGET (gtk_builder_get_object (builder, iptc_data[i]));
-
-      value = metadata_dialog_format_tag_value (metadata, iptc_data[i],
-                                                /* truncate = */ FALSE);
-
-      if (GTK_IS_ENTRY (widget))
-        {
-          GtkEntry *entry_widget = GTK_ENTRY (widget);
-
-          gtk_entry_set_text (entry_widget, value);
-        }
-      else if (GTK_IS_TEXT_VIEW (widget))
-        {
-          GtkTextView   *text_view = GTK_TEXT_VIEW (widget);
-          GtkTextBuffer *buffer;
-
-          buffer = gtk_text_view_get_buffer (text_view);
-          gtk_text_buffer_set_text (buffer, value, -1);
-        }
-
-      g_free (value);
-    }
-
-  g_strfreev (iptc_data);
+  g_strfreev (tags);
 }
 
 static void
@@ -465,48 +403,4 @@ metadata_dialog_format_tag_value (GExiv2Metadata *metadata,
     }
 
   return result;
-}
-
-static void
-metadata_dialog_iptc_callback (GtkWidget  *dialog,
-                               GtkBuilder *builder)
-{
-#if 0
-  GimpMetadata *metadata;
-  gint            i;
-
-  metadata = gimp_image_get_metadata (handler->image);
-
-  for (i = 0; i < G_N_ELEMENTS (iptc_tags); i++)
-    {
-      GObject *object = gtk_builder_get_object (handler->builder,
-                                                iptc_tags[i].tag);
-
-      if (! strcmp ("single", iptc_tags[i].mode))
-        {
-          GtkEntry *entry = GTK_ENTRY (object);
-
-          gexiv2_metadata_set_tag_string (GEXIV2_METADATA (metadata),
-                                          iptc_tags[i].tag,
-                                          gtk_entry_get_text (entry));
-        }
-      else  if (!strcmp ("multi", iptc_tags[i].mode))
-        {
-          GtkTextView   *text_view = GTK_TEXT_VIEW (object);
-          GtkTextBuffer *buffer;
-          GtkTextIter    start;
-          GtkTextIter    end;
-          gchar         *text;
-
-          buffer = gtk_text_view_get_buffer (text_view);
-          gtk_text_buffer_get_start_iter (buffer, &start);
-          gtk_text_buffer_get_end_iter (buffer, &end);
-
-          text = gtk_text_buffer_get_text (buffer, &start, &end, TRUE);
-          gexiv2_metadata_set_tag_string (GEXIV2_METADATA (metadata),
-                                          iptc_tags[i].tag, text);
-          g_free (text);
-        }
-    }
-#endif
 }

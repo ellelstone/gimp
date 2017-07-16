@@ -477,15 +477,15 @@ gimp_operation_config_deserialize (Gimp          *gimp,
 }
 
 void
-gimp_operation_config_sync_node (GimpObject *config,
-                                 GeglNode   *node)
+gimp_operation_config_sync_node (GObject  *config,
+                                 GeglNode *node)
 {
   GParamSpec **pspecs;
   gchar       *operation;
   guint        n_pspecs;
   gint         i;
 
-  g_return_if_fail (GIMP_IS_OBJECT (config));
+  g_return_if_fail (G_IS_OBJECT (config));
   g_return_if_fail (GEGL_IS_NODE (node));
 
   gegl_node_get (node,
@@ -555,15 +555,15 @@ gimp_operation_config_sync_node (GimpObject *config,
 }
 
 void
-gimp_operation_config_connect_node (GimpObject *config,
-                                    GeglNode   *node)
+gimp_operation_config_connect_node (GObject  *config,
+                                    GeglNode *node)
 {
   GParamSpec **pspecs;
   gchar       *operation;
   guint        n_pspecs;
   gint         i;
 
-  g_return_if_fail (GIMP_IS_OBJECT (config));
+  g_return_if_fail (G_IS_OBJECT (config));
   g_return_if_fail (GEGL_IS_NODE (node));
 
   gegl_node_get (node,
@@ -618,6 +618,51 @@ gimp_operation_config_connect_node (GimpObject *config,
   g_free (pspecs);
 }
 
+GParamSpec **
+gimp_operation_config_list_properties (GObject     *config,
+                                       GType        owner_type,
+                                       GParamFlags  flags,
+                                       guint       *n_pspecs)
+{
+  GParamSpec **param_specs;
+  guint        n_param_specs;
+  gint         i, j;
+
+  g_return_val_if_fail (G_IS_OBJECT (config), NULL);
+
+  param_specs = g_object_class_list_properties (G_OBJECT_GET_CLASS (config),
+                                                &n_param_specs);
+
+  for (i = 0, j = 0; i < n_param_specs; i++)
+    {
+      GParamSpec *pspec = param_specs[i];
+
+      /*  ignore properties of parent classes of owner_type  */
+      if (! g_type_is_a (pspec->owner_type, owner_type))
+        continue;
+
+      if (flags && ((pspec->flags & flags) != flags))
+        continue;
+
+      if (gimp_gegl_param_spec_has_key (pspec, "role", "output-extent"))
+        continue;
+
+      param_specs[j] = param_specs[i];
+      j++;
+    }
+
+  if (n_pspecs)
+    *n_pspecs = j;
+
+  if (j == 0)
+    {
+      g_free (param_specs);
+      param_specs = NULL;
+    }
+
+  return param_specs;
+}
+
 
 /*  private functions  */
 
@@ -626,7 +671,7 @@ gimp_operation_config_config_sync (GObject          *config,
                                    const GParamSpec *gimp_pspec,
                                    GeglNode         *node)
 {
-  gimp_operation_config_sync_node (GIMP_OBJECT (config), node);
+  gimp_operation_config_sync_node (config, node);
 }
 
 static void
