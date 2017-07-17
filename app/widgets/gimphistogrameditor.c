@@ -364,17 +364,13 @@ gimp_histogram_editor_set_image (GimpImageEditor *image_editor,
 
       if (editor->histogram)
         {
-          g_object_unref (editor->histogram);
-          editor->histogram = NULL;
-
+          g_clear_object (&editor->histogram);
           gimp_histogram_view_set_histogram (view, NULL);
         }
 
       if (editor->bg_histogram)
         {
-          g_object_unref (editor->bg_histogram);
-          editor->bg_histogram = NULL;
-
+          g_clear_object (&editor->bg_histogram);
           gimp_histogram_view_set_background (view, NULL);
         }
     }
@@ -413,24 +409,18 @@ gimp_histogram_editor_layer_changed (GimpImage           *image,
 {
   if (editor->drawable)
     {
-//      GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
+//      GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view
 //
 //      if (editor->histogram)
 //        {
-//          g_object_unref (editor->histogram);
-//          editor->histogram = NULL;
-//
+//          g_clear_object (&editor->histogram);
 //          gimp_histogram_view_set_histogram (view, NULL);
 //        }
-//
+
       if (editor->bg_histogram)
         {
-          GimpHistogramView *view = GIMP_HISTOGRAM_BOX (editor->box)->view;
-
-          g_object_unref (editor->bg_histogram);
-          editor->bg_histogram = NULL;
-
-          gimp_histogram_view_set_background (view, NULL);
+          g_clear_object (&editor->bg_histogram);
+//          gimp_histogram_view_set_background (view, NULL);
         }
 
       g_signal_handlers_disconnect_by_func (editor->drawable,
@@ -529,9 +519,7 @@ gimp_histogram_editor_frozen_update (GimpHistogramEditor *editor,
     }
   else if (editor->bg_histogram)
     {
-      g_object_unref (editor->bg_histogram);
-      editor->bg_histogram = NULL;
-
+      g_clear_object (&editor->bg_histogram);
       gimp_histogram_view_set_background (view, NULL);
     }
 }

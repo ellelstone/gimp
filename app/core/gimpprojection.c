@@ -561,8 +561,7 @@ gimp_projection_stop_rendering (GimpProjection *proj)
             cairo_region_copy (chunk_render->update_region);
         }
 
-      cairo_region_destroy (chunk_render->update_region);
-      chunk_render->update_region = NULL;
+      g_clear_pointer (&chunk_render->update_region, cairo_region_destroy);
     }
 
   rect.x      = chunk_render->x;
@@ -619,17 +618,8 @@ gimp_projection_free_buffer (GimpProjection  *proj)
   if (proj->priv->chunk_render.idle_id)
     gimp_projection_chunk_render_stop (proj);
 
-  if (proj->priv->update_region)
-    {
-      cairo_region_destroy (proj->priv->update_region);
-      proj->priv->update_region = NULL;
-    }
-
-  if (proj->priv->chunk_render.update_region)
-    {
-      cairo_region_destroy (proj->priv->chunk_render.update_region);
-      proj->priv->chunk_render.update_region = NULL;
-    }
+  g_clear_pointer (&proj->priv->update_region, cairo_region_destroy);
+  g_clear_pointer (&proj->priv->chunk_render.update_region, cairo_region_destroy);
 
   if (proj->priv->buffer)
     {
@@ -637,15 +627,10 @@ gimp_projection_free_buffer (GimpProjection  *proj)
         gegl_buffer_remove_handler (proj->priv->buffer,
                                     proj->priv->validate_handler);
 
-      g_object_unref (proj->priv->buffer);
-      proj->priv->buffer = NULL;
+      g_clear_object (&proj->priv->buffer);
     }
 
-  if (proj->priv->validate_handler)
-    {
-      g_object_unref (proj->priv->validate_handler);
-      proj->priv->validate_handler = NULL;
-    }
+  g_clear_object (&proj->priv->validate_handler);
 }
 
 static void
@@ -712,8 +697,7 @@ gimp_projection_flush_whenever (GimpProjection *proj,
         }
 
       /*  Free the update region  */
-      cairo_region_destroy (proj->priv->update_region);
-      proj->priv->update_region = NULL;
+      g_clear_pointer (&proj->priv->update_region, cairo_region_destroy);
     }
   else if (! now && proj->priv->invalidate_preview)
     {
@@ -903,8 +887,7 @@ gimp_projection_chunk_render_next_area (GimpProjection *proj)
 
   if (cairo_region_is_empty (chunk_render->update_region))
     {
-      cairo_region_destroy (chunk_render->update_region);
-      chunk_render->update_region = NULL;
+      g_clear_pointer (&chunk_render->update_region, cairo_region_destroy);
 
       return FALSE;
     }
@@ -923,8 +906,7 @@ gimp_projection_chunk_render_next_area (GimpProjection *proj)
 
   if (cairo_region_is_empty (chunk_render->update_region))
     {
-      cairo_region_destroy (chunk_render->update_region);
-      chunk_render->update_region = NULL;
+      g_clear_pointer (&chunk_render->update_region, cairo_region_destroy);
     }
 
   chunk_render->x      = rect.x;
