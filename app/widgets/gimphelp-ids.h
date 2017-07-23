@@ -245,6 +245,10 @@
 
 #define GIMP_HELP_PATH_DIALOG                     "gimp-path-dialog"
 #define GIMP_HELP_PATH_NEW                        "gimp-path-new"
+#define GIMP_HELP_PATH_PREVIOUS                   "gimp-path-previous"
+#define GIMP_HELP_PATH_NEXT                       "gimp-path-next"
+#define GIMP_HELP_PATH_TOP                        "gimp-path-top"
+#define GIMP_HELP_PATH_BOTTOM                     "gimp-path-bottom"
 #define GIMP_HELP_PATH_RAISE                      "gimp-path-raise"
 #define GIMP_HELP_PATH_RAISE_TO_TOP               "gimp-path-raise-to-top"
 #define GIMP_HELP_PATH_LOWER                      "gimp-path-lower"
@@ -691,6 +695,5 @@
 #define GIMP_HELP_CONTROLLER_MIDI                 "gimp-controller-midi"
 #define GIMP_HELP_CONTROLLER_MOUSE                "gimp-controller-mouse"
 #define GIMP_HELP_CONTROLLER_WHEEL                "gimp-controller-wheel"
-
 
 #endif /* __GIMP_HELP_IDS_H__ */

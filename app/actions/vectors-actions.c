@@ -298,6 +298,32 @@ static const GimpEnumActionEntry vectors_selection_to_vectors_actions[] =
     GIMP_HELP_SELECTION_TO_PATH }
 };
 
+static const GimpEnumActionEntry vectors_select_actions[] =
+{
+  { "vectors-select-top", NULL,
+    NC_("vectors-action", "Select _Top Path"), NULL,
+    NC_("vectors-action", "Select the topmost path"),
+    GIMP_ACTION_SELECT_FIRST, FALSE,
+    GIMP_HELP_PATH_TOP },
+
+  { "vectors-select-bottom", NULL,
+    NC_("vectors-action", "Select _Bottom Path"), NULL,
+    NC_("vectors-action", "Select the bottommost path"),
+    GIMP_ACTION_SELECT_LAST, FALSE,
+    GIMP_HELP_PATH_BOTTOM },
+
+  { "vectors-select-previous", NULL,
+    NC_("vectors-action", "Select _Previous Path"), NULL,
+    NC_("vectors-action", "Select the path above the current path"),
+    GIMP_ACTION_SELECT_PREVIOUS, FALSE,
+    GIMP_HELP_PATH_PREVIOUS },
+
+  { "vectors-select-next", NULL,
+    NC_("vectors-action", "Select _Next Path"), NULL,
+    NC_("vectors-action", "Select the vector below the current path"),
+    GIMP_ACTION_SELECT_NEXT, FALSE,
+    GIMP_HELP_PATH_NEXT }
+};
 
 void
 vectors_actions_setup (GimpActionGroup *group)
@@ -324,6 +350,11 @@ vectors_actions_setup (GimpActionGroup *group)
                                       vectors_selection_to_vectors_actions,
                                       G_N_ELEMENTS (vectors_selection_to_vectors_actions),
                                       G_CALLBACK (vectors_selection_to_vectors_cmd_callback));
+
+  gimp_action_group_add_enum_actions (group, "vectors-action",
+                                      vectors_select_actions,
+                                      G_N_ELEMENTS (vectors_select_actions),
+                                      G_CALLBACK (vectors_select_cmd_callback));
 
   items_actions_setup (group, "vectors");
 }
@@ -421,6 +452,11 @@ vectors_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("vectors-selection-add",          vectors);
   SET_SENSITIVE ("vectors-selection-subtract",     vectors);
   SET_SENSITIVE ("vectors-selection-intersect",    vectors);
+
+  SET_SENSITIVE ("vectors-select-top",       vectors && prev);
+  SET_SENSITIVE ("vectors-select-bottom",    vectors && next);
+  SET_SENSITIVE ("vectors-select-previous",  vectors && prev);
+  SET_SENSITIVE ("vectors-select-next",      vectors && next);
 
 #undef SET_SENSITIVE
 #undef SET_ACTIVE
