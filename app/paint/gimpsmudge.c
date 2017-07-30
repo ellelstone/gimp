@@ -364,12 +364,12 @@ gimp_smudge_motion (GimpPaintCore    *paint_core,
       gimp_context_get_foreground (context, &brush_color);
     }
 
-  /* Convert to linear RGBA */
+  /* Convert to linear RGBA
   if (brush_color_ptr)
     gimp_pickable_srgb_to_pixel (GIMP_PICKABLE (drawable),
                                  &brush_color,
                                  babl_format ("RGBA double"),
-                                 &brush_color);
+                                 &brush_color); */
 
   n_strokes = gimp_symmetry_get_size (sym);
   for (i = 0; i < n_strokes; i++)
