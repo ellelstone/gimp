@@ -53,8 +53,8 @@
       <placeholder name="Send" />
       <separator />
       <placeholder name="Info">
-	<menuitem action="file-copy-location" />
-	<menuitem action="file-show-in-file-manager" />
+  <menuitem action="file-copy-location" />
+  <menuitem action="file-show-in-file-manager" />
       </placeholder>
       <separator />
       <menuitem action="view-close" />
@@ -222,7 +222,7 @@
       </placeholder>
       <separator />
       <placeholder name="Preferences">
-        <menuitem action="dialogs-preferences" />      
+        <menuitem action="dialogs-preferences" />
         <menuitem action="dialogs-input-devices" />
         <menuitem action="dialogs-keyboard-shortcuts" />
         <menuitem action="dialogs-module-dialog"/>
@@ -280,8 +280,8 @@
       <menu action="view-rotate-menu" name="Rotate">
         <menuitem action="view-rotate-reset" />
         <separator />
-	<menuitem action="view-flip-horizontally" />
-	<menuitem action="view-flip-vertically" />
+  <menuitem action="view-flip-horizontally" />
+  <menuitem action="view-flip-vertically" />
         <separator />
         <menuitem action="view-rotate-15" />
         <menuitem action="view-rotate-345" />
@@ -305,21 +305,21 @@
         <menuitem action="view-color-management-enable" />
         <menuitem action="view-color-management-softproof" />
         <separator />
-	<menu action="view-display-intent-menu" name="Display Rendering Intent">
+  <menu action="view-display-intent-menu" name="Display Rendering Intent">
           <menuitem action="view-display-intent-perceptual" />
           <menuitem action="view-display-intent-relative-colorimetric" />
           <menuitem action="view-display-intent-saturation" />
           <menuitem action="view-display-intent-absolute-colorimetric" />
-	</menu>
+  </menu>
         <menuitem action="view-display-black-point-compensation" />
         <separator />
         <menuitem action="view-softproof-profile" />
-	<menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
+  <menu action="view-softproof-intent-menu" name="Softproof Rendering Intent">
           <menuitem action="view-softproof-intent-perceptual" />
           <menuitem action="view-softproof-intent-relative-colorimetric" />
           <menuitem action="view-softproof-intent-saturation" />
           <menuitem action="view-softproof-intent-absolute-colorimetric" />
-	</menu>
+  </menu>
         <menuitem action="view-softproof-black-point-compensation" />
         <menuitem action="view-softproof-gamut-check" />
         <separator />
@@ -360,7 +360,7 @@
       <menu action="image-mode-menu" name="Mode">
         <menuitem action="image-convert-rgb" />
         <menuitem action="image-convert-grayscale" />
-	<separator />
+  <separator />
       </menu>
       <menu action="image-precision-menu" name="Precision">
         <menuitem action="image-convert-u8" />
@@ -513,6 +513,30 @@
         <menuitem action="drawable-offset" />
       </menu>
 
+<!-- Layer Properties
+
+      <menu action="layers-properties-menu" name="Properties">
+        <menuitem action="layers-edit-attributes" />
+        <menu action="layers-opacity-menu" name="Opacity">
+          <menuitem action="layers-opacity-transparent" />
+          <menuitem action="layers-opacity-opaque" />
+          <menuitem action="layers-opacity-decrease" />
+          <menuitem action="layers-opacity-increase" />
+        </menu>
+        <menu action="layers-mode-menu" name="Layer Mode">
+          <menuitem action="layers-mode-first" />
+          <menuitem action="layers-mode-last" />
+          <menuitem action="layers-mode-previous" />
+          <menuitem action="layers-mode-next" />
+        </menu>
+        <menuitem action="drawable-visible" />
+        <menuitem action="drawable-linked" />
+        <menuitem action="drawable-lock-content" />
+        <menuitem action="layers-lock-alpha" />
+      </menu>
+
+-->
+
       <separator />
       <placeholder name="Resize">
         <menuitem action="layers-resize" />
@@ -558,34 +582,92 @@
         <separator />
     </menu>
 
+    <menu action="tools-menu" name="Tools">
+      <menu action="tools-select-menu" name="Selection Tools">
+        <menuitem action="tools-rect-select" />
+        <menuitem action="tools-ellipse-select" />
+        <menuitem action="tools-free-select" />
+        <menuitem action="tools-foreground-select" />
+        <menuitem action="tools-fuzzy-select" />
+        <menuitem action="tools-by-color-select" />
+        <menuitem action="tools-iscissors" />
+      </menu>
+      <menu action="tools-paint-menu" name="Paint Tools">
+        <menuitem action="tools-bucket-fill" />
+        <menuitem action="tools-blend" />
+        <menuitem action="tools-pencil" />
+        <menuitem action="tools-paintbrush" />
+        <menuitem action="tools-eraser" />
+        <menuitem action="tools-airbrush" />
+        <menuitem action="tools-ink" />
+        <menuitem action="tools-mypaint-brush" />
+        <menuitem action="tools-clone" />
+        <menuitem action="tools-heal" />
+        <menuitem action="tools-perspective-clone" />
+        <menuitem action="tools-convolve" />
+        <menuitem action="tools-smudge" />
+        <menuitem action="tools-dodge-burn" />
+      </menu>
+      <menu action="tools-transform-menu" name="Transform Tools">
+        <menuitem action="tools-align" />
+        <menuitem action="tools-move" />
+        <menuitem action="tools-crop" />
+        <menuitem action="tools-rotate" />
+        <menuitem action="tools-scale" />
+        <menuitem action="tools-shear" />
+        <menuitem action="tools-perspective" />
+        <menuitem action="tools-unified-transform" />
+        <menuitem action="tools-handle-transform" />
+        <menuitem action="tools-flip" />
+        <menuitem action="tools-cage" />
+        <menuitem action="tools-warp" />
+  <!-- Enable when the tool leaves the playground
+             <menuitem action="tools-n-point-deformation" />
+  -->
+      </menu>
+      <menuitem action="tools-vector" />
+      <menuitem action="tools-text" />
+<!--      <menuitem action="tools-gegl" />-->
+      <separator />
+      <menuitem action="tools-color-picker" />
+      <menuitem action="tools-measure" />
+      <menuitem action="tools-zoom" />
+      <separator />
+      <menuitem action="dialogs-toolbox" />
+      <menuitem action="context-colors-default" />
+      <menuitem action="context-colors-swap" />
+    </menu>
+
     <menu action="filters-menu" name="Filters">
       <menuitem action="filters-repeat" />
       <menuitem action="filters-reshow" />
       <menu action="filters-recent-menu" name="Recently Used">
         <placeholder name="Filters" />
-    </menu>
+      </menu>
       <menuitem action="plug-in-reset-all" />
-      <separator />
 
-    <menu action="filters-blur-menu" name="Blur">
+    <separator />
+
+      <menu action="filters-blur-menu" name="Blur">
         <menuitem action="filters-gaussian-blur" />
         <menuitem action="filters-gaussian-blur-selective" />
       <separator />
-     <placeholder name="Motion">
-       <menuitem action="filters-motion-blur-circular" />
-       <menuitem action="filters-motion-blur-linear" />
-       <menuitem action="filters-motion-blur-zoom" />
-     </placeholder>
+      <placeholder name="Motion">
+        <menuitem action="filters-motion-blur-circular" />
+        <menuitem action="filters-motion-blur-linear" />
+        <menuitem action="filters-motion-blur-zoom" />
+      </placeholder>
       <separator />
         <menuitem action="filters-pixelize" />
       <separator />
     </menu>
 
-    <menu action="filters-enhance-menu" name="Enhance">
+      <menu action="filters-enhance-menu" name="Enhance">
         <menuitem action="filters-high-pass" />
         <menuitem action="filters-unsharp-mask" />
         <separator />
         <menuitem action="filters-noise-reduction" />
+        <menuitem action="filters-snn-mean" />
         <menuitem action="filters-color-enhance" />
         <menuitem action="filters-red-eye-removal" />
         <separator />
@@ -627,7 +709,9 @@
         <menuitem action="filters-semi-flatten" />
         <separator />
       </menu>
-<separator />
+
+    <separator />
+
       <menu action="filters-effects-menu" name="Effects">
         <menuitem action="filters-softglow" />
         <menuitem action="filters-emboss" />
@@ -645,6 +729,7 @@
         <menuitem action="filters-alien-map" />
         <separator />
       </menu>
+
       <menu action="filters-distorts-menu" name="Distortions">
         <menuitem action="filters-apply-lens" />
         <menuitem action="filters-lens-distortion" />
@@ -664,7 +749,7 @@
         <separator />
       </menu>
 
-    <menu action="filters-patterns-menu" name="Patterns">
+      <menu action="filters-patterns-menu" name="Patterns">
       <menuitem action="filters-noise-cell" />
       <menuitem action="filters-noise-perlin" />
       <menuitem action="filters-plasma" />
@@ -679,68 +764,11 @@
       <separator />
     </menu>
 
-      <separator />
+    <separator />
+
       <placeholder name="Menus" />
-<!--      <separator />-->
       <placeholder name="Languages" />
       <placeholder name="Extensions" />
-<!--      <separator />-->
-    </menu>
-
-    <menu action="tools-menu" name="Tools">
-      <menu action="tools-select-menu" name="Selection Tools">
-        <menuitem action="tools-rect-select" />
-        <menuitem action="tools-ellipse-select" />
-        <menuitem action="tools-free-select" />
-        <menuitem action="tools-foreground-select" />
-        <menuitem action="tools-fuzzy-select" />
-        <menuitem action="tools-by-color-select" />
-        <menuitem action="tools-iscissors" />
-      </menu>
-      <menu action="tools-paint-menu" name="Paint Tools">
-        <menuitem action="tools-bucket-fill" />
-        <menuitem action="tools-blend" />
-        <menuitem action="tools-pencil" />
-        <menuitem action="tools-paintbrush" />
-        <menuitem action="tools-eraser" />
-        <menuitem action="tools-airbrush" />
-        <menuitem action="tools-ink" />
-        <menuitem action="tools-mypaint-brush" />
-        <menuitem action="tools-clone" />
-        <menuitem action="tools-heal" />
-        <menuitem action="tools-perspective-clone" />
-        <menuitem action="tools-convolve" />
-        <menuitem action="tools-smudge" />
-        <menuitem action="tools-dodge-burn" />
-      </menu>
-      <menu action="tools-transform-menu" name="Transform Tools">
-        <menuitem action="tools-align" />
-        <menuitem action="tools-move" />
-        <menuitem action="tools-crop" />
-        <menuitem action="tools-rotate" />
-        <menuitem action="tools-scale" />
-        <menuitem action="tools-shear" />
-        <menuitem action="tools-perspective" />
-        <menuitem action="tools-unified-transform" />
-        <menuitem action="tools-handle-transform" />
-        <menuitem action="tools-flip" />
-        <menuitem action="tools-cage" />
-        <menuitem action="tools-warp" />
-	<!-- Enable when the tool leaves the playground
-             <menuitem action="tools-n-point-deformation" />
-	-->
-      </menu>
-      <menuitem action="tools-vector" />
-      <menuitem action="tools-text" />
-<!--      <menuitem action="tools-gegl" />-->
-      <separator />
-      <menuitem action="tools-color-picker" />
-      <menuitem action="tools-measure" />
-      <menuitem action="tools-zoom" />
-      <separator />
-      <menuitem action="dialogs-toolbox" />
-      <menuitem action="context-colors-default" />
-      <menuitem action="context-colors-swap" />
     </menu>
 
     <placeholder name="Menus" />

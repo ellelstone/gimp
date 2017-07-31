@@ -1,10 +1,9 @@
 /* GIMP - The GNU Image Manipulation Program
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  *
- * file-rawtherapee.c -- raw file format plug-in that uses RawTherapee
+ * file-darktable.c -- raw file format plug-in that uses darktable
  * Copyright (C) 2012 Simon Budig <simon@gimp.org>
  * Copyright (C) 2016 Tobias Ellinghaus <me@houz.org>
- * Copyright (C) 2017 Alberto Griggio <alberto.griggio@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,14 +27,16 @@
 #include <glib/gstdio.h>
 
 #include <libgimp/gimp.h>
+#include <libgimp/gimpui.h>
 
 #include "libgimp/stdplugins-intl.h"
 
-#include "file-formats.h"
+#include "file-raw-formats.h"
+#include "file-raw-utils.h"
 
 
-#define LOAD_THUMB_PROC "file-rawtherapee-load-thumb"
-
+#define LOAD_THUMB_PROC "file-darktable-load-thumb"
+#define REGISTRY_KEY_BASE "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\darktable"
 
 static void     init                 (void);
 static void     query                (void);
@@ -50,6 +51,8 @@ static gint32   load_image           (const gchar      *filename,
 
 static gint32   load_thumbnail_image (const gchar      *filename,
                                       gint             thumb_size,
+                                      gint             *width,
+                                      gint             *height,
                                       GError          **error);
 
 const GimpPlugInInfo PLUG_IN_INFO =
@@ -61,7 +64,6 @@ const GimpPlugInInfo PLUG_IN_INFO =
 };
 
 MAIN ()
-
 
 static void
 init (void)
@@ -86,51 +88,82 @@ init (void)
 
   static const GimpParamDef thumb_return_vals[] =
   {
-    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               }
+    { GIMP_PDB_IMAGE,  "image",        "Thumbnail image"               },
+    { GIMP_PDB_INT32,  "image-width",  "Width of full-sized image"     },
+    { GIMP_PDB_INT32,  "image-height", "Height of full-sized image"    }
   };
 
-  /* check if rawtherapee is installed
-   * TODO: allow setting the location of the executable in preferences
+  /* check if darktable is installed
    */
-  gchar    *argv[]           = { "rawtherapee", "-v", NULL };
-  gchar    *rawtherapee_stdout = NULL;
-  gboolean  have_rawtherapee   = FALSE;
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = file_raw_get_executable_path ("darktable", NULL,
+                                                             "DARKTABLE_EXECUTABLE",
+                                                             "org.darktable",
+                                                             REGISTRY_KEY_BASE,
+                                                             &search_path);
+  gchar    *argv[]           = { exec_path, "--version", NULL };
+  gchar    *darktable_stdout = NULL;
+  gchar    *darktable_stderr = NULL;
+  gboolean  have_darktable   = FALSE;
+  GError   *error            = NULL;
   gint      i;
+
+  printf ("[%s] trying to call '%s'\n", __FILE__, exec_path);
 
   if (g_spawn_sync (NULL,
                     argv,
                     NULL,
-                    G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
-                    &rawtherapee_stdout,
+                    &darktable_stdout,
+                    &darktable_stderr,
                     NULL,
-                    NULL,
-                    NULL))
+                    &error))
     {
-      char *rtversion = NULL;
+      gint major, minor, patch;
 
-      if (sscanf (rawtherapee_stdout,
-                  "RawTherapee, version %ms",
-                  &rtversion) == 1)
+      if (sscanf (darktable_stdout,
+                  "this is darktable %d.%d.%d",
+                  &major, &minor, &patch) == 3)
         {
-          have_rawtherapee = TRUE;
-          free (rtversion);
+          if (((major == 1 && minor >= 7) || major >= 2))
+            {
+              if (g_strstr_len (darktable_stdout, -1,
+                                "Lua support enabled"))
+                {
+                  have_darktable = TRUE;
+                }
+            }
         }
-
-      g_free (rawtherapee_stdout);
     }
+  else
+    printf ("[%s] g_spawn_sync failed\n", __FILE__);
 
-  if (! have_rawtherapee)
+  if (error)
+    {
+      printf ("[%s] error: %s\n", __FILE__, error->message);
+      g_error_free (error);
+    }
+  if (darktable_stdout && *darktable_stdout)
+    printf ("[%s] stdout:\n%s\n", __FILE__, darktable_stdout);
+  if (darktable_stderr && *darktable_stderr)
+    printf ("[%s] stderr:\n%s\n", __FILE__, darktable_stderr);
+  printf ("[%s] have_darktable: %d\n", __FILE__, have_darktable);
+
+  g_free (darktable_stdout);
+  g_free (darktable_stderr);
+  g_free (exec_path);
+
+  if (! have_darktable)
     return;
 
   gimp_install_procedure (LOAD_THUMB_PROC,
-                          "Load thumbnail from a raw image via rawtherapee",
-                          "This plug-in loads a thumbnail from a raw image by calling rawtherapee-cli.",
-                          "Alberto Griggio",
-                          "Alberto Griggio",
-                          "2017",
+                          "Load thumbnail from a raw image via darktable",
+                          "This plug-in loads a thumbnail from a raw image by calling darktable-cli.",
+                          "Tobias Ellinghaus",
+                          "Tobias Ellinghaus",
+                          "2016",
                           NULL,
                           NULL,
                           GIMP_PLUGIN,
@@ -141,13 +174,20 @@ init (void)
   for (i = 0; i < G_N_ELEMENTS (file_formats); i++)
     {
       const FileFormat *format = &file_formats[i];
+      gchar            *load_proc;
+      gchar            *load_blurb;
+      gchar            *load_help;
 
-      gimp_install_procedure (format->load_proc,
-                              format->load_blurb,
-                              format->load_help,
-                              "Alberto Griggio",
-                              "Alberto Griggio",
-                              "2017",
+      load_proc  = g_strdup_printf (format->load_proc_format,  "darktable");
+      load_blurb = g_strdup_printf (format->load_blurb_format, "darktable");
+      load_help  = g_strdup_printf (format->load_help_format,  "darktable");
+
+      gimp_install_procedure (load_proc,
+                              load_blurb,
+                              load_help,
+                              "Tobias Ellinghaus",
+                              "Tobias Ellinghaus",
+                              "2016",
                               format->file_type,
                               NULL,
                               GIMP_PLUGIN,
@@ -155,15 +195,19 @@ init (void)
                               G_N_ELEMENTS (load_return_vals),
                               load_args, load_return_vals);
 
-      gimp_register_file_handler_mime (format->load_proc,
+      gimp_register_file_handler_mime (load_proc,
                                        format->mime_type);
-      gimp_register_file_handler_raw (format->load_proc);
-      gimp_register_magic_load_handler (format->load_proc,
+      gimp_register_file_handler_raw (load_proc);
+      gimp_register_magic_load_handler (load_proc,
                                         format->extensions,
                                         "",
                                         format->magic);
 
-      gimp_register_thumbnail_loader (format->load_proc, LOAD_THUMB_PROC);
+      gimp_register_thumbnail_loader (load_proc, LOAD_THUMB_PROC);
+
+      g_free (load_proc);
+      g_free (load_blurb);
+      g_free (load_help);
     }
 }
 
@@ -171,7 +215,7 @@ static void
 query (void)
 {
   /* query() is run only the first time for efficiency. Yet this plugin
-   * is dependent on the presence of rawtherapee which may be installed
+   * is dependent on the presence of darktable which may be installed
    * or uninstalled between GIMP startups. Therefore we should move the
    * usual gimp_install_procedure() to init() so that the check is done
    * at every startup instead.
@@ -205,9 +249,13 @@ run (const gchar      *name,
   /* check if the format passed is actually supported & load */
   for (i = 0; i < G_N_ELEMENTS (file_formats); i++)
     {
-      const FileFormat *format = &file_formats[i];
+      const FileFormat *format    = &file_formats[i];
+      gchar            *load_proc = NULL;
 
-      if (format->load_proc && ! strcmp (name, format->load_proc))
+      if (format->load_proc_format)
+        load_proc = g_strdup_printf (format->load_proc_format, "darktable");
+
+      if (load_proc && ! strcmp (name, load_proc))
         {
           image_ID = load_image (param[1].data.d_string, run_mode, &error);
 
@@ -226,15 +274,24 @@ run (const gchar      *name,
         }
       else if (! strcmp (name, LOAD_THUMB_PROC))
         {
+          gint width  = 0;
+          gint height = 0;
+
           image_ID = load_thumbnail_image (param[0].data.d_string,
                                            param[1].data.d_int32,
+                                           &width,
+                                           &height,
                                            &error);
 
           if (image_ID != -1)
             {
-              *nreturn_vals = 4;
+              *nreturn_vals = 6;
               values[1].type         = GIMP_PDB_IMAGE;
               values[1].data.d_image = image_ID;
+              values[2].type         = GIMP_PDB_INT32;
+              values[2].data.d_int32 = width;
+              values[3].type         = GIMP_PDB_INT32;
+              values[3].data.d_int32 = height;
               values[4].type         = GIMP_PDB_INT32;
               values[4].data.d_int32 = GIMP_RGB_IMAGE;
               values[5].type         = GIMP_PDB_INT32;
@@ -268,19 +325,38 @@ load_image (const gchar  *filename,
             GError      **error)
 {
   gint32  image_ID        = -1;
-  gchar  *filename_out    = gimp_temp_name ("tif");
+  GFile  *lua_file        = gimp_data_directory_file ("file-raw",
+                                                      "file-darktable-export-on-exit.lua",
+                                                      NULL);
+  gchar  *lua_script      = g_file_get_path (lua_file);
+  gchar  *lua_quoted      = g_shell_quote (lua_script);
+  gchar  *lua_cmd         = g_strdup_printf ("dofile(%s)", lua_quoted);
+  gchar  *filename_out    = gimp_temp_name ("exr");
+  gchar  *export_filename = g_strdup_printf ("lua/export_on_exit/export_filename=%s", filename_out);
 
-  gchar *rawtherapee_stdout = NULL;
+  gchar *darktable_stdout = NULL;
 
   /* linear sRGB for now as GIMP uses that internally in many places anyway */
-  gchar *argv[] =
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = file_raw_get_executable_path ("darktable", NULL,
+                                                             "DARKTABLE_EXECUTABLE",
+                                                             "org.darktable",
+                                                             REGISTRY_KEY_BASE,
+                                                             &search_path);
+  gchar    *argv[] =
     {
-      "rawtherapee",
-      "-gimp",
+      exec_path,
+      "--library", ":memory:",
+      "--luacmd",  lua_cmd,
+      "--conf",    "plugins/lighttable/export/icctype=3",
+      "--conf",    export_filename,
       (gchar *) filename,
-      filename_out,
       NULL
     };
+
+  g_object_unref (lua_file);
+  g_free (lua_script);
+  g_free (lua_quoted);
 
   gimp_progress_init_printf (_("Opening '%s'"),
                              gimp_filename_to_utf8 (filename));
@@ -290,10 +366,10 @@ load_image (const gchar  *filename,
                     NULL,
                     /*G_SPAWN_STDOUT_TO_DEV_NULL |*/
                     G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
-                    &rawtherapee_stdout,
+                    &darktable_stdout,
                     NULL,
                     NULL,
                     error))
@@ -303,11 +379,14 @@ load_image (const gchar  *filename,
         gimp_image_set_filename (image_ID, filename);
     }
 
-  /*if (rawtherapee_stdout) printf ("%s\n", rawtherapee_stdout);*/
-  g_free (rawtherapee_stdout);
+  /*if (darktable_stdout) printf ("%s\n", darktable_stdout);*/
+  g_free(darktable_stdout);
 
   g_unlink (filename_out);
+  g_free (lua_cmd);
   g_free (filename_out);
+  g_free (export_filename);
+  g_free (exec_path);
 
   gimp_progress_update (1.0);
 
@@ -317,91 +396,57 @@ load_image (const gchar  *filename,
 static gint32
 load_thumbnail_image (const gchar   *filename,
                       gint           thumb_size,
+                      gint          *width,
+                      gint          *height,
                       GError       **error)
 {
   gint32  image_ID         = -1;
   gchar  *filename_out     = gimp_temp_name ("jpg");
-  gchar  *thumb_pp3        = gimp_temp_name ("pp3");
-  FILE   *thumb_pp3_f      = fopen (thumb_pp3, "w");
-  gchar  *rawtherapee_stdout = NULL;
-  const char *pp3_content =
-    "[Version]\n"
-    "AppVersion=5.0\n"
-    "Version=326\n"
-    "\n"
-    "[Resize]\n"
-    "Enabled=true\n"
-    "AppliesTo=Cropped area\n"
-    "Method=Lanczos\n"
-    "Width=%d\n"
-    "Height=%d\n"
-    "\n"
-    "[Sharpening]\n"
-    "Enabled=false\n"
-    "\n"
-    "[SharpenEdge]\n"
-    "Enabled=false\n"
-    "\n"
-    "[SharpenMicro]\n"
-    "Enabled=false\n"
-    "\n"
-    "[Defringing]\n"
-    "Enabled=false\n"
-    "\n"
-    "[Directional Pyramid Equalizer]\n"
-    "Enabled=false\n"
-    "\n"
-    "[PostResizeSharpening]\n"
-    "Enabled=false\n"
-    "\n"
-    "[Directional Pyramid Denoising]\n"
-    "Enabled=false\n"
-    "\n"
-    "[Impulse Denoising]\n"
-    "Enabled=false\n"
-    "\n"
-    "[Wavelet]\n"
-    "Enabled=false\n"
-    "\n"
-    "[RAW Bayer]\n"
-    "Method=fast\n"
-    "\n"
-    "[RAW X-Trans]\n"
-    "Method=fast\n";
+  gchar  *size             = g_strdup_printf ("%d", thumb_size);
+  GFile  *lua_file         = gimp_data_directory_file ("file-raw",
+                                                       "file-darktable-get-size.lua",
+                                                       NULL);
+  gchar  *lua_script       = g_file_get_path (lua_file);
+  gchar  *lua_quoted       = g_shell_quote (lua_script);
+  gchar  *lua_cmd          = g_strdup_printf ("dofile(%s)", lua_quoted);
+  gchar  *darktable_stdout = NULL;
 
-
-  gchar *argv[] =
+  gboolean  search_path      = FALSE;
+  gchar    *exec_path        = file_raw_get_executable_path ("darktable", "-cli",
+                                                             "DARKTABLE_EXECUTABLE",
+                                                             "org.darktable",
+                                                             REGISTRY_KEY_BASE,
+                                                             &search_path);
+  gchar    *argv[] =
     {
-      "rawtherapee-cli",
-      "-o", filename_out,
-      "-d",
-      "-s",
-      "-j",
-      "-p", thumb_pp3,
-      "-f",
-      "-c", (char *) filename,
+      exec_path,
+      (gchar *) filename, filename_out,
+      "--width",          size,
+      "--height",         size,
+      "--hq",             "false",
+      "--core",
+      "--conf",           "plugins/lighttable/export/icctype=3",
+      "--luacmd",         lua_cmd,
       NULL
     };
 
-  if (thumb_pp3_f) {
-    if (fprintf (thumb_pp3_f, pp3_content, thumb_size, thumb_size) < 0) {
-      fclose (thumb_pp3_f);
-      thumb_pp3_f = NULL;
-    }
-  }
+  g_object_unref (lua_file);
+  g_free (lua_script);
+  g_free (lua_quoted);
 
   gimp_progress_init_printf (_("Opening thumbnail for '%s'"),
                              gimp_filename_to_utf8 (filename));
 
-  if (thumb_pp3_f &&
-      g_spawn_sync (NULL,
+  *width = *height = thumb_size;
+
+  if (g_spawn_sync (NULL,
                     argv,
                     NULL,
                     G_SPAWN_STDERR_TO_DEV_NULL |
-                    G_SPAWN_SEARCH_PATH,
+                    (search_path ? G_SPAWN_SEARCH_PATH : 0),
                     NULL,
                     NULL,
-                    &rawtherapee_stdout,
+                    &darktable_stdout,
                     NULL,
                     NULL,
                     error))
@@ -413,6 +458,15 @@ load_thumbnail_image (const gchar   *filename,
                                  filename_out);
       if (image_ID != -1)
         {
+          /* the size reported by raw files isn't precise,
+           * but it should be close enough to get an idea.
+           */
+          gchar *start_of_size = g_strstr_len (darktable_stdout,
+                                               -1,
+                                               "[dt4gimp]");
+          if (start_of_size)
+            sscanf (start_of_size, "[dt4gimp] %d %d", width, height);
+
           /* is this needed for thumbnails? */
           gimp_image_set_filename (image_ID, filename);
         }
@@ -420,13 +474,12 @@ load_thumbnail_image (const gchar   *filename,
 
   gimp_progress_update (1.0);
 
-  if (thumb_pp3_f) {
-    fclose (thumb_pp3_f);
-  }
-  g_unlink (thumb_pp3);
+  g_unlink (filename_out);
   g_free (filename_out);
-  g_free (thumb_pp3);
-  g_free (rawtherapee_stdout);
+  g_free (size);
+  g_free (lua_cmd);
+  g_free (darktable_stdout);
+  g_free (exec_path);
 
   return image_ID;
 }

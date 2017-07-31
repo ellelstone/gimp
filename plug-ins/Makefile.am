@@ -5,7 +5,6 @@ help_browser = help-browser
 endif
 
 if HAVE_OPENEXR
-file_darktable = file-darktable
 file_exr = file-exr
 endif
 
@@ -37,7 +36,7 @@ SUBDIRS = \
 	file-fits		\
 	file-jpeg		\
 	file-psd		\
-	file-rawtherapee	\
+	file-raw		\
 	file-tiff		\
 	help			\
 	$(help_browser)		\

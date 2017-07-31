@@ -3,5 +3,9 @@
 /.deps
 /_libs
 /.libs
+/file-darktable
+/file-darktable.exe
 /file-rawtherapee
 /file-rawtherapee.exe
+/file-raw-placeholder
+/file-raw-placeholder.exe
