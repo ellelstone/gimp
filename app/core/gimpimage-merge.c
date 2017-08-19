@@ -536,7 +536,7 @@ gimp_image_merge_layers (GimpImage     *image,
 
       /*  get the background for compositing  */
       gimp_context_get_background (context, &bg);
-      gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (layer),
+      gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (layer),
                                          &bg, &bg);
 
       flatten_node = gimp_gegl_create_flatten_node (&bg);

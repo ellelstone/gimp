@@ -1211,7 +1211,7 @@ gimp_context_deserialize (GimpConfig *config,
                           gint        nest_level,
                           gpointer    data)
 {
-  GimpContext   *context        = GIMP_CONTEXT (config);
+//  GimpContext   *context        = GIMP_CONTEXT (config);
 //  GimpLayerMode  old_paint_mode = context->paint_mode;
   gboolean       success;
 
