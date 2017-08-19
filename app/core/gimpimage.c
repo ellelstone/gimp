@@ -2353,6 +2353,7 @@ gimp_image_get_xcf_version (GimpImage    *image,
         case GIMP_LAYER_MODE_MERGE:
         case GIMP_LAYER_MODE_SPLIT:
         case GIMP_LAYER_MODE_MONO_MIX:
+        case GIMP_LAYER_MODE_PASS_THROUGH:
           version = MAX (10, version);
           break;
 

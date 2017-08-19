@@ -755,6 +755,7 @@ package Gimp::CodeGen::enums;
 		       GIMP_LAYER_MODE_MERGE => '37',
 		       GIMP_LAYER_MODE_SPLIT => '38',
 		       GIMP_LAYER_MODE_MONO_MIX => '39' }
+			  GIMP_LAYER_MODE_PASS_THROUGH) ],
 	},
     GimpConvertDitherType =>
 	{ contig => 1,

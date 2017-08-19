@@ -266,7 +266,10 @@ psd_lmode_layer (gint32  idLayer,
     case GIMP_LAYER_MODE_HARD_MIX:
       strcpy (psdMode, "hMix");
       break;
-
+    case GIMP_LAYER_MODE_PASS_THROUGH:
+      strcpy (psdMode, "pass");
+      break;
+      
     default:
       {
         const gchar *nick = "?";

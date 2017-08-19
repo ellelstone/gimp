@@ -613,7 +613,13 @@ psd_to_gimp_blend_mode (const gchar            *psd_mode,
    * "union", effectively, only returning "auto" for modes that default to
    * "union", to reduce UI clutter.
    */
-  if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_SRC_ATOP;
+  if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_SRC_OVER;
+
+  if (g_ascii_strncasecmp (psd_mode, "pass", 4) == 0)           /* Pass through (CS)*/
+    {
+      if (layer_composite) *layer_composite = GIMP_LAYER_COMPOSITE_AUTO;
+      return GIMP_LAYER_MODE_PASS_THROUGH;
+    }
 
   if (g_ascii_strncasecmp (psd_mode, "norm", 4) == 0)           /* Normal (ps3) */
     {
@@ -774,6 +780,11 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
 
   switch (layer_mode)
     {
+
+    case GIMP_LAYER_MODE_PASS_THROUGH:
+      psd_mode = g_strndup ("pass", 4);                       /* Pass through (CS) */
+      break;
+
     case GIMP_LAYER_MODE_NORMAL:
       psd_mode = g_strndup ("norm", 4);                       /* Normal (ps3) */
       break;
@@ -790,11 +801,9 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_MULTIPLY:
-    case GIMP_LAYER_MODE_MULTIPLY:
       psd_mode = g_strndup ("mul ", 4);                       /* Multiply (ps3) */
       break;
 
-    case GIMP_LAYER_MODE_SCREEN:
     case GIMP_LAYER_MODE_SCREEN:
       psd_mode = g_strndup ("scrn", 4);                       /* Screen (ps3) */
       break;
@@ -804,11 +813,9 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DIFFERENCE:
-    case GIMP_LAYER_MODE_DIFFERENCE:
       psd_mode = g_strndup ("diff", 4);                       /* Difference (ps3) */
       break;
 
-    case GIMP_LAYER_MODE_ADDITION:
     case GIMP_LAYER_MODE_ADDITION:
       psd_mode = g_strndup ("lddg", 4);                       /* Linear dodge (ps7)*/
       break;
@@ -821,11 +828,9 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DARKEN_ONLY:
-    case GIMP_LAYER_MODE_DARKEN_ONLY:
       psd_mode = g_strndup ("dark", 4);                       /* Darken (ps3) */
       break;
 
-    case GIMP_LAYER_MODE_LIGHTEN_ONLY:
     case GIMP_LAYER_MODE_LIGHTEN_ONLY:
       psd_mode = g_strndup ("lite", 4);                       /* Lighten (ps3) */
       break;
@@ -866,7 +871,6 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_DODGE:
-    case GIMP_LAYER_MODE_DODGE:
       psd_mode = g_strndup ("div ", 4);                       /* Color Dodge (ps6) */
       break;
 
@@ -875,7 +879,6 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_BURN:
-    case GIMP_LAYER_MODE_BURN:
       psd_mode = g_strndup ("idiv", 4);                       /* Color Burn (ps6) */
       break;
 
@@ -883,7 +886,6 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       psd_mode = g_strndup ("lbrn", 4);                       /* Linear Burn (ps6) */
       break;
 
-    case GIMP_LAYER_MODE_HARDLIGHT:
     case GIMP_LAYER_MODE_HARDLIGHT:
       psd_mode = g_strndup ("hLit", 4);                       /* Hard Light (ps3) */
       break;
@@ -917,7 +919,6 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_GRAIN_EXTRACT:
-    case GIMP_LAYER_MODE_GRAIN_EXTRACT:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
@@ -925,14 +926,12 @@ gimp_to_psd_blend_mode (GimpLayerMode          layer_mode,
       break;
 
     case GIMP_LAYER_MODE_GRAIN_MERGE:
-    case GIMP_LAYER_MODE_GRAIN_MERGE:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
                    gimp_layer_mode_effects_name (layer_mode));
       psd_mode = g_strndup ("norm", 4);
       break;
 
-    case GIMP_LAYER_MODE_COLOR_ERASE:
     case GIMP_LAYER_MODE_COLOR_ERASE:
       if (CONVERSION_WARNINGS)
         g_message ("Unsupported blend mode: %s. Mode reverts to normal",
@@ -984,6 +983,7 @@ gimp_layer_mode_effects_name (GimpLayerMode mode)
     "GRAIN EXTRACT",
     "GRAIN MERGE",
     "COLOR ERASE"
+    "PASS THROUGH"
   };
   static gchar *err_name = NULL;
   if (mode >= 0 && mode <= GIMP_LAYER_MODE_COLOR_ERASE)

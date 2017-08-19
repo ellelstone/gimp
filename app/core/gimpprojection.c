@@ -30,7 +30,6 @@
 
 #include "gegl/gimp-babl.h"
 #include "gegl/gimp-gegl-utils.h"
-#include "gegl/gimptilehandlervalidate.h"
 
 #include "gimp.h"
 #include "gimp-memsize.h"
@@ -39,6 +38,7 @@
 #include "gimppickable.h"
 #include "gimpprojectable.h"
 #include "gimpprojection.h"
+#include "gimptilehandlerprojectable.h"
 
 #include "gimp-log.h"
 #include "gimp-priorities.h"
@@ -386,12 +386,10 @@ gimp_projection_get_buffer (GimpPickable *pickable)
 
   if (! proj->priv->buffer)
     {
-      GeglNode   *graph;
       const Babl *format;
       gint        width;
       gint        height;
 
-      graph = gimp_projectable_get_graph (proj->priv->projectable);
       format = gimp_projection_get_format (GIMP_PICKABLE (proj));
       gimp_projectable_get_size (proj->priv->projectable, &width, &height);
 
@@ -399,7 +397,8 @@ gimp_projection_get_buffer (GimpPickable *pickable)
                                             format);
 
       proj->priv->validate_handler =
-        GIMP_TILE_HANDLER_VALIDATE (gimp_tile_handler_validate_new (graph));
+        GIMP_TILE_HANDLER_VALIDATE (
+          gimp_tile_handler_projectable_new (proj->priv->projectable));
 
       gimp_tile_handler_validate_assign (proj->priv->validate_handler,
                                          proj->priv->buffer);
@@ -605,7 +604,11 @@ gimp_projection_finish_draw (GimpProjection *proj)
     {
       gimp_projection_chunk_render_stop (proj);
 
+      gimp_projectable_begin_render (proj->priv->projectable);
+
       while (gimp_projection_chunk_render_iteration (proj));
+
+      gimp_projectable_end_render (proj->priv->projectable);
     }
 }
 
@@ -676,6 +679,8 @@ gimp_projection_flush_whenever (GimpProjection *proj,
           gint n_rects = cairo_region_num_rectangles (proj->priv->update_region);
           gint i;
 
+          gimp_projectable_begin_render (proj->priv->projectable);
+
           for (i = 0; i < n_rects; i++)
             {
               cairo_rectangle_int_t rect;
@@ -690,6 +695,8 @@ gimp_projection_flush_whenever (GimpProjection *proj,
                                           rect.width,
                                           rect.height);
             }
+
+          gimp_projectable_end_render (proj->priv->projectable);
         }
       else  /* Asynchronous */
         {
@@ -738,6 +745,8 @@ gimp_projection_chunk_render_callback (gpointer data)
   gint            chunks = 0;
   gboolean        retval = TRUE;
 
+  gimp_projectable_begin_render (proj->priv->projectable);
+
   do
     {
       if (! gimp_projection_chunk_render_iteration (proj))
@@ -752,6 +761,8 @@ gimp_projection_chunk_render_callback (gpointer data)
       chunks++;
     }
   while (g_timer_elapsed (timer, NULL) < GIMP_PROJECTION_CHUNK_TIME);
+
+  gimp_projectable_end_render (proj->priv->projectable);
 
   GIMP_LOG (PROJECTION, "%d chunks in %f seconds\n",
             chunks, g_timer_elapsed (timer, NULL));

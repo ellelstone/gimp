@@ -34,6 +34,7 @@ Core:
     some interactions.
   - Remove max size limitation of 4GB for XCF files.
   - Support clipboard images in the clipboard brush and pattern.
+  - libgimp calls are now thread-safe.
 
 Layers and compositing:
 
@@ -47,7 +48,8 @@ Layers and compositing:
   - Layer blending color space and compositing color space are
     configurable now.
   - New layer modes: linear burn, vivid light, linear light, pin light,
-    hard mix, exclusion, merge, split, luminance (rgb).
+    hard mix, exclusion, merge, split, luminance (rgb), pass-through
+    (for layer groups only).
   - Make erase mode an ordinary layer/paint mode.
   - Better performance of HSV-based layer modes.
   - Rename "Color (HSV)" mode to "Color (HSL)" to indicate the actual
@@ -143,6 +145,10 @@ Tools:
   - The Measure tool has better digit precision now (before that, at
     4000 PPI, up to 7 pixels would show up as 0 mm, then at 0.1 mm from
     the 8th pixel etc.).
+  - All paint tools now display the angle (relatively to the horizontal
+    line, centered on previously drawn position) alongside distance in
+    status bar when straight line constraining (holding shift when
+    painting).
   - Performance of the Fuzzy Select and the Bucket Fill tool has been
     improved.
   - The Fuzzy Select and the Bucket Fill tool now can select colors by

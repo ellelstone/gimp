@@ -206,9 +206,9 @@ static void    gimp_layer_pixel_to_rgb         (GimpPickable       *pickable,
                                                  gpointer            pixel,
                                                  GimpRGB            *color);
 static void    gimp_layer_rgb_to_pixel         (GimpPickable       *pickable,
-                                                 const GimpRGB     *color,
-                                                 const Babl        *format,
-                                                 gpointer           pixel);
+                                                 const GimpRGB      *color,
+                                                 const Babl         *format,
+                                                 gpointer            pixel);
 
 static void       gimp_layer_real_translate     (GimpLayer          *layer,
                                                  gint                offset_x,
@@ -668,24 +668,10 @@ gimp_layer_update_mode_node (GimpLayer *layer)
     }
   else
     {
-      if (gimp_filter_get_is_last_node (GIMP_FILTER (layer)))
-        {
-          if (layer->mode != GIMP_LAYER_MODE_DISSOLVE)
-            visible_mode          = GIMP_LAYER_MODE_NORMAL;
-          else
-            visible_mode          = GIMP_LAYER_MODE_DISSOLVE;
-
-          visible_blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
-          visible_composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
-          visible_composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;
-        }
-      else
-        {
-          visible_mode            = layer->mode;
-          visible_blend_space     = layer->blend_space;
-          visible_composite_space = layer->composite_space;
-          visible_composite_mode  = layer->composite_mode;
-        }
+      visible_mode            = layer->mode;
+      visible_blend_space     = layer->blend_space;
+      visible_composite_space = layer->composite_space;
+      visible_composite_mode  = layer->composite_mode;
     }
 
   gimp_gegl_mode_node_set_mode (mode_node,
@@ -772,11 +758,14 @@ gimp_layer_get_node (GimpFilter *filter)
   GimpDrawable *drawable = GIMP_DRAWABLE (filter);
   GimpLayer    *layer    = GIMP_LAYER (filter);
   GeglNode     *node;
+  GeglNode     *input;
   GeglNode     *source;
   GeglNode     *mode_node;
   gboolean      source_node_hijacked = FALSE;
 
   node = GIMP_FILTER_CLASS (parent_class)->get_node (filter);
+
+  input = gegl_node_get_input_proxy (node, "input");
 
   source = gimp_drawable_get_source_node (drawable);
 
@@ -789,6 +778,9 @@ gimp_layer_get_node (GimpFilter *filter)
 
   if (! source_node_hijacked)
     gegl_node_add_child (node, source);
+
+  gegl_node_connect_to (input,  "output",
+                        source, "input");
 
   g_warn_if_fail (layer->layer_offset_node == NULL);
   g_warn_if_fail (layer->mask_offset_node == NULL);
