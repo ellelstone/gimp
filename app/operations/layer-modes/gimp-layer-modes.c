@@ -492,7 +492,7 @@ static const GimpLayerModeInfo layer_mode_infos[] =
   { GIMP_LAYER_MODE_MONO_MIX,
 
     .op_name              = "gimp:layer-mode",
-//    .blend_function       = gimp_operation_layer_mode_mono_mix,
+    .blend_function       = gimp_operation_layer_mode_blend_mono_mix,
     .context              = GIMP_LAYER_MODE_CONTEXT_ALL,
     .paint_composite_mode = GIMP_LAYER_COMPOSITE_SRC_OVER,
     .composite_mode       = GIMP_LAYER_COMPOSITE_SRC_ATOP,

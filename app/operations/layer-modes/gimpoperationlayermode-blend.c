@@ -886,6 +886,36 @@ gimp_operation_layer_mode_blend_luminance (const gfloat *in,
 }
 
 void
+gimp_operation_layer_mode_blend_mono_mix (const gfloat *in,
+                                          const gfloat *layer,
+                                          gfloat       *comp,
+                                          gint          samples)
+{
+  while (samples--)
+    {
+      if (in[ALPHA] != 0.0f && layer[ALPHA] != 0.0f)
+        {
+          gfloat value = 0.0f;
+          gint   c;
+
+          for (c = 0; c < 3; c++)
+            {
+              value += in[c] * layer[c];
+            }
+
+          comp[RED] = comp[GREEN] = comp[BLUE] = value;
+        }
+
+      comp[ALPHA] = layer[ALPHA];
+
+      comp  += 4;
+      layer += 4;
+      in    += 4;
+    }
+}
+
+
+void
 gimp_operation_layer_mode_blend_multiply (const gfloat *in,
                                           const gfloat *layer,
                                           gfloat       *comp,

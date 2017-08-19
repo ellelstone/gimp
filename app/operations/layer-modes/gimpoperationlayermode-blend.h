@@ -134,6 +134,10 @@ void gimp_operation_layer_mode_blend_overlay           (const gfloat *in,
                                                         const gfloat *layer,
                                                         gfloat       *comp,
                                                         gint          samples);
+void gimp_operation_layer_mode_blend_mono_mix          (const gfloat *in,
+                                                        const gfloat *layer,
+                                                        gfloat       *comp,
+                                                        gint          samples);
 void gimp_operation_layer_mode_blend_pin_light         (const gfloat *in,
                                                         const gfloat *layer,
                                                         gfloat       *comp,
