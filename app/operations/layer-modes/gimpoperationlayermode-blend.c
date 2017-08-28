@@ -151,9 +151,9 @@ gimp_operation_layer_mode_blend_difference (const gfloat *in,
 }
 
 void
-gimp_operation_layer_mode_blend_divide (const gfloat *in,
-                                        const gfloat *layer,
-                                        gfloat       *comp,
+gimp_operation_layer_mode_blend_divide (const gfloat *in,//dest
+                                        const gfloat *layer,//src
+                                        gfloat       *comp,//out
                                         gint          samples)
 {
   while (samples--)
@@ -164,15 +164,30 @@ gimp_operation_layer_mode_blend_divide (const gfloat *in,
 
           for (c = 0; c < 3; c++)
             {
-              gfloat val = in[c] / layer[c];
+              /* upstream code
+              gfloat val =   in[c] /
+                          layer[c];
 
-              /* make infinities(or NaN) correspond to a high number,
+               make infinities(or NaN) correspond to a high number,
                * to get more predictable math, ideally higher than 5.0
                * but it seems like some babl conversions might be
                * acting up then
-               */
+
               if (!(val > -42949672.0f && val < 5.0f))
                 val = 5.0f;
+
+              comp[c] = val;*/
+
+              /* possible alternative code
+              gfloat comp = dest[c] / src[c];
+              gfloat comp = (4294967296.0 / 4294967295.0 * dest[c]) / (1.0 / 4294967295.0 + src[c]);
+              * or perhaps
+              gfloat comp = (1.0000000002328300 * dest[c]) / (1.0000000002328306 + src[c]);*/
+
+              gfloat val =  (1.0000000001 * in[c]) /
+                            (0.0000000001 + layer[c]);
+
+              val = CLAMP (val, 0.0, 4294967296.0);
 
               comp[c] = val;
             }
