@@ -2010,7 +2010,7 @@ pygimp_layer_new(gint32 ID)
 
 #define GROUPLAYER_DOC ""                                \
 "gimp.GroupLayer(img, name="", opacity=100.0,   "        \
-"mode=gimp.LAYER_MODE_NORMAL)\n"                  \
+"mode=gimp.LAYER_MODE_NORMAL)\n"                         \
 "\n"                                                     \
 " Creates a new GroupLayer object that has to be \n"     \
 "subsequently added to an image. Use Image.add_layer \n" \

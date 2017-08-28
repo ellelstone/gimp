@@ -11,7 +11,7 @@ AC_PREREQ(2.54)
 
 m4_define([gimp_major_version], [2])
 m4_define([gimp_minor_version], [9])
-m4_define([gimp_micro_version], [5])
+m4_define([gimp_micro_version], [7])
 m4_define([gimp_real_version],
           [gimp_major_version.gimp_minor_version.gimp_micro_version])
 m4_define([gimp_version], [gimp_real_version])
@@ -43,8 +43,8 @@ m4_define([gimp_stable],
 m4_define([gimp_full_name], [GNU Image Manipulation Program])
 
 # required versions of other packages
-m4_define([babl_required_version], [0.1.30])
-m4_define([gegl_required_version], [0.3.20])
+m4_define([babl_required_version], [0.1.31])
+m4_define([gegl_required_version], [0.3.21])
 m4_define([glib_required_version], [2.40.0])
 m4_define([atk_required_version], [2.2.0])
 m4_define([gtk_required_version], [2.24.10])

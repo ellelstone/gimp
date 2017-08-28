@@ -663,8 +663,16 @@ gimp_layer_update_mode_node (GimpLayer *layer)
     {
       visible_mode            = GIMP_LAYER_MODE_NORMAL;
       visible_blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
-      visible_composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
+      visible_composite_space = layer->composite_space;
       visible_composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;
+
+      /* This makes sure that masks of LEGACY-mode layers are
+       * composited in PERCEPTUAL space, and non-LEGACY layers in
+       * LINEAR space, or whatever composite space was chosen in the
+       * layer attributes dialog
+       */
+      if (visible_composite_space == GIMP_LAYER_COLOR_SPACE_AUTO)
+        visible_composite_space = gimp_layer_mode_get_composite_space (layer->mode);
     }
   else
     {
@@ -2315,11 +2323,14 @@ gimp_layer_set_mode (GimpLayer     *layer,
 
   if (layer->mode != mode)
     {
-      if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
+      if (gimp_item_is_attached (GIMP_ITEM (layer)))
         {
           GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
 
-          gimp_image_undo_push_layer_mode (image, NULL, layer);
+          gimp_image_unset_default_new_layer_mode (image);
+
+          if (push_undo)
+            gimp_image_undo_push_layer_mode (image, NULL, layer);
         }
 
       g_object_freeze_notify (G_OBJECT (layer));

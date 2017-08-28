@@ -88,9 +88,11 @@ export_merge (gint32  image_ID,
 
   if (nvisible <= 1)
     {
-      /* if there is only one (or zero) visible layer, add a new transparent
-         layer that has the same size as the canvas.  The merge that follows
-         will ensure that the offset, opacity and size are correct */
+      /* if there is only one (or zero) visible layer, add a new
+       * transparent layer that has the same size as the canvas.  The
+       * merge that follows will ensure that the offset, opacity and
+       * size are correct
+       */
       transp = gimp_layer_new (image_ID, "-",
                                gimp_image_width (image_ID),
                                gimp_image_height (image_ID),

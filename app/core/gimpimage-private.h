@@ -49,6 +49,7 @@ struct _GimpImagePrivate
   GimpUnit           resolution_unit;       /*  resolution unit              */
   GimpImageBaseType  base_type;             /*  base gimp_image type         */
   GimpPrecision      precision;             /*  image's precision            */
+  GimpLayerMode      new_layer_mode;        /*  default mode of new layers   */
 
   GimpColorProfile  *color_profile;         /*  image's color profile        */
 
