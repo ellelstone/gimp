@@ -92,7 +92,6 @@ gboolean                 gimp_image_insert_channel             (gint32          
 gboolean                 gimp_image_remove_channel             (gint32               image_ID,
                                                                 gint32               channel_ID);
 GIMP_DEPRECATED_FOR(gimp_image_insert_vectors)
-<<<<<<< HEAD
 gboolean                 gimp_image_add_vectors              (gint32               image_ID,
                                                               gint32               vectors_ID,
                                                               gint                 position);
@@ -195,7 +194,6 @@ GimpParasite*            gimp_image_get_parasite             (gint32            
                                                               const gchar         *name);
 gchar**                  gimp_image_get_parasite_list        (gint32               image_ID,
                                                               gint                *num_parasites);
-=======
 gboolean                 gimp_image_add_vectors                (gint32               image_ID,
                                                                 gint32               vectors_ID,
                                                                 gint                 position);
@@ -303,7 +301,6 @@ GimpParasite*            gimp_image_get_parasite               (gint32          
                                                                 const gchar         *name);
 gchar**                  gimp_image_get_parasite_list          (gint32               image_ID,
                                                                 gint                *num_parasites);
->>>>>>> upstream/master
 
 
 G_END_DECLS
