@@ -1310,10 +1310,14 @@ gimp_channel_real_clear (GimpChannel *channel,
 {
   if (push_undo)
     {
-      if (! undo_desc)
-        undo_desc = GIMP_CHANNEL_GET_CLASS (channel)->clear_desc;
+      if (! channel->empty)
+        {
+          /* Don't push an undo if the channel was already empty. */
+          if (! undo_desc)
+            undo_desc = GIMP_CHANNEL_GET_CLASS (channel)->clear_desc;
 
-      gimp_channel_push_undo (channel, undo_desc);
+          gimp_channel_push_undo (channel, undo_desc);
+        }
     }
   else
     {
