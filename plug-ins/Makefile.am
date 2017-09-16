@@ -35,7 +35,6 @@ SUBDIRS = \
 	$(file_exr)		\
 	file-fits		\
 	file-jpeg		\
-	file-psd		\
 	file-raw		\
 	file-tiff		\
 	help			\

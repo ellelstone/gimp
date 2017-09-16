@@ -2510,16 +2510,10 @@ build/windows/Makefile
 build/windows/gimp.rc
 build/windows/gimp-plug-ins.rc
 plug-ins/Makefile
-plug-ins/file-bmp/Makefile
 plug-ins/file-exr/Makefile
-plug-ins/file-faxg3/Makefile
 plug-ins/file-fits/Makefile
-plug-ins/file-fli/Makefile
-plug-ins/file-ico/Makefile
 plug-ins/file-jpeg/Makefile
-plug-ins/file-psd/Makefile
 plug-ins/file-raw/Makefile
-plug-ins/file-sgi/Makefile
 plug-ins/file-tiff/Makefile
 plug-ins/file-webp/Makefile
 plug-ins/ui/Makefile
