@@ -672,19 +672,19 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
         if (base_type == GIMP_GRAY)
           {
-            names[0] = _("Value:");
+            names[0] = _("V");
 
             if (has_alpha)
-              names[1] = _("Alpha:");
+              names[1] = _("A");
           }
         else
           {
-            names[0] = _("Red:");
-            names[1] = _("Green:");
-            names[2] = _("Blue:");
+            names[0] = _("R");
+            names[1] = _("G");
+            names[2] = _("B");
 
             if (has_alpha)
-              names[3] = _("Alpha:");
+              names[3] = _("A");
 
           }
       }
@@ -692,12 +692,12 @@ gimp_color_frame_update (GimpColorFrame *frame)
 
     case GIMP_COLOR_FRAME_MODE_RGB_PERCENT:
     case GIMP_COLOR_FRAME_MODE_RGB_U8:
-      names[0] = _("Red:");
-      names[1] = _("Green:");
-      names[2] = _("Blue:");
+      names[0] = _("R");
+      names[1] = _("G");
+      names[2] = _("B");
 
       if (has_alpha)
-        names[3] = _("Alpha:");
+        names[3] = _("A");
 
       names[4] = _("Hex:");
 
@@ -729,12 +729,12 @@ gimp_color_frame_update (GimpColorFrame *frame)
       break;
 
     case GIMP_COLOR_FRAME_MODE_HSV:
-      names[0] = _("Hue:");
-      names[1] = _("Sat.:");
-      names[2] = _("Value:");
+      names[0] = _("H");
+      names[1] = _("S");
+      names[2] = _("V");
 
       if (has_alpha)
-        names[3] = _("Alpha:");
+        names[3] = _("A");
 
       if (frame->sample_valid)
         {
@@ -753,12 +753,12 @@ gimp_color_frame_update (GimpColorFrame *frame)
       break;
 
     case GIMP_COLOR_FRAME_MODE_LCH:
-      names[0] = _("Light.:");
-      names[1] = _("Chr.:");
-      names[2] = _("Hue:");
+      names[0] = _("L");
+      names[1] = _("C");
+      names[2] = _("H");
 
       if (has_alpha)
-        names[3] = _("Alpha:");
+        names[3] = _("A");
 
       if (frame->sample_valid)
         {
@@ -781,12 +781,12 @@ gimp_color_frame_update (GimpColorFrame *frame)
       break;
 
     case GIMP_COLOR_FRAME_MODE_LAB:
-      names[0] = _("Lab_L*:");
-      names[1] = _("Lab_a*:");
-      names[2] = _("Lab_b*:");
+      names[0] = _("L");
+      names[1] = _("A");
+      names[2] = _("B");
 
       if (has_alpha)
-        names[3] = _("Alpha:");
+        names[3] = _("A");
 
       if (frame->sample_valid)
         {
@@ -809,13 +809,13 @@ gimp_color_frame_update (GimpColorFrame *frame)
       break;
 
     case GIMP_COLOR_FRAME_MODE_CMYK:
-      names[0] = _("Cyan:");
-      names[1] = _("Magenta:");
-      names[2] = _("Yellow:");
-      names[3] = _("Black:");
+      names[0] = _("C");
+      names[1] = _("M");
+      names[2] = _("Y");
+      names[3] = _("K");
 
       if (has_alpha)
-        names[4] = _("Alpha:");
+        names[4] = _("A");
 
       if (frame->sample_valid)
         {
