@@ -1653,7 +1653,7 @@ xcf_save_tile_rle (XcfInfo        *info,
       gint n_components = babl_format_get_n_components (format);
 
       xcf_write_to_be (bpp / n_components, tile_data,
-                       tile_size / n_components);
+                       tile_size / bpp);
     }
 
   for (i = 0; i < bpp; i++)
@@ -1789,7 +1789,7 @@ xcf_save_tile_zlib (XcfInfo        *info,
       gint n_components = babl_format_get_n_components (format);
 
       xcf_write_to_be (bpp / n_components, tile_data,
-                       tile_size / n_components);
+                       tile_size / bpp);
     }
 
   /* allocate deflate state */
