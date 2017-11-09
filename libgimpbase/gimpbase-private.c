@@ -36,7 +36,6 @@ void
 gimp_base_init (GimpUnitVtable *vtable)
 {
   static gboolean gimp_base_initialized = FALSE;
-  GQuark          quark;
 
   g_return_if_fail (vtable != NULL);
 
@@ -44,6 +43,20 @@ gimp_base_init (GimpUnitVtable *vtable)
     g_error ("gimp_base_init() must only be called once!");
 
   _gimp_unit_vtable = *vtable;
+
+  gimp_base_compat_enums_init ();
+
+  gimp_base_initialized = TRUE;
+}
+
+void
+gimp_base_compat_enums_init (void)
+{
+  static gboolean gimp_base_compat_initialized = FALSE;
+  GQuark          quark;
+
+  if (gimp_base_compat_initialized)
+    return;
 
   quark = g_quark_from_static_string ("gimp-compat-enum");
 
@@ -76,5 +89,5 @@ gimp_base_init (GimpUnitVtable *vtable)
   g_type_set_qdata (GIMP_TYPE_TRANSFER_MODE, quark,
                     (gpointer) GIMP_TYPE_TRANSFER_MODE_COMPAT);
 
-  gimp_base_initialized = TRUE;
+  gimp_base_compat_initialized = TRUE;
 }

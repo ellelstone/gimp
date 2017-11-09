@@ -1,0 +1,78 @@
+{
+    "id": "org.gimp.GIMP",
+    "branch": "dev",
+    "base": "org.gimp.BaseApp",
+    "base-version": "stable",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.24",
+    "sdk": "org.gnome.Sdk",
+    "command": "gimp-2.9",
+    "rename-desktop-file": "gimp.desktop",
+    "rename-appdata-file": "gimp.appdata.xml",
+    "rename-icon": "gimp",
+    "finish-args": ["--share=ipc", "--socket=x11", "--share=network",
+                    "--filesystem=host", "--filesystem=xdg-config/GIMP",
+                    "--filesystem=xdg-config/gtk-3.0",
+                    "--talk-name=org.gtk.vfs", "--talk-name=org.gtk.vfs.*" ],
+    "tags": ["dev"],
+    "desktop-file-name-prefix": "(Dev) ",
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig",
+                "/share/aclocal", "/man", "/share/man", "/share/gtk-doc",
+                "/share/vala", "*.la", "*.a", "/bin/wmf*", "/bin/libwmf-*",
+                "/bin/pygtk*", "/bin/pygobject*"],
+    "modules": [
+        {
+            "name": "babl",
+            "config-opts": [ "--disable-docs" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/babl",
+                    "branch": "BABL_0_1_30",
+                    "commit": "8e90256c71a54f4729240c10b17269d06b88e9e0"
+                }
+            ]
+        },
+        {
+            "name": "gegl",
+            "config-opts": [ "--disable-docs", "--disable-introspection" ],
+            "cleanup": [ "/bin" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/gegl",
+                    "branch": "GEGL_0_3_20",
+                    "commit": "517991898e8ea672d38aa0dd282bb59b84ae253d"
+                }
+            ]
+        },
+        {
+            "name": "gimp",
+            "config-opts": [ "--disable-docs", "--disable-gtk-doc", "--disable-gtk-doc-html", "--enable-vector-icons" ],
+            "cleanup": [ "/bin/gimptool-2.0", "/bin/gimp-console-2.9" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/gimp",
+                    "branch": "GIMP_2_9_6",
+                    "commit": "5afea2f6d3ce5160362df930883d62fb9e0728c6"
+                }
+            ],
+	    "post-install": [
+                "rm -fr /app/include /app/lib/pkgconfig /app/share/pkgconfig",
+                "rm -fr /app/share/gtk-doc/ /app/share/man/",
+                "rm -fr /app/lib/*.la /app/lib/*.a",
+                "rm -fr /app/share/ghostscript/9.20/doc/",
+                "rm -fr /app/bin/wmf* /app/bin/libwmf-*",
+                "rm -fr /app/bin/pygtk* /app/bin/pygobject* /app/bin/pygobject-codegen-2.0"
+            ]
+        }
+    ]
+}

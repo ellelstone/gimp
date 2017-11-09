@@ -344,7 +344,7 @@ static const GimpToggleActionEntry layers_toggle_actions[] =
 
   { "layers-blend-space-rgb-linear", NULL,
     NC_("layers-action", "Layer Blend Space: RGB (linear)"), NULL, NULL,
-    GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
+//    GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     NULL },
 
   { "layers-blend-space-rgb-perceptual", NULL,
@@ -362,7 +362,7 @@ static const GimpToggleActionEntry layers_toggle_actions[] =
 
   { "layers-composite-space-rgb-linear", NULL,
     NC_("layers-action", "Layer Composite Space: RGB (linear)"), NULL, NULL,
-    GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
+//    GIMP_LAYER_COLOR_SPACE_RGB_LINEAR,
     NULL },
 
   { "layers-composite-space-rgb-perceptual", NULL,

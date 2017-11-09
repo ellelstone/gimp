@@ -21,6 +21,24 @@ Core:
   - No undo steps when single-clicking with a selection tool while there
     was already no selection.
   - Transform tools don't commit identity transformation anymore.
+  - Manual language can now be selected amongst all installed manuals,
+    which is particularly interesting when no GIMP manuals are available
+    in your GUI language. This will be proposed by default when a manual
+    is not installed for the GUI language (alongside the possibility to
+    read online) and the choice can be edited in preferences.
+  - The statusbar now blinks on warnings and errors.
+  - Highlight upper/lower halves of spinscales while hovering.
+
+Tools:
+
+  - Blend tool now features on-canvas gradient editing: adding, shifting,
+    removing color stops, shifting midpoints and converting them to color
+    stops, assignging colors to color stops, changing blending type
+    for midpoints. Additional options: 'Instant mode' (active before you
+    start blending) to support the old workflow where you can't edit color
+    stops before applying the gradient fill, and 'Modify active gradient'
+    which allows changing user-writable gradients directly rather than
+    creating copies of them.
 
 Color management:
 
@@ -40,6 +58,16 @@ File formats:
     - Fix potential group-layer naming conflict during loading.
     - Fix missing some attributes loading empty layers.
     - Improve layer opacity loading/saving.
+    - Fix active layer selection upon loading.
+    - Load and save layer group expanded state.
+
+Filters:
+
+  - Update GEGL-based filter Wavelet Decompose:
+    * Add an option to keep the decomposition in a layer group.
+    * Add an option to add layer mask to each scales layers.
+    * Do not use 'new from visible' because it produces unexpected
+      results; replaced by succession of layer copy and merge down.
 
 PDB:
 
@@ -48,18 +76,23 @@ PDB:
 
 Translations:
 
-  - Updated: Polish. 
+  - Updated: Catalan, Croatian, Galician, German, Greek, Hungarian,
+    Icelandic, Indonesian, Italian, Polish, Russian, Spanish.
 
 Building:
 
   - Require LittleCMS >= 2.8.
   - Initial docker-based build environment for GIMP now available.
   - Warn against use of GCC 7.2 which has a bug breaking GIMP.
+  - An official flatpak stable package is now available on flathub.
 
 Contributors:
 
-Piotr Drąg, Tobias Ellinghaus, Ell, Lionel N, Michael Natterer, Jehan Pagès,
-Juan Palacios, Michael Schumacher.
+Marco Ciampa, Fran Dieguez, Piotr Drąg, Tobias Ellinghaus, Ell,
+Sveinn í Felli, gogo, Luis Angel Gonzo, Øyvind Kolås, Thomas Manni,
+Jordi Mas, Balázs Meskó, Lionel N, Michael Natterer, Jehan Pagès,
+Juan Palacios, Alexandre Prokoudine, Michael Schumacher,
+Dimitris Spingos, Andika Triwidada.
 
 Overview of Changes from GIMP 2.9.4 to GIMP 2.9.6
 =================================================

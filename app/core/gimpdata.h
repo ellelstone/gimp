@@ -61,7 +61,11 @@ struct _GimpDataClass
                                    GOutputStream  *output,
                                    GError        **error);
   const gchar * (* get_extension) (GimpData       *data);
+  void          (* copy)          (GimpData       *data,
+                                   GimpData       *src_data);
   GimpData    * (* duplicate)     (GimpData       *data);
+  gint          (* compare)       (GimpData       *data1,
+                                   GimpData       *data2);
 };
 
 
@@ -104,6 +108,11 @@ void          gimp_data_set_mtime        (GimpData     *data,
                                           gint64        mtime);
 gint64        gimp_data_get_mtime        (GimpData     *data);
 
+gboolean      gimp_data_is_copyable      (GimpData     *data);
+void          gimp_data_copy             (GimpData     *data,
+                                          GimpData     *src_data);
+
+gboolean      gimp_data_is_duplicatable  (GimpData     *data);
 GimpData    * gimp_data_duplicate        (GimpData     *data);
 
 void          gimp_data_make_internal    (GimpData     *data,

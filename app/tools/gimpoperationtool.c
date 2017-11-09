@@ -188,12 +188,18 @@ gimp_operation_tool_initialize (GimpTool     *tool,
 
       if (filter_tool->config)
         {
-          gimp_operation_tool_sync_op (op_tool, TRUE);
+          GtkWidget *options_gui;
 
-          if (! op_tool->options_gui)
+          gimp_operation_tool_sync_op (op_tool, TRUE);
+          options_gui = g_weak_ref_get (&op_tool->options_gui_ref);
+          if (! options_gui)
             {
               gimp_operation_tool_create_gui (op_tool);
               gimp_operation_tool_add_gui (op_tool);
+            }
+          else
+            {
+              g_object_unref (options_gui);
             }
         }
 
@@ -273,20 +279,24 @@ gimp_operation_tool_dialog (GimpFilterTool *filter_tool)
 {
   GimpOperationTool *op_tool = GIMP_OPERATION_TOOL (filter_tool);
   GtkWidget         *main_vbox;
+  GtkWidget         *options_gui;
+  GtkWidget         *options_box;
 
   main_vbox = gimp_filter_tool_dialog_get_vbox (filter_tool);
 
   /*  The options vbox  */
-  op_tool->options_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
-  gtk_box_pack_start (GTK_BOX (main_vbox), op_tool->options_box,
+  options_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+  g_weak_ref_set (&op_tool->options_box_ref, options_box);
+  gtk_box_pack_start (GTK_BOX (main_vbox), options_box,
                       TRUE, TRUE, 0);
-  gtk_widget_show (op_tool->options_box);
+  gtk_widget_show (options_box);
 
-  g_object_add_weak_pointer (G_OBJECT (op_tool->options_box),
-                             (gpointer) &op_tool->options_box);
-
-  if (op_tool->options_gui)
-    gimp_operation_tool_add_gui (op_tool);
+  options_gui = g_weak_ref_get (&op_tool->options_gui_ref);
+  if (options_gui)
+    {
+      gimp_operation_tool_add_gui (op_tool);
+      g_object_unref (options_gui);
+    }
 }
 
 static void
@@ -497,13 +507,14 @@ static void
 gimp_operation_tool_create_gui (GimpOperationTool *op_tool)
 {
   GimpFilterTool *filter_tool = GIMP_FILTER_TOOL (op_tool);
+  GtkWidget      *options_gui;
   gint            off_x, off_y;
   GeglRectangle   area;
   gint            aux;
 
   gimp_filter_tool_get_drawable_area (filter_tool, &off_x, &off_y, &area);
 
-  op_tool->options_gui =
+  options_gui =
     gimp_prop_gui_new (G_OBJECT (filter_tool->config),
                        G_TYPE_FROM_INSTANCE (filter_tool->config), 0,
                        &area,
@@ -511,9 +522,7 @@ gimp_operation_tool_create_gui (GimpOperationTool *op_tool)
                        (GimpCreatePickerFunc) gimp_filter_tool_add_color_picker,
                        (GimpCreateControllerFunc) gimp_filter_tool_add_controller,
                        filter_tool);
-
-  g_object_add_weak_pointer (G_OBJECT (op_tool->options_gui),
-                             (gpointer) &op_tool->options_gui);
+  g_weak_ref_set (&op_tool->options_gui_ref, options_gui);
 
   for (aux = 1; ; aux++)
     {
@@ -554,7 +563,13 @@ static void
 gimp_operation_tool_add_gui (GimpOperationTool *op_tool)
 {
   GtkSizeGroup *size_group  = NULL;
+  GtkWidget    *options_gui;
+  GtkWidget    *options_box;
   GList        *list;
+
+  options_gui = g_weak_ref_get (&op_tool->options_gui_ref);
+  options_box = g_weak_ref_get (&op_tool->options_box_ref);
+  g_return_if_fail (options_gui && options_box);
 
   for (list = op_tool->aux_inputs; list; list = g_list_next (list))
     {
@@ -569,7 +584,7 @@ gimp_operation_tool_add_gui (GimpOperationTool *op_tool)
 
       gtk_size_group_add_widget (size_group, toggle);
 
-      gtk_box_pack_start (GTK_BOX (op_tool->options_box), input->box,
+      gtk_box_pack_start (GTK_BOX (options_box), input->box,
                           FALSE, FALSE, 0);
       gtk_widget_show (input->box);
     }
@@ -577,9 +592,11 @@ gimp_operation_tool_add_gui (GimpOperationTool *op_tool)
   if (size_group)
     g_object_unref (size_group);
 
-  gtk_box_pack_start (GTK_BOX (op_tool->options_box), op_tool->options_gui,
-                      TRUE, TRUE, 0);
-  gtk_widget_show (op_tool->options_gui);
+  gtk_box_pack_start (GTK_BOX (options_box), options_gui, TRUE, TRUE, 0);
+  gtk_widget_show (options_gui);
+
+  g_object_unref (options_gui);
+  g_object_unref (options_box);
 }
 
 
@@ -682,6 +699,7 @@ gimp_operation_tool_set_operation (GimpOperationTool *op_tool,
 {
   GimpTool       *tool;
   GimpFilterTool *filter_tool;
+  GtkWidget      *options_gui;
 
   g_return_if_fail (GIMP_IS_OPERATION_TOOL (op_tool));
 
@@ -705,11 +723,12 @@ gimp_operation_tool_set_operation (GimpOperationTool *op_tool,
 
   gimp_filter_tool_set_widget (filter_tool, NULL);
 
-  if (op_tool->options_gui)
+  options_gui = g_weak_ref_get (&op_tool->options_gui_ref);
+  if (options_gui)
     {
       gimp_filter_tool_disable_color_picking (filter_tool);
-
-      gtk_widget_destroy (op_tool->options_gui);
+      g_object_unref (options_gui);
+      gtk_widget_destroy (options_gui);
     }
 
   if (! operation)
@@ -722,9 +741,15 @@ gimp_operation_tool_set_operation (GimpOperationTool *op_tool,
 
   if (filter_tool->config && tool->display)
     {
+      GtkWidget *options_box;
+
       gimp_operation_tool_create_gui (op_tool);
 
-      if (op_tool->options_box)
-        gimp_operation_tool_add_gui (op_tool);
+      options_box = g_weak_ref_get (&op_tool->options_box_ref);
+      if (options_box)
+        {
+          gimp_operation_tool_add_gui (op_tool);
+          g_object_unref (options_box);
+        }
     }
 }

@@ -61,20 +61,24 @@ enum
 
 typedef struct
 {
-  GimpGradient     *gradient;
-  gboolean          reverse;
+  GimpGradient        *gradient;
+  gboolean             reverse;
 #ifdef USE_GRADIENT_CACHE
-  GimpRGB          *gradient_cache;
-  gint              gradient_cache_size;
+  GimpRGB             *gradient_cache;
+  gint                 gradient_cache_size;
+#else
+  GimpGradientSegment *last_seg;
 #endif
-  gdouble           offset;
-  gdouble           sx, sy;
-  GimpGradientType  gradient_type;
-  gdouble           dist;
-  gdouble           vec[2];
-  GimpRepeatMode    repeat;
-  GRand            *seed;
-  GeglBuffer       *dist_buffer;
+  gdouble              offset;
+  gdouble              sx, sy;
+  GimpGradientType     gradient_type;
+  gdouble              dist;
+  gdouble              vec[2];
+  GimpRepeatMode       repeat;
+  GimpRGB              leftmost_color;
+  GimpRGB              rightmost_color;
+  GRand               *seed;
+  GeglBuffer          *dist_buffer;
 } RenderBlendData;
 
 
@@ -884,10 +888,7 @@ gradient_render_pixel (gdouble   x,
   switch (rbd->repeat)
     {
     case GIMP_REPEAT_TRUNCATE:
-      break;
-
     case GIMP_REPEAT_NONE:
-      factor = CLAMP (factor, 0.0, 1.0);
       break;
 
     case GIMP_REPEAT_SAWTOOTH:
@@ -912,18 +913,22 @@ gradient_render_pixel (gdouble   x,
 
   /* Blend the colors */
 
-  if (factor < 0.0 || factor > 1.0)
+  if (factor <= 0.0)
     {
-      color->r = color->g = color->b = 0;
-      color->a = GIMP_OPACITY_TRANSPARENT;
+      *color = rbd->leftmost_color;
+    }
+  else if (factor >= 1.0)
+    {
+      *color = rbd->rightmost_color;
     }
   else
     {
 #ifdef USE_GRADIENT_CACHE
       *color = rbd->gradient_cache[(gint) (factor * (rbd->gradient_cache_size - 1))];
 #else
-      gimp_gradient_get_color_at (rbd->gradient, NULL, NULL,
-                                  factor, rbd->reverse, color);
+      rbd->last_seg = gimp_gradient_get_color_at (rbd->gradient, NULL,
+                                                  rbd->last_seg, factor,
+                                                  rbd->reverse, color);
 #endif
     }
 }
@@ -998,7 +1003,8 @@ gimp_operation_blend_process (GeglOperation       *operation,
 
 #ifdef USE_GRADIENT_CACHE
   {
-    gint i;
+    GimpGradientSegment *last_seg = NULL;
+    gint                 i;
 
     rbd.gradient_cache_size = ceil (sqrt (SQR (sx - ex) + SQR (sy - ey)));
     rbd.gradient_cache      = g_new0 (GimpRGB, rbd.gradient_cache_size);
@@ -1007,9 +1013,9 @@ gimp_operation_blend_process (GeglOperation       *operation,
       {
         gdouble factor = (gdouble) i / (gdouble) (rbd.gradient_cache_size - 1);
 
-        gimp_gradient_get_color_at (rbd.gradient, NULL, NULL,
-                                    factor, rbd.reverse,
-                                    rbd.gradient_cache + i);
+        last_seg = gimp_gradient_get_color_at (rbd.gradient, NULL, last_seg,
+                                               factor, rbd.reverse,
+                                               rbd.gradient_cache + i);
       }
   }
 #endif
@@ -1061,6 +1067,26 @@ gimp_operation_blend_process (GeglOperation       *operation,
   rbd.sy            = self->start_y;
   rbd.gradient_type = self->gradient_type;
   rbd.repeat        = self->gradient_repeat;
+
+  if (rbd.repeat == GIMP_REPEAT_NONE)
+    {
+      gimp_gradient_segment_get_left_flat_color  (rbd.gradient, NULL,
+                                                  rbd.gradient->segments,
+                                                  &rbd.leftmost_color);
+      gimp_gradient_segment_get_right_flat_color (rbd.gradient, NULL,
+                                                  gimp_gradient_segment_get_last (
+                                                    rbd.gradient->segments),
+                                                  &rbd.rightmost_color);
+
+      if (rbd.reverse)
+        {
+          GimpRGB temp;
+
+          temp                = rbd.leftmost_color;
+          rbd.leftmost_color  = rbd.rightmost_color;
+          rbd.rightmost_color = temp;
+        }
+    }
 
   /* Render the gradient! */
 

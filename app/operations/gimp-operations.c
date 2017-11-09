@@ -55,6 +55,8 @@
 #include "gimpoperationthreshold.h"
 
 #include "gimp-operation-config.h"
+//#include "gimpbrightnesscontrastconfig.h"
+//#include "gimpcolorbalanceconfig.h"
 #include "gimpcurvesconfig.h"
 #include "gimplevelsconfig.h"
 
@@ -94,7 +96,9 @@ void
 gimp_operations_init (Gimp *gimp)
 {
   g_return_if_fail (GIMP_IS_GIMP (gimp));
+
   gimp_layer_modes_init ();
+
   g_type_class_ref (GIMP_TYPE_OPERATION_BLEND);
   g_type_class_ref (GIMP_TYPE_OPERATION_BORDER);
   g_type_class_ref (GIMP_TYPE_OPERATION_CAGE_COEF_CALC);

@@ -79,6 +79,12 @@ GimpGradientSegment * gimp_gradient_get_color_at   (GimpGradient        *gradien
                                                     GimpRGB             *color);
 GimpGradientSegment * gimp_gradient_get_segment_at (GimpGradient  *grad,
                                                     gdouble        pos);
+void                  gimp_gradient_split_at       (GimpGradient         *gradient,
+                                                    GimpContext          *context,
+                                                    GimpGradientSegment  *seg,
+                                                    gdouble               pos,
+                                                    GimpGradientSegment **newl,
+                                                    GimpGradientSegment **newr);
 
 gboolean          gimp_gradient_has_fg_bg_segments (GimpGradient  *gradient);
 GimpGradient    * gimp_gradient_flatten            (GimpGradient  *gradient,
@@ -147,6 +153,20 @@ gimp_gradient_segment_set_right_color_type    (GimpGradient         *gradient,
                                                GimpGradientColor     color_type);
 
 
+void
+gimp_gradient_segment_get_left_flat_color     (GimpGradient         *gradient,
+                                               GimpContext          *context,
+                                               GimpGradientSegment  *seg,
+                                               GimpRGB              *color);
+
+
+void
+gimp_gradient_segment_get_right_flat_color    (GimpGradient         *gradient,
+                                               GimpContext          *context,
+                                               GimpGradientSegment  *seg,
+                                               GimpRGB              *color);
+
+
 /* Position Setting/Getting Routines */
 /* (Setters return the position after it was set) */
 gdouble gimp_gradient_segment_get_left_pos    (GimpGradient         *gradient,
@@ -179,6 +199,11 @@ gimp_gradient_segment_get_coloring_type       (GimpGradient         *gradient,
  * If the second segment is NULL, these functions will process
  * until the end of the string.
  * */
+gint    gimp_gradient_segment_range_get_n_segments
+                                              (GimpGradient         *gradient,
+                                               GimpGradientSegment  *range_l,
+                                               GimpGradientSegment  *range_r);
+
 void    gimp_gradient_segment_range_compress  (GimpGradient         *gradient,
                                                GimpGradientSegment  *range_l,
                                                GimpGradientSegment  *range_r,
@@ -235,6 +260,12 @@ void    gimp_gradient_segment_range_split_uniform
                                                GimpGradientSegment **final_end_seg);
 
 void    gimp_gradient_segment_range_delete    (GimpGradient         *gradient,
+                                               GimpGradientSegment  *start_seg,
+                                               GimpGradientSegment  *end_seg,
+                                               GimpGradientSegment **final_start_seg,
+                                               GimpGradientSegment **final_end_seg);
+
+void    gimp_gradient_segment_range_merge     (GimpGradient         *gradient,
                                                GimpGradientSegment  *start_seg,
                                                GimpGradientSegment  *end_seg,
                                                GimpGradientSegment **final_start_seg,

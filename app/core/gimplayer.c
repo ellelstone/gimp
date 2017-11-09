@@ -663,7 +663,7 @@ gimp_layer_update_mode_node (GimpLayer *layer)
     {
       visible_mode            = GIMP_LAYER_MODE_NORMAL;
       visible_blend_space     = GIMP_LAYER_COLOR_SPACE_AUTO;
-      visible_composite_space = layer->composite_space;
+      visible_composite_space = GIMP_LAYER_COLOR_SPACE_AUTO;
       visible_composite_mode  = GIMP_LAYER_COMPOSITE_AUTO;
 
       /* This makes sure that masks of LEGACY-mode layers are
@@ -671,8 +671,7 @@ gimp_layer_update_mode_node (GimpLayer *layer)
        * LINEAR space, or whatever composite space was chosen in the
        * layer attributes dialog
        */
-      if (visible_composite_space == GIMP_LAYER_COLOR_SPACE_AUTO)
-        visible_composite_space = gimp_layer_mode_get_composite_space (layer->mode);
+      visible_composite_space = gimp_layer_get_real_composite_space (layer);
     }
   else
     {
@@ -1851,7 +1850,8 @@ gimp_layer_create_mask (GimpLayer       *layer,
             gimp_rgba_set (&background, 0.0, 0.0, 0.0, 0.0);
 
             gimp_gegl_apply_flatten (src_buffer, NULL, NULL,
-                                     dest_buffer, &background);
+                                     dest_buffer, &background,
+                                     GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL);
           }
         else
           {
@@ -2178,10 +2178,13 @@ gimp_layer_remove_alpha (GimpLayer   *layer,
                      gimp_drawable_get_format_without_alpha (GIMP_DRAWABLE (layer)));
 
   gimp_context_get_background (context, &background);
+//  gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (layer),
+//                                     &background, &background);
 
   gimp_gegl_apply_flatten (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),
                            NULL, NULL,
-                           new_buffer, &background);
+                           new_buffer, &background,
+                           gimp_layer_get_real_composite_space (layer));
 
   gimp_drawable_set_buffer (GIMP_DRAWABLE (layer),
                             gimp_item_is_attached (GIMP_ITEM (layer)),
@@ -2398,6 +2401,10 @@ gimp_layer_set_blend_space (GimpLayer           *layer,
 
   if (layer->blend_space != blend_space)
     {
+      GimpLayerColorSpace prev_real_blend_space;
+
+      prev_real_blend_space = gimp_layer_get_real_blend_space (layer);
+
       if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
         {
           GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
@@ -2410,10 +2417,13 @@ gimp_layer_set_blend_space (GimpLayer           *layer,
       g_signal_emit (layer, layer_signals[BLEND_SPACE_CHANGED], 0);
       g_object_notify (G_OBJECT (layer), "blend-space");
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
-        gimp_layer_update_mode_node (layer);
+      if (gimp_layer_get_real_blend_space (layer) != prev_real_blend_space)
+        {
+          if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+            gimp_layer_update_mode_node (layer);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
+          gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
+        }
     }
 }
 
@@ -2423,6 +2433,17 @@ gimp_layer_get_blend_space (GimpLayer *layer)
   g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COLOR_SPACE_AUTO);
 
   return layer->blend_space;
+}
+
+GimpLayerColorSpace
+gimp_layer_get_real_blend_space (GimpLayer *layer)
+{
+  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL);
+
+  if (layer->blend_space == GIMP_LAYER_COLOR_SPACE_AUTO)
+    return gimp_layer_mode_get_blend_space (layer->mode);
+  else
+    return layer->blend_space;
 }
 
 void
@@ -2437,6 +2458,10 @@ gimp_layer_set_composite_space (GimpLayer           *layer,
 
   if (layer->composite_space != composite_space)
     {
+      GimpLayerColorSpace prev_real_composite_space;
+
+      prev_real_composite_space = gimp_layer_get_real_composite_space (layer);
+
       if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
         {
           GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
@@ -2449,10 +2474,13 @@ gimp_layer_set_composite_space (GimpLayer           *layer,
       g_signal_emit (layer, layer_signals[COMPOSITE_SPACE_CHANGED], 0);
       g_object_notify (G_OBJECT (layer), "composite-space");
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
-        gimp_layer_update_mode_node (layer);
+      if (gimp_layer_get_real_composite_space (layer) != prev_real_composite_space)
+        {
+          if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+            gimp_layer_update_mode_node (layer);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
+          gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
+        }
     }
 }
 
@@ -2462,6 +2490,17 @@ gimp_layer_get_composite_space (GimpLayer *layer)
   g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COLOR_SPACE_AUTO);
 
   return layer->composite_space;
+}
+
+GimpLayerColorSpace
+gimp_layer_get_real_composite_space (GimpLayer *layer)
+{
+  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COLOR_SPACE_RGB_PERCEPTUAL);
+
+  if (layer->composite_space == GIMP_LAYER_COLOR_SPACE_AUTO)
+    return gimp_layer_mode_get_composite_space (layer->mode);
+  else
+    return layer->composite_space;
 }
 
 void
@@ -2476,6 +2515,10 @@ gimp_layer_set_composite_mode (GimpLayer              *layer,
 
   if (layer->composite_mode != composite_mode)
     {
+      GimpLayerCompositeMode prev_real_composite_mode;
+
+      prev_real_composite_mode = gimp_layer_get_real_composite_mode (layer);
+
       if (push_undo && gimp_item_is_attached (GIMP_ITEM (layer)))
         {
           GimpImage *image = gimp_item_get_image (GIMP_ITEM (layer));
@@ -2488,12 +2531,15 @@ gimp_layer_set_composite_mode (GimpLayer              *layer,
       g_signal_emit (layer, layer_signals[COMPOSITE_MODE_CHANGED], 0);
       g_object_notify (G_OBJECT (layer), "composite-mode");
 
-      if (gimp_filter_peek_node (GIMP_FILTER (layer)))
-        gimp_layer_update_mode_node (layer);
+      if (gimp_layer_get_real_composite_mode (layer) != prev_real_composite_mode)
+        {
+          if (gimp_filter_peek_node (GIMP_FILTER (layer)))
+            gimp_layer_update_mode_node (layer);
 
-      gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
+          gimp_drawable_update (GIMP_DRAWABLE (layer), 0, 0, -1, -1);
 
-      gimp_layer_update_excludes_backdrop (layer);
+          gimp_layer_update_excludes_backdrop (layer);
+        }
     }
 }
 
@@ -2503,6 +2549,17 @@ gimp_layer_get_composite_mode (GimpLayer *layer)
   g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COMPOSITE_AUTO);
 
   return layer->composite_mode;
+}
+
+GimpLayerCompositeMode
+gimp_layer_get_real_composite_mode (GimpLayer *layer)
+{
+  g_return_val_if_fail (GIMP_IS_LAYER (layer), GIMP_LAYER_COMPOSITE_SRC_OVER);
+
+  if (layer->composite_mode == GIMP_LAYER_COMPOSITE_AUTO)
+    return gimp_layer_mode_get_composite_mode (layer->mode);
+  else
+    return layer->composite_mode;
 }
 
 gboolean

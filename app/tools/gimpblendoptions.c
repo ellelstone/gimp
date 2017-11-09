@@ -25,10 +25,13 @@
 
 #include "tools-types.h"
 
+#include "core/gimpdata.h"
 #include "core/gimpdatafactory.h"
+#include "core/gimp-gradients.h"
 
 #include "widgets/gimppropwidgets.h"
 #include "widgets/gimpviewablebox.h"
+#include "widgets/gimpwidgets-utils.h"
 
 #include "gimpblendoptions.h"
 #include "gimppaintoptions-gui.h"
@@ -45,7 +48,9 @@ enum
   PROP_SUPERSAMPLE,
   PROP_SUPERSAMPLE_DEPTH,
   PROP_SUPERSAMPLE_THRESHOLD,
-  PROP_DITHER
+  PROP_DITHER,
+  PROP_INSTANT,
+  PROP_MODIFY_ACTIVE
 };
 
 
@@ -120,6 +125,20 @@ gimp_blend_options_class_init (GimpBlendOptionsClass *klass)
                             NULL,
                             TRUE,
                             GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_INSTANT,
+                            "instant",
+                            _("Instant mode"),
+                            _("Commit gradient instantly"),
+                            FALSE,
+                            GIMP_PARAM_STATIC_STRINGS);
+
+  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_MODIFY_ACTIVE,
+                            "modify-active",
+                            _("Modify active gradient"),
+                            _("Modify the active gradient in-place"),
+                            FALSE,
+                            GIMP_PARAM_STATIC_STRINGS);
 }
 
 static void
@@ -160,6 +179,13 @@ gimp_blend_options_set_property (GObject      *object,
 
     case PROP_DITHER:
       options->dither = g_value_get_boolean (value);
+      break;
+
+    case PROP_INSTANT:
+      options->instant = g_value_get_boolean (value);
+      break;
+    case PROP_MODIFY_ACTIVE:
+      options->modify_active = g_value_get_boolean (value);
       break;
 
     default:
@@ -203,6 +229,13 @@ gimp_blend_options_get_property (GObject    *object,
       g_value_set_boolean (value, options->dither);
       break;
 
+    case PROP_INSTANT:
+      g_value_set_boolean (value, options->instant);
+      break;
+    case PROP_MODIFY_ACTIVE:
+      g_value_set_boolean (value, options->modify_active);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -212,13 +245,21 @@ gimp_blend_options_get_property (GObject    *object,
 GtkWidget *
 gimp_blend_options_gui (GimpToolOptions *tool_options)
 {
-  GObject   *config = G_OBJECT (tool_options);
-  GtkWidget *vbox   = gimp_paint_options_gui (tool_options);
-  GtkWidget *vbox2;
-  GtkWidget *frame;
-  GtkWidget *scale;
-  GtkWidget *combo;
-  GtkWidget *button;
+  GObject          *config  = G_OBJECT (tool_options);
+  GimpContext      *context = GIMP_CONTEXT (tool_options);
+  GimpBlendOptions *options = GIMP_BLEND_OPTIONS (tool_options);
+  GtkWidget        *vbox    = gimp_paint_options_gui (tool_options);
+  GtkWidget        *vbox2;
+  GtkWidget        *frame;
+  GtkWidget        *scale;
+  GtkWidget        *combo;
+  GtkWidget        *button;
+  GtkWidget        *label;
+  gchar            *str;
+  GdkModifierType   extend_mask;
+  GimpGradient     *gradient;
+
+  extend_mask = gimp_get_extend_selection_mask ();
 
   /*  the gradient  */
   button = gimp_prop_gradient_box_new (NULL, GIMP_CONTEXT (tool_options),
@@ -280,6 +321,50 @@ gimp_blend_options_gui (GimpToolOptions *tool_options)
                                     0.01, 0.1, 2);
   gtk_box_pack_start (GTK_BOX (vbox2), scale, FALSE, FALSE, 0);
   gtk_widget_show (scale);
+
+  /* the instant toggle */
+  str = g_strdup_printf (_("Instant mode  (%s)"),
+                          gimp_get_mod_string (extend_mask));
+
+  button = gimp_prop_check_button_new (config, "instant", str);
+  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  g_free (str);
+
+  options->instant_toggle = button;
+
+  /*  the modify active toggle  */
+  vbox2 = gtk_box_new (GTK_ORIENTATION_VERTICAL, 2);
+  frame = gimp_prop_expanding_frame_new (config, "modify-active", NULL,
+                                         vbox2, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 0);
+  gtk_widget_show (frame);
+
+  options->modify_active_frame = frame;
+
+  label = gtk_label_new (_("The active gradient is non-writable "
+                           "and cannot be edited directly. "
+                           "Uncheck this option "
+                           "to edit a copy of it."));
+  gtk_box_pack_start (GTK_BOX (vbox2), label, TRUE, TRUE, 0);
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_width_chars (GTK_LABEL (label), 24);
+  gtk_label_set_xalign (GTK_LABEL (label), 0.0);
+  gimp_label_set_attributes (GTK_LABEL (label),
+                             PANGO_ATTR_STYLE, PANGO_STYLE_ITALIC,
+                             -1);
+
+  options->modify_active_hint = label;
+
+  gradient = gimp_context_get_gradient (GIMP_CONTEXT (options));
+
+  gtk_widget_set_sensitive (options->modify_active_frame,
+                            gradient !=
+                            gimp_gradients_get_custom (context->gimp));
+  gtk_widget_set_visible (options->modify_active_hint,
+                          gradient &&
+                          ! gimp_data_is_writable (GIMP_DATA (gradient)));
 
   return vbox;
 }

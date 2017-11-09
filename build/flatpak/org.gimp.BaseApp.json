@@ -1,25 +1,51 @@
 {
-    "id": "org.gimp.GIMP",
-    "branch": "master",
+    "id": "org.gimp.BaseApp",
+    "branch": "stable",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.24",
     "sdk": "org.gnome.Sdk",
-    "command": "gimp-2.9",
-    "rename-desktop-file": "gimp.desktop",
-    "rename-appdata-file": "gimp.appdata.xml",
-    "rename-icon": "gimp",
-    "finish-args": ["--share=ipc", "--socket=x11", "--filesystem=host", "--filesystem=xdg-config/GIMP", "--share=network", "--socket=system-bus", "--socket=session-bus" ],
-    "tags": ["dev"],
-    "desktop-file-name-prefix": "(Dev) ",
+    "runtime-version": "3.24",
     "build-options" : {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
         "env": {
             "V": "1"
-        }
+        },
+    "cleanup": [ "/man", "/share/man", "/share/gtk-doc",
+                 "/share/vala", "*.la", "*.a"]
     },
-    "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/gtk-doc", "/share/vala", "*.la", "*.a"],
     "modules": [
+        {
+            "name": "webkitgtk",
+            "config-opts": [ "--with-gtk=2.0", "--disable-webkit2", "--disable-geolocation", "--disable-video",
+                             "--disable-spellcheck", "--disable-credential-storage", "--disable-web-audio" ],
+            "build-options" : {
+                "env": {
+                    "PYTHON": "/usr/bin/python3"
+                },
+                "arch" : {
+                    "aarch64" : {
+                        "cflags": "-DENABLE_YARR_JIT=0 -fno-delete-null-pointer-checks",
+                        "cxxflags": "-DENABLE_YARR_JIT=0 -fno-delete-null-pointer-checks",
+                        "config-opts" : [
+                            "--disable-jit"
+                        ]
+                    }
+                }
+            },
+
+            "cleanup": [ "/share/doc", "/bin" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.webkitgtk.org/releases/webkitgtk-2.4.11.tar.xz",
+                    "sha256": "588aea051bfbacced27fdfe0335a957dca839ebe36aa548df39c7bbafdb65bf7"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/webkitgtk-2.4.11.patch"
+                }
+            ]
+        },
         {
             "name": "python",
             "modules": [
@@ -48,23 +74,30 @@
                 {
                     "name": "pygobject",
                     "config-opts": [ "--disable-introspection" ],
-                    "cleanup": [ "/bin", "/share/pygobject/2.0/codegen" ],
                     "sources": [
                         {
                             "type": "archive",
                             "url": "http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.xz",
                             "sha256": "fb8a1d4f665130a125011659bd347c7339c944232163dbb9a34fd0686577adb8"
+                        },
+                        {
+                            "type": "shell",
+                            "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                         }
                     ]
                 },
                 {
                     "name": "pygtk",
-                    "cleanup": [ "/bin", "/lib/pygtk" ],
+                    "cleanup": [ "/lib/pygtk" ],
                     "sources": [
                         {
                             "type": "archive",
                             "url": "http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.gz",
                             "sha256": "6e3e54fa6e65a69ac60bd58cb2e60a57f3346ac52efe995f3d10b6c38c972fd8"
+                        },
+                        {
+                            "type": "shell",
+                            "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                         }
                     ]
                 }
@@ -81,6 +114,10 @@
                             "type": "archive",
                             "url": "http://www.exiv2.org/exiv2-0.25.tar.gz",
                             "sha256": "c80bfc778a15fdb06f71265db2c3d49d8493c382e516cb99b8c9f9cbde36efa4"
+                        },
+                        {
+                            "type": "shell",
+                            "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} config/" ]
                         }
                     ]
                 }
@@ -89,8 +126,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/gexiv2/0.10/gexiv2-0.10.4.tar.xz",
-                    "sha256": "ad8d31afdc0a1932cc44c4cfcea449497c0d0b445c0ad2f9735707b306e71ca4"
+                    "url": "https://download.gnome.org/sources/gexiv2/0.10/gexiv2-0.10.6.tar.xz",
+                    "sha256": "132788919667254b42c026ab39ab3c3a5be59be8575c05fa4b371ca8aed55825"
                 }
             ]
         },
@@ -105,6 +142,10 @@
                             "type": "archive",
                             "url": "http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.2.0.tar.gz",
                             "sha256": "ecf815b60695555c1fbc73679e84c7c9902f4e8faa6e8000d2f905b8b86cedc7"
+                        },
+                        {
+                            "type": "shell",
+                            "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                         }
                     ]
                 }
@@ -116,12 +157,17 @@
                     "type": "archive",
                     "url": "http://download.savannah.nongnu.org/releases/openexr/openexr-2.2.0.tar.gz",
                     "sha256": "36a012f6c43213f840ce29a8b182700f6cf6b214bea0d5735594136b44914231"
+                },
+                {
+                    "type": "shell",
+                    "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                 }
             ]
         },
         {
             "name": "jasper",
             "cmake": true,
+            "buildsystem": "cmake-ninja",
             "builddir": true,
             "config-opts": [ "-DCMAKE_INSTALL_LIBDIR=lib" ],
             "cleanup": [ "/bin", "/share" ],
@@ -196,6 +242,10 @@
                     "type": "archive",
                     "url": "http://download.sourceforge.net/aa-project/aalib-1.4rc5.tar.gz",
                     "sha256": "fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee"
+                },
+                {
+                    "type": "shell",
+                    "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                 }
             ]
         },
@@ -218,20 +268,24 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://downloads.webmproject.org/releases/webp/libwebp-0.5.2.tar.gz",
-                    "sha256": "b75310c810b3eda222c77f6d6c26b061240e3d9060095de44b2c1bae291ecdef"
+                    "url": "http://downloads.webmproject.org/releases/webp/libwebp-0.6.0.tar.gz",
+                    "sha256": "c928119229d4f8f35e20113ffb61f281eda267634a8dc2285af4b0ee27cf2b40"
                 }
             ]
         },
         {
             "name": "libwmf",
             "config-opts": [ "--disable-static", "--disable-dependency-tracking" ],
-            "cleanup": [ "/share/doc", "/bin" ],
+            "cleanup": [ "/share/doc" ],
             "sources": [
                 {
                     "type": "archive",
                     "url": "http://downloads.sourceforge.net/wvware/libwmf-0.2.8.4.tar.gz",
                     "sha256": "5b345c69220545d003ad52bfd035d5d6f4f075e65204114a9e875e84895a7cf8"
+                },
+                {
+                    "type": "shell",
+                    "commands": [ "cp -p /usr/share/automake-*/config.{sub,guess} ." ]
                 }
             ]
         },
@@ -246,49 +300,18 @@
                     "type": "archive",
                     "url": "https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs920/ghostscript-9.20.tar.xz",
                     "sha256": "3c0f3dc5df6f784850fa4ce7dcc3d6c56ef543af1fbaedd1d9f8d9f8b66de0ab"
-                }
-            ]
-        },
-        {
-            "name": "webkitgtk",
-            "config-opts": [ "--with-gtk=2.0", "--disable-webkit2", "--disable-geolocation", "--disable-video",
-                             "--disable-spellcheck", "--disable-credential-storage", "--disable-web-audio" ],
-            "build-options" : {
-                "env": {
-                    "PYTHON": "/usr/bin/python3"
-                }
-            },
-            "cleanup": [ "/share/doc", "/bin" ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://www.webkitgtk.org/releases/webkitgtk-2.4.11.tar.xz",
-                    "sha256": "588aea051bfbacced27fdfe0335a957dca839ebe36aa548df39c7bbafdb65bf7"
                 },
                 {
-                    "type": "patch",
-                    "path": "patches/webkitgtk-2.4.11.patch"
-                }
-            ]
-        },
-        {
-            "name": "babl",
-            "config-opts": [ "--disable-docs" ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "git://git.gnome.org/babl"
-                }
-            ]
-        },
-        {
-            "name": "gegl",
-            "config-opts": [ "--disable-docs", "--disable-introspection" ],
-            "cleanup": [ "/bin" ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "git://git.gnome.org/gegl"
+                    "type": "shell",
+                    "commands": [
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} freetype/builds/unix/",
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} ijs/",
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} jpeg/",
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} libpng/",
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} lcms2/",
+                                  "cp -p /usr/share/automake-*/config.{sub,guess} tiff/config/",
+                                  "rm -rf libpng/pngread.c"
+                                ]
                 }
             ]
         },
@@ -300,16 +323,6 @@
                     "type": "archive",
                     "url": "https://github.com/mypaint/libmypaint/releases/download/v1.3.0/libmypaint-1.3.0.tar.xz",
                     "sha256": "6a07d9d57fea60f68d218a953ce91b168975a003db24de6ac01ad69dcc94a671"
-                }
-            ]
-        },
-        {
-            "name": "gimp",
-            "config-opts": [ "--disable-docs", "--disable-gtk-doc", "--disable-gtk-doc-html", "--enable-vector-icons" ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "git://git.gnome.org/gimp"
                 }
             ]
         }

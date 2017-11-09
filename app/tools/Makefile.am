@@ -1,6 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-
 AM_CPPFLAGS = \
 	-DG_LOG_DOMAIN=\"Gimp-Tools\"	\
 	-I$(top_builddir)		\
@@ -31,6 +30,8 @@ libapptools_a_sources = \
 	gimpblendoptions.h		\
 	gimpblendtool.c			\
 	gimpblendtool.h			\
+	gimpblendtool-editor.c		\
+	gimpblendtool-editor.h		\
 	gimpbrushtool.c			\
 	gimpbrushtool.h			\
 	gimpbucketfilloptions.c		\

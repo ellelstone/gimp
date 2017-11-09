@@ -504,11 +504,11 @@ histogram_invoker (GimpProcedure         *procedure,
             }
 
           mean       = gimp_histogram_get_mean (histogram, channel,
-                  start, end);
+                                                 start, end);
           std_dev    = gimp_histogram_get_std_dev (histogram, channel,
-                     start, end);
+                                                   start, end);
           median     = gimp_histogram_get_median (histogram, channel,
-                    start, end);
+                                                  start, end);
           pixels     = gimp_histogram_get_count (histogram, channel, 0, n_bins - 1);
           count      = gimp_histogram_get_count (histogram, channel,
                                                  start, end);
@@ -814,12 +814,12 @@ register_color_procs (GimpPDB *pdb)
                                "gimp-invert");
   gimp_procedure_set_static_strings (procedure,
                                      "gimp-invert",
-                                     "Invert the contents of the specified drawable.",
-                                     "This procedure inverts the contents of the specified drawable. Each intensity channel is inverted independently. The inverted intensity is given as inten' = (255 - inten).",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "Spencer Kimball & Peter Mattis",
-                                     "1995-1996",
-                                     NULL);
+                                     "Deprecated: Use 'gimp-drawable-invert' instead.",
+                                     "Deprecated: Use 'gimp-drawable-invert' instead.",
+                                     "",
+                                     "",
+                                     "",
+                                     "gimp-drawable-invert");
   gimp_procedure_add_argument (procedure,
                                gimp_param_spec_drawable_id ("drawable",
                                                             "drawable",

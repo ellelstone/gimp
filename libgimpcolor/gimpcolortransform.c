@@ -185,6 +185,7 @@ gimp_color_transform_new (GimpColorProfile         *src_profile,
   cmsHPROFILE                dest_lcms;
   cmsUInt32Number            lcms_src_format;
   cmsUInt32Number            lcms_dest_format;
+  GError                    *error = NULL;
 
   g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (src_profile), NULL);
   g_return_val_if_fail (src_format != NULL, NULL);

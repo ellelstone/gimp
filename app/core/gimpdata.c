@@ -77,38 +77,41 @@ struct _GimpDataPrivate
         G_TYPE_INSTANCE_GET_PRIVATE (data, GIMP_TYPE_DATA, GimpDataPrivate)
 
 
-static void      gimp_data_class_init        (GimpDataClass       *klass);
-static void      gimp_data_tagged_iface_init (GimpTaggedInterface *iface);
+static void       gimp_data_class_init        (GimpDataClass       *klass);
+static void       gimp_data_tagged_iface_init (GimpTaggedInterface *iface);
 
-static void      gimp_data_init              (GimpData            *data,
-                                              GimpDataClass       *data_class);
+static void       gimp_data_init              (GimpData            *data,
+                                               GimpDataClass       *data_class);
 
-static void      gimp_data_constructed       (GObject             *object);
-static void      gimp_data_finalize          (GObject             *object);
-static void      gimp_data_set_property      (GObject             *object,
-                                              guint                property_id,
-                                              const GValue        *value,
-                                              GParamSpec          *pspec);
-static void      gimp_data_get_property      (GObject             *object,
-                                              guint                property_id,
-                                              GValue              *value,
-                                              GParamSpec          *pspec);
+static void       gimp_data_constructed       (GObject             *object);
+static void       gimp_data_finalize          (GObject             *object);
+static void       gimp_data_set_property      (GObject             *object,
+                                               guint                property_id,
+                                               const GValue        *value,
+                                               GParamSpec          *pspec);
+static void       gimp_data_get_property      (GObject             *object,
+                                               guint                property_id,
+                                               GValue              *value,
+                                               GParamSpec          *pspec);
 
-static void      gimp_data_name_changed      (GimpObject          *object);
-static gint64    gimp_data_get_memsize       (GimpObject          *object,
-                                              gint64              *gui_size);
+static void       gimp_data_name_changed      (GimpObject          *object);
+static gint64     gimp_data_get_memsize       (GimpObject          *object,
+                                               gint64              *gui_size);
 
-static gboolean  gimp_data_is_name_editable  (GimpViewable        *viewable);
+static gboolean   gimp_data_is_name_editable  (GimpViewable        *viewable);
 
-static void      gimp_data_real_dirty        (GimpData            *data);
+static void       gimp_data_real_dirty        (GimpData            *data);
+static GimpData * gimp_data_real_duplicate    (GimpData            *data);
+static gint       gimp_data_real_compare      (GimpData            *data1,
+                                               GimpData            *data2);
 
-static gboolean  gimp_data_add_tag           (GimpTagged          *tagged,
-                                              GimpTag             *tag);
-static gboolean  gimp_data_remove_tag        (GimpTagged          *tagged,
-                                              GimpTag             *tag);
-static GList *   gimp_data_get_tags          (GimpTagged          *tagged);
-static gchar *   gimp_data_get_identifier    (GimpTagged          *tagged);
-static gchar *   gimp_data_get_checksum      (GimpTagged          *tagged);
+static gboolean   gimp_data_add_tag           (GimpTagged          *tagged,
+                                               GimpTag             *tag);
+static gboolean   gimp_data_remove_tag        (GimpTagged          *tagged,
+                                               GimpTag             *tag);
+static GList    * gimp_data_get_tags          (GimpTagged          *tagged);
+static gchar    * gimp_data_get_identifier    (GimpTagged          *tagged);
+static gchar    * gimp_data_get_checksum      (GimpTagged          *tagged);
 
 
 static guint data_signals[LAST_SIGNAL] = { 0 };
@@ -185,7 +188,9 @@ gimp_data_class_init (GimpDataClass *klass)
   klass->dirty                     = gimp_data_real_dirty;
   klass->save                      = NULL;
   klass->get_extension             = NULL;
-  klass->duplicate                 = NULL;
+  klass->copy                      = NULL;
+  klass->duplicate                 = gimp_data_real_duplicate;
+  klass->compare                   = gimp_data_real_compare;
 
   g_object_class_install_property (object_class, PROP_FILE,
                                    g_param_spec_object ("file", NULL, NULL,
@@ -365,7 +370,8 @@ gimp_data_get_memsize (GimpObject *object,
 static gboolean
 gimp_data_is_name_editable (GimpViewable *viewable)
 {
-  return gimp_data_is_writable (GIMP_DATA (viewable));
+  return gimp_data_is_writable (GIMP_DATA (viewable)) &&
+         ! gimp_data_is_internal (GIMP_DATA (viewable));
 }
 
 static void
@@ -377,6 +383,40 @@ gimp_data_real_dirty (GimpData *data)
    * changed implementation will also set the "dirty" flag to TRUE.
    */
   gimp_object_name_changed (GIMP_OBJECT (data));
+}
+
+static GimpData *
+gimp_data_real_duplicate (GimpData *data)
+{
+  if (GIMP_DATA_GET_CLASS (data)->copy)
+    {
+      GimpData *new = g_object_new (G_OBJECT_TYPE (data), NULL);
+
+      gimp_data_copy (new, data);
+
+      return new;
+    }
+
+  return NULL;
+}
+
+static gint
+gimp_data_real_compare (GimpData *data1,
+                        GimpData *data2)
+{
+  GimpDataPrivate *private1 = GIMP_DATA_GET_PRIVATE (data1);
+  GimpDataPrivate *private2 = GIMP_DATA_GET_PRIVATE (data2);
+
+  /*  move the internal objects (like the FG -> BG) gradient) to the top  */
+  if (private1->internal != private2->internal)
+    return private1->internal ? -1 : 1;
+
+  /*  keep user-deletable objects above system resource files  */
+  if (private1->deletable != private2->deletable)
+    return private1->deletable ? -1 : 1;
+
+  return gimp_object_name_collate ((GimpObject *) data1,
+                                   (GimpObject *) data2);
 }
 
 static gboolean
@@ -1072,6 +1112,47 @@ gimp_data_get_mtime (GimpData *data)
   return private->mtime;
 }
 
+gboolean
+gimp_data_is_copyable (GimpData *data)
+{
+  g_return_val_if_fail (GIMP_IS_DATA (data), FALSE);
+
+  return GIMP_DATA_GET_CLASS (data)->copy != NULL;
+}
+
+/**
+ * gimp_data_copy:
+ * @data:     a #GimpData object
+ * @src_data: the #GimpData object to copy from
+ *
+ * Copies @src_data to @data.  Only the object data is  copied:  the
+ * name, file name, preview, etc. are not copied.
+ **/
+void
+gimp_data_copy (GimpData *data,
+                GimpData *src_data)
+{
+  g_return_if_fail (GIMP_IS_DATA (data));
+  g_return_if_fail (GIMP_IS_DATA (src_data));
+  g_return_if_fail (GIMP_DATA_GET_CLASS (data)->copy != NULL);
+  g_return_if_fail (GIMP_DATA_GET_CLASS (data)->copy ==
+                    GIMP_DATA_GET_CLASS (src_data)->copy);
+
+  if (data != src_data)
+    GIMP_DATA_GET_CLASS (data)->copy (data, src_data);
+}
+
+gboolean
+gimp_data_is_duplicatable (GimpData *data)
+{
+  g_return_val_if_fail (GIMP_IS_DATA (data), FALSE);
+
+  if (GIMP_DATA_GET_CLASS (data)->duplicate == gimp_data_real_duplicate)
+    return gimp_data_is_copyable (data);
+  else
+    return GIMP_DATA_GET_CLASS (data)->duplicate != NULL;
+}
+
 /**
  * gimp_data_duplicate:
  * @data: a #GimpData object
@@ -1087,7 +1168,7 @@ gimp_data_duplicate (GimpData *data)
 {
   g_return_val_if_fail (GIMP_IS_DATA (data), NULL);
 
-  if (GIMP_DATA_GET_CLASS (data)->duplicate)
+  if (gimp_data_is_duplicatable (data))
     {
       GimpData        *new     = GIMP_DATA_GET_CLASS (data)->duplicate (data);
       GimpDataPrivate *private = GIMP_DATA_GET_PRIVATE (new);
@@ -1166,19 +1247,12 @@ gint
 gimp_data_compare (GimpData *data1,
                    GimpData *data2)
 {
-  GimpDataPrivate *private1 = GIMP_DATA_GET_PRIVATE (data1);
-  GimpDataPrivate *private2 = GIMP_DATA_GET_PRIVATE (data2);
+  g_return_val_if_fail (GIMP_IS_DATA (data1), 0);
+  g_return_val_if_fail (GIMP_IS_DATA (data2), 0);
+  g_return_val_if_fail (GIMP_DATA_GET_CLASS (data1)->compare ==
+                        GIMP_DATA_GET_CLASS (data2)->compare, 0);
 
-  /*  move the internal objects (like the FG -> BG) gradient) to the top  */
-  if (private1->internal != private2->internal)
-    return private1->internal ? -1 : 1;
-
-  /*  keep user-deletable objects above system resource files  */
-  if (private1->deletable != private2->deletable)
-    return private1->deletable ? -1 : 1;
-
-  return gimp_object_name_collate ((GimpObject *) data1,
-                                   (GimpObject *) data2);
+  return GIMP_DATA_GET_CLASS (data1)->compare (data1, data2);
 }
 
 /**

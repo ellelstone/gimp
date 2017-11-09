@@ -43,8 +43,8 @@ struct _GimpOperationTool
   GList          *aux_inputs;
 
   /* dialog */
-  GtkWidget      *options_box;
-  GtkWidget      *options_gui;
+  GWeakRef        options_box_ref;
+  GWeakRef        options_gui_ref;
 };
 
 struct _GimpOperationToolClass

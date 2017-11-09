@@ -165,6 +165,8 @@ G_DEFINE_TYPE (GimpColorProfile, gimp_color_profile,
 #define parent_class gimp_color_profile_parent_class
 
 
+#define GIMP_COLOR_PROFILE_ERROR gimp_color_profile_error_quark ()
+
 static GQuark
 gimp_color_profile_error_quark (void)
 {
@@ -199,25 +201,17 @@ gimp_color_profile_finalize (GObject *object)
 {
   GimpColorProfile *profile = GIMP_COLOR_PROFILE (object);
 
-  if (profile->priv->lcms_profile)
-    {
-      cmsCloseProfile (profile->priv->lcms_profile);
-      profile->priv->lcms_profile = NULL;
-    }
+  g_clear_pointer (&profile->priv->lcms_profile, cmsCloseProfile);
 
-  if (profile->priv->data)
-    {
-      g_free (profile->priv->data);
-      profile->priv->data   = NULL;
-      profile->priv->length = 0;
-    }
+  g_clear_pointer (&profile->priv->data, g_free);
+  profile->priv->length = 0;
 
-  g_free (profile->priv->description);
-  g_free (profile->priv->manufacturer);
-  g_free (profile->priv->model);
-  g_free (profile->priv->copyright);
-  g_free (profile->priv->label);
-  g_free (profile->priv->summary);
+  g_clear_pointer (&profile->priv->description,  g_free);
+  g_clear_pointer (&profile->priv->manufacturer, g_free);
+  g_clear_pointer (&profile->priv->model,        g_free);
+  g_clear_pointer (&profile->priv->copyright,    g_free);
+  g_clear_pointer (&profile->priv->label,        g_free);
+  g_clear_pointer (&profile->priv->summary,      g_free);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -317,7 +311,7 @@ gimp_color_profile_new_from_file (GFile   *file,
 
       if (error && *error == NULL)
         {
-          g_set_error (error, gimp_color_profile_error_quark (), 0,
+          g_set_error (error, GIMP_COLOR_PROFILE_ERROR, 0,
                        _("'%s' does not appear to be an ICC color profile"),
                        gimp_file_get_utf8_name (file));
         }
@@ -363,7 +357,7 @@ gimp_color_profile_new_from_icc_profile (const guint8  *data,
    }
   else
     {
-      g_set_error_literal (error, gimp_color_profile_error_quark (), 0,
+      g_set_error_literal (error, GIMP_COLOR_PROFILE_ERROR, 0,
                            _("Data does not appear to be an ICC color profile"));
     }
 
@@ -420,7 +414,7 @@ gimp_color_profile_new_from_lcms_profile (gpointer   lcms_profile,
       g_free (data);
     }
 
-  g_set_error_literal (error, gimp_color_profile_error_quark (), 0,
+  g_set_error_literal (error, GIMP_COLOR_PROFILE_ERROR, 0,
                        _("Could not save color profile to memory"));
 
   return NULL;
@@ -725,9 +719,10 @@ gimp_color_profile_is_equal (GimpColorProfile *profile1,
   const gsize header_len = sizeof (cmsICCHeader);
 
   g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (profile1), FALSE);
-  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (profile1), FALSE);
+  g_return_val_if_fail (GIMP_IS_COLOR_PROFILE (profile2), FALSE);
 
-  return (profile1->priv->length == profile2->priv->length &&
+  return profile1 == profile2                              ||
+         (profile1->priv->length == profile2->priv->length &&
           memcmp (profile1->priv->data + header_len,
                   profile2->priv->data + header_len,
                   profile1->priv->length - header_len) == 0);

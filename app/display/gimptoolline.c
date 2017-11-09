@@ -25,6 +25,7 @@
 
 #include <gegl.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
 #include "libgimpbase/gimpbase.h"
 #include "libgimpmath/gimpmath.h"
@@ -32,33 +33,41 @@
 #include "display-types.h"
 
 #include "core/gimp-utils.h"
+#include "core/gimpmarshal.h"
 
 #include "widgets/gimpwidgets-utils.h"
 
+#include "gimpcanvasgroup.h"
 #include "gimpcanvashandle.h"
 #include "gimpcanvasline.h"
 #include "gimpdisplayshell.h"
+#include "gimpdisplayshell-cursor.h"
 #include "gimptoolline.h"
 
 #include "gimp-intl.h"
 
 
-#define SHOW_LINE TRUE
-#define ENDPOINT_GRIP_HANDLE_TYPE GIMP_HANDLE_CROSS
-#define ENDPOINT_GRIP_HANDLE_SIZE GIMP_CANVAS_HANDLE_SIZE_CROSS
-#define SLIDER_GRIP_HANDLE_TYPE   GIMP_HANDLE_FILLED_DIAMOND
-#define SLIDER_GRIP_HANDLE_SIZE   (ENDPOINT_GRIP_HANDLE_SIZE * 2 / 3)
+#define SHOW_LINE            TRUE
+#define GRAB_LINE_MASK       GDK_MOD1_MASK
+#define ENDPOINT_HANDLE_TYPE GIMP_HANDLE_CROSS
+#define ENDPOINT_HANDLE_SIZE GIMP_CANVAS_HANDLE_SIZE_CROSS
+#define SLIDER_HANDLE_TYPE   GIMP_HANDLE_FILLED_DIAMOND
+#define SLIDER_HANDLE_SIZE   (ENDPOINT_HANDLE_SIZE * 2 / 3)
+#define HANDLE_CIRCLE_SCALE  1.8
+#define LINE_VICINITY        ((gint) (SLIDER_HANDLE_SIZE * HANDLE_CIRCLE_SCALE) / 2)
+#define SLIDER_TEAR_DISTANCE (5 * LINE_VICINITY)
+
+
+/* hover-only "handles" */
+#define HOVER_NEW_SLIDER     (GIMP_TOOL_LINE_HANDLE_NONE - 1)
 
 
 typedef enum
 {
-  /* POINT_NONE evaluates to FALSE */
-  POINT_NONE = 0,
-  POINT_START,
-  POINT_END,
-  POINT_BOTH,
-  POINT_SLIDER
-} GimpToolLinePoint;
+  GRAB_NONE,
+  GRAB_SELECTION,
+  GRAB_LINE
+} GimpToolLineGrab;
 
 enum
 {
@@ -68,7 +77,19 @@ enum
   PROP_X2,
   PROP_Y2,
   PROP_SLIDERS,
+  PROP_SELECTION,
   PROP_STATUS_TITLE,
+};
+
+enum
+{
+  CAN_ADD_SLIDER,
+  ADD_SLIDER,
+  PREPARE_TO_REMOVE_SLIDER,
+  REMOVE_SLIDER,
+  SELECTION_CHANGED,
+  HANDLE_CLICKED,
+  LAST_SIGNAL
 };
 
 struct _GimpToolLinePrivate
@@ -78,6 +99,7 @@ struct _GimpToolLinePrivate
   gdouble            x2;
   gdouble            y2;
   GArray            *sliders;
+  gint               selection;
   gchar             *status_title;
 
   gdouble            saved_x1;
@@ -88,17 +110,17 @@ struct _GimpToolLinePrivate
 
   gdouble            mouse_x;
   gdouble            mouse_y;
-  GimpToolLinePoint  point;
-  gint               slider_index;
-  gboolean           point_grabbed;
+  gint               hover;
+  gdouble            new_slider_value;
+  gboolean           remove_slider;
+  GimpToolLineGrab   grab;
 
   GimpCanvasItem    *line;
-  GimpCanvasItem    *start_handle_circle;
-  GimpCanvasItem    *start_handle_grip;
-  GimpCanvasItem    *end_handle_circle;
-  GimpCanvasItem    *end_handle_grip;
-  GArray            *slider_handle_circles;
-  GArray            *slider_handle_grips;
+  GimpCanvasItem    *start_handle;
+  GimpCanvasItem    *end_handle;
+  GimpCanvasItem    *slider_group;
+  GArray            *slider_handles;
+  GimpCanvasItem    *handle_circle;
 };
 
 
@@ -134,6 +156,8 @@ static void     gimp_tool_line_hover           (GimpToolWidget        *widget,
                                                 const GimpCoords      *coords,
                                                 GdkModifierType        state,
                                                 gboolean               proximity);
+static gboolean gimp_tool_line_key_press       (GimpToolWidget        *widget,
+                                                GdkEventKey           *kevent);
 static void     gimp_tool_line_motion_modifier (GimpToolWidget        *widget,
                                                 GdkModifierType        key,
                                                 gboolean               press,
@@ -145,19 +169,40 @@ static gboolean gimp_tool_line_get_cursor      (GimpToolWidget        *widget,
                                                 GimpToolCursorType    *tool_cursor,
                                                 GimpCursorModifier    *modifier);
 
-static gboolean gimp_tool_line_point_motion    (GimpToolLine          *line,
+static GimpControllerSlider *
+                gimp_tool_line_get_slider      (GimpToolLine          *line,
+                                                gint                   slider);
+static GimpCanvasItem *
+                gimp_tool_line_get_handle      (GimpToolLine          *line,
+                                                gint                   handle);
+static gdouble  gimp_tool_line_project_point   (GimpToolLine          *line,
+                                                gdouble                x,
+                                                gdouble                y,
+                                                gboolean               constrain,
+                                                gdouble               *dist);
+
+static gboolean
+               gimp_tool_line_selection_motion (GimpToolLine          *line,
                                                 gboolean               constrain);
 
 static void     gimp_tool_line_update_handles  (GimpToolLine          *line);
+static void     gimp_tool_line_update_circle   (GimpToolLine          *line);
 static void     gimp_tool_line_update_hilight  (GimpToolLine          *line);
 static void     gimp_tool_line_update_status   (GimpToolLine          *line,
                                                 GdkModifierType        state,
                                                 gboolean               proximity);
 
+static gboolean gimp_tool_line_handle_hit      (GimpCanvasItem        *handle,
+                                                gdouble                x,
+                                                gdouble                y,
+                                                gdouble               *min_dist);
+
 
 G_DEFINE_TYPE (GimpToolLine, gimp_tool_line, GIMP_TYPE_TOOL_WIDGET)
 
 #define parent_class gimp_tool_line_parent_class
+
+static guint line_signals[LAST_SIGNAL] = { 0, };
 
 
 static void
@@ -176,8 +221,71 @@ gimp_tool_line_class_init (GimpToolLineClass *klass)
   widget_class->button_release  = gimp_tool_line_button_release;
   widget_class->motion          = gimp_tool_line_motion;
   widget_class->hover           = gimp_tool_line_hover;
+  widget_class->key_press       = gimp_tool_line_key_press;
   widget_class->motion_modifier = gimp_tool_line_motion_modifier;
   widget_class->get_cursor      = gimp_tool_line_get_cursor;
+
+  line_signals[CAN_ADD_SLIDER] =
+    g_signal_new ("can-add-slider",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, can_add_slider),
+                  NULL, NULL,
+                  gimp_marshal_BOOLEAN__DOUBLE,
+                  G_TYPE_BOOLEAN, 1,
+                  G_TYPE_DOUBLE);
+
+  line_signals[ADD_SLIDER] =
+    g_signal_new ("add-slider",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, add_slider),
+                  NULL, NULL,
+                  gimp_marshal_INT__DOUBLE,
+                  G_TYPE_INT, 1,
+                  G_TYPE_DOUBLE);
+
+  line_signals[PREPARE_TO_REMOVE_SLIDER] =
+    g_signal_new ("prepare-to-remove-slider",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, prepare_to_remove_slider),
+                  NULL, NULL,
+                  gimp_marshal_VOID__INT_BOOLEAN,
+                  G_TYPE_NONE, 2,
+                  G_TYPE_INT,
+                  G_TYPE_BOOLEAN);
+
+  line_signals[REMOVE_SLIDER] =
+    g_signal_new ("remove-slider",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, remove_slider),
+                  NULL, NULL,
+                  gimp_marshal_VOID__INT,
+                  G_TYPE_NONE, 1,
+                  G_TYPE_INT);
+
+  line_signals[SELECTION_CHANGED] =
+    g_signal_new ("selection-changed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, selection_changed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+
+  line_signals[HANDLE_CLICKED] =
+    g_signal_new ("handle-clicked",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (GimpToolLineClass, handle_clicked),
+                  NULL, NULL,
+                  gimp_marshal_BOOLEAN__INT_UINT_ENUM,
+                  G_TYPE_BOOLEAN, 3,
+                  G_TYPE_INT,
+                  G_TYPE_UINT,
+                  GIMP_TYPE_BUTTON_PRESS_TYPE);
 
   g_object_class_install_property (object_class, PROP_X1,
                                    g_param_spec_double ("x1", NULL, NULL,
@@ -212,6 +320,14 @@ gimp_tool_line_class_init (GimpToolLineClass *klass)
                                                        G_TYPE_ARRAY,
                                                        GIMP_PARAM_READWRITE));
 
+  g_object_class_install_property (object_class, PROP_SELECTION,
+                                   g_param_spec_int ("selection", NULL, NULL,
+                                                     GIMP_TOOL_LINE_HANDLE_NONE,
+                                                     G_MAXINT,
+                                                     GIMP_TOOL_LINE_HANDLE_NONE,
+                                                     GIMP_PARAM_READWRITE |
+                                                     G_PARAM_CONSTRUCT));
+
   g_object_class_install_property (object_class, PROP_STATUS_TITLE,
                                    g_param_spec_string ("status-title",
                                                         NULL, NULL,
@@ -233,10 +349,12 @@ gimp_tool_line_init (GimpToolLine *line)
 
   private->sliders = g_array_new (FALSE, FALSE, sizeof (GimpControllerSlider));
 
-  private->slider_handle_circles = g_array_new (FALSE, TRUE,
-                                                sizeof (GimpCanvasItem *));
-  private->slider_handle_grips   = g_array_new (FALSE, TRUE,
-                                                sizeof (GimpCanvasItem *));
+  private->selection = GIMP_TOOL_LINE_HANDLE_NONE;
+  private->hover     = GIMP_TOOL_LINE_HANDLE_NONE;
+  private->grab      = GRAB_NONE;
+
+  private->slider_handles = g_array_new (FALSE, TRUE,
+                                         sizeof (GimpCanvasItem *));
 }
 
 static void
@@ -256,40 +374,36 @@ gimp_tool_line_constructed (GObject *object)
 
   gimp_canvas_item_set_visible (private->line, SHOW_LINE);
 
-  private->start_handle_circle =
+  private->start_handle =
+    gimp_tool_widget_add_handle (widget,
+                                 ENDPOINT_HANDLE_TYPE,
+                                 private->x1,
+                                 private->y1,
+                                 ENDPOINT_HANDLE_SIZE,
+                                 ENDPOINT_HANDLE_SIZE,
+                                 GIMP_HANDLE_ANCHOR_CENTER);
+
+  private->end_handle =
+    gimp_tool_widget_add_handle (widget,
+                                 ENDPOINT_HANDLE_TYPE,
+                                 private->x2,
+                                 private->y2,
+                                 ENDPOINT_HANDLE_SIZE,
+                                 ENDPOINT_HANDLE_SIZE,
+                                 GIMP_HANDLE_ANCHOR_CENTER);
+
+  private->slider_group =
+    gimp_canvas_group_new (gimp_tool_widget_get_shell (widget));
+  gimp_tool_widget_add_item (widget, private->slider_group);
+  g_object_unref (private->slider_group);
+
+  private->handle_circle =
     gimp_tool_widget_add_handle (widget,
                                  GIMP_HANDLE_CIRCLE,
                                  private->x1,
                                  private->y1,
-                                 2 * ENDPOINT_GRIP_HANDLE_SIZE,
-                                 2 * ENDPOINT_GRIP_HANDLE_SIZE,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
-
-  private->start_handle_grip =
-    gimp_tool_widget_add_handle (widget,
-                                 ENDPOINT_GRIP_HANDLE_TYPE,
-                                 private->x1,
-                                 private->y1,
-                                 ENDPOINT_GRIP_HANDLE_SIZE,
-                                 ENDPOINT_GRIP_HANDLE_SIZE,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
-
-  private->end_handle_circle =
-    gimp_tool_widget_add_handle (widget,
-                                 GIMP_HANDLE_CIRCLE,
-                                 private->x2,
-                                 private->y2,
-                                 2 * ENDPOINT_GRIP_HANDLE_SIZE,
-                                 2 * ENDPOINT_GRIP_HANDLE_SIZE,
-                                 GIMP_HANDLE_ANCHOR_CENTER);
-
-  private->end_handle_grip =
-    gimp_tool_widget_add_handle (widget,
-                                 ENDPOINT_GRIP_HANDLE_TYPE,
-                                 private->x2,
-                                 private->y2,
-                                 ENDPOINT_GRIP_HANDLE_SIZE,
-                                 ENDPOINT_GRIP_HANDLE_SIZE,
+                                 ENDPOINT_HANDLE_SIZE * HANDLE_CIRCLE_SCALE,
+                                 ENDPOINT_HANDLE_SIZE * HANDLE_CIRCLE_SCALE,
                                  GIMP_HANDLE_ANCHOR_CENTER);
 
   gimp_tool_line_changed (widget);
@@ -303,8 +417,7 @@ gimp_tool_line_finalize (GObject *object)
 
   g_clear_pointer (&private->sliders, g_array_unref);
   g_clear_pointer (&private->status_title, g_free);
-  g_clear_pointer (&private->slider_handle_circles, g_array_unref);
-  g_clear_pointer (&private->slider_handle_grips, g_array_unref);
+  g_clear_pointer (&private->slider_handles, g_array_unref);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -334,10 +447,47 @@ gimp_tool_line_set_property (GObject      *object,
       break;
 
     case PROP_SLIDERS:
-      g_return_if_fail (g_value_get_boxed (value) != NULL);
+      {
+        GArray   *sliders = g_value_dup_boxed (value);
+        gboolean  deselect;
 
-      g_array_unref (private->sliders);
-      private->sliders = g_value_dup_boxed (value);
+        g_return_if_fail (sliders != NULL);
+
+        deselect =
+          GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->selection) &&
+          (sliders->len != private->sliders->len               ||
+           ! gimp_tool_line_get_slider (line, private->selection)->selectable);
+
+        g_array_unref (private->sliders);
+        private->sliders = sliders;
+
+        if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->hover))
+          private->hover = GIMP_TOOL_LINE_HANDLE_NONE;
+
+        if (deselect)
+          gimp_tool_line_set_selection (line, GIMP_TOOL_LINE_HANDLE_NONE);
+      }
+      break;
+
+    case PROP_SELECTION:
+      {
+        gint selection = g_value_get_int (value);
+
+        g_return_if_fail (selection < (gint) private->sliders->len);
+        g_return_if_fail (selection < 0 ||
+                          gimp_tool_line_get_slider (line,
+                                                     selection)->selectable);
+
+        if (selection != private->selection)
+          {
+            private->selection = selection;
+
+            if (private->grab == GRAB_SELECTION)
+              private->grab = GRAB_NONE;
+
+            g_signal_emit (line, line_signals[SELECTION_CHANGED], 0);
+          }
+      }
       break;
 
     case PROP_STATUS_TITLE:
@@ -381,6 +531,10 @@ gimp_tool_line_get_property (GObject    *object,
       g_value_set_boxed (value, private->sliders);
       break;
 
+    case PROP_SELECTION:
+      g_value_set_int (value, private->selection);
+      break;
+
     case PROP_STATUS_TITLE:
       g_value_set_string (value, private->status_title);
       break;
@@ -404,77 +558,59 @@ gimp_tool_line_changed (GimpToolWidget *widget)
                         private->x2,
                         private->y2);
 
-  gimp_canvas_handle_set_position (private->start_handle_circle,
-                                   private->x1,
-                                   private->y1);
-  gimp_canvas_handle_set_position (private->start_handle_grip,
+  gimp_canvas_handle_set_position (private->start_handle,
                                    private->x1,
                                    private->y1);
 
-  gimp_canvas_handle_set_position (private->end_handle_circle,
-                                   private->x2,
-                                   private->y2);
-  gimp_canvas_handle_set_position (private->end_handle_grip,
+  gimp_canvas_handle_set_position (private->end_handle,
                                    private->x2,
                                    private->y2);
 
   /* remove excessive slider handles */
-  for (i = private->sliders->len; i < private->slider_handle_circles->len; i++)
+  for (i = private->sliders->len; i < private->slider_handles->len; i++)
     {
-      gimp_tool_widget_remove_item (widget,
-                                    g_array_index (private->slider_handle_circles,
-                                                   GimpCanvasItem *, i));
-      gimp_tool_widget_remove_item (widget,
-                                    g_array_index (private->slider_handle_grips,
-                                                   GimpCanvasItem *, i));
+      gimp_canvas_group_remove_item (GIMP_CANVAS_GROUP (private->slider_group),
+                                     gimp_tool_line_get_handle (line, i));
     }
 
-  g_array_set_size (private->slider_handle_circles, private->sliders->len);
-  g_array_set_size (private->slider_handle_grips,   private->sliders->len);
+  g_array_set_size (private->slider_handles, private->sliders->len);
 
   for (i = 0; i < private->sliders->len; i++)
     {
-      gdouble          t;
+      gdouble          value;
       gdouble          x;
       gdouble          y;
-      GimpCanvasItem **circle;
-      GimpCanvasItem **grip;
+      GimpCanvasItem **handle;
 
-      t = g_array_index (private->sliders, GimpControllerSlider, i).value;
+      value = gimp_tool_line_get_slider (line, i)->value;
 
-      x = private->x1 + (private->x2 - private->x1) * t;
-      y = private->y1 + (private->y2 - private->y1) * t;
+      x = private->x1 + (private->x2 - private->x1) * value;
+      y = private->y1 + (private->y2 - private->y1) * value;
 
-      circle = &g_array_index (private->slider_handle_circles,
-                               GimpCanvasItem *, i);
-      grip   = &g_array_index (private->slider_handle_grips,
-                               GimpCanvasItem *, i);
+      handle = &g_array_index (private->slider_handles, GimpCanvasItem *, i);
 
-      if (*circle)
+      if (*handle)
         {
-          gimp_canvas_handle_set_position (*circle, x, y);
-          gimp_canvas_handle_set_position (*grip,   x, y);
+          gimp_canvas_handle_set_position (*handle, x, y);
         }
       else
         {
-          *circle = gimp_tool_widget_add_handle (widget,
-                                                 GIMP_HANDLE_CIRCLE,
-                                                 x,
-                                                 y,
-                                                 2 * SLIDER_GRIP_HANDLE_SIZE,
-                                                 2 * SLIDER_GRIP_HANDLE_SIZE,
-                                                 GIMP_HANDLE_ANCHOR_CENTER);
-          *grip   = gimp_tool_widget_add_handle (widget,
-                                                 SLIDER_GRIP_HANDLE_TYPE,
-                                                 x,
-                                                 y,
-                                                 SLIDER_GRIP_HANDLE_SIZE,
-                                                 SLIDER_GRIP_HANDLE_SIZE,
-                                                 GIMP_HANDLE_ANCHOR_CENTER);
+          *handle = gimp_canvas_handle_new (gimp_tool_widget_get_shell (widget),
+                                            SLIDER_HANDLE_TYPE,
+                                            GIMP_HANDLE_ANCHOR_CENTER,
+                                            x,
+                                            y,
+                                            SLIDER_HANDLE_SIZE,
+                                            SLIDER_HANDLE_SIZE);
+
+          gimp_canvas_group_add_item (GIMP_CANVAS_GROUP (private->slider_group),
+                                      *handle);
+          g_object_unref (*handle);
         }
     }
 
   gimp_tool_line_update_handles (line);
+  gimp_tool_line_update_circle (line);
   gimp_tool_line_update_hilight (line);
 }
 
@@ -487,32 +623,85 @@ gimp_tool_line_button_press (GimpToolWidget      *widget,
 {
   GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
   GimpToolLinePrivate *private = line->private;
+  gboolean             result  = FALSE;
 
-  if (private->point != POINT_NONE)
+  private->grab          = GRAB_NONE;
+  private->remove_slider = FALSE;
+
+  private->saved_x1 = private->x1;
+  private->saved_y1 = private->y1;
+  private->saved_x2 = private->x2;
+  private->saved_y2 = private->y2;
+
+  if (press_type         != GIMP_BUTTON_PRESS_NORMAL   &&
+      private->hover      > GIMP_TOOL_LINE_HANDLE_NONE &&
+      private->selection  > GIMP_TOOL_LINE_HANDLE_NONE)
+    {
+      g_signal_emit (line, line_signals[HANDLE_CLICKED], 0,
+                     private->selection, state, press_type, &result);
+
+      if (! result)
+        gimp_tool_widget_hover (widget, coords, state, TRUE);
+    }
+
+  if (press_type == GIMP_BUTTON_PRESS_NORMAL || ! result)
     {
       private->saved_x1 = private->x1;
       private->saved_y1 = private->y1;
       private->saved_x2 = private->x2;
       private->saved_y2 = private->y2;
 
-      if (private->point == POINT_SLIDER)
+      if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->hover))
         {
           private->saved_slider_value =
-            g_array_index (private->sliders,
-                           GimpControllerSlider, private->slider_index).value;
+            gimp_tool_line_get_slider (line, private->hover)->value;
         }
 
-      private->point_grabbed = TRUE;
+      if (private->hover > GIMP_TOOL_LINE_HANDLE_NONE)
+        {
+          gimp_tool_line_set_selection (line, private->hover);
 
-      gimp_tool_line_point_motion (line,
-                                   state & gimp_get_constrain_behavior_mask ());
+          private->grab = GRAB_SELECTION;
+        }
+      else if (private->hover == HOVER_NEW_SLIDER)
+        {
+          gint slider;
 
-      return private->point;
+          g_signal_emit (line, line_signals[ADD_SLIDER], 0,
+                         private->new_slider_value, &slider);
+
+          g_return_val_if_fail (slider < (gint) private->sliders->len, FALSE);
+
+          if (slider >= 0)
+            {
+              gimp_tool_line_set_selection (line, slider);
+
+              private->saved_slider_value =
+                gimp_tool_line_get_slider (line, private->selection)->value;
+
+              private->grab = GRAB_SELECTION;
+            }
+        }
+      else if (state & GRAB_LINE_MASK)
+        {
+          private->grab = GRAB_LINE;
+        }
+
+      result = (private->grab != GRAB_NONE);
     }
 
+  if (! result)
+    {
+      private->hover = GIMP_TOOL_LINE_HANDLE_NONE;
+
+      gimp_tool_line_set_selection (line, GIMP_TOOL_LINE_HANDLE_NONE);
+    }
+
+  gimp_tool_line_update_handles (line);
+  gimp_tool_line_update_circle (line);
   gimp_tool_line_update_status (line, state, TRUE);
 
-  return 0;
+  return result;
 }
 
 void
@@ -524,25 +713,55 @@ gimp_tool_line_button_release (GimpToolWidget        *widget,
 {
   GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
   GimpToolLinePrivate *private = line->private;
+  GimpToolLineGrab     grab    = private->grab;
+
+  private->grab = GRAB_NONE;
 
   if (release_type == GIMP_BUTTON_RELEASE_CANCEL)
     {
-      if (private->point == POINT_SLIDER)
+      if (grab != GRAB_NONE)
         {
-          g_array_index (private->sliders,
-                         GimpControllerSlider, private->slider_index).value =
-            private->saved_slider_value;
+          if (grab == GRAB_SELECTION &&
+              GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->selection))
+            {
+              gimp_tool_line_get_slider (line, private->selection)->value =
+                private->saved_slider_value;
+
+              if (private->remove_slider)
+                {
+                  private->remove_slider = FALSE;
+
+                  g_signal_emit (line, line_signals[PREPARE_TO_REMOVE_SLIDER], 0,
+                                 private->selection, FALSE);
+                }
+            }
+
+          g_object_set (line,
+                        "x1", private->saved_x1,
+                        "y1", private->saved_y1,
+                        "x2", private->saved_x2,
+                        "y2", private->saved_y2,
+                        NULL);
         }
-
-      g_object_set (line,
-                    "x1", private->saved_x1,
-                    "y1", private->saved_y1,
-                    "x2", private->saved_x2,
-                    "y2", private->saved_y2,
-                    NULL);
     }
+  else if (grab == GRAB_SELECTION)
+    {
+      if (private->remove_slider)
+        {
+          private->remove_slider = FALSE;
 
-  private->point_grabbed = FALSE;
+          g_signal_emit (line, line_signals[REMOVE_SLIDER], 0,
+                         private->selection);
+        }
+      else if (release_type == GIMP_BUTTON_RELEASE_CLICK)
+        {
+          gboolean result;
+
+          g_signal_emit (line, line_signals[HANDLE_CLICKED], 0,
+                         private->selection, state, GIMP_BUTTON_PRESS_NORMAL,
+                         &result);
+        }
+    }
 }
 
 void
@@ -559,7 +778,7 @@ gimp_tool_line_motion (GimpToolWidget   *widget,
   private->mouse_x = coords->x;
   private->mouse_y = coords->y;
 
-  if (private->point == POINT_BOTH)
+  if (private->grab == GRAB_LINE)
     {
       g_object_set (line,
                     "x1", private->x1 + diff_x,
@@ -572,7 +791,7 @@ gimp_tool_line_motion (GimpToolWidget   *widget,
     {
       gboolean constrain = (state & gimp_get_constrain_behavior_mask ()) != 0;
 
-      gimp_tool_line_point_motion (line, constrain);
+      gimp_tool_line_selection_motion (line, constrain);
     }
 
   gimp_tool_line_update_status (line, state, TRUE);
@@ -591,52 +810,217 @@ gimp_tool_line_hover (GimpToolWidget   *widget,
   private->mouse_x = coords->x;
   private->mouse_y = coords->y;
 
-  gimp_tool_line_update_handles (line);
+  private->hover = GIMP_TOOL_LINE_HANDLE_NONE;
 
-  private->point = POINT_NONE;
+  if (! (state & GRAB_LINE_MASK))
+    {
+      /* find the closest handle to the cursor */
+      gdouble min_dist     = G_MAXDOUBLE;
+      gint    first_handle = private->sliders->len - 1;
 
-  if (state & GDK_MOD1_MASK)
-    {
-      private->point = POINT_BOTH;
-    }
-  else
-    {
-      /* give sliders precedence over the endpoints, since they're smaller */
-      for (i = private->sliders->len - 1; i >= 0; i--)
+      /* skip the sliders if the two endpoints are the same, in particular so
+       * that if the line is created during a button-press event (as in the
+       * blend tool), the end endpoint is dragged, instead of a slider.
+       */
+      if (private->x1 == private->x2 && private->y1 == private->y2)
+        first_handle = -1;
+
+      for (i = first_handle; i > GIMP_TOOL_LINE_HANDLE_NONE; i--)
         {
-          GimpCanvasItem *circle;
+          GimpCanvasItem *handle;
 
-          circle = g_array_index (private->slider_handle_circles,
-                                  GimpCanvasItem *, i);
-
-          if (gimp_canvas_item_hit (circle, private->mouse_x, private->mouse_y))
+          if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (i))
             {
-              private->point        = POINT_SLIDER;
-              private->slider_index = i;
+              const GimpControllerSlider *slider;
 
+              slider = gimp_tool_line_get_slider (line, i);
+
+              if (! slider->visible || ! slider->selectable)
+                continue;
+            }
+
+          handle = gimp_tool_line_get_handle (line, i);
+
+          if (gimp_tool_line_handle_hit (handle,
+                                         private->mouse_x,
+                                         private->mouse_y,
+                                         &min_dist))
+            {
+              private->hover = i;
+            }
+        }
+
+      if (private->hover == GIMP_TOOL_LINE_HANDLE_NONE)
+        {
+          gboolean constrain;
+          gdouble  value;
+          gdouble  dist;
+
+          constrain = (state & gimp_get_constrain_behavior_mask ()) != 0;
+
+          value = gimp_tool_line_project_point (line,
+                                                private->mouse_x,
+                                                private->mouse_y,
+                                                constrain,
+                                                &dist);
+
+          if (value >= 0.0 && value <= 1.0 && dist <= LINE_VICINITY)
+            {
+              gboolean can_add;
+
+              g_signal_emit (line, line_signals[CAN_ADD_SLIDER], 0,
+                             value, &can_add);
+
+              if (can_add)
+                {
+                  private->hover            = HOVER_NEW_SLIDER;
+                  private->new_slider_value = value;
+                }
+            }
+        }
+    }
+
+  gimp_tool_line_update_handles (line);
+  gimp_tool_line_update_circle (line);
+  gimp_tool_line_update_status (line, state, proximity);
+}
+
+static gboolean
+gimp_tool_line_key_press (GimpToolWidget *widget,
+                          GdkEventKey    *kevent)
+{
+  GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
+  GimpToolLinePrivate *private = line->private;
+  GimpDisplayShell    *shell;
+  gdouble              pixels  = 1.0;
+  gboolean             move_line;
+
+  move_line = kevent->state & GRAB_LINE_MASK;
+
+  if (private->selection == GIMP_TOOL_LINE_HANDLE_NONE && ! move_line)
+    return GIMP_TOOL_WIDGET_CLASS (parent_class)->key_press (widget, kevent);
+
+  shell = gimp_tool_widget_get_shell (widget);
+
+  if (kevent->state & gimp_get_extend_selection_mask ())
+    pixels = 10.0;
+
+  if (kevent->state & gimp_get_toggle_behavior_mask ())
+    pixels = 50.0;
+
+  switch (kevent->keyval)
+    {
+    case GDK_KEY_Left:
+    case GDK_KEY_Right:
+    case GDK_KEY_Up:
+    case GDK_KEY_Down:
+      /* move an endpoint (or both endpoints) */
+      if (private->selection < 0 || move_line)
+        {
+          gdouble xdist, ydist;
+          gdouble dx,    dy;
+
+          xdist = FUNSCALEX (shell, pixels);
+          ydist = FUNSCALEY (shell, pixels);
+
+          dx = 0.0;
+          dy = 0.0;
+
+          switch (kevent->keyval)
+            {
+            case GDK_KEY_Left:  dx = -xdist; break;
+            case GDK_KEY_Right: dx = +xdist; break;
+            case GDK_KEY_Up:    dy = -ydist; break;
+            case GDK_KEY_Down:  dy = +ydist; break;
+            }
+
+          if (private->selection == GIMP_TOOL_LINE_HANDLE_START || move_line)
+            {
+              g_object_set (line,
+                            "x1", private->x1 + dx,
+                            "y1", private->y1 + dy,
+                            NULL);
+            }
+
+          if (private->selection == GIMP_TOOL_LINE_HANDLE_END || move_line)
+            {
+              g_object_set (line,
+                            "x2", private->x2 + dx,
+                            "y2", private->y2 + dy,
+                            NULL);
+            }
+        }
+      /* move a slider */
+      else
+        {
+          GimpControllerSlider *slider;
+          gdouble               dist;
+          gdouble               dvalue;
+
+          slider = gimp_tool_line_get_slider (line, private->selection);
+
+          if (! slider->movable)
+            break;
+
+          dist = gimp_canvas_item_transform_distance (private->line,
+                                                      private->x1, private->y1,
+                                                      private->x2, private->y2);
+
+          if (dist > 0.0)
+            dist = pixels / dist;
+
+          dvalue = 0.0;
+
+          switch (kevent->keyval)
+            {
+            case GDK_KEY_Left:
+              if      (private->x1 < private->x2) dvalue = -dist;
+              else if (private->x1 > private->x2) dvalue = +dist;
+              break;
+
+            case GDK_KEY_Right:
+              if      (private->x1 < private->x2) dvalue = +dist;
+              else if (private->x1 > private->x2) dvalue = -dist;
+              break;
+
+            case GDK_KEY_Up:
+              if      (private->y1 < private->y2) dvalue = -dist;
+              else if (private->y1 > private->y2) dvalue = +dist;
+              break;
+
+            case GDK_KEY_Down:
+              if      (private->y1 < private->y2) dvalue = +dist;
+              else if (private->y1 > private->y2) dvalue = -dist;
               break;
             }
-        }
 
-      if (private->point == POINT_NONE)
-        {
-          if (gimp_canvas_item_hit (private->end_handle_circle,
-                                    private->mouse_x,
-                                    private->mouse_y))
+          if (dvalue != 0.0)
             {
-              private->point = POINT_END;
-            }
-          else if (gimp_canvas_item_hit (private->start_handle_circle,
-                                         private->mouse_x,
-                                         private->mouse_y))
-            {
-              private->point = POINT_START;
+              slider->value += dvalue;
+              slider->value  = CLAMP (slider->value, slider->min, slider->max);
+              slider->value  = CLAMP (slider->value, 0.0, 1.0);
+
+              g_object_set (line,
+                            "sliders", private->sliders,
+                            NULL);
             }
         }
+      return TRUE;
+
+    case GDK_KEY_BackSpace:
+    case GDK_KEY_Delete:
+      if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->selection))
+        {
+          if (gimp_tool_line_get_slider (line, private->selection)->removable)
+            {
+              g_signal_emit (line, line_signals[REMOVE_SLIDER], 0,
+                             private->selection);
+            }
+        }
+      return TRUE;
     }
 
-  gimp_tool_line_update_hilight (line);
-  gimp_tool_line_update_status (line, state, proximity);
+  return GIMP_TOOL_WIDGET_CLASS (parent_class)->key_press (widget, kevent);
 }
 
 static void
@@ -649,7 +1033,7 @@ gimp_tool_line_motion_modifier (GimpToolWidget  *widget,
 
   if (key == gimp_get_constrain_behavior_mask ())
     {
-      gimp_tool_line_point_motion (line, press);
+      gimp_tool_line_selection_motion (line, press);
 
       gimp_tool_line_update_status (line, state, TRUE);
     }
@@ -666,9 +1050,43 @@ gimp_tool_line_get_cursor (GimpToolWidget     *widget,
   GimpToolLine        *line    = GIMP_TOOL_LINE (widget);
   GimpToolLinePrivate *private = line->private;
 
-  if (private->point == POINT_BOTH)
+  if (private->grab ==GRAB_LINE || (state & GRAB_LINE_MASK))
     {
       *modifier = GIMP_CURSOR_MODIFIER_MOVE;
+
+      return TRUE;
+    }
+  else if (private->grab  == GRAB_SELECTION ||
+           private->hover >  GIMP_TOOL_LINE_HANDLE_NONE)
+    {
+      const GimpControllerSlider *slider = NULL;
+
+      if (private->grab == GRAB_SELECTION)
+        {
+          if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->selection))
+            slider = gimp_tool_line_get_slider (line, private->selection);
+        }
+      else if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->hover))
+        {
+          slider = gimp_tool_line_get_slider (line, private->hover);
+        }
+
+      if (private->grab == GRAB_SELECTION && slider && private->remove_slider)
+        {
+          *modifier = GIMP_CURSOR_MODIFIER_MINUS;
+
+          return TRUE;
+        }
+      else if (! slider || slider->movable)
+        {
+          *modifier = GIMP_CURSOR_MODIFIER_MOVE;
+
+          return TRUE;
+        }
+    }
+  else if (private->hover == HOVER_NEW_SLIDER)
+    {
+      *modifier = GIMP_CURSOR_MODIFIER_PLUS;
 
       return TRUE;
     }
@@ -676,17 +1094,112 @@ gimp_tool_line_get_cursor (GimpToolWidget     *widget,
   return FALSE;
 }
 
+static GimpControllerSlider *
+gimp_tool_line_get_slider (GimpToolLine *line,
+                           gint          slider)
+{
+  GimpToolLinePrivate *private = line->private;
+
+  g_assert (slider >= 0 && slider < private->sliders->len);
+
+  return &g_array_index (private->sliders, GimpControllerSlider, slider);
+}
+
+static GimpCanvasItem *
+gimp_tool_line_get_handle (GimpToolLine *line,
+                           gint          handle)
+{
+  GimpToolLinePrivate *private = line->private;
+
+  switch (handle)
+    {
+    case GIMP_TOOL_LINE_HANDLE_NONE:
+      return NULL;
+
+    case GIMP_TOOL_LINE_HANDLE_START:
+      return private->start_handle;
+
+    case GIMP_TOOL_LINE_HANDLE_END:
+      return private->end_handle;
+
+    default:
+      g_assert (handle >= 0 &&
+                handle <  (gint) private->slider_handles->len);
+
+      return g_array_index (private->slider_handles,
+                            GimpCanvasItem *, handle);
+    }
+}
+
+static gdouble
+gimp_tool_line_project_point (GimpToolLine *line,
+                              gdouble       x,
+                              gdouble       y,
+                              gboolean      constrain,
+                              gdouble      *dist)
+{
+  GimpToolLinePrivate *private = line->private;
+  gdouble              length_sqr;
+  gdouble              value   = 0.0;
+
+  length_sqr = SQR (private->x2 - private->x1) +
+               SQR (private->y2 - private->y1);
+
+  /* don't calculate the projection for 0-length lines, since we'll just get
+   * NaN.
+   */
+  if (length_sqr > 0.0)
+    {
+      value  = (private->x2 - private->x1) * (x - private->x1) +
+               (private->y2 - private->y1) * (y - private->y1);
+      value /= length_sqr;
+
+      if (dist)
+        {
+          gdouble px;
+          gdouble py;
+
+          px = private->x1 + (private->x2 - private->x1) * value;
+          py = private->y1 + (private->y2 - private->y1) * value;
+
+          *dist = gimp_canvas_item_transform_distance (private->line,
+                                                       x,  y,
+                                                       px, py);
+        }
+
+      if (constrain)
+        value = RINT (12.0 * value) / 12.0;
+    }
+  else
+    {
+      if (dist)
+        {
+          *dist = gimp_canvas_item_transform_distance (private->line,
+                                                       x,           y,
+                                                       private->x1, private->y1);
+        }
+    }
+
+  return value;
+}
+
 static gboolean
-gimp_tool_line_point_motion (GimpToolLine *line,
-                             gboolean      constrain)
+gimp_tool_line_selection_motion (GimpToolLine *line,
+                                 gboolean      constrain)
 {
   GimpToolLinePrivate *private = line->private;
   gdouble              x       = private->mouse_x;
   gdouble              y       = private->mouse_y;
 
-  switch (private->point)
+  if (private->grab != GRAB_SELECTION)
+    return FALSE;
+
+  switch (private->selection)
     {
-    case POINT_START:
+    case GIMP_TOOL_LINE_HANDLE_NONE:
+      g_assert_not_reached ();
+
+    case GIMP_TOOL_LINE_HANDLE_START:
       if (constrain)
         gimp_constrain_line (private->x2, private->y2,
                              &x, &y,
@@ -698,7 +1211,7 @@ gimp_tool_line_point_motion (GimpToolLine *line,
                     NULL);
       return TRUE;
 
-    case POINT_END:
+    case GIMP_TOOL_LINE_HANDLE_END:
       if (constrain)
         gimp_constrain_line (private->x1, private->y1,
                              &x, &y,
@@ -710,122 +1223,208 @@ gimp_tool_line_point_motion (GimpToolLine *line,
                     NULL);
       return TRUE;
 
-    case POINT_SLIDER:
+    default:
       {
-        gdouble length_sqr;
+        GimpDisplayShell     *shell;
+        GimpControllerSlider *slider;
+        gdouble               value;
+        gdouble               dist;
+        gboolean              remove_slider;
 
-        length_sqr = SQR (private->x2 - private->x1) +
-                     SQR (private->y2 - private->y1);
+        shell = gimp_tool_widget_get_shell (GIMP_TOOL_WIDGET (line));
 
-        /* don't change slider values of 0-length lines, since we'll just get
-         * NaN.
-         */
-        if (length_sqr > 0.0)
+        slider = gimp_tool_line_get_slider (line, private->selection);
+
+        /* project the cursor position onto the line */
+        value = gimp_tool_line_project_point (line, x, y, constrain, &dist);
+
+        /* slider dragging */
+        if (slider->movable)
           {
-            GimpControllerSlider *slider;
-            gdouble               t;
+            value = CLAMP (value, slider->min, slider->max);
+            value = CLAMP (value, 0.0,         1.0);
 
-            slider = &g_array_index (private->sliders, GimpControllerSlider,
-                                     private->slider_index);
+            value = fabs (value); /* avoid negative zero */
 
-            /* project the cursor position onto the line */
-            t  = (private->x2 - private->x1) * (x - private->x1) +
-                 (private->y2 - private->y1) * (y - private->y1);
-            t /= length_sqr;
-
-            if (constrain)
-              t = RINT (12.0 * t) / 12.0;
-
-            t = CLAMP (t, slider->min, slider->max);
-            t = CLAMP (t, 0.0, 1.0);
-
-            t = fabs (t); /* avoid negative zero */
-
-            slider->value = t;
+            slider->value = value;
 
             g_object_set (line,
                           "sliders", private->sliders,
                           NULL);
           }
 
+        /* slider tearing */
+        remove_slider = slider->removable && dist > SLIDER_TEAR_DISTANCE;
+
+        if (remove_slider != private->remove_slider)
+          {
+            private->remove_slider = remove_slider;
+
+            g_signal_emit (line, line_signals[PREPARE_TO_REMOVE_SLIDER], 0,
+                           private->selection, remove_slider);
+
+            /* set the cursor modifier to a minus by talking to the shell
+             * directly -- eek!
+             */
+            {
+              GimpCursorType     cursor;
+              GimpToolCursorType tool_cursor;
+              GimpCursorModifier modifier;
+
+              cursor      = shell->current_cursor;
+              tool_cursor = shell->tool_cursor;
+              modifier    = GIMP_CURSOR_MODIFIER_NONE;
+
+              gimp_tool_line_get_cursor (GIMP_TOOL_WIDGET (line), NULL, 0,
+                                         &cursor, &tool_cursor, &modifier);
+
+              gimp_display_shell_set_cursor (shell, cursor, tool_cursor, modifier);
+            }
+
+            gimp_tool_line_update_handles (line);
+            gimp_tool_line_update_circle (line);
+            gimp_tool_line_update_status (line,
+                                          constrain ?
+                                            gimp_get_constrain_behavior_mask () :
+                                            0,
+                                          TRUE);
+          }
+
         return TRUE;
       }
-
-    default:
-      break;
     }
-
-  return FALSE;
 }
 
 static void
 gimp_tool_line_update_handles (GimpToolLine *line)
 {
   GimpToolLinePrivate *private = line->private;
-  gboolean             start_visible,  end_visible;
-  gint                 start_diameter, end_diameter;
+  gdouble              value;
+  gdouble              dist;
   gint                 i;
 
-  /* Calculate handle visibility */
-  if (private->point_grabbed)
-    {
-      start_visible = FALSE;
-      end_visible   = FALSE;
-    }
-  else
-    {
-      start_diameter = gimp_canvas_handle_calc_size (private->start_handle_circle,
-                                                     private->mouse_x,
-                                                     private->mouse_y,
-                                                     0,
-                                                     2 * ENDPOINT_GRIP_HANDLE_SIZE);
-      start_visible = start_diameter > 2;
-
-      end_diameter = gimp_canvas_handle_calc_size (private->end_handle_circle,
-                                                   private->mouse_x,
-                                                   private->mouse_y,
-                                                   0,
-                                                   2 * ENDPOINT_GRIP_HANDLE_SIZE);
-      end_visible = end_diameter > 2;
-    }
-
-  gimp_canvas_item_set_visible (private->start_handle_circle, start_visible);
-  gimp_canvas_item_set_visible (private->end_handle_circle,   end_visible);
-
-  if (start_visible)
-    gimp_canvas_handle_set_size (private->start_handle_circle,
-                                 start_diameter, start_diameter);
-
-  if (end_visible)
-    gimp_canvas_handle_set_size (private->end_handle_circle,
-                                 end_diameter, end_diameter);
+  value = gimp_tool_line_project_point (line,
+                                        private->mouse_x,
+                                        private->mouse_y,
+                                        FALSE,
+                                        &dist);
 
   for (i = 0; i < private->sliders->len; i++)
     {
-      GimpCanvasItem *circle;
-      gboolean        visible;
-      gint            diameter;
+      const GimpControllerSlider *slider;
+      GimpCanvasItem             *handle;
+      gint                        size;
+      gint                        hit_radius;
+      gboolean                    show_autohidden;
+      gboolean                    visible;
 
-      circle = g_array_index (private->slider_handle_circles,
-                              GimpCanvasItem *, i);
+      slider = gimp_tool_line_get_slider (line, i);
+      handle = gimp_tool_line_get_handle (line, i);
 
-      if (private->point_grabbed)
-        visible = FALSE;
-      else
-        {
-          diameter = gimp_canvas_handle_calc_size (circle,
-                                                   private->mouse_x,
-                                                   private->mouse_y,
-                                                   0,
-                                                   2 * SLIDER_GRIP_HANDLE_SIZE);
-          visible = diameter > 2;
-        }
+      size = slider->size * SLIDER_HANDLE_SIZE;
+      size = MAX (size, 1);
 
-      gimp_canvas_item_set_visible (circle, visible);
+      hit_radius = (MAX (size, SLIDER_HANDLE_SIZE) * HANDLE_CIRCLE_SCALE) / 2;
+
+      /* show a autohidden slider if it's selected, or if no other handle is
+       * grabbed or hovered-over, and the cursor is close enough to the line,
+       * between the slider's min and max values.
+       */
+      show_autohidden = private->selection == i                        ||
+                        (private->grab == GRAB_NONE                    &&
+                         (private->hover <= GIMP_TOOL_LINE_HANDLE_NONE ||
+                          private->hover == i)                         &&
+                         dist <= hit_radius                            &&
+                         value >= slider->min                          &&
+                         value <= slider->max);
+
+      visible = slider->visible                         &&
+                (! slider->autohide || show_autohidden) &&
+                ! (private->selection == i && private->remove_slider);
+
+      handle = gimp_tool_line_get_handle (line, i);
 
       if (visible)
-        gimp_canvas_handle_set_size (circle, diameter, diameter);
+        {
+          g_object_set (handle,
+                        "type",   slider->type,
+                        "width",  size,
+                        "height", size,
+                        NULL);
+        }
+
+      gimp_canvas_item_set_visible (handle, visible);
     }
+}
+
+static void
+gimp_tool_line_update_circle (GimpToolLine *line)
+{
+  GimpToolLinePrivate *private = line->private;
+  gboolean             visible;
+
+  visible = (private->grab == GRAB_NONE                    &&
+             private->hover != GIMP_TOOL_LINE_HANDLE_NONE) ||
+            (private->grab == GRAB_SELECTION               &&
+             private->remove_slider);
+
+  if (visible)
+    {
+      gdouble  x;
+      gdouble  y;
+      gint     width;
+      gint     height;
+      gboolean dashed;
+
+      if (private->grab == GRAB_NONE && private->hover == HOVER_NEW_SLIDER)
+        {
+          /* new slider */
+          x = private->x1 +
+              (private->x2 - private->x1) * private->new_slider_value;
+          y = private->y1 +
+              (private->y2 - private->y1) * private->new_slider_value;
+
+          width = height = SLIDER_HANDLE_SIZE;
+
+          dashed = TRUE;
+        }
+      else
+        {
+          GimpCanvasItem *handle;
+
+          if (private->grab == GRAB_SELECTION)
+            {
+              /* tear slider */
+              handle = gimp_tool_line_get_handle (line, private->selection);
+              dashed = TRUE;
+            }
+          else
+            {
+              /* hover over handle */
+              handle = gimp_tool_line_get_handle (line, private->hover);
+              dashed = FALSE;
+            }
+
+          gimp_canvas_handle_get_position (handle, &x,     &y);
+          gimp_canvas_handle_get_size     (handle, &width, &height);
+        }
+
+      width   = MAX (width,  SLIDER_HANDLE_SIZE);
+      height  = MAX (height, SLIDER_HANDLE_SIZE);
+
+      width  *= HANDLE_CIRCLE_SCALE;
+      height *= HANDLE_CIRCLE_SCALE;
+
+      gimp_canvas_handle_set_position (private->handle_circle, x,     y);
+      gimp_canvas_handle_set_size     (private->handle_circle, width, height);
+
+      g_object_set (private->handle_circle,
+                    "type", dashed ? GIMP_HANDLE_DASHED_CIRCLE :
+                                     GIMP_HANDLE_CIRCLE,
+                    NULL);
+    }
+
+  gimp_canvas_item_set_visible (private->handle_circle, visible);
 }
 
 static void
@@ -834,32 +1433,15 @@ gimp_tool_line_update_hilight (GimpToolLine *line)
   GimpToolLinePrivate *private = line->private;
   gint                 i;
 
-  gimp_canvas_item_set_highlight (private->start_handle_circle,
-                                  private->point == POINT_START);
-  gimp_canvas_item_set_highlight (private->start_handle_grip,
-                                  private->point == POINT_START);
-
-  gimp_canvas_item_set_highlight (private->end_handle_circle,
-                                  private->point == POINT_END);
-  gimp_canvas_item_set_highlight (private->end_handle_grip,
-                                  private->point == POINT_END);
-
-  for (i = 0; i < private->sliders->len; i++)
+  for (i = GIMP_TOOL_LINE_HANDLE_NONE + 1;
+       i < (gint) private->sliders->len;
+       i++)
     {
-      GimpCanvasItem *circle;
-      GimpCanvasItem *grip;
-      gboolean        highlight;
+      GimpCanvasItem *handle;
 
-      circle = g_array_index (private->slider_handle_circles,
-                              GimpCanvasItem *, i);
-      grip   = g_array_index (private->slider_handle_grips,
-                              GimpCanvasItem *, i);
+      handle = gimp_tool_line_get_handle (line, i);
 
-      highlight =
-        (private->point == POINT_SLIDER && private->slider_index == i);
-
-      gimp_canvas_item_set_highlight (circle, highlight);
-      gimp_canvas_item_set_highlight (grip,   highlight);
+      gimp_canvas_item_set_highlight (handle, i == private->selection);
     }
 }
 
@@ -872,27 +1454,153 @@ gimp_tool_line_update_status (GimpToolLine    *line,
 
   if (proximity)
     {
-      gchar *status_help =
-        gimp_suggest_modifiers ("",
-                                (gimp_get_constrain_behavior_mask () |
-                                 GDK_MOD1_MASK) &
+      gint             handle;
+      const gchar     *message                = NULL;
+      const gchar     *toggle_behavior_format = NULL;
+      gchar           *status;
+
+      if (private->grab == GRAB_SELECTION)
+        handle = private->selection;
+      else
+        handle = private->hover;
+
+      if (handle == GIMP_TOOL_LINE_HANDLE_START ||
+          handle == GIMP_TOOL_LINE_HANDLE_END)
+        {
+          message                = _("Click-Drag to move the endpoint");
+          toggle_behavior_format = _("%s for constrained angles");
+        }
+      else if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (handle) ||
+               handle == HOVER_NEW_SLIDER)
+        {
+          if (private->grab == GRAB_SELECTION && private->remove_slider)
+            {
+              message = _("Release to remove the slider");
+            }
+          else
+            {
+              toggle_behavior_format = _("%s for constrained values");
+
+              if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (handle))
+                {
+                  if (gimp_tool_line_get_slider (line, handle)->movable)
+                    {
+                      if (gimp_tool_line_get_slider (line, handle)->removable)
+                        {
+                          if (private->grab == GRAB_SELECTION)
+                            {
+                              message = _("Click-Drag to move the slider; "
+                                          "drag away to remove the slider");
+                            }
+                          else
+                            {
+                              message = _("Click-Drag to move or remove the slider");
+                            }
+                        }
+                      else
+                        {
+                          message = _("Click-Drag to move the slider");
+                        }
+                    }
+                  else
+                    {
+                      toggle_behavior_format = NULL;
+
+                      if (gimp_tool_line_get_slider (line, handle)->removable)
+                        {
+                          if (private->grab == GRAB_SELECTION)
+                            {
+                              message = _("Click-Drag away to remove the slider");
+                            }
+                          else
+                            {
+                              message = _("Click-Drag to remove the slider");
+                            }
+                        }
+                      else
+                        {
+                          message = NULL;
+                        }
+                    }
+                }
+              else
+                {
+                  message = _("Click or Click-Drag to add a new slider");
+                }
+            }
+        }
+      else if (state & GDK_MOD1_MASK)
+        {
+          message = _("Click-Drag to move the line");
+        }
+
+      status =
+        gimp_suggest_modifiers (message ? message : "",
+                                ((toggle_behavior_format ?
+                                   gimp_get_constrain_behavior_mask () : 0) |
+                                 (private->grab == GRAB_NONE ?
+                                   GDK_MOD1_MASK : 0)) &
                                 ~state,
                                 NULL,
-                                _("%s for constrained angles"),
+                                toggle_behavior_format,
                                 _("%s to move the whole line"));
 
-      gimp_tool_widget_set_status_coords (GIMP_TOOL_WIDGET (line),
-                                          private->status_title,
-                                          private->x2 - private->x1,
-                                          ", ",
-                                          private->y2 - private->y1,
-                                          status_help);
+      if (message)
+        {
+          gimp_tool_widget_set_status (GIMP_TOOL_WIDGET (line), status);
+        }
+      else
+        {
+          gimp_tool_widget_set_status_coords (GIMP_TOOL_WIDGET (line),
+                                              private->status_title,
+                                              private->x2 - private->x1,
+                                              ", ",
+                                              private->y2 - private->y1,
+                                              status);
+        }
 
-      g_free (status_help);
+      g_free (status);
     }
   else
     {
       gimp_tool_widget_set_status (GIMP_TOOL_WIDGET (line), NULL);
+    }
+}
+
+static gboolean
+gimp_tool_line_handle_hit (GimpCanvasItem *handle,
+                           gdouble         x,
+                           gdouble         y,
+                           gdouble        *min_dist)
+{
+  gdouble handle_x;
+  gdouble handle_y;
+  gint    handle_width;
+  gint    handle_height;
+  gint    radius;
+  gdouble dist;
+
+  gimp_canvas_handle_get_position (handle, &handle_x,     &handle_y);
+  gimp_canvas_handle_get_size     (handle, &handle_width, &handle_height);
+
+  handle_width  = MAX (handle_width,  SLIDER_HANDLE_SIZE);
+  handle_height = MAX (handle_height, SLIDER_HANDLE_SIZE);
+
+  radius = ((gint) (handle_width * HANDLE_CIRCLE_SCALE)) / 2;
+  radius = MAX (radius, LINE_VICINITY);
+
+  dist = gimp_canvas_item_transform_distance (handle,
+                                              x, y, handle_x, handle_y);
+
+  if (dist <= radius && dist < *min_dist)
+    {
+      *min_dist = dist;
+
+      return TRUE;
+    }
+  else
+    {
+      return FALSE;
     }
 }
 
@@ -929,6 +1637,12 @@ gimp_tool_line_set_sliders (GimpToolLine               *line,
 
   private = line->private;
 
+  if (GIMP_TOOL_LINE_HANDLE_IS_SLIDER (private->selection) &&
+      private->sliders->len != n_sliders)
+    {
+      gimp_tool_line_set_selection (line, GIMP_TOOL_LINE_HANDLE_NONE);
+    }
+
   g_array_set_size (private->sliders, n_sliders);
 
   memcpy (private->sliders->data, sliders,
@@ -952,4 +1666,34 @@ gimp_tool_line_get_sliders (GimpToolLine *line,
   if (n_sliders) *n_sliders = private->sliders->len;
 
   return (const GimpControllerSlider *) private->sliders->data;
+}
+
+void
+gimp_tool_line_set_selection (GimpToolLine *line,
+                              gint          handle)
+{
+  GimpToolLinePrivate *private;
+
+  g_return_if_fail (GIMP_IS_TOOL_LINE (line));
+
+  private = line->private;
+
+  g_return_if_fail (handle >= GIMP_TOOL_LINE_HANDLE_NONE &&
+                    handle <  (gint) private->sliders->len);
+
+  g_object_set (line,
+                "selection", handle,
+                NULL);
+}
+
+gint
+gimp_tool_line_get_selection (GimpToolLine *line)
+{
+  GimpToolLinePrivate *private;
+
+  g_return_val_if_fail (GIMP_IS_TOOL_LINE (line), GIMP_TOOL_LINE_HANDLE_NONE);
+
+  private = line->private;
+
+  return private->selection;
 }

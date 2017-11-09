@@ -54,12 +54,42 @@ typedef gboolean (* GimpEevlUnitResolverProc) (const gchar      *identifier,
                                                GimpEevlQuantity *result,
                                                gpointer          data);
 
-gboolean gimp_eevl_evaluate (const gchar               *string,
-                             GimpEevlUnitResolverProc   unit_resolver_proc,
-                             GimpEevlQuantity          *result,
-                             gpointer                   data,
-                             const gchar              **error_pos,
-                             GError                   **error);
+
+/**
+ * GimpEevlOptions:
+ * @unit_resolver_proc: Unit resolver callback.
+ * @data:               Data passed to unit resolver.
+ * @ratio_expressions:  Allow ratio expressions
+ * @ratio_invert:       Invert ratios
+ * @ratio_quantity:     Quantity to multiply ratios by
+ */
+typedef struct
+{
+  GimpEevlUnitResolverProc unit_resolver_proc;
+  gpointer                 data;
+
+  gboolean                 ratio_expressions;
+  gboolean                 ratio_invert;
+  GimpEevlQuantity         ratio_quantity;
+} GimpEevlOptions;
+
+#define GIMP_EEVL_OPTIONS_INIT                                                 \
+  ((const GimpEevlOptions)                                                     \
+  {                                                                            \
+    .unit_resolver_proc = NULL,                                                \
+    .data               = NULL,                                                \
+                                                                               \
+    .ratio_expressions  = FALSE,                                               \
+    .ratio_invert       = FALSE,                                               \
+    .ratio_quantity     = {0.0, 0}                                             \
+  })
+
+
+gboolean gimp_eevl_evaluate (const gchar            *string,
+                             const GimpEevlOptions  *options,
+                             GimpEevlQuantity       *result,
+                             const gchar           **error_pos,
+                             GError                **error);
 
 
 G_END_DECLS

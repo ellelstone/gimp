@@ -448,13 +448,17 @@ gimp_data_editor_real_set_data (GimpDataEditor *editor,
       gtk_entry_set_text (GTK_ENTRY (editor->name_entry), "");
     }
 
+  gtk_editable_set_editable (
+    GTK_EDITABLE (editor->name_entry),
+    editor->data &&
+    gimp_viewable_is_name_editable (GIMP_VIEWABLE (editor->data)));
+
   editable = (editor->data && gimp_data_is_writable (editor->data));
 
   if (editor->data_editable != editable)
     {
       editor->data_editable = editable;
 
-      gtk_editable_set_editable (GTK_EDITABLE (editor->name_entry), editable);
       gimp_docked_title_changed (GIMP_DOCKED (editor));
     }
 }

@@ -48,8 +48,9 @@
 #include "gimppropgui-channel-mixer.h"
 
 #include "gimppropgui-color-rotate.h"
+#include "gimppropgui-color-to-alpha.h"
 #include "gimppropgui-convolution-matrix.h"
-#include "gimppropgui-diffration-patterns.h"
+#include "gimppropgui-diffraction-patterns.h"
 #include "gimppropgui-eval.h"
 #include "gimppropgui-generic.h"
 
@@ -344,14 +345,19 @@ gimp_prop_widget_new_from_pspec (GObject                  *config,
     }
   else if (GIMP_IS_PARAM_SPEC_RGB (pspec))
     {
+      gboolean   has_alpha;
       GtkWidget *button;
+
+      has_alpha = gimp_param_spec_rgb_has_alpha (pspec);
 
       widget = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 4);
 
       button = gimp_prop_color_button_new (config, pspec->name,
                                            g_param_spec_get_nick (pspec),
                                            128, 24,
-                                           GIMP_COLOR_AREA_SMALL_CHECKS);
+                                           has_alpha ?
+                                             GIMP_COLOR_AREA_SMALL_CHECKS :
+                                             GIMP_COLOR_AREA_FLAT);
       gimp_color_button_set_update (GIMP_COLOR_BUTTON (button), TRUE);
       gimp_color_panel_set_context (GIMP_COLOR_PANEL (button), context);
       gtk_box_pack_start (GTK_BOX (widget), button, TRUE, TRUE, 0);
@@ -365,7 +371,8 @@ gimp_prop_widget_new_from_pspec (GObject                  *config,
                                        pspec->name,
                                        GIMP_ICON_COLOR_PICKER_GRAY,
                                        _("Pick color from the image"),
-                                       /* pick_abyss = */ FALSE);
+                                       /* pick_abyss = */ FALSE,
+                                       NULL, NULL);
           gtk_box_pack_start (GTK_BOX (widget), button, FALSE, FALSE, 0);
           gtk_widget_show (button);
         }
@@ -430,6 +437,8 @@ gui_new_funcs[] =
 {
   { "GimpGegl-gegl-color-rotate-config",
     _gimp_prop_gui_new_color_rotate },
+  { "GimpGegl-gegl-color-to-alpha-plus-config",
+    _gimp_prop_gui_new_color_to_alpha },
   { "GimpGegl-gegl-convolution-matrix-config",
     _gimp_prop_gui_new_convolution_matrix },
   { "GimpGegl-gegl-channel-mixer-config",

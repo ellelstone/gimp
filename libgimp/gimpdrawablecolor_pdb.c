@@ -294,7 +294,8 @@ gimp_drawable_histogram (gint32                drawable_ID,
  *
  * This procedure inverts the contents of the specified drawable. Each
  * intensity channel is inverted independently. The inverted intensity
- * is given as inten' = (255 - inten).
+ * is given as inten' = (255 - inten). If 'linear' is TRUE, the
+ * drawable is inverted in linear space.
  *
  * Returns: TRUE on success.
  *
