@@ -28,8 +28,6 @@ libappoperations_a_sources = \
 	gimp-operation-config.h			\
 	gimpcageconfig.c			\
 	gimpcageconfig.h			\
-	gimpcolorbalanceconfig.c		\
-	gimpcolorbalanceconfig.h		\
 	gimpcurvesconfig.c			\
 	gimpcurvesconfig.h			\
 	gimplevelsconfig.c			\

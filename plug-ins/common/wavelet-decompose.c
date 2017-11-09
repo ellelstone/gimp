@@ -210,24 +210,27 @@ run (const gchar      *name,
        *
        * this avoids imperfect reconstruction of the image when using integer
        * precision.  see bug #786844.
+       * 
+       * Elle: this fix doesn't work in GIMP-CCE. Use 16f or 32f and move on.
+       * Elle: I should remove this switch as it does nothing.
        */
       switch (gimp_image_get_precision (image_id))
         {
-        case GIMP_PRECISION_U8_LINEAR:
+//        case GIMP_PRECISION_U8_LINEAR:
         case GIMP_PRECISION_U8_GAMMA:
-        case GIMP_PRECISION_U16_LINEAR:
+//        case GIMP_PRECISION_U16_LINEAR:
         case GIMP_PRECISION_U16_GAMMA:
-        case GIMP_PRECISION_U32_LINEAR:
+//        case GIMP_PRECISION_U32_LINEAR:
         case GIMP_PRECISION_U32_GAMMA:
-          grain_extract_mode = GIMP_LAYER_MODE_GRAIN_EXTRACT_LEGACY;
-          grain_merge_mode   = GIMP_LAYER_MODE_GRAIN_MERGE_LEGACY;
+          grain_extract_mode = GIMP_LAYER_MODE_GRAIN_EXTRACT;
+          grain_merge_mode   = GIMP_LAYER_MODE_GRAIN_MERGE;
           break;
 
-        case GIMP_PRECISION_HALF_LINEAR:
+//        case GIMP_PRECISION_HALF_LINEAR:
         case GIMP_PRECISION_HALF_GAMMA:
-        case GIMP_PRECISION_FLOAT_LINEAR:
+//        case GIMP_PRECISION_FLOAT_LINEAR:
         case GIMP_PRECISION_FLOAT_GAMMA:
-        case GIMP_PRECISION_DOUBLE_LINEAR:
+//        case GIMP_PRECISION_DOUBLE_LINEAR:
         case GIMP_PRECISION_DOUBLE_GAMMA:
           grain_extract_mode = GIMP_LAYER_MODE_GRAIN_EXTRACT;
           grain_merge_mode   = GIMP_LAYER_MODE_GRAIN_MERGE;
