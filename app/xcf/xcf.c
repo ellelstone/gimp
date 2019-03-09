@@ -66,7 +66,7 @@ static GimpValueArray * xcf_save_invoker (GimpProcedure         *procedure,
 
 
 static GimpXcfLoaderFunc * const xcf_loaders[] =
-{
+{ /* elle: version 13 allows to read default GIMP groups with layer masks */
   xcf_load_image,   /* version  0 */
   xcf_load_image,   /* version  1 */
   xcf_load_image,   /* version  2 */
@@ -80,6 +80,7 @@ static GimpXcfLoaderFunc * const xcf_loaders[] =
   xcf_load_image,   /* version 10 */
   xcf_load_image,   /* version 11 */
   xcf_load_image    /* version 12 */
+  xcf_load_image    /* version 13 */
 };
 
 
