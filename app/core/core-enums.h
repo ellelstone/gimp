@@ -293,8 +293,8 @@ GType gimp_thumbnail_size_get_type (void) G_GNUC_CONST;
 typedef enum  /*< pdb-skip >*/
 {
   GIMP_THUMBNAIL_SIZE_NONE    = 0,    /*< desc="No thumbnails"    >*/
-  GIMP_THUMBNAIL_SIZE_NORMAL  = 128,  /*< desc="Normal (128x128)" >*/
-  GIMP_THUMBNAIL_SIZE_LARGE   = 256   /*< desc="Large (256x256)"  >*/
+  GIMP_THUMBNAIL_SIZE_NORMAL  = 256,  /*< desc="Normal (128x128)" >*/
+  GIMP_THUMBNAIL_SIZE_LARGE   = 512   /*< desc="Large (256x256)"  >*/
 } GimpThumbnailSize;
 
 

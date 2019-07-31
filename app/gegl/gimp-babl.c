@@ -333,10 +333,10 @@ gimp_babl_format_get_color_profile (const Babl *format)
           if (! srgb_profile)
             {
               srgb_profile = gimp_color_profile_new_rgb_built_in ();
-
               g_object_add_weak_pointer (G_OBJECT (srgb_profile),
                                          (gpointer) &srgb_profile);
             }
+
           return srgb_profile;
     }
 }

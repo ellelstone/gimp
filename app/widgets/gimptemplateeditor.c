@@ -600,12 +600,12 @@ gimp_template_editor_show_advanced (GimpTemplateEditor *editor,
                                     gboolean            expanded)
 {
   GimpTemplateEditorPrivate *private;
-
+expanded = TRUE;
   g_return_if_fail (GIMP_IS_TEMPLATE_EDITOR (editor));
 
   private = GET_PRIVATE (editor);
 
-  gtk_expander_set_expanded (GTK_EXPANDER (private->expander), expanded);
+  gtk_expander_set_expanded (GTK_EXPANDER (private->expander), TRUE /*expanded*/);
 }
 
 GtkWidget *
