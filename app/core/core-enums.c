@@ -631,8 +631,8 @@ gimp_thumbnail_size_get_type (void)
   static const GimpEnumDesc descs[] =
   {
     { GIMP_THUMBNAIL_SIZE_NONE, NC_("thumbnail-size", "No thumbnails"), NULL },
-    { GIMP_THUMBNAIL_SIZE_NORMAL, NC_("thumbnail-size", "Normal (256x256)"), NULL },
-    { GIMP_THUMBNAIL_SIZE_LARGE, NC_("thumbnail-size", "Large (512x512)"), NULL },
+    { GIMP_THUMBNAIL_SIZE_NORMAL, NC_("thumbnail-size", "Normal (128x128)"), NULL },
+    { GIMP_THUMBNAIL_SIZE_LARGE, NC_("thumbnail-size", "Large (256x256)"), NULL },
     { 0, NULL, NULL }
   };
 
