@@ -157,7 +157,6 @@ gimp_template_editor_constructed (GObject *object)
   GtkWidget                 *xres;
   GtkWidget                 *yres;
   GtkWidget                 *combo;
-  GtkWidget                 *toggle;
   GtkWidget                 *scrolled_window;
   GtkWidget                 *text_view;
   GtkTextBuffer             *text_buffer;
@@ -305,6 +304,10 @@ gimp_template_editor_constructed (GObject *object)
 
   frame = gimp_frame_new ("<expander>");
   gtk_container_add (GTK_CONTAINER (private->expander), frame);
+
+  //elle: The so-called Advanced Options seem pretty basic, so shouldn't be hidden by default.
+  gtk_expander_set_expanded (GTK_EXPANDER (private->expander), TRUE);
+
   gtk_widget_show (frame);
 
   table = gtk_table_new (9, 2, FALSE);
@@ -440,13 +443,6 @@ gimp_template_editor_constructed (GObject *object)
   gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
                              _("_Gamma:"), 0.0, 0.5,
                              combo, 1, FALSE);
-
-  toggle = gimp_prop_check_button_new (G_OBJECT (template),
-                                       "color-managed",
-                                       _("Color _manage this image"));
-  gimp_table_attach_aligned (GTK_TABLE (table), 0, row++,
-                             NULL, 0.0, 0.5,
-                             toggle, 1, FALSE);
 
   private->profile_combo =
     gimp_prop_profile_combo_box_new (G_OBJECT (template),

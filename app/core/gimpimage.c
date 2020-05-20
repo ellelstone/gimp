@@ -215,11 +215,11 @@ static void         gimp_image_get_pixel_average (GimpPickable      *pickable,
                                                   const GeglRectangle *rect,
                                                   const Babl        *format,
                                                   gpointer           pixel);
-static void         gimp_image_pixel_to_srgb     (GimpPickable      *pickable,
+static void         gimp_image_pixel_to_rgb     (GimpPickable      *pickable,
                                                   const Babl        *format,
                                                   gpointer           pixel,
                                                   GimpRGB           *color);
-static void         gimp_image_srgb_to_pixel     (GimpPickable      *pickable,
+static void         gimp_image_rgb_to_pixel     (GimpPickable      *pickable,
                                                   const GimpRGB     *color,
                                                   const Babl        *format,
                                                   gpointer           pixel);
@@ -724,8 +724,8 @@ gimp_pickable_iface_init (GimpPickableInterface *iface)
   iface->get_pixel_at          = gimp_image_get_pixel_at;
   iface->get_opacity_at        = gimp_image_get_opacity_at;
   iface->get_pixel_average     = gimp_image_get_pixel_average;
-  iface->pixel_to_srgb         = gimp_image_pixel_to_srgb;
-  iface->srgb_to_pixel         = gimp_image_srgb_to_pixel;
+  iface->pixel_to_rgb         = gimp_image_pixel_to_rgb;
+  iface->rgb_to_pixel         = gimp_image_rgb_to_pixel;
 }
 
 static void
@@ -761,8 +761,6 @@ gimp_image_init (GimpImage *image)
   private->colormap            = NULL;
   private->n_colors            = 0;
   private->palette             = NULL;
-
-  private->is_color_managed    = TRUE;
 
   private->metadata            = NULL;
 
@@ -962,12 +960,10 @@ gimp_image_set_property (GObject      *object,
 
     case PROP_BASE_TYPE:
       private->base_type = g_value_get_enum (value);
-      _gimp_image_free_color_transforms (image);
       break;
 
     case PROP_PRECISION:
       private->precision = g_value_get_enum (value);
-      _gimp_image_free_color_transforms (image);
       break;
 
     case PROP_SYMMETRY:
@@ -1411,8 +1407,7 @@ gimp_image_color_managed_get_color_profile (GimpColorManaged *managed)
   GimpImage        *image   = GIMP_IMAGE (managed);
   GimpColorProfile *profile = NULL;
 
-  if (gimp_image_get_is_color_managed (image))
-    profile = gimp_image_get_color_profile (image);
+  profile = gimp_image_get_color_profile (image);
 
   if (! profile)
     profile = gimp_image_get_builtin_color_profile (image);
@@ -1586,22 +1581,22 @@ gimp_image_get_pixel_average (GimpPickable        *pickable,
 }
 
 static void
-gimp_image_pixel_to_srgb (GimpPickable *pickable,
+gimp_image_pixel_to_rgb (GimpPickable *pickable,
                           const Babl   *format,
                           gpointer      pixel,
                           GimpRGB      *color)
 {
-  gimp_image_color_profile_pixel_to_srgb (GIMP_IMAGE (pickable),
+  gimp_image_color_profile_pixel_to_rgb (GIMP_IMAGE (pickable),
                                           format, pixel, color);
 }
 
 static void
-gimp_image_srgb_to_pixel (GimpPickable  *pickable,
+gimp_image_rgb_to_pixel (GimpPickable  *pickable,
                           const GimpRGB *color,
                           const Babl    *format,
                           gpointer       pixel)
 {
-  gimp_image_color_profile_srgb_to_pixel (GIMP_IMAGE (pickable),
+  gimp_image_color_profile_rgb_to_pixel (GIMP_IMAGE (pickable),
                                           color, format, pixel);
 }
 

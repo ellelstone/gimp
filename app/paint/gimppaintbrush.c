@@ -199,7 +199,7 @@ gimp_paintbrush_real_get_paint_params (GimpPaintbrush            *paintbrush,
                                              paint_color))
     {
       /* optionally take the color from the current gradient */
-      gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+      gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                          paint_color, paint_color);
 
       *paint_appl_mode = GIMP_PAINT_INCREMENTAL;
@@ -218,7 +218,7 @@ gimp_paintbrush_real_get_paint_params (GimpPaintbrush            *paintbrush,
       /* otherwise fill the area with the foreground color */
       gimp_context_get_foreground (context, paint_color);
 
-      gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+      gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                          paint_color, paint_color);
     }
 }

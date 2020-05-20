@@ -123,6 +123,13 @@ const Babl       * gimp_color_profile_get_lcms_format       (const Babl        *
                                                              guint32           *lcms_format);
 
 
+void               gimp_color_profile_get_colorants          (GimpColorProfile *profile);
+GimpColorProfile * gimp_color_profile_new_rgb_from_colorants (void);
+GimpColorProfile * gimp_color_profile_new_rgb_from_colorants_perceptual (void);
+
+
+
+
 G_END_DECLS
 
 #endif  /* __GIMP_COLOR_PROFILE_H__ */

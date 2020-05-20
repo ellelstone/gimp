@@ -73,7 +73,7 @@ static const GimpActionEntry view_actions[] =
   { "view-padding-color-menu",  NULL, NC_("view-action", "_Padding Color") },
 
   { "view-color-management-menu", NULL,
-    NC_("view-action", "_Color Management") },
+    NC_("view-action", "_Proof") },
 
   { "view-display-intent-menu", NULL,
     NC_("view-action", "Display _Rendering Intent") },
@@ -1006,8 +1006,8 @@ view_actions_update (GimpActionGroup *group,
   SET_SENSITIVE ("view-navigation-window", image);
   SET_SENSITIVE ("view-display-filters",   image);
 
-  SET_SENSITIVE ("view-color-management-enable",                image);
-  SET_ACTIVE    ("view-color-management-enable",                cm);
+//  SET_SENSITIVE ("view-color-management-enable",                image);
+//  SET_ACTIVE    ("view-color-management-enable",                cm);
   SET_SENSITIVE ("view-color-management-softproof",             image);
   SET_ACTIVE    ("view-color-management-softproof",             sp);
   SET_SENSITIVE ("view-display-intent-perceptual",              cm);

@@ -989,7 +989,7 @@ gimp_tool_gui_canvas_resized (GtkWidget     *canvas,
       if (allocation.width  > 2 * requisition.width &&
           allocation.height > 3 * requisition.height)
         {
-          overlay = TRUE;
+          overlay = FALSE;
         }
 
       gimp_tool_gui_set_overlay (gui,

@@ -178,18 +178,6 @@ static const GimpActionEntry image_actions[] =
     GIMP_HELP_IMAGE_PROPERTIES }
 };
 
-static const GimpToggleActionEntry image_toggle_actions[] =
-{
-  { "image-color-management-enabled", NULL,
-    NC_("image-action", "_Enable Color Management"), NULL,
-    NC_("image-action", "Whether the image is color managed. Disabling "
-        "color management is equivalent to assigning a built-in sRGB "
-        "color profile. Better leave color management enabled."),
-    image_color_management_enabled_cmd_callback,
-    TRUE,
-    GIMP_HELP_IMAGE_COLOR_MANAGEMENT_ENABLED }
-};
-
 static const GimpRadioActionEntry image_convert_base_type_actions[] =
 {
   { "image-convert-rgb", GIMP_ICON_CONVERT_RGB,
@@ -306,10 +294,6 @@ image_actions_setup (GimpActionGroup *group)
                                  image_actions,
                                  G_N_ELEMENTS (image_actions));
 
-  gimp_action_group_add_toggle_actions (group, "image-action",
-                                        image_toggle_actions,
-                                        G_N_ELEMENTS (image_toggle_actions));
-
   gimp_action_group_add_radio_actions (group, "image-convert-action",
                                        image_convert_base_type_actions,
                                        G_N_ELEMENTS (image_convert_base_type_actions),
@@ -360,7 +344,6 @@ image_actions_update (GimpActionGroup *group,
   gboolean   lp            = FALSE;
   gboolean   sel           = FALSE;
   gboolean   groups        = FALSE;
-  gboolean   color_managed = FALSE;
   gboolean   profile       = FALSE;
 
   if (image)
@@ -419,7 +402,6 @@ image_actions_update (GimpActionGroup *group,
 
       groups = ! gimp_item_stack_is_flat (GIMP_ITEM_STACK (layers));
 
-      color_managed = gimp_image_get_is_color_managed (image);
       profile       = (gimp_image_get_color_profile (image) != NULL);
     }
 
@@ -463,9 +445,6 @@ image_actions_update (GimpActionGroup *group,
 
   SET_SENSITIVE ("image-convert-gamma",  image);
   SET_SENSITIVE ("image-convert-linear", image && !is_indexed);
-
-  SET_SENSITIVE ("image-color-management-enabled", image);
-  SET_ACTIVE    ("image-color-management-enabled", image && color_managed);
 
   SET_SENSITIVE ("image-color-profile-assign",  image);
   SET_SENSITIVE ("image-color-profile-convert", image);

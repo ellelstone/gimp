@@ -133,7 +133,7 @@ gimp_histogram_view_class_init (GimpHistogramViewClass *klass)
                                    g_param_spec_enum ("histogram-channel",
                                                       NULL, NULL,
                                                       GIMP_TYPE_HISTOGRAM_CHANNEL,
-                                                      GIMP_HISTOGRAM_VALUE,
+                                                      GIMP_HISTOGRAM_RGB,
                                                       GIMP_PARAM_READWRITE |
                                                       G_PARAM_CONSTRUCT));
 
@@ -644,7 +644,7 @@ gimp_histogram_view_set_histogram (GimpHistogramView *view,
                             view);
 
           if (! gimp_histogram_has_channel (histogram, view->channel))
-            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_RGB);
         }
 
       gimp_histogram_view_update_bins (view);
@@ -694,7 +694,7 @@ gimp_histogram_view_set_background (GimpHistogramView *view,
                             view);
 
           if (! gimp_histogram_has_channel (histogram, view->channel))
-            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+            gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_RGB);
         }
 
       gimp_histogram_view_update_bins (view);

@@ -25,36 +25,13 @@ file_webp = file-webp
 endif
 
 SUBDIRS = \
-	script-fu		\
-	$(pygimp)		\
-	file-bmp		\
 	$(file_darktable)	\
-	file-dds		\
 	$(file_exr)		\
-	file-faxg3		\
 	file-fits		\
-	file-fli		\
-	file-ico		\
 	file-jpeg		\
 	file-psd		\
 	file-raw		\
-	file-sgi		\
-	file-tiff		\
-	$(file_webp)		\
-	flame			\
-	fractal-explorer	\
-	gfig			\
-	gimpressionist		\
-	gradient-flare		\
-	help			\
-	$(help_browser)		\
-	ifs-compose		\
-	imagemap		\
-	lighting		\
-	map-object		\
-	metadata		\
-	pagecurl		\
-	$(print)		\
+	file-tiff   \
 	screenshot		\
 	selection-to-path	\
 	$(twain)		\

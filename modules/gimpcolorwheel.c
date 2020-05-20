@@ -1598,7 +1598,7 @@ gimp_color_wheel_create_transform (GimpColorWheel *wheel)
       const Babl *format = babl_format ("cairo-RGB24");
 
       if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_srgb ();
+        profile = gimp_color_profile_new_rgb_from_colorants ();
 
       priv->transform = gimp_widget_get_color_transform (GTK_WIDGET (wheel),
                                                          priv->config,

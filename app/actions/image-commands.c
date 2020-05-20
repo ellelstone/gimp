@@ -427,24 +427,6 @@ image_convert_gamma_cmd_callback (GimpAction *action,
 }
 
 void
-image_color_management_enabled_cmd_callback (GimpAction *action,
-                                             GVariant   *value,
-                                             gpointer    data)
-{
-  GimpImage *image;
-  gboolean   enabled;
-  return_if_no_image (image, data);
-
-  enabled = g_variant_get_boolean (value);
-
-  if (enabled != gimp_image_get_is_color_managed (image))
-    {
-      gimp_image_set_is_color_managed (image, enabled, TRUE);
-      gimp_image_flush (image);
-    }
-}
-
-void
 image_color_profile_assign_cmd_callback (GimpAction *action,
                                          GVariant   *value,
                                          gpointer    data)
@@ -1312,8 +1294,7 @@ image_profile_assign_callback (GtkWidget                *dialog,
       return;
     }
 
-  gimp_image_set_is_color_managed (image, TRUE, TRUE);
-
+  //gimp_image_set_color_profile (image, new_profile, NULL);
   /*  omg...  */
   gimp_image_parasite_detach (image, "icc-profile-name", TRUE);
 

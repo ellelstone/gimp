@@ -494,7 +494,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
         {
           if (! linear_rgb_profile)
             {
-              linear_rgb_profile = gimp_color_profile_new_rgb_srgb_linear ();
+              linear_rgb_profile = gimp_color_profile_new_rgb_from_colorants ();
               g_object_add_weak_pointer (G_OBJECT (linear_rgb_profile),
                                          (gpointer) &linear_rgb_profile);
             }
@@ -505,7 +505,7 @@ gimp_babl_format_get_color_profile (const Babl *format)
         {
           if (! srgb_profile)
             {
-              srgb_profile = gimp_color_profile_new_rgb_srgb ();
+              srgb_profile = gimp_color_profile_new_rgb_from_colorants_perceptual ();
               g_object_add_weak_pointer (G_OBJECT (srgb_profile),
                                          (gpointer) &srgb_profile);
             }

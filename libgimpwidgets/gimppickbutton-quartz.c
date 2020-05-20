@@ -233,7 +233,7 @@
       const Babl              *format;
       GimpColorTransformFlags  flags = 0;
 
-      format = babl_format ("R'G'B'A double");
+      format = babl_format ("RGBA double");
 
       flags |= GIMP_COLOR_TRANSFORM_FLAGS_NOOPTIMIZE;
       flags |= GIMP_COLOR_TRANSFORM_FLAGS_BLACK_POINT_COMPENSATION;

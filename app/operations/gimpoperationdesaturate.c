@@ -199,18 +199,30 @@ gimp_operation_desaturate_process (GeglOperation       *operation,
 
     case GIMP_DESATURATE_LUMA:
     case GIMP_DESATURATE_LUMINANCE:
-      while (samples--)
-        {
-          gfloat value = GIMP_RGB_LUMINANCE (src[0], src[1], src[2]);
+      {
+        GimpColorProfile *profile = gimp_color_profile_new_rgb_from_colorants ();
+        const Babl *space_from_colorants = gimp_color_profile_get_space (profile,
+                              GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC,
+                              NULL);
+        const double *rgbtoxyz = babl_space_get_rgbtoxyz (space_from_colorants);
+        double red_Y   = rgbtoxyz[3];
+        double green_Y = rgbtoxyz[4];
+        double blue_Y  = rgbtoxyz[5];
 
-          dest[0] = value;
-          dest[1] = value;
-          dest[2] = value;
-          dest[3] = src[3];
+         while (samples--)
+          {
+            gfloat value  = (src[0] * red_Y)   +
+                            (src[1] * green_Y) +
+                            (src[2] * blue_Y);
+            dest[0] = value;
+            dest[1] = value;
+            dest[2] = value;
+            dest[3] = src[3];
 
-          src  += 4;
-          dest += 4;
-        }
+            src  += 4;
+            dest += 4;
+          }
+      }
       break;
 
     case GIMP_DESATURATE_AVERAGE:

@@ -211,11 +211,11 @@ static GimpColorProfile *
 static gdouble gimp_layer_get_opacity_at        (GimpPickable       *pickable,
                                                  gint                x,
                                                  gint                y);
-static void    gimp_layer_pixel_to_srgb         (GimpPickable       *pickable,
+static void    gimp_layer_pixel_to_rgb         (GimpPickable       *pickable,
                                                  const Babl         *format,
                                                  gpointer            pixel,
                                                  GimpRGB            *color);
-static void    gimp_layer_srgb_to_pixel         (GimpPickable       *pickable,
+static void    gimp_layer_rgb_to_pixel         (GimpPickable       *pickable,
                                                  const GimpRGB      *color,
                                                  const Babl         *format,
                                                  gpointer            pixel);
@@ -586,8 +586,8 @@ static void
 gimp_pickable_iface_init (GimpPickableInterface *iface)
 {
   iface->get_opacity_at = gimp_layer_get_opacity_at;
-  iface->pixel_to_srgb  = gimp_layer_pixel_to_srgb;
-  iface->srgb_to_pixel  = gimp_layer_srgb_to_pixel;
+  iface->pixel_to_rgb  = gimp_layer_pixel_to_rgb;
+  iface->rgb_to_pixel  = gimp_layer_rgb_to_pixel;
 }
 
 static void
@@ -996,8 +996,7 @@ gimp_layer_convert (GimpItem  *item,
   old_precision = gimp_drawable_get_precision (drawable);
   new_precision = gimp_image_get_precision (dest_image);
 
-  if (g_type_is_a (old_type, GIMP_TYPE_LAYER) &&
-      gimp_image_get_is_color_managed (dest_image))
+  if (g_type_is_a (old_type, GIMP_TYPE_LAYER))
     {
       GimpColorProfile *src_profile =
         gimp_color_managed_get_color_profile (GIMP_COLOR_MANAGED (item));
@@ -1590,25 +1589,25 @@ gimp_layer_get_opacity_at (GimpPickable *pickable,
 }
 
 static void
-gimp_layer_pixel_to_srgb (GimpPickable *pickable,
+gimp_layer_pixel_to_rgb (GimpPickable *pickable,
                           const Babl   *format,
                           gpointer      pixel,
                           GimpRGB      *color)
 {
   GimpImage *image = gimp_item_get_image (GIMP_ITEM (pickable));
 
-  gimp_pickable_pixel_to_srgb (GIMP_PICKABLE (image), format, pixel, color);
+  gimp_pickable_pixel_to_rgb (GIMP_PICKABLE (image), format, pixel, color);
 }
 
 static void
-gimp_layer_srgb_to_pixel (GimpPickable  *pickable,
+gimp_layer_rgb_to_pixel (GimpPickable  *pickable,
                           const GimpRGB *color,
                           const Babl    *format,
                           gpointer       pixel)
 {
   GimpImage *image = gimp_item_get_image (GIMP_ITEM (pickable));
 
-  gimp_pickable_srgb_to_pixel (GIMP_PICKABLE (image), color, format, pixel);
+  gimp_pickable_rgb (GIMP_PICKABLE (image), color, format, pixel);
 }
 
 static void
@@ -2460,7 +2459,7 @@ gimp_layer_remove_alpha (GimpLayer   *layer,
                      gimp_drawable_get_format_without_alpha (GIMP_DRAWABLE (layer)));
 
   gimp_context_get_background (context, &background);
-  gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (layer),
+  gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (layer),
                                      &background, &background);
 
   gimp_gegl_apply_flatten (gimp_drawable_get_buffer (GIMP_DRAWABLE (layer)),

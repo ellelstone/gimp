@@ -118,7 +118,7 @@ gimp_eraser_get_paint_params (GimpPaintbrush            *paintbrush,
   GimpContext       *context = GIMP_CONTEXT (paint_options);
 
   gimp_context_get_background (context, paint_color);
-  gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+  gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                      paint_color, paint_color);
 
   if (options->anti_erase)

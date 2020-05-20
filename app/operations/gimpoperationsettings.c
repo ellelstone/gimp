@@ -43,9 +43,7 @@ enum
   PROP_CLIP,
   PROP_REGION,
   PROP_MODE,
-  PROP_OPACITY,
-  PROP_COLOR_MANAGED,
-  PROP_GAMMA_HACK
+  PROP_OPACITY
 };
 
 
@@ -106,22 +104,6 @@ gimp_operation_settings_class_init (GimpOperationSettingsClass *klass)
                            0.0, 1.0, 1.0,
                            GIMP_PARAM_STATIC_STRINGS |
                            GIMP_CONFIG_PARAM_DEFAULTS);
-
-  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_COLOR_MANAGED,
-                            "gimp-color-managed",
-                            _("Color _managed"),
-                            NULL,
-                            FALSE,
-                            GIMP_PARAM_STATIC_STRINGS |
-                            GIMP_CONFIG_PARAM_DEFAULTS);
-
-  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_GAMMA_HACK,
-                            "gimp-gamma-hack",
-                            "Gamma hack (temp hack, please ignore)",
-                            NULL,
-                            FALSE,
-                            GIMP_PARAM_STATIC_STRINGS |
-                            GIMP_CONFIG_PARAM_DEFAULTS);
 }
 
 static void
@@ -153,14 +135,6 @@ gimp_operation_settings_get_property (GObject    *object,
 
     case PROP_OPACITY:
       g_value_set_double (value, settings->opacity);
-      break;
-
-    case PROP_COLOR_MANAGED:
-      g_value_set_boolean (value, settings->color_managed);
-      break;
-
-    case PROP_GAMMA_HACK:
-      g_value_set_boolean (value, settings->gamma_hack);
       break;
 
     default:
@@ -195,14 +169,6 @@ gimp_operation_settings_set_property (GObject      *object,
       settings->opacity = g_value_get_double (value);
       break;
 
-    case PROP_COLOR_MANAGED:
-      settings->color_managed = g_value_get_boolean (value);
-      break;
-
-    case PROP_GAMMA_HACK:
-      settings->gamma_hack = g_value_get_boolean (value);
-      break;
-
    default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -232,8 +198,6 @@ gimp_operation_settings_sync_drawable_filter (GimpOperationSettings *settings,
                                           GIMP_LAYER_COLOR_SPACE_AUTO,
                                           GIMP_LAYER_COMPOSITE_AUTO);
   gimp_drawable_filter_set_opacity       (filter, settings->opacity);
-  gimp_drawable_filter_set_color_managed (filter, settings->color_managed);
-  gimp_drawable_filter_set_gamma_hack    (filter, settings->gamma_hack);
 }
 
 
@@ -245,9 +209,9 @@ static const gchar * const base_properties[] =
   "gimp-clip",
   "gimp-region",
   "gimp-mode",
-  "gimp-opacity",
-  "gimp-color-managed",
-  "gimp-gamma-hack"
+  "gimp-opacity"//,
+  //"gimp-color-managed",
+  //"gimp-gamma-hack"
 };
 
 gboolean

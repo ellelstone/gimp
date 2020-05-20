@@ -183,6 +183,7 @@ gimp_operation_threshold_process (GeglOperation       *operation,
   while (samples--)
     {
       gfloat value = 0.0;
+      double Y[3];
 
       switch (threshold->channel)
         {
@@ -213,7 +214,9 @@ gimp_operation_threshold_process (GeglOperation       *operation,
           break;
 
         case GIMP_HISTOGRAM_LUMINANCE:
-          value = GIMP_RGB_LUMINANCE (src[RED], src[GREEN], src[BLUE]);
+          gimp_get_Y (Y);
+          value = (src[RED] * Y[0]) + (src[GREEN] * Y[1]) + (src[BLUE] * Y[2]);
+          return value;
           break;
         }
 

@@ -19,7 +19,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+#include <stdio.h>
 #include "config.h"
 
 #include <gegl-plugin.h>
@@ -35,7 +35,7 @@
 #include "gimpoperationlayermode-blend.h"
 
 
-#define EPSILON      1e-6f
+#define EPSILON      6.e-5f/*1e-6f*/
 
 #define SAFE_DIV_MIN EPSILON
 #define SAFE_DIV_MAX (1.0f / SAFE_DIV_MIN)
@@ -815,6 +815,13 @@ gimp_operation_layer_mode_blend_luma_darken_only (GeglOperation *operation,
                                                   gfloat        *comp,
                                                   gint           samples)
 {
+  double Y[3], rY, gY, bY;
+  gimp_get_Y (Y);
+  rY = Y[0];
+  gY = Y[1];
+  bY = Y[2];
+  //printf("operationlayermode-blend.c luma darken: rY=%.8f gY=%.8f bY:%.8f\n\n", rY, gY, bY );
+
   while (samples--)
     {
       if (in[ALPHA] != 0.0f && layer[ALPHA] != 0.0f)
@@ -823,8 +830,13 @@ gimp_operation_layer_mode_blend_luma_darken_only (GeglOperation *operation,
           gfloat src_luminance;
           gint   c;
 
-          dest_luminance = GIMP_RGB_LUMINANCE (in[0],    in[1],    in[2]);
-          src_luminance  = GIMP_RGB_LUMINANCE (layer[0], layer[1], layer[2]);
+          dest_luminance  = (in[0]    * rY) +
+                            (in[1]    * gY) +
+                            (in[2]    * bY);
+
+          src_luminance   = (layer[0] * rY) +
+                            (layer[1] * gY) +
+                            (layer[2] * bY);
 
           if (dest_luminance <= src_luminance)
             {
@@ -853,6 +865,13 @@ gimp_operation_layer_mode_blend_luma_lighten_only (GeglOperation *operation,
                                                    gfloat        *comp,
                                                    gint           samples)
 {
+  double Y[3], rY, gY, bY;
+  gimp_get_Y (Y);
+  rY = Y[0];
+  gY = Y[1];
+  bY = Y[2];
+  //printf("operationlayermode-blend.c luma lighten: rY=%.8f gY=%.8f bY:%.8f\n\n", rY, gY, bY );
+
   while (samples--)
     {
       if (in[ALPHA] != 0.0f && layer[ALPHA] != 0.0f)
@@ -861,8 +880,14 @@ gimp_operation_layer_mode_blend_luma_lighten_only (GeglOperation *operation,
           gfloat src_luminance;
           gint   c;
 
-          dest_luminance = GIMP_RGB_LUMINANCE (in[0],    in[1],    in[2]);
-          src_luminance  = GIMP_RGB_LUMINANCE (layer[0], layer[1], layer[2]);
+          dest_luminance  = (in[0]    * rY) +
+                            (in[1]    * gY) +
+                            (in[2]    * bY);
+
+          src_luminance   = (layer[0] * rY) +
+                            (layer[1] * gY) +
+                            (layer[2] * bY);
+
 
           if (dest_luminance >= src_luminance)
             {
@@ -895,9 +920,17 @@ gimp_operation_layer_mode_blend_luminance (GeglOperation *operation,
   gfloat            *scratch;
   gfloat            *in_Y;
   gfloat            *layer_Y;
+  static GimpColorProfile *profile = NULL;
+  const Babl *space;
+  if (G_UNLIKELY (! profile))
+    profile = gimp_color_profile_new_rgb_from_colorants ();
+  space = gimp_color_profile_get_space (profile,
+          GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC,
+          NULL);
 
   if (! fish)
-    fish = babl_fish ("RGBA float", "Y float");
+    fish = babl_fish (babl_format_with_space ("RGBA float", space),
+                      babl_format_with_space ("Y float",    space));
 
   scratch = gegl_scratch_new (gfloat, 2 * samples);
 

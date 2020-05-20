@@ -897,7 +897,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           gfloat             lch[4];
 
           if (G_UNLIKELY (! fish))
-            fish = babl_fish (babl_format ("R'G'B'A double"),
+            fish = babl_fish (babl_format ("RGBA double"),
                               babl_format ("CIE LCH(ab) alpha float"));
 
           babl_process (fish, &frame->color, lch, 1);
@@ -929,7 +929,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           gfloat             lab[4];
 
           if (G_UNLIKELY (! fish))
-            fish = babl_fish (babl_format ("R'G'B'A double"),
+            fish = babl_fish (babl_format ("RGBA double"),
                               babl_format ("CIE Lab alpha float"));
 
           babl_process (fish, &frame->color, lab, 1);
@@ -961,7 +961,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           gfloat             xyY[4];
 
           if (G_UNLIKELY (! fish))
-            fish = babl_fish (babl_format ("R'G'B'A double"),
+            fish = babl_fish (babl_format ("RGBA double"),
                               babl_format ("CIE xyY alpha float"));
 
           babl_process (fish, &frame->color, xyY, 1);
@@ -993,7 +993,7 @@ gimp_color_frame_update (GimpColorFrame *frame)
           gfloat             Yuv[4];
 
           if (G_UNLIKELY (! fish))
-            fish = babl_fish (babl_format ("R'G'B'A double"),
+            fish = babl_fish (babl_format ("RGBA double"),
                               babl_format ("CIE Yuv alpha float"));
 
           babl_process (fish, &frame->color, Yuv, 1);

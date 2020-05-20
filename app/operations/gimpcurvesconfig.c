@@ -103,7 +103,7 @@ gimp_curves_config_class_init (GimpCurvesConfigClass *klass)
                             "linear",
                             _("Linear"),
                             _("Work on linear RGB"),
-                            FALSE, 0);
+                            TRUE, 0);
 
   GIMP_CONFIG_PROP_ENUM (object_class, PROP_CHANNEL,
                          "channel",

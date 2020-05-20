@@ -86,6 +86,7 @@ static void       app_restore_after_callback (Gimp               *gimp,
 static gboolean   app_exit_after_callback    (Gimp               *gimp,
                                               gboolean            kill_it,
                                               GMainLoop         **loop);
+static void       app_initialize_colorants    (void);
 
 GType gimp_convert_dither_type_compat_get_type (void); /* compat cruft */
 GType gimp_layer_mode_effects_get_type         (void); /* compat cruft */
@@ -192,6 +193,8 @@ app_run (const gchar         *full_prog_name,
   GimpLangRc         *temprc;
   gchar              *language   = NULL;
   GError             *font_error = NULL;
+
+  app_initialize_colorants ();/* initializes contents of colorant_data for "anyrgb" */
 
   if (filenames && filenames[0] && ! filenames[1] &&
       g_file_test (filenames[0], G_FILE_TEST_IS_DIR))
@@ -458,6 +461,40 @@ app_run (const gchar         *full_prog_name,
 
 
 /*  private functions  */
+
+/* Set global variables for passing colorant information
+ * from GIMP to babl 
+ */
+const Babl *colorant_babl;
+double *colorant_data;
+
+static void
+app_initialize_colorants ()
+{
+  colorant_babl = babl_format ("Y u8");
+  colorant_data = malloc( 9 * sizeof(double));
+
+  colorant_data[0] =  0.43603516;
+  colorant_data[1] =  0.22248840;
+  colorant_data[2] =  0.01391602;
+  colorant_data[3] =  0.38511658;
+  colorant_data[4] =  0.71690369;
+  colorant_data[5] =  0.09706116;
+  colorant_data[6] =  0.14305115;
+  colorant_data[7] =  0.06060791;
+  colorant_data[8] =  0.71392822;
+
+  babl_set_user_data (colorant_babl, colorant_data);
+
+/*Uncomment the code below to print colorant Y values to screen:
+  double colorants[3][3], *new_colorant_data;
+  new_colorant_data  = babl_get_user_data (colorant_babl);
+  colorants[1][0] = new_colorant_data[1];
+  colorants[1][1] = new_colorant_data[4];
+  colorants[1][2] = new_colorant_data[7];
+  printf("app.c babl_get_user_data: Y values=%.8f %.8f %.8f\n", colorants[1][0], colorants[1][1], colorants[1][2]);
+*/
+}
 
 static void
 app_init_update_noop (const gchar *text1,

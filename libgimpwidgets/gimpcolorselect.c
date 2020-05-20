@@ -317,6 +317,10 @@ gimp_color_select_class_init (GimpColorSelectClass *klass)
 {
   GObjectClass           *object_class   = G_OBJECT_CLASS (klass);
   GimpColorSelectorClass *selector_class = GIMP_COLOR_SELECTOR_CLASS (klass);
+  /*GimpColorProfile *profile = gimp_color_profile_new_rgb_from_colorants ();
+  const Babl *space_from_colorants  = gimp_color_profile_get_space (profile,
+                                        GIMP_COLOR_RENDERING_INTENT_RELATIVE_COLORIMETRIC,
+                                        NULL);*/
 
   object_class->finalize                = gimp_color_select_finalize;
 
@@ -330,12 +334,12 @@ gimp_color_select_class_init (GimpColorSelectClass *klass)
   selector_class->set_model_visible     = gimp_color_select_set_model_visible;
   selector_class->set_config            = gimp_color_select_set_config;
 
-  fish_rgb_to_lch    = babl_fish (babl_format ("R'G'B'A double"),
+  fish_rgb_to_lch    = babl_fish (babl_format ("RGBA double"),
                                   babl_format ("CIE LCH(ab) double"));
   fish_lch_to_rgb    = babl_fish (babl_format ("CIE LCH(ab) double"),
-                                  babl_format ("R'G'B' double"));
+                                  babl_format ("RGB double"));
   fish_lch_to_rgb_u8 = babl_fish (babl_format ("CIE LCH(ab) double"),
-                                  babl_format ("R'G'B' u8"));
+                                  babl_format ("RGB u8"));
 }
 
 static void
@@ -920,7 +924,7 @@ gimp_color_select_xy_expose (GtkWidget       *widget,
 
   if (select->transform)
     {
-      const Babl *format = babl_format ("R'G'B' u8");
+      const Babl *format = babl_format ("RGB u8");
       guchar     *buf    = g_new (guchar,
                                   select->xy_rowstride * select->xy_height);
       guchar     *src    = select->xy_buf;
@@ -1132,7 +1136,7 @@ gimp_color_select_z_expose (GtkWidget       *widget,
 
   if (select->transform)
     {
-      const Babl *format = babl_format ("R'G'B' u8");
+      const Babl *format = babl_format ("RGB u8");
       guchar     *buf    = g_new (guchar,
                                   select->z_rowstride * select->z_height);
       guchar     *src    = select->z_buf;
@@ -1967,7 +1971,7 @@ gimp_color_select_create_transform (GimpColorSelect *select)
       const Babl *format = babl_format ("cairo-RGB24");
 
       if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_srgb ();
+        profile = gimp_color_profile_new_rgb_from_colorants();
 
       select->transform = gimp_widget_get_color_transform (GTK_WIDGET (select),
                                                            select->config,

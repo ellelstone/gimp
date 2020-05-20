@@ -542,7 +542,7 @@ gimp_operation_gradient_set_property (GObject      *object,
 static void
 gimp_operation_gradient_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
@@ -1148,7 +1148,7 @@ gimp_operation_gradient_process (GeglOperation       *operation,
   /* Render the gradient! */
 
   iter = gegl_buffer_iterator_new (output, result, 0,
-                                   babl_format ("R'G'B'A float"),
+                                   babl_format ("RGBA float"),
                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE, 1);
   roi = &iter->items[0].roi;
 

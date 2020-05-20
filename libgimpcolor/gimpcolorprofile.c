@@ -72,6 +72,64 @@
 #endif
 
 
+static gboolean
+gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
+                                             GimpMatrix3      *matrix);
+/**
+ * gimp_color_profile_get_colorants:
+ *
+ * This function retrieves colorants from an RGB matrix profiles
+ * for use in all babl/GEGL/GIMP functions that use calculations
+ * involving Y and XYZ.
+ *
+ **/
+
+/* Set global variables for passing colorant information
+ * from GIMP to babl 
+ */
+const Babl *colorant_babl;
+double *colorant_data;
+
+void gimp_color_profile_get_colorants (GimpColorProfile *profile)
+{
+  GimpMatrix3       matrix = { 0, };
+  colorant_babl = babl_format ("Y u8");
+  colorant_data = malloc( 9 * sizeof(double));
+
+  if (gimp_color_profile_is_rgb (profile))
+    {//printf("gimp_color_profile_get_colorants\n");
+      gimp_color_profile_get_rgb_matrix_colorants ( profile, &matrix );
+
+      colorant_data[0]= matrix.coeff[0][0];
+      colorant_data[1]= matrix.coeff[0][1];
+      colorant_data[2]= matrix.coeff[0][2];
+      colorant_data[3]= matrix.coeff[1][0];
+      colorant_data[4]= matrix.coeff[1][1];
+      colorant_data[5]= matrix.coeff[1][2];
+      colorant_data[6]= matrix.coeff[2][0];
+      colorant_data[7]= matrix.coeff[2][1];
+      colorant_data[8]= matrix.coeff[2][2];
+      //printf("gimp_color_profile_get_colorants 'if': Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+    }
+  else
+    {
+      colorant_data[0] =  1.0;
+       colorant_data[1] =  0.0;
+       colorant_data[2] =  0.0;
+       colorant_data[3] =  0.0;
+       colorant_data[4] =  1.0;
+       colorant_data[5] =  0.0;
+       colorant_data[6] =  0.0;
+       colorant_data[7] =  0.0;
+       colorant_data[8] =  1.0;
+       //printf("gimp_color_profile_get_colorants 'else' unable to retrieve colorants Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+    }
+
+  babl_set_user_data (colorant_babl, colorant_data);
+  /* Uncomment below to print values to screen:*/
+  //printf("gimp_color_profile_get_colorants: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+}
+
 /**
  * SECTION: gimpcolorprofile
  * @title: GimpColorProfile
@@ -832,9 +890,213 @@ gimp_color_profile_get_rgb_matrix_colorants (GimpColorProfile *profile,
 
       return TRUE;
     }
+  else
+    { printf("gimp_color_profile_get_rgb_matrix_colorants: Probably an RGB LUT Profile\n");
+          matrix->coeff[0][0] = 1.0;
+          matrix->coeff[0][1] = 0.0;
+          matrix->coeff[0][2] = 0.0;
+
+          matrix->coeff[1][0] = 0.0;
+          matrix->coeff[1][1] = 0.1;
+          matrix->coeff[1][2] = 0.0;
+
+          matrix->coeff[2][0] = 0.0;
+          matrix->coeff[2][1] = 0.0;
+          matrix->coeff[2][2] = 1.0;
+
+      return TRUE;
+    }
 
   return FALSE;
 }
+
+static cmsHPROFILE *
+gimp_color_profile_new_rgb_from_colorants_internal (void)
+{
+  cmsHPROFILE       target_profile;
+  cmsCIEXYZ         whitepoint = {0.964199999, 1.000000000, 0.824899998};
+  cmsToneCurve     *curve;
+
+  cmsCIEXYZ red;
+  cmsCIEXYZ green;
+  cmsCIEXYZ blue;
+
+  double colorants[3][3], *new_colorant_data;
+  new_colorant_data  = babl_get_user_data (colorant_babl);
+
+    colorants[0][0] = new_colorant_data[0];
+    colorants[0][1] = new_colorant_data[3];
+    colorants[0][2] = new_colorant_data[6];
+
+    colorants[1][0] = new_colorant_data[1];
+    colorants[1][1] = new_colorant_data[4];
+    colorants[1][2] = new_colorant_data[7];
+
+    colorants[2][0] = new_colorant_data[2];
+    colorants[2][1] = new_colorant_data[5];
+    colorants[2][2] = new_colorant_data[8];
+    //Uncomment the code below to print colorants to screen:
+    //printf("gimp_color_profile_new_rgb_from_colorants_internal: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+
+  target_profile = cmsCreateProfilePlaceholder (0);
+  cmsSetProfileVersion (target_profile, 4.3);
+  cmsSetDeviceClass (target_profile, cmsSigDisplayClass);
+  cmsSetPCS (target_profile, cmsSigXYZData);
+  cmsWriteTag (target_profile, cmsSigMediaWhitePointTag, &whitepoint);
+  curve = cmsBuildGamma (NULL, 1.00);
+  gimp_color_profile_set_tag (target_profile, cmsSigProfileDescriptionTag,
+                                  "linear rgb profile from global variable 'colorant_babl'");
+  cmsSetColorSpace (target_profile, cmsSigRgbData);
+
+      red.X = colorants[0][0];
+      red.Y = colorants[1][0];
+      red.Z = colorants[2][0];
+
+      green.X = colorants[0][1];
+      green.Y = colorants[1][1];
+      green.Z = colorants[2][1];
+
+      blue.X = colorants[0][2];
+      blue.Y = colorants[1][2];
+      blue.Z = colorants[2][2];
+
+      cmsWriteTag (target_profile, cmsSigRedColorantTag,   &red);
+      cmsWriteTag (target_profile, cmsSigGreenColorantTag, &green);
+      cmsWriteTag (target_profile, cmsSigBlueColorantTag,  &blue);
+
+      cmsWriteTag (target_profile, cmsSigRedTRCTag,   curve);
+      cmsWriteTag (target_profile, cmsSigGreenTRCTag, curve);
+      cmsWriteTag (target_profile, cmsSigBlueTRCTag,  curve);
+
+  cmsFreeToneCurve (curve);
+
+  return target_profile;
+}
+
+/**
+ * gimp_color_profile_new_rgb_from_colorants:
+ *
+ * Returns: linear RGB from colorants #GimpColorProfile.
+ *
+ **/
+GimpColorProfile *
+gimp_color_profile_new_rgb_from_colorants (void)
+{
+  static GimpColorProfile *profile = NULL;
+
+  const guint8 *data;
+  gsize         length;
+
+  // (G_UNLIKELY (profile == NULL))
+    //{
+      cmsHPROFILE lcms_profile = gimp_color_profile_new_rgb_from_colorants_internal ();
+
+      profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
+
+      cmsCloseProfile (lcms_profile);
+    //}
+
+  data = gimp_color_profile_get_icc_profile (profile, &length);
+
+  return gimp_color_profile_new_from_icc_profile (data, length, NULL);
+}
+
+static cmsHPROFILE *
+gimp_color_profile_new_rgb_from_colorants_perceptual_internal (void)
+{
+  cmsHPROFILE       target_profile;
+  cmsCIEXYZ         whitepoint = {0.964199999, 1.000000000, 0.824899998};
+
+  cmsFloat64Number srgb_parameters[5] =
+    { 2.4, 1.0 / 1.055,  0.055 / 1.055, 1.0 / 12.92, 0.04045 };
+
+  cmsToneCurve *curve = cmsBuildParametricToneCurve (NULL, 4, srgb_parameters);
+
+  cmsCIEXYZ red;
+  cmsCIEXYZ green;
+  cmsCIEXYZ blue;
+
+  double colorants[3][3], *new_colorant_data;
+  new_colorant_data = babl_get_user_data (colorant_babl);
+
+    colorants[0][0] = new_colorant_data[0];
+    colorants[0][1] = new_colorant_data[3];
+    colorants[0][2] = new_colorant_data[6];
+
+    colorants[1][0] = new_colorant_data[1];
+    colorants[1][1] = new_colorant_data[4];
+    colorants[1][2] = new_colorant_data[7];
+
+    colorants[2][0] = new_colorant_data[2];
+    colorants[2][1] = new_colorant_data[5];
+    colorants[2][2] = new_colorant_data[8];
+    //Uncomment the code below to print colorants to screen:
+    //printf("gimp_color_profile_new_rgb_from_colorants_perceptual_internal: Y values=%.8f %.8f %.8f\n", colorant_data[1], colorant_data[4], colorant_data[7]);
+
+  target_profile = cmsCreateProfilePlaceholder (0);
+  cmsSetProfileVersion (target_profile, 4.3);
+  cmsSetDeviceClass (target_profile, cmsSigDisplayClass);
+  cmsSetPCS (target_profile, cmsSigXYZData);
+  cmsWriteTag (target_profile, cmsSigMediaWhitePointTag, &whitepoint);
+  
+  gimp_color_profile_set_tag (target_profile, cmsSigProfileDescriptionTag,
+                                  "perceptual rgb profile from global variable 'colorant_babl'");
+
+  cmsSetColorSpace (target_profile, cmsSigRgbData);
+
+      red.X = colorants[0][0];
+      red.Y = colorants[1][0];
+      red.Z = colorants[2][0];
+
+      green.X = colorants[0][1];
+      green.Y = colorants[1][1];
+      green.Z = colorants[2][1];
+
+      blue.X = colorants[0][2];
+      blue.Y = colorants[1][2];
+      blue.Z = colorants[2][2];
+
+      cmsWriteTag (target_profile, cmsSigRedColorantTag,   &red);
+      cmsWriteTag (target_profile, cmsSigGreenColorantTag, &green);
+      cmsWriteTag (target_profile, cmsSigBlueColorantTag,  &blue);
+
+      cmsWriteTag (target_profile, cmsSigRedTRCTag,   curve);
+      cmsWriteTag (target_profile, cmsSigGreenTRCTag, curve);
+      cmsWriteTag (target_profile, cmsSigBlueTRCTag,  curve);
+
+  cmsFreeToneCurve (curve);
+
+  return target_profile;
+}
+
+/**
+ * gimp_color_profile_new_rgb_from_colorants:
+ * 
+ * Returns: linear RGB from colorants #GimpColorProfile.
+ *
+ **/
+GimpColorProfile *
+gimp_color_profile_new_rgb_from_colorants_perceptual (void)
+{
+  static GimpColorProfile *profile = NULL;
+
+  const guint8 *data;
+  gsize         length;
+
+  // (G_UNLIKELY (profile == NULL))
+    //{
+      cmsHPROFILE lcms_profile = gimp_color_profile_new_rgb_from_colorants_perceptual_internal ();
+
+      profile = gimp_color_profile_new_from_lcms_profile (lcms_profile, NULL);
+
+      cmsCloseProfile (lcms_profile);
+    //}
+
+  data = gimp_color_profile_get_icc_profile (profile, &length);
+
+  return gimp_color_profile_new_from_icc_profile (data, length, NULL);
+}
+
 
 static void
 gimp_color_profile_make_tag (cmsHPROFILE       profile,
@@ -1590,6 +1852,7 @@ gimp_color_profile_get_lcms_format (const Babl *format,
   const Babl *output_format = NULL;
   const Babl *type;
   const Babl *model;
+  const Babl *space;
   gboolean    has_alpha;
   gboolean    rgb    = FALSE;
   gboolean    gray   = FALSE;

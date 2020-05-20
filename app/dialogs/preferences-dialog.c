@@ -2317,10 +2317,6 @@ prefs_dialog_new (Gimp       *gimp,
   button = prefs_check_button_add (object, "filter-tool-use-last-settings",
                                    _("Default to the last used settings"),
                                    GTK_BOX (vbox2));
-  button = prefs_check_button_add (object, "filter-tool-show-color-options",
-                                   _("Show advanced color options"),
-                                   GTK_BOX (vbox2));
-
   /*  Canvas Size Dialog  */
   vbox2 = prefs_frame_new (_("Canvas Size Dialog"),
                            GTK_CONTAINER (vbox), FALSE);

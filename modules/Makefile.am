@@ -33,13 +33,8 @@ endif
 
 lib_LTLIBRARIES = \
 	libcolor-selector-cmyk.la		\
-	libcolor-selector-water.la		\
 	libcolor-selector-wheel.la		\
-	libdisplay-filter-clip-warning.la	\
-	libdisplay-filter-color-blind.la	\
-	libdisplay-filter-gamma.la		\
-	libdisplay-filter-high-contrast.la	\
-	$(controller_midi_module)		\
+	libdisplay-filter-clip-warning.la \
 	$(controller_linux_input_module)	\
 	$(controller_dx_dinput_module)
 
@@ -54,10 +49,6 @@ libcolor_selector_cmyk_la_SOURCES = color-selector-cmyk.c
 libcolor_selector_cmyk_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libcolor_selector_cmyk_la_LIBADD = $(libgimpconfig) $(color_selector_libadd)
 
-libcolor_selector_water_la_SOURCES = color-selector-water.c
-libcolor_selector_water_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libcolor_selector_water_la_LIBADD = $(color_selector_libadd)
-
 libcolor_selector_wheel_la_SOURCES = color-selector-wheel.c gimpcolorwheel.c gimpcolorwheel.h
 libcolor_selector_wheel_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libcolor_selector_wheel_la_LIBADD = $(color_selector_libadd)
@@ -65,18 +56,6 @@ libcolor_selector_wheel_la_LIBADD = $(color_selector_libadd)
 libdisplay_filter_clip_warning_la_SOURCES = display-filter-clip-warning.c
 libdisplay_filter_clip_warning_la_LDFLAGS = -avoid-version -module $(no_undefined)
 libdisplay_filter_clip_warning_la_LIBADD = $(display_filter_libadd)
-
-libdisplay_filter_color_blind_la_SOURCES = display-filter-color-blind.c
-libdisplay_filter_color_blind_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libdisplay_filter_color_blind_la_LIBADD = $(display_filter_libadd)
-
-libdisplay_filter_gamma_la_SOURCES = display-filter-gamma.c
-libdisplay_filter_gamma_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libdisplay_filter_gamma_la_LIBADD = $(display_filter_libadd)
-
-libdisplay_filter_high_contrast_la_SOURCES = display-filter-high-contrast.c
-libdisplay_filter_high_contrast_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libdisplay_filter_high_contrast_la_LIBADD = $(display_filter_libadd)
 
 libcontroller_linux_input_la_SOURCES = \
 	gimpinputdevicestore-gudev.c	\
@@ -95,8 +74,3 @@ libcontroller_dx_dinput_la_SOURCES = \
 libcontroller_dx_dinput_la_LDFLAGS = -avoid-version -module $(no_undefined) -Wl,-ldinput8 -Wl,-ldxguid
 libcontroller_dx_dinput_la_LIBADD = \
 	$(controller_libadd) -lrpcrt4
-
-libcontroller_midi_la_SOURCES = controller-midi.c
-libcontroller_midi_la_CFLAGS = $(ALSA_CFLAGS)
-libcontroller_midi_la_LDFLAGS = -avoid-version -module $(no_undefined)
-libcontroller_midi_la_LIBADD = $(controller_libadd) $(ALSA_LIBS)

@@ -481,7 +481,7 @@ gimp_display_shell_format_title (GimpDisplayShell *shell,
               break;
 
             case 'o': /* image's color profile name */
-              if (gimp_image_get_is_color_managed (image))
+              if (TRUE)
                 {
                   GimpColorManaged *managed = GIMP_COLOR_MANAGED (image);
                   GimpColorProfile *profile;

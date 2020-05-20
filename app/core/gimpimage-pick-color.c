@@ -138,7 +138,7 @@ gimp_image_pick_color (GimpImage     *image,
         }
 
       if (! result || sample_average)
-        gimp_pickable_pixel_to_srgb (pickable, format, sample, color);
+        gimp_pickable_pixel_to_rgb (pickable, format, sample, color);
 
       result = TRUE;
     }

@@ -226,7 +226,7 @@ gimp_drawable_transform_buffer_flip (GimpDrawable         *drawable,
       else
         {
           gimp_context_get_background (context, &bg);
-          gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+          gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                              &bg, &bg);
         }
 
@@ -491,7 +491,7 @@ gimp_drawable_transform_buffer_rotate (GimpDrawable      *drawable,
       else
         {
           gimp_context_get_background (context, &bg);
-          gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+          gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                              &bg, &bg);
         }
 

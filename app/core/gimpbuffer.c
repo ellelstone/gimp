@@ -273,7 +273,7 @@ gimp_buffer_get_new_pixbuf (GimpViewable *viewable,
       GeglBuffer       *src_buf;
       GeglBuffer       *dest_buf;
 
-      srgb_profile = gimp_color_profile_new_rgb_srgb ();
+      srgb_profile = gimp_color_profile_new_rgb_from_colorants_perceptual ();
 
       temp_buf = gimp_temp_buf_new (width, height,
                                     gimp_buffer_get_format (buffer));
@@ -420,7 +420,7 @@ gimp_buffer_new_from_pixbuf (GdkPixbuf   *pixbuf,
 
   if (! profile && gdk_pixbuf_get_colorspace (pixbuf) == GDK_COLORSPACE_RGB)
     {
-      profile = gimp_color_profile_new_rgb_srgb ();
+      profile = gimp_color_profile_new_rgb_from_colorants_perceptual ();
     }
 
   if (profile)

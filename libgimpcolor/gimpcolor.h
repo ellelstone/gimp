@@ -16,6 +16,12 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#ifndef COLORANTS_H
+#define COLORANTS_H
+extern const Babl *colorant_babl;
+extern double *colorant_data;
+#endif
+
 #ifndef __GIMP_COLOR_H__
 #define __GIMP_COLOR_H__
 

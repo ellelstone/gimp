@@ -57,7 +57,6 @@ enum
   PROP_PRECISION,
   PROP_COMPONENT_TYPE,
   PROP_LINEAR,
-  PROP_COLOR_MANAGED,
   PROP_COLOR_PROFILE,
   PROP_FILL_TYPE,
   PROP_COMMENT,
@@ -207,16 +206,6 @@ gimp_template_class_init (GimpTemplateClass *klass)
                                                          G_PARAM_READWRITE |
                                                          GIMP_PARAM_STATIC_STRINGS));
 
-  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_COLOR_MANAGED,
-                            "color-managed",
-                            _("Color managed"),
-                            _("Whether the image is color managed. "
-                              "Disabling color management is equivalent to "
-                              "choosing a built-in sRGB profile. Better "
-                              "leave color management enabled."),
-                            TRUE,
-                            GIMP_PARAM_STATIC_STRINGS);
-
   GIMP_CONFIG_PROP_OBJECT (object_class, PROP_COLOR_PROFILE,
                            "color-profile",
                            _("Color profile"),
@@ -311,9 +300,6 @@ gimp_template_set_property (GObject      *object,
                              g_value_get_boolean (value));
       g_object_notify (object, "precision");
       break;
-    case PROP_COLOR_MANAGED:
-      private->color_managed = g_value_get_boolean (value);
-      break;
     case PROP_COLOR_PROFILE:
       if (private->color_profile)
         g_object_unref (private->color_profile);
@@ -377,9 +363,6 @@ gimp_template_get_property (GObject    *object,
       break;
     case PROP_LINEAR:
       g_value_set_boolean (value, gimp_babl_linear (private->precision));
-      break;
-    case PROP_COLOR_MANAGED:
-      g_value_set_boolean (value, private->color_managed);
       break;
     case PROP_COLOR_PROFILE:
       g_value_set_object (value, private->color_profile);

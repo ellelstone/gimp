@@ -115,11 +115,11 @@ static void           gimp_image_proxy_get_pixel_average        (GimpPickable   
                                                                  const GeglRectangle    *rect,
                                                                  const Babl             *format,
                                                                  gpointer                pixel);
-static void           gimp_image_proxy_pixel_to_srgb            (GimpPickable           *pickable,
+static void           gimp_image_proxy_pixel_to_rgb            (GimpPickable           *pickable,
                                                                  const Babl             *format,
                                                                  gpointer                pixel,
                                                                  GimpRGB                *color);
-static void           gimp_image_proxy_srgb_to_pixel            (GimpPickable           *pickable,
+static void           gimp_image_proxy_rgb_to_pixel            (GimpPickable           *pickable,
                                                                  const GimpRGB          *color,
                                                                  const Babl             *format,
                                                                  gpointer                pixel);
@@ -200,8 +200,8 @@ gimp_image_proxy_pickable_iface_init (GimpPickableInterface *iface)
   iface->get_pixel_at          = gimp_image_proxy_get_pixel_at;
   iface->get_opacity_at        = gimp_image_proxy_get_opacity_at;
   iface->get_pixel_average     = gimp_image_proxy_get_pixel_average;
-  iface->pixel_to_srgb         = gimp_image_proxy_pixel_to_srgb;
-  iface->srgb_to_pixel         = gimp_image_proxy_srgb_to_pixel;
+  iface->pixel_to_rgb         = gimp_image_proxy_pixel_to_rgb;
+  iface->rgb_to_pixel         = gimp_image_proxy_rgb_to_pixel;
 }
 
 static void
@@ -415,7 +415,6 @@ gimp_image_proxy_get_new_pixbuf (GimpViewable *viewable,
   gdouble             scale_x;
   gdouble             scale_y;
   gdouble             scale;
-  GimpColorTransform *transform;
 
   pickable     = gimp_image_proxy_get_pickable     (image_proxy);
   bounding_box = gimp_image_proxy_get_bounding_box (image_proxy);
@@ -428,44 +427,6 @@ gimp_image_proxy_get_new_pixbuf (GimpViewable *viewable,
   pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8,
                            width, height);
 
-  transform = gimp_image_get_color_transform_to_srgb_u8 (image);
-
-  if (transform)
-    {
-      GimpTempBuf *temp_buf;
-      GeglBuffer  *src_buf;
-      GeglBuffer  *dest_buf;
-
-      temp_buf = gimp_temp_buf_new (width, height,
-                                    gimp_pickable_get_format (pickable));
-
-      gegl_buffer_get (gimp_pickable_get_buffer (pickable),
-                       GEGL_RECTANGLE (bounding_box.x * scale,
-                                       bounding_box.y * scale,
-                                       width,
-                                       height),
-                       scale,
-                       gimp_temp_buf_get_format (temp_buf),
-                       gimp_temp_buf_get_data (temp_buf),
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
-
-      src_buf  = gimp_temp_buf_create_buffer (temp_buf);
-      dest_buf = gimp_pixbuf_create_buffer (pixbuf);
-
-      gimp_temp_buf_unref (temp_buf);
-
-      gimp_color_transform_process_buffer (transform,
-                                           src_buf,
-                                           GEGL_RECTANGLE (0, 0,
-                                                           width, height),
-                                           dest_buf,
-                                           GEGL_RECTANGLE (0, 0, 0, 0));
-
-      g_object_unref (src_buf);
-      g_object_unref (dest_buf);
-    }
-  else
-    {
       gegl_buffer_get (gimp_pickable_get_buffer (pickable),
                        GEGL_RECTANGLE (bounding_box.x * scale,
                                        bounding_box.y * scale,
@@ -476,7 +437,6 @@ gimp_image_proxy_get_new_pixbuf (GimpViewable *viewable,
                        gdk_pixbuf_get_pixels (pixbuf),
                        gdk_pixbuf_get_rowstride (pixbuf),
                        GEGL_ABYSS_CLAMP);
-    }
 
   return pixbuf;
 }
@@ -583,7 +543,7 @@ gimp_image_proxy_get_pixel_average (GimpPickable        *pickable,
 }
 
 static void
-gimp_image_proxy_pixel_to_srgb (GimpPickable *pickable,
+gimp_image_proxy_pixel_to_rgb (GimpPickable *pickable,
                                 const Babl   *format,
                                 gpointer      pixel,
                                 GimpRGB      *color)
@@ -593,11 +553,11 @@ gimp_image_proxy_pixel_to_srgb (GimpPickable *pickable,
 
   proxy_pickable = gimp_image_proxy_get_pickable (image_proxy);
 
-  gimp_pickable_pixel_to_srgb (proxy_pickable, format, pixel, color);
+  gimp_pickable_pixel_to_rgb (proxy_pickable, format, pixel, color);
 }
 
 static void
-gimp_image_proxy_srgb_to_pixel (GimpPickable  *pickable,
+gimp_image_proxy_rgb_to_pixel (GimpPickable  *pickable,
                                 const GimpRGB *color,
                                 const Babl    *format,
                                 gpointer       pixel)
@@ -607,7 +567,7 @@ gimp_image_proxy_srgb_to_pixel (GimpPickable  *pickable,
 
   proxy_pickable = gimp_image_proxy_get_pickable (image_proxy);
 
-  gimp_pickable_srgb_to_pixel (proxy_pickable, color, format, pixel);
+  gimp_pickable_rgb (proxy_pickable, color, format, pixel);
 }
 
 static void

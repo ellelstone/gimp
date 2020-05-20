@@ -128,14 +128,14 @@ gimp_gradient_class_init (GimpGradientClass *klass)
   data_class->copy                  = gimp_gradient_copy;
   data_class->compare               = gimp_gradient_compare;
 
-  fish_srgb_to_linear_rgb = babl_fish (babl_format ("R'G'B' double"),
+  fish_srgb_to_linear_rgb = babl_fish (babl_format ("RGB double"),
                                        babl_format ("RGB double"));
   fish_linear_rgb_to_srgb = babl_fish (babl_format ("RGB double"),
-                                       babl_format ("R'G'B' double"));
-  fish_srgb_to_cie_lab    = babl_fish (babl_format ("R'G'B' double"),
+                                       babl_format ("RGB double"));
+  fish_srgb_to_cie_lab    = babl_fish (babl_format ("RGB double"),
                                        babl_format ("CIE Lab double"));
   fish_cie_lab_to_srgb    = babl_fish (babl_format ("CIE Lab double"),
-                                       babl_format ("R'G'B' double"));
+                                       babl_format ("RGB double"));
 }
 
 static void
@@ -247,7 +247,7 @@ gimp_gradient_get_new_preview (GimpViewable *viewable,
       cur_x += dx;
     }
 
-  temp_buf = gimp_temp_buf_new (width, height, babl_format ("R'G'B'A u8"));
+  temp_buf = gimp_temp_buf_new (width, height, babl_format ("RGBA u8"));
 
   buf = gimp_temp_buf_get_data (temp_buf);
 

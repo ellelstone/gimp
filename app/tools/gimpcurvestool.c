@@ -791,11 +791,16 @@ gimp_curves_tool_color_picked (GimpFilterTool *filter_tool,
   GimpDrawable     *drawable = GIMP_TOOL (tool)->drawable;
   GimpRGB           rgb      = *color;
 
-  if (config->linear)
+/*  if (config->linear)
     babl_process (babl_fish (babl_format ("R'G'B'A double"),
                              babl_format ("RGBA double")),
-                  &rgb, &rgb, 1);
-
+                  &rgb, &rgb, 1);*/
+/* Above function assumes the default encoding is perceptual, and so if
+ * anyone wants to work on linear, the RGB values need to be switched
+ * to linear. If one assumes the default encoding is linear, perhaps
+ * the babl formats should be switched to enable also working on
+ * perceptual RGB.
+ */
   tool->picked_color[GIMP_HISTOGRAM_RED]   = rgb.r;
   tool->picked_color[GIMP_HISTOGRAM_GREEN] = rgb.g;
   tool->picked_color[GIMP_HISTOGRAM_BLUE]  = rgb.b;

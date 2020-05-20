@@ -51,8 +51,7 @@ enum
 {
   PROP_0,
   PROP_ENABLED,
-  PROP_COLOR_CONFIG,
-  PROP_COLOR_MANAGED
+  PROP_COLOR_CONFIG
 };
 
 enum
@@ -84,9 +83,6 @@ static void       gimp_color_display_get_property (GObject      *object,
 
 static void  gimp_color_display_set_color_config  (GimpColorDisplay *display,
                                                    GimpColorConfig  *config);
-static void  gimp_color_display_set_color_managed (GimpColorDisplay *display,
-                                                   GimpColorManaged *managed);
-
 
 G_DEFINE_TYPE_WITH_CODE (GimpColorDisplay, gimp_color_display, G_TYPE_OBJECT,
                          G_ADD_PRIVATE (GimpColorDisplay)
@@ -123,13 +119,6 @@ gimp_color_display_class_init (GimpColorDisplayClass *klass)
                                                         GIMP_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT_ONLY));
 
-  g_object_class_install_property (object_class, PROP_COLOR_MANAGED,
-                                   g_param_spec_object ("color-managed",
-                                                        "Color Managed",
-                                                        "The color managed pixel source that is filtered",
-                                                        GIMP_TYPE_COLOR_MANAGED,
-                                                        GIMP_PARAM_READWRITE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
   display_signals[CHANGED] =
     g_signal_new ("changed",
                   G_TYPE_FROM_CLASS (klass),
@@ -214,11 +203,6 @@ gimp_color_display_set_property (GObject      *object,
                                            g_value_get_object (value));
       break;
 
-    case PROP_COLOR_MANAGED:
-      gimp_color_display_set_color_managed (display,
-                                            g_value_get_object (value));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -244,11 +228,6 @@ gimp_color_display_get_property (GObject    *object,
                           GIMP_COLOR_DISPLAY_GET_PRIVATE (display)->config);
       break;
 
-    case PROP_COLOR_MANAGED:
-      g_value_set_object (value,
-                          GIMP_COLOR_DISPLAY_GET_PRIVATE (display)->managed);
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
       break;
@@ -268,24 +247,6 @@ gimp_color_display_set_color_config (GimpColorDisplay *display,
       private->config = g_object_ref (config);
 
       g_signal_connect_swapped (private->config, "notify",
-                                G_CALLBACK (gimp_color_display_changed),
-                                display);
-    }
-}
-
-static void
-gimp_color_display_set_color_managed (GimpColorDisplay *display,
-                                      GimpColorManaged *managed)
-{
-  GimpColorDisplayPrivate *private = GIMP_COLOR_DISPLAY_GET_PRIVATE (display);
-
-  g_return_if_fail (private->managed == NULL);
-
-  if (managed)
-    {
-      private->managed = g_object_ref (managed);
-
-      g_signal_connect_swapped (private->managed, "profile-changed",
                                 G_CALLBACK (gimp_color_display_changed),
                                 display);
     }

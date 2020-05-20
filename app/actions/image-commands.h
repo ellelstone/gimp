@@ -36,9 +36,6 @@ void   image_convert_gamma_cmd_callback            (GimpAction *action,
                                                     GVariant   *value,
                                                     gpointer    data);
 
-void   image_color_management_enabled_cmd_callback (GimpAction *action,
-                                                    GVariant   *value,
-                                                    gpointer    data);
 void   image_color_profile_assign_cmd_callback     (GimpAction *action,
                                                     GVariant   *value,
                                                     gpointer    data);

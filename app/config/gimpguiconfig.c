@@ -183,13 +183,6 @@ gimp_gui_config_class_init (GimpGuiConfigClass *klass)
                             FALSE,
                             GIMP_PARAM_STATIC_STRINGS);
 
-  GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_FILTER_TOOL_SHOW_COLOR_OPTIONS,
-                            "filter-tool-show-color-options",
-                            "Show avanced color options in filters",
-                            FILTER_TOOL_SHOW_COLOR_OPTIONS_BLURB,
-                            FALSE,
-                            GIMP_PARAM_STATIC_STRINGS);
-
   GIMP_CONFIG_PROP_BOOLEAN (object_class, PROP_TRUST_DIRTY_FLAG,
                             "trust-dirty-flag",
                             "Trust dirty flag",

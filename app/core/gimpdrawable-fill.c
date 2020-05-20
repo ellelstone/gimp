@@ -132,7 +132,7 @@ gimp_drawable_fill_buffer (GimpDrawable  *drawable,
       GimpRGB    image_color;
       GeglColor *gegl_color;
 
-      gimp_pickable_srgb_to_image_color (GIMP_PICKABLE (drawable),
+      gimp_pickable_rgb_to_image_color (GIMP_PICKABLE (drawable),
                                          color, &image_color);
 
       if (! gimp_drawable_has_alpha (drawable))

@@ -804,7 +804,6 @@ gimp_text_layer_render_layout (GimpTextLayer  *layer,
   GimpItem           *item     = GIMP_ITEM (layer);
   GimpImage          *image    = gimp_item_get_image (item);
   GeglBuffer         *buffer;
-  GimpColorTransform *transform;
   cairo_t            *cr;
   cairo_surface_t    *surface;
   gint                width;
@@ -838,21 +837,8 @@ gimp_text_layer_render_layout (GimpTextLayer  *layer,
 
   buffer = gimp_cairo_surface_create_buffer (surface);
 
-  transform = gimp_image_get_color_transform_from_srgb_u8 (image);
-
-  if (transform)
-    {
-      gimp_color_transform_process_buffer (transform,
-                                           buffer,
-                                           NULL,
-                                           gimp_drawable_get_buffer (drawable),
-                                           NULL);
-    }
-  else
-    {
-      gimp_gegl_buffer_copy (buffer, NULL, GEGL_ABYSS_NONE,
+  gimp_gegl_buffer_copy (buffer, NULL, GEGL_ABYSS_NONE,
                              gimp_drawable_get_buffer (drawable), NULL);
-    }
 
   g_object_unref (buffer);
   cairo_surface_destroy (surface);

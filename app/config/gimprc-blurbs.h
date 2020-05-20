@@ -197,9 +197,6 @@ _("How many recent settings to keep around in filter tools.")
 #define FILTER_TOOL_USE_LAST_SETTINGS_BLURB \
 _("Default to the last used settings in filter tools.")
 
-#define FILTER_TOOL_SHOW_COLOR_OPTIONS_BLURB \
-_("Show advanced color options in filter tools.")
-
 #define IMAGE_STATUS_FORMAT_BLURB \
 _("Sets the text to appear in image window status bars.")
 

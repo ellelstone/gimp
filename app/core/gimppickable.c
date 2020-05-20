@@ -244,7 +244,7 @@ gimp_pickable_get_color_at (GimpPickable *pickable,
   if (! gimp_pickable_get_pixel_at (pickable, x, y, NULL, pixel))
     return FALSE;
 
-  gimp_pickable_pixel_to_srgb (pickable, NULL, pixel, color);
+  gimp_pickable_pixel_to_rgb (pickable, NULL, pixel, color);
 
   return TRUE;
 }
@@ -267,7 +267,7 @@ gimp_pickable_get_opacity_at (GimpPickable *pickable,
 }
 
 void
-gimp_pickable_pixel_to_srgb (GimpPickable *pickable,
+gimp_pickable_pixel_to_rgb (GimpPickable *pickable,
                              const Babl   *format,
                              gpointer      pixel,
                              GimpRGB      *color)
@@ -283,9 +283,9 @@ gimp_pickable_pixel_to_srgb (GimpPickable *pickable,
 
   pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
 
-  if (pickable_iface->pixel_to_srgb)
+  if (pickable_iface->pixel_to_rgb)
     {
-      pickable_iface->pixel_to_srgb (pickable, format, pixel, color);
+      pickable_iface->pixel_to_rgb (pickable, format, pixel, color);
     }
   else
     {
@@ -294,7 +294,7 @@ gimp_pickable_pixel_to_srgb (GimpPickable *pickable,
 }
 
 void
-gimp_pickable_srgb_to_pixel (GimpPickable  *pickable,
+gimp_pickable_rgb (GimpPickable  *pickable,
                              const GimpRGB *color,
                              const Babl    *format,
                              gpointer       pixel)
@@ -310,9 +310,9 @@ gimp_pickable_srgb_to_pixel (GimpPickable  *pickable,
 
   pickable_iface = GIMP_PICKABLE_GET_INTERFACE (pickable);
 
-  if (pickable_iface->srgb_to_pixel)
+  if (pickable_iface->rgb_to_pixel)
     {
-      pickable_iface->srgb_to_pixel (pickable, color, format, pixel);
+      pickable_iface->rgb_to_pixel (pickable, color, format, pixel);
     }
   else
     {
@@ -321,7 +321,7 @@ gimp_pickable_srgb_to_pixel (GimpPickable  *pickable,
 }
 
 void
-gimp_pickable_srgb_to_image_color (GimpPickable  *pickable,
+gimp_pickable_rgb_to_image_color (GimpPickable  *pickable,
                                    const GimpRGB *color,
                                    GimpRGB       *image_color)
 {
@@ -329,9 +329,9 @@ gimp_pickable_srgb_to_image_color (GimpPickable  *pickable,
   g_return_if_fail (color != NULL);
   g_return_if_fail (image_color != NULL);
 
-  gimp_pickable_srgb_to_pixel (pickable,
+  gimp_pickable_rgb (pickable,
                                color,
-                               babl_format ("R'G'B'A double"),
+                               babl_format ("RGBA double"),
                                image_color);
 }
 
@@ -372,7 +372,7 @@ gimp_pickable_pick_color (GimpPickable *pickable,
                                        format, sample);
     }
 
-  gimp_pickable_pixel_to_srgb (pickable, format, sample, color);
+  gimp_pickable_pixel_to_rgb (pickable, format, sample, color);
 
   return TRUE;
 }

@@ -187,10 +187,6 @@ gimp_image_undo_constructed (GObject *object)
                                          GIMP_IMAGE_COLORMAP_SIZE);
       break;
 
-    case GIMP_UNDO_IMAGE_COLOR_MANAGED:
-      image_undo->is_color_managed = gimp_image_get_is_color_managed (image);
-      break;
-
     case GIMP_UNDO_IMAGE_METADATA:
       image_undo->metadata =
         gimp_metadata_duplicate (gimp_image_get_metadata (image));
@@ -468,17 +464,6 @@ gimp_image_undo_pop (GimpUndo            *undo,
 
         image_undo->num_colors = num_colors;
         image_undo->colormap   = colormap;
-      }
-      break;
-
-    case GIMP_UNDO_IMAGE_COLOR_MANAGED:
-      {
-        gboolean is_color_managed;
-
-        is_color_managed = gimp_image_get_is_color_managed (image);
-        gimp_image_set_is_color_managed (image, image_undo->is_color_managed,
-                                         FALSE);
-        image_undo->is_color_managed = is_color_managed;
       }
       break;
 

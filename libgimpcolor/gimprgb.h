@@ -130,7 +130,10 @@ void      gimp_rgb_clamp           (GimpRGB       *rgb);
 void      gimp_rgb_gamma           (GimpRGB       *rgb,
                                     gdouble        gamma);
 
+gdouble   gimp_get_Y               (double Y[3]);
+
 gdouble   gimp_rgb_luminance       (const GimpRGB *rgb);
+
 guchar    gimp_rgb_luminance_uchar (const GimpRGB *rgb);
 
 GIMP_DEPRECATED_FOR(gimp_rgb_luminance)

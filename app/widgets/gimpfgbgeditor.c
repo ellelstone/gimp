@@ -671,16 +671,15 @@ gimp_fg_bg_editor_create_transform (GimpFgBgEditor *editor)
   if (editor->color_config)
     {
       static GimpColorProfile *profile = NULL;
-
       if (G_UNLIKELY (! profile))
-        profile = gimp_color_profile_new_rgb_srgb ();
+      profile = gimp_color_profile_new_rgb_from_colorants ();
 
       editor->transform =
         gimp_widget_get_color_transform (GTK_WIDGET (editor),
                                          editor->color_config,
                                          profile,
-                                         babl_format ("R'G'B'A double"),
-                                         babl_format ("R'G'B'A double"));
+                                         babl_format ("RGBA double"),
+                                         babl_format ("RGBA double"));
     }
 }
 
@@ -764,9 +763,9 @@ gimp_fg_bg_editor_draw_color_frame (GimpFgBgEditor *editor,
   if (editor->transform)
     {
       gimp_color_transform_process_pixels (editor->transform,
-                                           babl_format ("R'G'B'A double"),
+                                           babl_format ("RGBA double"),
                                            color,
-                                           babl_format ("R'G'B'A double"),
+                                           babl_format ("RGBA double"),
                                            &transformed_color,
                                            1);
     }

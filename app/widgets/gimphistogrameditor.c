@@ -678,7 +678,7 @@ gimp_histogram_editor_menu_update (GimpHistogramEditor *editor)
   if (editor->histogram &&
       ! gimp_histogram_has_channel (editor->histogram, view->channel))
     {
-      gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_VALUE);
+      gimp_histogram_view_set_channel (view, GIMP_HISTOGRAM_RGB);
     }
 }
 
