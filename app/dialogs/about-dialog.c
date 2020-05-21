@@ -85,8 +85,8 @@ static void        about_dialog_add_animation (GtkWidget       *vbox,
 static gboolean    about_dialog_anim_expose   (GtkWidget       *widget,
                                                GdkEventExpose  *event,
                                                GimpAboutDialog *dialog);
-static void        about_dialog_add_update    (GimpAboutDialog *dialog,
-                                               GimpCoreConfig  *config);
+//static void        about_dialog_add_update    (GimpAboutDialog *dialog,
+//                                               GimpCoreConfig  *config);
 static void        about_dialog_reshuffle     (GimpAboutDialog *dialog);
 static gboolean    about_dialog_timer         (gpointer         data);
 
@@ -95,13 +95,13 @@ static void        about_dialog_add_unstable_message
                                               (GtkWidget       *vbox);
 #endif /* GIMP_UNSTABLE */
 
-static void        about_dialog_last_release_changed
+/*static void        about_dialog_last_release_changed
                                               (GimpCoreConfig   *config,
                                                const GParamSpec *pspec,
                                                GimpAboutDialog  *dialog);
 static void        about_dialog_download_clicked
                                               (GtkButton   *button,
-                                               const gchar *link);
+                                               const gchar *link);*/
 
 GtkWidget *
 about_dialog_create (GimpCoreConfig *config)
@@ -186,7 +186,7 @@ about_dialog_create (GimpCoreConfig *config)
 #ifdef GIMP_UNSTABLE
           about_dialog_add_unstable_message (children->data);
 #endif /* GIMP_UNSTABLE */
-          about_dialog_add_update (&dialog, config);
+          //about_dialog_add_update (&dialog, config);
         }
       else
         g_warning ("%s: ooops, no box in this container?", G_STRLOC);
@@ -278,7 +278,7 @@ about_dialog_add_animation (GtkWidget       *vbox,
                     dialog);
 }
 
-static void
+/*static void
 about_dialog_add_update (GimpAboutDialog *dialog,
                          GimpCoreConfig  *config)
 {
@@ -297,26 +297,26 @@ about_dialog_add_update (GimpAboutDialog *dialog,
   gchar     *date;
   gchar     *text;
 
-  /* Get the dialog vbox. */
+  //Get the dialog vbox.
   container = gtk_dialog_get_content_area (GTK_DIALOG (dialog->dialog));
   children = gtk_container_get_children (GTK_CONTAINER (container));
   g_return_if_fail (GTK_IS_BOX (children->data));
   vbox = children->data;
   g_list_free (children);
 
-  /* The preferred localized date representation without the time. */
+  //The preferred localized date representation without the time.
   datetime = g_date_time_new_from_unix_local (config->last_release_timestamp);
   date = g_date_time_format (datetime, "%x");
   g_date_time_unref (datetime);
 
-  /* The update frame. */
+  //The update frame.
   frame = gtk_frame_new (NULL);
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, FALSE, 2);
 
   box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_container_add (GTK_CONTAINER (frame), box);
 
-  /* Button in the frame. */
+  //Button in the frame.
   button = gtk_button_new ();
   gtk_box_pack_start (GTK_BOX (box), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -336,10 +336,10 @@ about_dialog_add_update (GimpAboutDialog *dialog,
 
   if (config->last_known_release != NULL)
     {
-      /* There is a newer version. */
+      //There is a newer version.
       gchar *comment = NULL;
 
-      /* We want the frame to stand out. */
+      //We want the frame to stand out.
       label = gtk_label_new (NULL);
       text = g_strdup_printf ("<tt><b><big>%s</big></b></tt>",
                               _("Update available!"));
@@ -351,7 +351,7 @@ about_dialog_add_update (GimpAboutDialog *dialog,
       gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_ETCHED_OUT);
       gtk_box_reorder_child (GTK_BOX (vbox), frame, 3);
 
-      /* Button is an update link. */
+      //Button is an update link.
       gtk_image_set_from_icon_name (GTK_IMAGE (button_image),
                                     "software-update-available",
                                     GTK_ICON_SIZE_DIALOG);
@@ -361,17 +361,17 @@ about_dialog_add_update (GimpAboutDialog *dialog,
 
       if (config->last_revision > 0)
         {
-          /* This is actually a new revision of current version. */
+          //This is actually a new revision of current version.
           text = g_strdup_printf (_("Download GIMP %s revision %d (released on %s)\n"),
                                   config->last_known_release,
                                   config->last_revision,
                                   date);
 
-          /* Finally an optional release comment. */
+          //Finally an optional release comment.
           if (config->last_release_comment)
             {
-              /* Translators: <> tags are Pango markup. Please keep these
-               * markups in your translation. */
+              //Translators: <> tags are Pango markup. Please keep these
+              //markups in your translation.
               comment = g_strdup_printf (_("<u>Release comment</u>: <i>%s</i>"), config->last_release_comment);
             }
         }
@@ -398,7 +398,7 @@ about_dialog_add_update (GimpAboutDialog *dialog,
     }
   else
     {
-      /* Button is a "Check for updates" action. */
+      //Button is a "Check for updates" action.
       gtk_image_set_from_icon_name (GTK_IMAGE (button_image),
                                     "view-refresh",
                                     GTK_ICON_SIZE_MENU);
@@ -410,14 +410,14 @@ about_dialog_add_update (GimpAboutDialog *dialog,
 
   gtk_box_reorder_child (GTK_BOX (vbox), frame, 4);
 
-  /* Last check date box. */
+  //Last check date box.
   box2 = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_container_add (GTK_CONTAINER (box), box2);
   gtk_widget_show (box2);
 
-  /* Show a small "Check for updates" button only if the big one has
-   * been replaced by a download button.
-   */
+  //Show a small "Check for updates" button only if the big one has
+  //been replaced by a download button.
+   
   if (config->last_known_release != NULL)
     {
       button = gtk_button_new ();
@@ -439,10 +439,10 @@ about_dialog_add_update (GimpAboutDialog *dialog,
       datetime = g_date_time_new_from_unix_local (config->check_update_timestamp);
       date = g_date_time_format (datetime, "%x");
       time = g_date_time_format (datetime, "%X");
-      /* Translators: first string is the date in the locale's date
-       * representation (e.g., 12/31/99), second is the time in the
-       * locale's time representation (e.g., 23:13:48).
-       */
+      //Translators: first string is the date in the locale's date
+      //representation (e.g., 12/31/99), second is the time in the
+      //locale's time representation (e.g., 23:13:48).
+
       subtext = g_strdup_printf (_("Last checked on %s at %s"), date, time);
       g_date_time_unref (datetime);
       g_free (date);
@@ -464,11 +464,11 @@ about_dialog_add_update (GimpAboutDialog *dialog,
 
   dialog->update_frame = frame;
 
-  /* Reconstruct the dialog when release info changes. */
+  //Reconstruct the dialog when release info changes.
   g_signal_connect (config, "notify::last-known-release",
                     (GCallback) about_dialog_last_release_changed,
                     dialog);
-}
+}*/
 
 static void
 about_dialog_reshuffle (GimpAboutDialog *dialog)
@@ -838,7 +838,7 @@ about_dialog_add_unstable_message (GtkWidget *vbox)
 
 #endif /* GIMP_UNSTABLE */
 
-static void
+/*static void
 about_dialog_last_release_changed (GimpCoreConfig   *config,
                                    const GParamSpec *pspec,
                                    GimpAboutDialog  *dialog)
@@ -871,4 +871,4 @@ about_dialog_download_clicked (GtkButton   *button,
                   link,
                   gtk_get_current_event_time(),
                   NULL);
-}
+}*/

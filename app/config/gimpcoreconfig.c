@@ -685,7 +685,7 @@ gimp_core_config_class_init (GimpCoreConfigClass *klass)
                             "check-updates",
                             "Check for updates",
                             CHECK_UPDATES_BLURB,
-                            TRUE,
+                            FALSE,
                             GIMP_PARAM_STATIC_STRINGS);
 
   GIMP_CONFIG_PROP_INT64 (object_class, PROP_CHECK_UPDATE_TIMESTAMP,
