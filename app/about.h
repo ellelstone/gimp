@@ -23,7 +23,7 @@
   _("GIMP")
 
 #define GIMP_NAME \
-  _("GNU Image Manipulation Program")
+  _("GNU Image Manipulation Program (2.10-CCE)")
 
 /* The year of the last commit (UTC) will be inserted into this string. */
 #define GIMP_COPYRIGHT \

@@ -617,7 +617,7 @@ gimp_display_shell_canvas_draw_drop_zone (GimpDisplayShell *shell,
 
     layout = gtk_widget_create_pango_layout (shell->canvas, NULL);
 
-    msg = g_strdup_printf (_("<big>Unstable Development Version</big>\n\n"
+    msg = g_strdup_printf (_("<big>GIMP-210-CCE Unstable Development Version</big>\n\n"
                              "<small>commit <tt>%s</tt></small>\n\n"
                              "<small>Please test bugs against "
                              "latest git master branch\n"
