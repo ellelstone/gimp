@@ -55,6 +55,7 @@ file_pdf_save_libexecdir = $(gimpplugindir)/plug-ins/file-pdf-save
 file_pat_libexecdir = $(gimpplugindir)/plug-ins/file-pat
 file_png_libexecdir = $(gimpplugindir)/plug-ins/file-png
 unit_editor_libexecdir = $(gimpplugindir)/plug-ins/unit-editor
+wavelet_decompose_libexecdir = $(gimpplugindir)/plug-ins/wavelet-decompose
 
 align_layers_libexec_PROGRAMS = align-layers
 crop_zealous_libexec_PROGRAMS = crop-zealous
@@ -65,6 +66,7 @@ file_pdf_load_libexec_PROGRAMS = file-pdf-load
 file_pdf_save_libexec_PROGRAMS = $(FILE_PDF_SAVE)
 file_png_libexec_PROGRAMS = file-png
 unit_editor_libexec_PROGRAMS = unit-editor
+wavelet_decompose_libexec_PROGRAMS = wavelet-decompose
 
 
 EXTRA_PROGRAMS = \
@@ -248,3 +250,21 @@ unit_editor_LDADD = \
 	$(RT_LIBS)		\
 	$(INTLLIBS)		\
 	$(unit_editor_RC)
+
+wavelet_decompose_SOURCES = \
+	wavelet-decompose.c
+
+wavelet_decompose_LDADD = \
+	$(libgimpui)		\
+	$(libgimpwidgets)	\
+	$(libgimpmodule)	\
+	$(libgimp)		\
+	$(libgimpmath)		\
+	$(libgimpconfig)	\
+	$(libgimpcolor)		\
+	$(libgimpbase)		\
+	$(GTK_LIBS)		\
+	$(GEGL_LIBS)		\
+	$(RT_LIBS)		\
+	$(INTLLIBS)		\
+	$(wavelet_decompose_RC)

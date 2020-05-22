@@ -677,9 +677,11 @@
 
       <menu action="filters-enhance-menu" name="Enhance">
         <menuitem action="filters-high-pass" />
+        <menuitem action="filters-unsharp-mask" />
+        <separator />
         <menuitem action="filters-noise-reduction" />
         <menuitem action="filters-snn-mean" />
-        <menuitem action="filters-unsharp-mask" />
+        <separator />
       </menu>
 
       <menu action="filters-edge-detect-menu" name="Edge-Detect">
