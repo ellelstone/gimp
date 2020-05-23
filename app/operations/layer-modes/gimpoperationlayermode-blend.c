@@ -603,7 +603,9 @@ gimp_operation_layer_mode_blend_lch_chroma (GeglOperation *operation,
           gfloat B1 = in[2];
           gfloat c1 = hypotf (A1, B1);
 
-          if (c1 > EPSILON)
+          if ( c1 > EPSILON &&
+             ( abs(in[0]-in[1])>EPSILON) &&
+             ( abs(in[1]-in[2])>EPSILON ) )
             {
               gfloat A2 = layer[1];
               gfloat B2 = layer[2];
