@@ -34,8 +34,9 @@
 
 #include "gimpoperationlayermode-blend.h"
 
-
-#define EPSILON      6.e-5f/*1e-6f*/
+#define EPSILON  1e-6f
+#define CHROMA_EPSILON 1e-3f
+#include <math.h>
 
 #define SAFE_DIV_MIN EPSILON
 #define SAFE_DIV_MAX (1.0f / SAFE_DIV_MIN)
@@ -602,10 +603,8 @@ gimp_operation_layer_mode_blend_lch_chroma (GeglOperation *operation,
           gfloat A1 = in[1];
           gfloat B1 = in[2];
           gfloat c1 = hypotf (A1, B1);
-
-          if ( c1 > EPSILON &&
-             ( abs(in[0]-in[1])>EPSILON) &&
-             ( abs(in[1]-in[2])>EPSILON ) )
+          gfloat fabsf_chroma = fabsf(A1);
+          if ( fabsf_chroma > CHROMA_EPSILON )
             {
               gfloat A2 = layer[1];
               gfloat B2 = layer[2];
